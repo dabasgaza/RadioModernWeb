@@ -18,14 +18,22 @@ namespace DataAccess.Services
         public DateTime ChangedAt { get; set; }
     }
 
+    public class PagedAuditLogResult
+    {
+        public List<AuditLogDto> Items { get; set; } = [];
+        public int TotalCount { get; set; }
+    }
+
     public interface IAuditLogService
     {
-        Task<Result<List<AuditLogDto>>> GetFilteredAuditLogsAsync(
+        Task<Result<PagedAuditLogResult>> GetFilteredAuditLogsAsync(
             string? tableName = null,
             int? userId = null,
             string? action = null,
             DateTime? fromDate = null,
-            DateTime? toDate = null);
+            DateTime? toDate = null,
+            int page = 1,
+            int pageSize = 100);
 
         Task<Result<List<User>>> GetAuditUsersAsync();
     }

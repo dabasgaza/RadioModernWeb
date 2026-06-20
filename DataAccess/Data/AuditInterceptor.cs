@@ -3,14 +3,25 @@ using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 namespace DataAccess.Data
 {
     /// <summary>
     /// معترض عمليات الحفظ: يقوم بتحديث تواريخ التعديل تلقائياً وتسجيل التغييرات في جدول AuditLogs
     /// </summary>
-    public class AuditInterceptor(CurrentSessionProvider sessionProvider) : SaveChangesInterceptor
+    public class AuditInterceptor : SaveChangesInterceptor
     {
+        private readonly CurrentSessionProvider _sessionProvider;
+        private readonly ILogger<AuditInterceptor> _logger;
+
+        public AuditInterceptor(
+            CurrentSessionProvider sessionProvider,
+            ILogger<AuditInterceptor> logger)
+        {
+            _sessionProvider = sessionProvider;
+            _logger = logger;
+        }
         // إعدادات الـ JSON المشتركة لتحسين الأداء وتجنب تخصيص الذاكرة في كل مرة
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
@@ -34,7 +45,7 @@ namespace DataAccess.Data
             var context = eventData.Context;
             if (context == null) return base.SavingChangesAsync(eventData, result, cancellationToken);
 
-            var userId = sessionProvider.CurrentSession?.UserId;
+            var userId = _sessionProvider.CurrentSession?.UserId;
             var auditEntries = new List<AuditLog>();
 
             var entries = context.ChangeTracker.Entries()
@@ -153,7 +164,7 @@ namespace DataAccess.Data
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "فشل تسجيل التدقيق (Audit)");
+                _logger.LogError(ex, "فشل تسجيل التدقيق (Audit)");
                 System.Diagnostics.Debug.WriteLine("═══════════════════════════════════════");
                 System.Diagnostics.Debug.WriteLine($"⚠️ فشل تسجيل التدقيق (Audit)");
                 System.Diagnostics.Debug.WriteLine($"السبب: {ex.GetBaseException().Message}");

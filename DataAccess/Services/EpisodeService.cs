@@ -4,6 +4,7 @@ using Domain.Models;
 using Microsoft.ApplicationInsights;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;  // 🆕 إضافة لـ JSON serialization في سجل التدقيق
+using Microsoft.Extensions.Logging;
 
 namespace DataAccess.Services;
 
@@ -51,8 +52,21 @@ public interface IEpisodeCommandService
 
 public interface IEpisodeService : IEpisodeQueryService, IEpisodeCommandService { }
 
-public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contextFactory, TelemetryClient telemetryClient) : IEpisodeService
+public class EpisodeService : IEpisodeService
 {
+    private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
+    private readonly TelemetryClient _telemetryClient;
+    private readonly ILogger<EpisodeService> _logger;
+
+    public EpisodeService(
+        IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
+        TelemetryClient telemetryClient,
+        ILogger<EpisodeService> logger)
+    {
+        _contextFactory = contextFactory;
+        _telemetryClient = telemetryClient;
+        _logger = logger;
+    }
     // ──────────────────────────────────────────────────────────────
     // Compiled Query for hot path
     // ──────────────────────────────────────────────────────────────
@@ -150,10 +164,10 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
 
     public async Task<List<ActiveEpisodeDto>> GetActiveEpisodesAsync()
     {
-        var operation = telemetryClient.StartOperation<Microsoft.ApplicationInsights.DataContracts.RequestTelemetry>("GetActiveEpisodes");
+        var operation = _telemetryClient.StartOperation<Microsoft.ApplicationInsights.DataContracts.RequestTelemetry>("GetActiveEpisodes");
         try
         {
-            using var context = await contextFactory.CreateDbContextAsync();
+            using var context = await _contextFactory.CreateDbContextAsync();
 
             var episodes = new List<ActiveEpisodeDto>();
             await foreach (var ep in s_compiledActiveEpisodes(context))
@@ -162,14 +176,14 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
                 episodes.Add(ep);
             }
 
-            telemetryClient.TrackMetric("ActiveEpisodesCount", episodes.Count);
+            _telemetryClient.TrackMetric("ActiveEpisodesCount", episodes.Count);
             operation.Telemetry.Success = true;
             return episodes;
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "An unexpected error occurred during processing");
-            telemetryClient.TrackException(ex);
+            _logger.LogError(ex, "An unexpected error occurred during processing");
+            _telemetryClient.TrackException(ex);
             operation.Telemetry.Success = false;
             throw;
         }
@@ -181,7 +195,7 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
 
     public async Task<ActiveEpisodeDto?> GetActiveEpisodeByIdAsync(int episodeId)
     {
-        await using var context = await contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
 
         ActiveEpisodeDto? episode = null;
         await foreach (var ep in s_compiledActiveEpisodeById(context, episodeId))
@@ -199,7 +213,7 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
 
     public async Task<List<EpisodeGuestDto>> GetEpisodeGuestsAsync(int episodeId)
     {
-        await using var context = await contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
         return await context.EpisodeGuests
             .AsNoTracking()
             .Where(eg => eg.EpisodeId == episodeId)
@@ -225,7 +239,7 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
 
         try
         {
-            using var context = await contextFactory.CreateDbContextAsync();
+            using var context = await _contextFactory.CreateDbContextAsync();
 
             var programExists = await context.Programs.AnyAsync(p => p.ProgramId == dto.ProgramId && p.IsActive);
             if (!programExists) return Result<int>.Fail("البرنامج المحدد غير موجود أو غير نشط.");
@@ -299,7 +313,7 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Failed to create Episode: {EpisodeName}, ProgramId: {ProgramId}", dto.EpisodeName, dto.ProgramId);
+            _logger.LogError(ex, "Failed to create Episode: {EpisodeName}, ProgramId: {ProgramId}", dto.EpisodeName, dto.ProgramId);
             return Result<int>.Fail("حدث خطأ في قاعدة البيانات أثناء جدولة الحلقة. يرجى المحاولة لاحقاً.");
         }
     }
@@ -311,7 +325,7 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
 
         try
         {
-            using var context = await contextFactory.CreateDbContextAsync();
+            using var context = await _contextFactory.CreateDbContextAsync();
 
             var programExists = await context.Programs.AnyAsync(p => p.ProgramId == dto.ProgramId && p.IsActive);
             if (!programExists) return Result.Fail("البرنامج المحدد غير موجود أو غير نشط.");
@@ -410,7 +424,7 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Failed to update Episode: {EpisodeId}, {EpisodeName}", dto.EpisodeId, dto.EpisodeName);
+            _logger.LogError(ex, "Failed to update Episode: {EpisodeId}, {EpisodeName}", dto.EpisodeId, dto.EpisodeName);
             return Result.Fail("حدث خطأ في قاعدة البيانات أثناء تعديل بيانات الحلقة. يرجى المحاولة لاحقاً.");
         }
     }
@@ -427,7 +441,7 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
             : session.EnsurePermission(AppPermissions.EpisodeManage);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
 
-        await using var context = await contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
         var episode = await context.Episodes.FindAsync(episodeId);
         if (episode == null) return Result.Fail("الحلقة غير موجودة.");
 
@@ -461,7 +475,7 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
         if (string.IsNullOrWhiteSpace(reason))
             return Result.Fail("يجب إدخال سبب التراجع عن الحالة.");
 
-        await using var context = await contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
         var episode = await context.Episodes.FindAsync(episodeId);
         if (episode == null) return Result.Fail("الحلقة غير موجودة.");
 
@@ -528,7 +542,7 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
         if (string.IsNullOrWhiteSpace(reason))
             return Result.Fail("يجب إدخال سبب إلغاء الحلقة.");
 
-        await using var context = await contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
         var episode = await context.Episodes.FindAsync(episodeId);
         if (episode == null) return Result.Fail("الحلقة غير موجودة.");
 
@@ -552,7 +566,7 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
         var permCheck = session.EnsurePermission(AppPermissions.EpisodeEdit);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
 
-        await using var context = await contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
         var episode = await context.Episodes.FindAsync(episodeId);
         if (episode == null) return Result.Fail("الحلقة غير موجودة.");
 
@@ -570,7 +584,7 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
         var permCheck = session.EnsurePermission(AppPermissions.EpisodeWebPublish);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
 
-        await using var context = await contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
 
         if (!await context.EnsureDomainUserExistsAsync(session))
             return Result.Fail("المستخدم غير موجود في النظام. الرجاء تسجيل الخروج وإعادة تسجيل الدخول.");
@@ -610,7 +624,7 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
 
         try
         {
-            await using var context = await contextFactory.CreateDbContextAsync();
+            await using var context = await _contextFactory.CreateDbContextAsync();
 
             var episode = await context.Episodes
                 .IgnoreQueryFilters()
@@ -640,7 +654,7 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
 
             await context.SaveChangesAsync();
 
-            telemetryClient.TrackEvent("EpisodeDeleted", new Dictionary<string, string>
+            _telemetryClient.TrackEvent("EpisodeDeleted", new Dictionary<string, string>
             {
                 { "EpisodeId", episodeId.ToString() },
                 { "UserId", session.UserId.ToString() }
@@ -650,8 +664,8 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "An unexpected error occurred during processing");
-            telemetryClient.TrackException(ex);
+            _logger.LogError(ex, "An unexpected error occurred during processing");
+            _telemetryClient.TrackException(ex);
             return Result.Fail($"خطأ أثناء الحذف: {ex.Message}");
         }
     }
@@ -667,7 +681,7 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
 
         try
         {
-            await using var context = await contextFactory.CreateDbContextAsync();
+            await using var context = await _contextFactory.CreateDbContextAsync();
 
             var affected = await context.Episodes
                 .Where(e => episodeIds.Contains(e.EpisodeId) && e.IsActive && e.StatusId != EpisodeStatus.Cancelled)
@@ -680,7 +694,7 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Failed to batch cancel {Count} episodes", episodeIds.Count);
+            _logger.LogError(ex, "Failed to batch cancel {Count} episodes", episodeIds.Count);
             return (0, episodeIds.Count);
         }
     }
@@ -692,7 +706,7 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
 
         try
         {
-            await using var context = await contextFactory.CreateDbContextAsync();
+            await using var context = await _contextFactory.CreateDbContextAsync();
 
             await context.EpisodeGuests
                 .Where(eg => episodeIds.Contains(eg.EpisodeId) && eg.IsActive)
@@ -713,7 +727,7 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
                     .SetProperty(e => e.UpdatedAt, DateTime.UtcNow)
                     .SetProperty(e => e.UpdatedByUserId, session.UserId));
 
-            telemetryClient.TrackEvent("EpisodesBatchDeleted", new Dictionary<string, string>
+            _telemetryClient.TrackEvent("EpisodesBatchDeleted", new Dictionary<string, string>
             {
                 { "Count", affected.ToString() },
                 { "UserId", session.UserId.ToString() }
@@ -723,7 +737,7 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Failed to batch delete {Count} episodes", episodeIds.Count);
+            _logger.LogError(ex, "Failed to batch delete {Count} episodes", episodeIds.Count);
             return (0, episodeIds.Count);
         }
     }
@@ -733,7 +747,7 @@ public class EpisodeService(IDbContextFactory<BroadcastWorkflowDBContext> contex
     // ═══════════════════════════════════════════════════════
     public async Task<List<ConflictInfo>> GetConflictingEpisodesAsync(int programId, DateTime scheduledTime, int? excludeEpisodeId = null)
     {
-        await using var context = await contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
 
         var windowStart = scheduledTime.AddHours(-1);
         var windowEnd = scheduledTime.AddHours(1);

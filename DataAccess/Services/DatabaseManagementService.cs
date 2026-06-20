@@ -4,6 +4,7 @@ using Domain.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace DataAccess.Services
 {
@@ -13,17 +14,20 @@ namespace DataAccess.Services
         private readonly IConfiguration _configuration;
         private readonly CurrentSessionProvider _sessionProvider;
         private readonly SecureConfigurationProvider _secureConfigProvider;
+        private readonly ILogger<DatabaseManagementService> _logger;
 
         public DatabaseManagementService(
             IDbContextFactory<BroadcastWorkflowDBContext> dbContextFactory,
             IConfiguration configuration,
             CurrentSessionProvider sessionProvider,
-            SecureConfigurationProvider secureConfigProvider)
+            SecureConfigurationProvider secureConfigProvider,
+            ILogger<DatabaseManagementService> logger)
         {
             _dbContextFactory = dbContextFactory;
             _configuration = configuration;
             _sessionProvider = sessionProvider;
             _secureConfigProvider = secureConfigProvider;
+            _logger = logger;
         }
 
         /// <summary>
@@ -116,7 +120,7 @@ namespace DataAccess.Services
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "An unexpected error occurred during processing");
+                _logger.LogError(ex, "An unexpected error occurred during processing");
                 await LogBackupAsync(customBackupFolder ?? "N/A", "Local", 0, "Failed", ex.Message);
                 return Result<string>.Fail($"حدث خطأ أثناء عمل النسخة الاحتياطية: {ex.Message}");
             }
@@ -183,7 +187,7 @@ namespace DataAccess.Services
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "An unexpected error occurred during processing");
+                _logger.LogError(ex, "An unexpected error occurred during processing");
                 // Re-enable multi-user mode just in case of failure
                 try
                 {
@@ -215,7 +219,7 @@ namespace DataAccess.Services
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "An unexpected error occurred during processing");
+                _logger.LogError(ex, "An unexpected error occurred during processing");
                 return Result.Fail($"حدث خطأ أثناء فحص/تهيئة قاعدة البيانات: {ex.Message}");
             }
         }
@@ -255,7 +259,7 @@ namespace DataAccess.Services
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "An unexpected error occurred during processing");
+                _logger.LogError(ex, "An unexpected error occurred during processing");
                 return Result.Fail($"حدث خطأ أثناء إعادة تعيين قاعدة البيانات: {ex.Message}");
             }
         }
@@ -277,7 +281,7 @@ namespace DataAccess.Services
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "An unexpected error occurred during processing");
+                _logger.LogError(ex, "An unexpected error occurred during processing");
                 return Result<List<DatabaseBackupLog>>.Fail($"حدث خطأ أثناء جلب سجل النسخ الاحتياطي: {ex.Message}");
             }
         }
@@ -333,7 +337,7 @@ namespace DataAccess.Services
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "An unexpected error occurred during processing");
+                _logger.LogError(ex, "An unexpected error occurred during processing");
                 return Result.Fail($"حدث خطأ أثناء المزامنة السحابية: {ex.Message}");
             }
         }
@@ -383,7 +387,7 @@ namespace DataAccess.Services
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "An unexpected error occurred during processing");
+                _logger.LogError(ex, "An unexpected error occurred during processing");
                 return Result.Fail($"حدث خطأ أثناء تطبيق سياسة الاحتفاظ: {ex.Message}");
             }
         }

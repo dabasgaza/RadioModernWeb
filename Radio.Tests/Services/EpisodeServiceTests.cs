@@ -4,6 +4,7 @@ using Domain.Models;
 using Radio.Tests.Helpers;
 using Radio.Tests.TestData.Builders;
 using Radio.Tests.TestData.Fixtures;
+using Microsoft.Extensions.Logging;
 
 namespace Radio.Tests.Services;
 
@@ -19,7 +20,7 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
     public EpisodeServiceTests(DatabaseFixture db)
     {
         _db = db;
-        _service = new EpisodeService(db.DbContextFactory, TestTelemetry.Client);
+        _service = new EpisodeService(db.DbContextFactory, TestTelemetry.Client, Mock.Of<ILogger<EpisodeService>>());
     }
 
     public async Task InitializeAsync() => await _db.ResetAsync();

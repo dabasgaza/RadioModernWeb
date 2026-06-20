@@ -18,8 +18,7 @@ public static class DbSeeder
         await context.Database.EnsureCreatedAsync();
 
         await SeedEpisodeStatusesAsync(context);
-        await SeedPermissionsAsync(context);   // يجب أن يسبق SeedRolesAsync
-        await SeedRolesAsync(context);
+        await SeedPermissionsAsync(context);
         await SeedRolePermissionsAsync(context);
         await SeedAdminUserAsync(context, adminPassword);
         await SeedSocialMediaPlatformsAsync(context);
@@ -121,36 +120,6 @@ public static class DbSeeder
                     await context.SaveChangesAsync();
                 }
             }
-        }
-    }
-
-    // ═══════════════════════════════════════════
-    // الأدوار الافتراضية
-    // ═══════════════════════════════════════════
-
-    private static async Task SeedRolesAsync(BroadcastWorkflowDBContext context)
-    {
-        // نتحقق بالاسم وليس بالـ ID لتجنب تعارض الـ RowVersion seed
-        var existingNames = await context.Set<Role>()
-            .IgnoreQueryFilters()
-            .Select(r => r.RoleName)
-            .ToHashSetAsync();
-
-        var now = DateTime.UtcNow;
-
-        var roles = new[]
-        {
-            new Role { RoleName = "Admin",        RoleDescription = "مسؤول النظام — صلاحيات كاملة",                    IsActive = true, CreatedAt = now, UpdatedAt = now },
-            new Role { RoleName = "Producer",     RoleDescription = "منتج البرامج — إدارة البرامج والحلقات والضيوف",   IsActive = true, CreatedAt = now, UpdatedAt = now },
-            new Role { RoleName = "WebPublisher", RoleDescription = "ناشر الموقع — نشر الحلقات على الموقع فقط",        IsActive = true, CreatedAt = now, UpdatedAt = now },
-            new Role { RoleName = "Reporter",     RoleDescription = "مراسل — عرض التقارير وإدارة التغطيات",            IsActive = true, CreatedAt = now, UpdatedAt = now },
-        };
-
-        var missing = roles.Where(r => !existingNames.Contains(r.RoleName)).ToList();
-        if (missing.Count > 0)
-        {
-            context.Set<Role>().AddRange(missing);
-            await context.SaveChangesAsync();
         }
     }
 

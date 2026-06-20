@@ -3,6 +3,7 @@ using DataAccess.DTOs;
 using DataAccess.Validation;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace DataAccess.Services
 {
@@ -17,10 +18,21 @@ namespace DataAccess.Services
     }
 
     // ✨ استخدام Primary Constructor
-    public class CorrespondentService(
-        IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
-        ICachedLookupService cachedLookup) : ICorrespondentService
+    public class CorrespondentService : ICorrespondentService
     {
+        private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
+        private readonly ICachedLookupService _cachedLookup;
+        private readonly ILogger<CorrespondentService> _logger;
+
+        public CorrespondentService(
+            IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
+            ICachedLookupService cachedLookup,
+            ILogger<CorrespondentService> logger)
+        {
+            _contextFactory = contextFactory;
+            _cachedLookup = cachedLookup;
+            _logger = logger;
+        }
         // ──────────────────────────────────────────────────────────────
         // Compiled Query — تقليل وقت ترجمة LINQ في المسارات الساخنة
         // ──────────────────────────────────────────────────────────────
@@ -38,7 +50,7 @@ namespace DataAccess.Services
 
         public async Task<List<CorrespondentDto>> GetAllActiveAsync()
         {
-            using var context = await contextFactory.CreateDbContextAsync();
+            using var context = await _contextFactory.CreateDbContextAsync();
 
             var result = new List<CorrespondentDto>();
             await foreach (var dto in s_compiledGetAllActive(context))
@@ -56,7 +68,7 @@ namespace DataAccess.Services
 
             try
             {
-                using var context = await contextFactory.CreateDbContextAsync();
+                using var context = await _contextFactory.CreateDbContextAsync();
 
                 context.Correspondents.Add(new Correspondent
                 {
@@ -66,12 +78,12 @@ namespace DataAccess.Services
                 });
 
                 await context.SaveChangesAsync();
-                cachedLookup.InvalidateByEntity("Correspondent");
+                _cachedLookup.InvalidateByEntity("Correspondent");
                 return Result.Success();
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "Failed to create Correspondent: {CorrespondentName}", dto.FullName);
+                _logger.LogError(ex, "Failed to create Correspondent: {CorrespondentName}", dto.FullName);
                 return Result.Fail("حدث خطأ في قاعدة البيانات أثناء إضافة المراسل. يرجى المحاولة لاحقاً.");
             }
         }
@@ -86,7 +98,7 @@ namespace DataAccess.Services
 
             try
             {
-                using var context = await contextFactory.CreateDbContextAsync();
+                using var context = await _contextFactory.CreateDbContextAsync();
                 var cor = await context.Correspondents.FindAsync(dto.CorrespondentId);
 
                 if (cor == null) return Result.Fail("المراسل غير موجود.");
@@ -96,12 +108,12 @@ namespace DataAccess.Services
                 cor.AssignedLocations = dto.AssignedLocations;
 
                 await context.SaveChangesAsync();
-                cachedLookup.InvalidateByEntity("Correspondent");
+                _cachedLookup.InvalidateByEntity("Correspondent");
                 return Result.Success();
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "Failed to update Correspondent: {CorrespondentId}, {CorrespondentName}", dto.CorrespondentId, dto.FullName);
+                _logger.LogError(ex, "Failed to update Correspondent: {CorrespondentId}, {CorrespondentName}", dto.CorrespondentId, dto.FullName);
                 return Result.Fail("حدث خطأ في قاعدة البيانات أثناء تعديل بيانات المراسل. يرجى المحاولة لاحقاً.");
             }
         }
@@ -113,7 +125,7 @@ namespace DataAccess.Services
 
             try
             {
-                using var context = await contextFactory.CreateDbContextAsync();
+                using var context = await _contextFactory.CreateDbContextAsync();
                 var cor = await context.Correspondents.FindAsync(id);
 
                 if (cor == null) return Result.Fail("المراسل غير موجود.");
@@ -121,19 +133,19 @@ namespace DataAccess.Services
                 cor.IsActive = false;
 
                 await context.SaveChangesAsync();
-                cachedLookup.InvalidateByEntity("Correspondent");
+                _cachedLookup.InvalidateByEntity("Correspondent");
                 return Result.Success();
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "Failed to soft delete Correspondent: {CorrespondentId}", id);
+                _logger.LogError(ex, "Failed to soft delete Correspondent: {CorrespondentId}", id);
                 return Result.Fail("حدث خطأ في قاعدة البيانات أثناء حذف المراسل. يرجى المحاولة لاحقاً.");
             }
         }
 
         public async Task<List<CorrespondentCoverageDto>> GetCoverageAsync(int correspondentId)
         {
-            using var context = await contextFactory.CreateDbContextAsync();
+            using var context = await _contextFactory.CreateDbContextAsync();
 
             // ✅ إزالة Include غير الضروري — Select يجلب العلاقة تلقائياً عبر SQL JOIN
             return await context.CorrespondentCoverages

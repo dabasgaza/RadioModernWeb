@@ -5,6 +5,7 @@ using Domain.Models;
 using Radio.Tests.Helpers;
 using Radio.Tests.TestData.Builders;
 using Radio.Tests.TestData.Fixtures;
+using Microsoft.Extensions.Logging;
 
 namespace Radio.Tests.Services;
 
@@ -19,7 +20,7 @@ public class UserServiceTests : IClassFixture<DatabaseFixture>
         _db = db;
         var sp = new Mock<IServiceProvider>();
         var sessionProvider = new CurrentSessionProvider(sp.Object);
-        _service = new UserService(db.DbContextFactory, sessionProvider);
+        _service = new UserService(db.DbContextFactory, sessionProvider, Mock.Of<ILogger<UserService>>());
     }
 
     [Fact]

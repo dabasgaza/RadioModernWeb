@@ -3,6 +3,7 @@ using DataAccess.DTOs;
 using DataAccess.Validation;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace DataAccess.Services;
 
@@ -15,8 +16,21 @@ public interface IGuestService
 }
 
 // ✨ استخدام Primary Constructor وإزالة IAuditService
-public class GuestService(IDbContextFactory<BroadcastWorkflowDBContext> contextFactory, ICachedLookupService cachedLookup) : IGuestService
+public class GuestService : IGuestService
 {
+    private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
+    private readonly ICachedLookupService _cachedLookup;
+    private readonly ILogger<GuestService> _logger;
+
+    public GuestService(
+        IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
+        ICachedLookupService cachedLookup,
+        ILogger<GuestService> logger)
+    {
+        _contextFactory = contextFactory;
+        _cachedLookup = cachedLookup;
+        _logger = logger;
+    }
     // ──────────────────────────────────────────────────────────────
     // Compiled Query — تقليل وقت ترجمة LINQ في المسارات الساخنة
     // يُستدعى عند كل فتح لنموذج الحلقات أو شاشة الضيوف
@@ -38,7 +52,7 @@ public class GuestService(IDbContextFactory<BroadcastWorkflowDBContext> contextF
 
     public async Task<List<GuestDto>> GetAllActiveAsync()
     {
-        using var context = await contextFactory.CreateDbContextAsync();
+        using var context = await _contextFactory.CreateDbContextAsync();
 
         // ✨ استخدام Compiled Query — يُجمع مرة واحدة فقط بدلاً من كل استدعاء
         var result = new List<GuestDto>();
@@ -58,7 +72,7 @@ public class GuestService(IDbContextFactory<BroadcastWorkflowDBContext> contextF
 
         try
         {
-            using var context = await contextFactory.CreateDbContextAsync();
+            using var context = await _contextFactory.CreateDbContextAsync();
 
             var guest = new Guest
             {
@@ -72,13 +86,13 @@ public class GuestService(IDbContextFactory<BroadcastWorkflowDBContext> contextF
             await context.SaveChangesAsync();
 
             // ✨ إبطال كاش الضيوف بعد الإضافة
-            cachedLookup.InvalidateByEntity("Guest");
+            _cachedLookup.InvalidateByEntity("Guest");
 
             return Result.Success();
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Failed to create Guest: {FullName}, {Organization}", dto.FullName, dto.Organization);
+            _logger.LogError(ex, "Failed to create Guest: {FullName}, {Organization}", dto.FullName, dto.Organization);
             return Result.Fail("حدث خطأ في قاعدة البيانات أثناء إضافة الضيف. يرجى المحاولة لاحقاً.");
         }
     }
@@ -90,7 +104,7 @@ public class GuestService(IDbContextFactory<BroadcastWorkflowDBContext> contextF
 
         try
         {
-            using var context = await contextFactory.CreateDbContextAsync();
+            using var context = await _contextFactory.CreateDbContextAsync();
             var guest = await context.Guests.FindAsync(dto.GuestId);
 
             if (guest == null) return Result.Fail("الضيف غير موجود.");
@@ -105,7 +119,7 @@ public class GuestService(IDbContextFactory<BroadcastWorkflowDBContext> contextF
                 await context.SaveChangesAsync();
 
                 // ✨ إبطال كاش الضيوف بعد التعديل
-                cachedLookup.InvalidateByEntity("Guest");
+                _cachedLookup.InvalidateByEntity("Guest");
 
                 return Result.Success();
             }
@@ -132,7 +146,7 @@ public class GuestService(IDbContextFactory<BroadcastWorkflowDBContext> contextF
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Failed to update Guest: {GuestId}, {FullName}", dto.GuestId, dto.FullName);
+            _logger.LogError(ex, "Failed to update Guest: {GuestId}, {FullName}", dto.GuestId, dto.FullName);
             return Result.Fail("حدث خطأ في قاعدة البيانات أثناء تعديل بيانات الضيف. يرجى المحاولة لاحقاً.");
         }
     }
@@ -144,7 +158,7 @@ public class GuestService(IDbContextFactory<BroadcastWorkflowDBContext> contextF
 
         try
         {
-            using var context = await contextFactory.CreateDbContextAsync();
+            using var context = await _contextFactory.CreateDbContextAsync();
 
             var hasExecutedEpisodes = await context.EpisodeGuests
                 .AnyAsync(eg => eg.GuestId == guestId &&
@@ -163,13 +177,13 @@ public class GuestService(IDbContextFactory<BroadcastWorkflowDBContext> contextF
             await context.SaveChangesAsync();
 
             // ✨ إبطال كاش الضيوف بعد الحذف
-            cachedLookup.InvalidateByEntity("Guest");
+            _cachedLookup.InvalidateByEntity("Guest");
 
             return Result.Success();
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Failed to soft delete Guest: {GuestId}", guestId);
+            _logger.LogError(ex, "Failed to soft delete Guest: {GuestId}", guestId);
             return Result.Fail("حدث خطأ في قاعدة البيانات أثناء حذف الضيف.");
         }
     }

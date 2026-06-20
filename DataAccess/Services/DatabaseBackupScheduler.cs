@@ -36,7 +36,7 @@ namespace DataAccess.Services
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "An unexpected error occurred during processing");
+                _logger.LogError(ex, "An unexpected error occurred during processing");
                 _logger.LogError(ex, "خطأ أثناء تهيئة قاعدة البيانات في بداية تشغيل الخدمة.");
             }
 
@@ -111,7 +111,7 @@ namespace DataAccess.Services
                 }
                 catch (Exception ex)
                 {
-                    Serilog.Log.Error(ex, "An unexpected error occurred during processing");
+                    _logger.LogError(ex, "An unexpected error occurred during processing");
                     _logger.LogError(ex, "خطأ غير متوقع في خدمة جدولة النسخ الاحتياطي.");
                     // Delay for 1 hour before retrying on error to avoid rapid failure loops
                     await Task.Delay(TimeSpan.FromHours(1), stoppingToken);

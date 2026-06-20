@@ -1,8 +1,5 @@
 using System.Security.Claims;
 using DataAccess.Common;
-using DataAccess.DTOs;
-using DataAccess.DTOs;
-using DataAccess.Services;
 
 namespace Radio.Web.Services;
 
@@ -43,7 +40,7 @@ public class CurrentUserService : ICurrentUserService
     public bool HasPermission(string permissionName)
     {
         if (!IsAuthenticated) return false;
-        if (string.Equals(PrimaryRole, "Admin", StringComparison.OrdinalIgnoreCase)) return true;
+        if (User?.HasClaim(c => c.Type == "SuperAdmin") == true) return true;
         return Permissions.Contains(permissionName);
     }
 
@@ -61,28 +58,3 @@ public class CurrentUserService : ICurrentUserService
     }
 }
 
-/// <summary>
-/// خدمة بيانات العرض — توفر بيانات مشتركة لكل الصفحات (Sidebar, Lookup data, etc.)
-/// </summary>
-public interface IViewDataService
-{
-    Task<List<Domain.Models.Program>> GetActiveProgramsAsync();
-    Task<Dictionary<byte, string>> GetEpisodeStatusesAsync();
-    Task<List<StaffRoleDto>> GetStaffRolesAsync();
-    Task<List<SocialMediaPlatformDto>> GetSocialPlatformsAsync();
-}
-
-public class ViewDataService : IViewDataService
-{
-    private readonly ICachedLookupService _lookup;
-    public ViewDataService(ICachedLookupService lookup) => _lookup = lookup;
-
-    public Task<List<Domain.Models.Program>> GetActiveProgramsAsync() =>
-        _lookup.GetProgramsAsync().ContinueWith(t => t.Result
-            .Select(p => new Domain.Models.Program { ProgramId = p.ProgramId, ProgramName = p.ProgramName, Category = p.Category ?? "", ProgramDescription = p.ProgramDescription ?? "" })
-            .ToList());
-
-    public Task<Dictionary<byte, string>> GetEpisodeStatusesAsync() => _lookup.GetEpisodeStatusesAsync();
-    public Task<List<StaffRoleDto>> GetStaffRolesAsync() => _lookup.GetStaffRolesAsync();
-    public Task<List<SocialMediaPlatformDto>> GetSocialPlatformsAsync() => _lookup.GetSocialPlatformsAsync();
-}

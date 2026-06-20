@@ -2,6 +2,7 @@ using DataAccess.Common;
 using DataAccess.DTOs;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace DataAccess.Services
 {
@@ -20,15 +21,26 @@ namespace DataAccess.Services
         Task<Result> DeleteUserAsync(int userId, UserSession session);
     }
 
-    public class UserService(
-        IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
-        CurrentSessionProvider sessionProvider) : IUserService
+    public class UserService : IUserService
     {
+        private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
+        private readonly CurrentSessionProvider _sessionProvider;
+        private readonly ILogger<UserService> _logger;
+
+        public UserService(
+            IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
+            CurrentSessionProvider sessionProvider,
+            ILogger<UserService> logger)
+        {
+            _contextFactory = contextFactory;
+            _sessionProvider = sessionProvider;
+            _logger = logger;
+        }
         #region إدارة المستخدمين
 
         public async Task<List<UserDto>> GetAllUsersAsync()
         {
-            await using var context = await contextFactory.CreateDbContextAsync();
+            await using var context = await _contextFactory.CreateDbContextAsync();
 
             return await context.Users
                 .AsNoTracking()
@@ -54,7 +66,7 @@ namespace DataAccess.Services
 
             try
             {
-                await using var context = await contextFactory.CreateDbContextAsync();
+                await using var context = await _contextFactory.CreateDbContextAsync();
 
                 if (await context.Users.AnyAsync(u => u.Username == dto.Username))
                     return Result.Fail("اسم المستخدم موجود بالفعل في النظام.");
@@ -76,7 +88,7 @@ namespace DataAccess.Services
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "Failed to create User: {Username}", dto.Username);
+                _logger.LogError(ex, "Failed to create User: {Username}", dto.Username);
                 return Result.Fail("حدث خطأ في قاعدة البيانات أثناء إضافة المستخدم. يرجى المحاولة لاحقاً.");
             }
         }
@@ -88,7 +100,7 @@ namespace DataAccess.Services
 
             try
             {
-                await using var context = await contextFactory.CreateDbContextAsync();
+                await using var context = await _contextFactory.CreateDbContextAsync();
                 var dbUser = await context.Users.FindAsync(dto.UserId);
 
                 if (dbUser == null) return Result.Fail("المستخدم غير موجود.");
@@ -108,13 +120,13 @@ namespace DataAccess.Services
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
-                    Serilog.Log.Error(ex, "Concurrency error updating User: {UserId}", dto.UserId);
+                    _logger.LogError(ex, "Concurrency error updating User: {UserId}", dto.UserId);
                     return Result.Fail("تم تعديل بيانات هذا المستخدم من قبل شخص آخر. يرجى التحديث والمحاولة ثانية.");
                 }
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "Failed to update User: {UserId}, {Username}", dto.UserId, dto.Username);
+                _logger.LogError(ex, "Failed to update User: {UserId}, {Username}", dto.UserId, dto.Username);
                 return Result.Fail("حدث خطأ في قاعدة البيانات أثناء تعديل بيانات المستخدم. يرجى المحاولة لاحقاً.");
             }
         }
@@ -129,7 +141,7 @@ namespace DataAccess.Services
 
             try
             {
-                await using var context = await contextFactory.CreateDbContextAsync();
+                await using var context = await _contextFactory.CreateDbContextAsync();
                 var user = await context.Users.FindAsync(userId);
 
                 if (user == null) return Result.Fail("المستخدم غير موجود.");
@@ -140,7 +152,7 @@ namespace DataAccess.Services
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "Failed to toggle User status: {UserId} to {IsActive}", userId, isActive);
+                _logger.LogError(ex, "Failed to toggle User status: {UserId} to {IsActive}", userId, isActive);
                 return Result.Fail("حدث خطأ في قاعدة البيانات أثناء تغيير حالة المستخدم.");
             }
         }
@@ -151,7 +163,7 @@ namespace DataAccess.Services
 
         public async Task<List<RoleDto>> GetRolesAsync()
         {
-            await using var context = await contextFactory.CreateDbContextAsync();
+            await using var context = await _contextFactory.CreateDbContextAsync();
 
             return await context.Roles
                 .AsNoTracking()
@@ -172,7 +184,7 @@ namespace DataAccess.Services
 
             try
             {
-                await using var context = await contextFactory.CreateDbContextAsync();
+                await using var context = await _contextFactory.CreateDbContextAsync();
 
                 if (await context.Roles.AnyAsync(r => r.RoleName == dto.RoleName))
                     return Result.Fail("اسم الدور موجود مسبقاً");
@@ -192,7 +204,7 @@ namespace DataAccess.Services
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "Failed to create Role: {RoleName}", dto.RoleName);
+                _logger.LogError(ex, "Failed to create Role: {RoleName}", dto.RoleName);
                 return Result.Fail("حدث خطأ في قاعدة البيانات أثناء إضافة الدور. يرجى المحاولة لاحقاً.");
             }
         }
@@ -204,7 +216,7 @@ namespace DataAccess.Services
 
             try
             {
-                await using var context = await contextFactory.CreateDbContextAsync();
+                await using var context = await _contextFactory.CreateDbContextAsync();
                 var role = await context.Roles.FindAsync(dto.RoleId);
                 if (role == null) return Result.Fail("الدور غير موجود");
 
@@ -220,7 +232,7 @@ namespace DataAccess.Services
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "Failed to update Role: {RoleId}, {RoleName}", dto.RoleId, dto.RoleName);
+                _logger.LogError(ex, "Failed to update Role: {RoleId}, {RoleName}", dto.RoleId, dto.RoleName);
                 return Result.Fail("حدث خطأ في قاعدة البيانات أثناء تعديل الدور. يرجى المحاولة لاحقاً.");
             }
         }
@@ -232,7 +244,7 @@ namespace DataAccess.Services
 
             try
             {
-                await using var context = await contextFactory.CreateDbContextAsync();
+                await using var context = await _contextFactory.CreateDbContextAsync();
                 // ✨ استخدام IgnoreQueryFilters لإيجاد الدور حتى لو كان محذوفاً ناعمياً
                 var role = await context.Roles
                     .IgnoreQueryFilters()
@@ -257,14 +269,14 @@ namespace DataAccess.Services
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "Failed to delete Role: {RoleId}", roleId);
+                _logger.LogError(ex, "Failed to delete Role: {RoleId}", roleId);
                 return Result.Fail("حدث خطأ في قاعدة البيانات أثناء حذف الدور.");
             }
         }
 
         public async Task<List<PermissionViewModel>> GetPermissionsMatrixAsync(int roleId)
         {
-            await using var context = await contextFactory.CreateDbContextAsync();
+            await using var context = await _contextFactory.CreateDbContextAsync();
 
             // ✅ استعلام واحد يجلب الصلاحيات مع IsAssigned بدلاً من استعلامين منفصلين
             return await context.Permissions
@@ -286,7 +298,7 @@ namespace DataAccess.Services
             var permCheck = session.EnsurePermission(AppPermissions.UserManage);
             if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
 
-            await using var context = await contextFactory.CreateDbContextAsync();
+            await using var context = await _contextFactory.CreateDbContextAsync();
 
             var existing = await context.RolePermissions
                 .Where(rp => rp.RoleId == roleId)
@@ -311,7 +323,7 @@ namespace DataAccess.Services
             }
 
             // تحديث الصلاحيات فورياً للمستخدم الحالي في الجلسة النشطة
-            await sessionProvider.RefreshPermissionsAsync();
+            await _sessionProvider.RefreshPermissionsAsync();
 
             return Result.Success();
         }

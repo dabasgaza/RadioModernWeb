@@ -13,6 +13,7 @@ public interface ICachedLookupService
     Task<List<GuestDto>> GetGuestsAsync();
     Task<List<CorrespondentDto>> GetCorrespondentsAsync();
     Task<List<EmployeeDto>> GetEmployeesAsync();
+    Task<List<SocialMediaPlatformDto>> GetSocialPlatformsAsync();
     Task<Dictionary<byte, string>> GetEpisodeStatusesAsync();
     Task Invalidate(string key);
     Task InvalidateAll();
@@ -99,6 +100,20 @@ public class CachedLookupService : ICachedLookupService
                 .AsNoTracking()
                 .Where(e => e.IsActive)
                 .Select(e => new EmployeeDto(e.EmployeeId, e.FullName, e.StaffRoleId, e.StaffRole!.RoleName, e.Notes))
+                .ToListAsync();
+        }, new HybridCacheEntryOptions { Expiration = CacheDuration }) ?? [];
+    }
+
+    public async Task<List<SocialMediaPlatformDto>> GetSocialPlatformsAsync()
+    {
+        return await _cache.GetOrCreateAsync("platforms", async _ =>
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var ctx = scope.ServiceProvider.GetRequiredService<IDbContextFactory<BroadcastWorkflowDBContext>>();
+            await using var context = await ctx.CreateDbContextAsync();
+            return await context.SocialMediaPlatforms
+                .AsNoTracking()
+                .Select(p => new SocialMediaPlatformDto(p.SocialMediaPlatformId, p.Name, p.Icon, p.BaseUrl ?? string.Empty))
                 .ToListAsync();
         }, new HybridCacheEntryOptions { Expiration = CacheDuration }) ?? [];
     }

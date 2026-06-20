@@ -75,7 +75,6 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     options.Password.RequiredUniqueChars = 4;
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
-    options.SecurityStampValidationInterval = TimeSpan.FromMinutes(30);
 })
 .AddEntityFrameworkStores<BroadcastWorkflowDBContext>()
 .AddUserStore<UserStore<ApplicationUser, ApplicationRole, BroadcastWorkflowDBContext, int>>()
@@ -201,8 +200,7 @@ else
 }
 
 // --- Health Checks ---
-builder.Services.AddHealthChecks()
-    .AddSqlServer(connectionString, name: "sql-server");
+builder.Services.AddHealthChecks();
 
 // --- Rate Limiting ---
 builder.Services.AddRateLimiter(options =>

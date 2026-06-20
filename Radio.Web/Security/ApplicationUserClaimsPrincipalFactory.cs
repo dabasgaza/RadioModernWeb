@@ -64,6 +64,11 @@ public class ApplicationUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<
         if (!string.IsNullOrWhiteSpace(user.DisplayPhoneNumber))
             identity.AddClaim(new Claim("Phone", user.DisplayPhoneNumber));
 
+        // هل المستخدم من فئة SuperAdmin؟ (يتجاوز جدول الصلاحيات)
+        var appRole = await RoleManager.Roles.FirstOrDefaultAsync(r => r.DomainRoleId == user.DomainRoleId);
+        if (appRole?.IsSuperAdmin == true)
+            identity.AddClaim(new Claim("SuperAdmin", "true"));
+
         // تحميل الصلاحيات من جدول RolePermissions الأصلي عبر DomainRoleId
         if (user.DomainRoleId > 0)
         {

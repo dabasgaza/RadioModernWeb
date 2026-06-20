@@ -13,9 +13,8 @@ public static class ClaimsPrincipalExtensions
     {
         if (user?.Identity?.IsAuthenticated != true) return false;
 
-        // Admin bypasses
-        var role = user.FindFirstValue(ClaimTypes.Role);
-        if (string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase)) return true;
+        // SuperAdmin bypasses role-permission table
+        if (user.HasClaim(c => c.Type == "SuperAdmin")) return true;
 
         return user.HasClaim("Permission", permissionName);
     }

@@ -5,6 +5,7 @@ using Domain.Models;
 using Radio.Tests.Helpers;
 using Radio.Tests.TestData.Builders;
 using Radio.Tests.TestData.Fixtures;
+using Microsoft.Extensions.Logging;
 
 namespace Radio.Tests.Services;
 
@@ -18,7 +19,7 @@ public class GuestServiceTests : IClassFixture<DatabaseFixture>
     {
         _db = db;
         var lookup = Mock.Of<ICachedLookupService>();
-        _service = new GuestService(db.DbContextFactory, lookup);
+        _service = new GuestService(db.DbContextFactory, lookup, Mock.Of<ILogger<GuestService>>());
     }
 
     [Fact]

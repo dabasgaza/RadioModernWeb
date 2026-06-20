@@ -4,6 +4,7 @@ using Domain.Models;
 using Microsoft.ApplicationInsights;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Logging;
 
 namespace DataAccess.Services;
 
@@ -33,14 +34,30 @@ public interface IPublishingCommandService
 public interface IPublishingService : IPublishingQueryService, IPublishingCommandService { }
 
 // ✨ استخدام Primary Constructor
-public class PublishingService(IDbContextFactory<BroadcastWorkflowDBContext> contextFactory, HybridCache cache, TelemetryClient telemetryClient) : IPublishingService
+public class PublishingService : IPublishingService
 {
+    private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
+    private readonly HybridCache _cache;
+    private readonly TelemetryClient _telemetryClient;
+    private readonly ILogger<PublishingService> _logger;
+
+    public PublishingService(
+        IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
+        HybridCache cache,
+        TelemetryClient telemetryClient,
+        ILogger<PublishingService> logger)
+    {
+        _contextFactory = contextFactory;
+        _cache = cache;
+        _telemetryClient = telemetryClient;
+        _logger = logger;
+    }
     public async Task<Result> LogWebsitePublishingAsync(int episodeId, string title, MediaType mediaType, string notes, UserSession session)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodePublish);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
 
-        using var context = await contextFactory.CreateDbContextAsync();
+        using var context = await _contextFactory.CreateDbContextAsync();
 
         if (!await context.EnsureDomainUserExistsAsync(session))
             return Result.Fail("المستخدم غير موجود في النظام. الرجاء تسجيل الخروج وإعادة تسجيل الدخول.");
@@ -83,7 +100,7 @@ public class PublishingService(IDbContextFactory<BroadcastWorkflowDBContext> con
         var permCheck = session.EnsurePermission(AppPermissions.EpisodePublish);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
 
-        using var context = await contextFactory.CreateDbContextAsync();
+        using var context = await _contextFactory.CreateDbContextAsync();
 
         if (!await context.EnsureDomainUserExistsAsync(session))
             return Result.Fail("المستخدم غير موجود في النظام. الرجاء تسجيل الخروج وإعادة تسجيل الدخول.");
@@ -155,26 +172,26 @@ public class PublishingService(IDbContextFactory<BroadcastWorkflowDBContext> con
     /// </summary>
     public async Task<List<SocialMediaPlatformDto>> GetAllPlatformsAsync()
     {
-        var operation = telemetryClient.StartOperation<Microsoft.ApplicationInsights.DataContracts.RequestTelemetry>("GetAllPlatforms");
+        var operation = _telemetryClient.StartOperation<Microsoft.ApplicationInsights.DataContracts.RequestTelemetry>("GetAllPlatforms");
         try
         {
-            var result = await cache.GetOrCreateAsync("platforms", async _ =>
+            var result = await _cache.GetOrCreateAsync("platforms", async _ =>
             {
-                using var context = await contextFactory.CreateDbContextAsync();
+                using var context = await _contextFactory.CreateDbContextAsync();
                 return await context.SocialMediaPlatforms
                     .AsNoTracking()
                     .Where(p => p.IsActive)
                     .Select(p => new SocialMediaPlatformDto(p.SocialMediaPlatformId, p.Name, p.Icon))
                     .ToListAsync();
             }, new HybridCacheEntryOptions { Expiration = TimeSpan.FromHours(1) }) ?? [];
-            telemetryClient.TrackMetric("PlatformsCount", result.Count);
+            _telemetryClient.TrackMetric("PlatformsCount", result.Count);
             operation.Telemetry.Success = true;
             return result;
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "An unexpected error occurred during processing");
-            telemetryClient.TrackException(ex);
+            _logger.LogError(ex, "An unexpected error occurred during processing");
+            _telemetryClient.TrackException(ex);
             operation.Telemetry.Success = false;
             throw;
         }
@@ -192,7 +209,7 @@ public class PublishingService(IDbContextFactory<BroadcastWorkflowDBContext> con
         var permCheck = session.EnsurePermission(AppPermissions.EpisodePublish);
         if (!permCheck.IsSuccess) return Result<int>.Fail(permCheck.ErrorMessage!);
 
-        using var context = await contextFactory.CreateDbContextAsync();
+        using var context = await _contextFactory.CreateDbContextAsync();
 
         if (!await context.EnsureDomainUserExistsAsync(session))
             return Result<int>.Fail("المستخدم غير موجود في النظام. الرجاء تسجيل الخروج وإعادة تسجيل الدخول.");
@@ -225,7 +242,7 @@ public class PublishingService(IDbContextFactory<BroadcastWorkflowDBContext> con
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "An unexpected error occurred during processing");
+            _logger.LogError(ex, "An unexpected error occurred during processing");
             return Result<int>.Fail($"خطأ في حفظ سجل النشر: {ex.Message}");
         }
     }
@@ -238,7 +255,7 @@ public class PublishingService(IDbContextFactory<BroadcastWorkflowDBContext> con
         var permCheck = session.EnsurePermission(AppPermissions.EpisodeWebPublish);
         if (!permCheck.IsSuccess) return Result<int>.Fail(permCheck.ErrorMessage!);
 
-        using var context = await contextFactory.CreateDbContextAsync();
+        using var context = await _contextFactory.CreateDbContextAsync();
 
         if (!await context.EnsureDomainUserExistsAsync(session))
             return Result<int>.Fail("المستخدم غير موجود في النظام. الرجاء تسجيل الخروج وإعادة تسجيل الدخول.");
@@ -276,7 +293,7 @@ public class PublishingService(IDbContextFactory<BroadcastWorkflowDBContext> con
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "An unexpected error occurred during processing");
+            _logger.LogError(ex, "An unexpected error occurred during processing");
             return Result<int>.Fail($"خطأ في نشر الحلقة: {ex.Message}");
         }
     }
@@ -291,7 +308,7 @@ public class PublishingService(IDbContextFactory<BroadcastWorkflowDBContext> con
     /// </summary>
     public async Task<SocialMediaPublishingLogDto?> GetSocialPublishingLogAsync(int episodeGuestId)
     {
-        using var context = await contextFactory.CreateDbContextAsync();
+        using var context = await _contextFactory.CreateDbContextAsync();
 
         // ✅ Select مباشر بدلاً من Include + تحويل في الذاكرة
         var log = await context.SocialMediaPublishingLogs
@@ -330,7 +347,7 @@ public class PublishingService(IDbContextFactory<BroadcastWorkflowDBContext> con
 
     public async Task<SocialMediaPublishingLogDto?> GetSocialPublishingLogByIdAsync(int logId)
     {
-        using var context = await contextFactory.CreateDbContextAsync();
+        using var context = await _contextFactory.CreateDbContextAsync();
 
         var log = await context.SocialMediaPublishingLogs
             .AsNoTracking()
@@ -371,7 +388,7 @@ public class PublishingService(IDbContextFactory<BroadcastWorkflowDBContext> con
     /// </summary>
     public async Task<List<SocialMediaPublishingLogDto>> GetEpisodeSocialLogsAsync(int episodeId)
     {
-        using var context = await contextFactory.CreateDbContextAsync();
+        using var context = await _contextFactory.CreateDbContextAsync();
 
         // ✅ Select مباشر بدلاً من Include ثلاثي + تحويل في الذاكرة
         return await context.SocialMediaPublishingLogs
@@ -405,7 +422,7 @@ public class PublishingService(IDbContextFactory<BroadcastWorkflowDBContext> con
         var permCheck = session.EnsurePermission(AppPermissions.EpisodePublish);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
 
-        using var context = await contextFactory.CreateDbContextAsync();
+        using var context = await _contextFactory.CreateDbContextAsync();
 
         try
         {
@@ -456,7 +473,7 @@ public class PublishingService(IDbContextFactory<BroadcastWorkflowDBContext> con
     /// </summary>
     public async Task<WebsitePublishingLogDto?> GetWebsitePublishingLogAsync(int episodeId)
     {
-        using var context = await contextFactory.CreateDbContextAsync();
+        using var context = await _contextFactory.CreateDbContextAsync();
 
         var log = await context.WebsitePublishingLogs
             .AsNoTracking()
@@ -477,7 +494,7 @@ public class PublishingService(IDbContextFactory<BroadcastWorkflowDBContext> con
 
     public async Task<WebsitePublishingLogDto?> GetWebsitePublishingLogByIdAsync(int logId)
     {
-        using var context = await contextFactory.CreateDbContextAsync();
+        using var context = await _contextFactory.CreateDbContextAsync();
 
         var log = await context.WebsitePublishingLogs
             .AsNoTracking()
@@ -503,7 +520,7 @@ public class PublishingService(IDbContextFactory<BroadcastWorkflowDBContext> con
         var permCheck = session.EnsurePermission(AppPermissions.EpisodeWebPublish);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
 
-        using var context = await contextFactory.CreateDbContextAsync();
+        using var context = await _contextFactory.CreateDbContextAsync();
 
         var log = await context.WebsitePublishingLogs
             .FirstOrDefaultAsync(l => l.WebsitePublishingLogId == dto.Id && l.IsActive);
@@ -526,7 +543,7 @@ public class PublishingService(IDbContextFactory<BroadcastWorkflowDBContext> con
         var permCheck = session.EnsurePermission(AppPermissions.EpisodePublish);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
 
-        using var context = await contextFactory.CreateDbContextAsync();
+        using var context = await _contextFactory.CreateDbContextAsync();
 
         var log = await context.SocialMediaPublishingLogs
             .Include(l => l.Platforms)
@@ -550,7 +567,7 @@ public class PublishingService(IDbContextFactory<BroadcastWorkflowDBContext> con
         var permCheck = session.EnsurePermission(AppPermissions.EpisodeWebPublish);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
 
-        using var context = await contextFactory.CreateDbContextAsync();
+        using var context = await _contextFactory.CreateDbContextAsync();
 
         var log = await context.WebsitePublishingLogs
             .FirstOrDefaultAsync(l => l.WebsitePublishingLogId == logId && l.IsActive);
@@ -571,7 +588,7 @@ public class PublishingService(IDbContextFactory<BroadcastWorkflowDBContext> con
     /// </summary>
     public async Task<List<PublishingRecordDto>> GetAllPublishingRecordsAsync(int? episodeId = null)
     {
-        using var context = await contextFactory.CreateDbContextAsync();
+        using var context = await _contextFactory.CreateDbContextAsync();
 
         var records = new List<PublishingRecordDto>();
 

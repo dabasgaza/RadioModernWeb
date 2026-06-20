@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Radio.Tests.Helpers;
 using Radio.Tests.TestData.Builders;
 using Radio.Tests.TestData.Fixtures;
+using Microsoft.Extensions.Logging;
 
 namespace Radio.Tests.Services;
 
@@ -24,7 +25,7 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         var sc = new ServiceCollection();
         sc.AddHybridCache();
         var cache = sc.BuildServiceProvider().GetRequiredService<HybridCache>(); // ponytail: real HybridCache beats mock boilerplate
-        _service = new PublishingService(db.DbContextFactory, cache, TestTelemetry.Client);
+        _service = new PublishingService(db.DbContextFactory, cache, TestTelemetry.Client, Mock.Of<ILogger<PublishingService>>());
     }
 
     [Fact]

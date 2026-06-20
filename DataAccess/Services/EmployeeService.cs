@@ -3,6 +3,7 @@ using DataAccess.DTOs;
 using DataAccess.Validation;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace DataAccess.Services;
 
@@ -20,10 +21,21 @@ public interface IEmployeeService
 }
 
 // ✨ استخدام Primary Constructor
-public class EmployeeService(
-    IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
-    ICachedLookupService cachedLookup) : IEmployeeService
+public class EmployeeService : IEmployeeService
 {
+    private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
+    private readonly ICachedLookupService _cachedLookup;
+    private readonly ILogger<EmployeeService> _logger;
+
+    public EmployeeService(
+        IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
+        ICachedLookupService cachedLookup,
+        ILogger<EmployeeService> logger)
+    {
+        _contextFactory = contextFactory;
+        _cachedLookup = cachedLookup;
+        _logger = logger;
+    }
     // ──────────────────────────────────────────────────────────────
     // Compiled Queries — تقليل وقت ترجمة LINQ في المسارات الساخنة
     // ──────────────────────────────────────────────────────────────
@@ -47,7 +59,7 @@ public class EmployeeService(
 
     public async Task<List<EmployeeDto>> GetAllActiveAsync()
     {
-        using var context = await contextFactory.CreateDbContextAsync();
+        using var context = await _contextFactory.CreateDbContextAsync();
 
         var result = new List<EmployeeDto>();
         await foreach (var dto in s_compiledGetAllActive(context))
@@ -65,7 +77,7 @@ public class EmployeeService(
 
         try
         {
-            using var context = await contextFactory.CreateDbContextAsync();
+            using var context = await _contextFactory.CreateDbContextAsync();
 
             var employee = new Employee
             {
@@ -79,12 +91,12 @@ public class EmployeeService(
 
             context.Employees.Add(employee);
             await context.SaveChangesAsync();
-            cachedLookup.InvalidateByEntity("Employee");
+            _cachedLookup.InvalidateByEntity("Employee");
             return Result<int>.Success(employee.EmployeeId);
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Failed to create Employee: {FullName}", dto.FullName);
+            _logger.LogError(ex, "Failed to create Employee: {FullName}", dto.FullName);
             return Result<int>.Fail("حدث خطأ في قاعدة البيانات أثناء إضافة الموظف. يرجى المحاولة لاحقاً.");
         }
     }
@@ -99,7 +111,7 @@ public class EmployeeService(
 
         try
         {
-            using var context = await contextFactory.CreateDbContextAsync();
+            using var context = await _contextFactory.CreateDbContextAsync();
 
             var employee = await context.Employees.FindAsync(dto.EmployeeId);
             if (employee == null)
@@ -111,12 +123,12 @@ public class EmployeeService(
             employee.UpdatedAt = DateTime.UtcNow;
 
             await context.SaveChangesAsync();
-            cachedLookup.InvalidateByEntity("Employee");
+            _cachedLookup.InvalidateByEntity("Employee");
             return Result.Success();
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Failed to update Employee: {EmployeeId}, {FullName}", dto.EmployeeId, dto.FullName);
+            _logger.LogError(ex, "Failed to update Employee: {EmployeeId}, {FullName}", dto.EmployeeId, dto.FullName);
             return Result.Fail("حدث خطأ في قاعدة البيانات أثناء تعديل بيانات الموظف. يرجى المحاولة لاحقاً.");
         }
     }
@@ -128,7 +140,7 @@ public class EmployeeService(
 
         try
         {
-            using var context = await contextFactory.CreateDbContextAsync();
+            using var context = await _contextFactory.CreateDbContextAsync();
 
             var employee = await context.Employees.FindAsync(employeeId);
             if (employee == null)
@@ -138,19 +150,19 @@ public class EmployeeService(
             employee.UpdatedAt = DateTime.UtcNow;
 
             await context.SaveChangesAsync();
-            cachedLookup.InvalidateByEntity("Employee");
+            _cachedLookup.InvalidateByEntity("Employee");
             return Result.Success();
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Failed to soft delete Employee: {EmployeeId}", employeeId);
+            _logger.LogError(ex, "Failed to soft delete Employee: {EmployeeId}", employeeId);
             return Result.Fail("حدث خطأ في قاعدة البيانات أثناء حذف الموظف. يرجى المحاولة لاحقاً.");
         }
     }
 
     public async Task<List<StaffRoleDto>> GetAllRolesAsync()
     {
-        using var context = await contextFactory.CreateDbContextAsync();
+        using var context = await _contextFactory.CreateDbContextAsync();
 
         var result = new List<StaffRoleDto>();
         await foreach (var dto in s_compiledGetAllRoles(context))
@@ -168,7 +180,7 @@ public class EmployeeService(
 
         try
         {
-            using var context = await contextFactory.CreateDbContextAsync();
+            using var context = await _contextFactory.CreateDbContextAsync();
 
             var role = new StaffRole
             {
@@ -180,12 +192,12 @@ public class EmployeeService(
 
             context.StaffRoles.Add(role);
             await context.SaveChangesAsync();
-            cachedLookup.InvalidateByEntity("StaffRole");
+            _cachedLookup.InvalidateByEntity("StaffRole");
             return Result<int>.Success(role.StaffRoleId);
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Failed to create StaffRole: {RoleName}", dto.RoleName);
+            _logger.LogError(ex, "Failed to create StaffRole: {RoleName}", dto.RoleName);
             return Result<int>.Fail("حدث خطأ في قاعدة البيانات أثناء إضافة الدور الوظيفي. يرجى المحاولة لاحقاً.");
         }
     }
@@ -200,7 +212,7 @@ public class EmployeeService(
 
         try
         {
-            using var context = await contextFactory.CreateDbContextAsync();
+            using var context = await _contextFactory.CreateDbContextAsync();
 
             var role = await context.StaffRoles.FindAsync(dto.StaffRoleId);
             if (role == null)
@@ -210,12 +222,12 @@ public class EmployeeService(
             role.UpdatedAt = DateTime.UtcNow;
 
             await context.SaveChangesAsync();
-            cachedLookup.InvalidateByEntity("StaffRole");
+            _cachedLookup.InvalidateByEntity("StaffRole");
             return Result.Success();
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Failed to update StaffRole: {RoleId}, {RoleName}", dto.StaffRoleId, dto.RoleName);
+            _logger.LogError(ex, "Failed to update StaffRole: {RoleId}, {RoleName}", dto.StaffRoleId, dto.RoleName);
             return Result.Fail("حدث خطأ في قاعدة البيانات أثناء تعديل الدور الوظيفي. يرجى المحاولة لاحقاً.");
         }
     }
@@ -227,7 +239,7 @@ public class EmployeeService(
 
         try
         {
-            using var context = await contextFactory.CreateDbContextAsync();
+            using var context = await _contextFactory.CreateDbContextAsync();
 
             var role = await context.StaffRoles.FindAsync(roleId);
             if (role == null)
@@ -237,12 +249,12 @@ public class EmployeeService(
             role.UpdatedAt = DateTime.UtcNow;
 
             await context.SaveChangesAsync();
-            cachedLookup.InvalidateByEntity("StaffRole");
+            _cachedLookup.InvalidateByEntity("StaffRole");
             return Result.Success();
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Failed to soft delete StaffRole: {RoleId}", roleId);
+            _logger.LogError(ex, "Failed to soft delete StaffRole: {RoleId}", roleId);
             return Result.Fail("حدث خطأ في قاعدة البيانات أثناء حذف الدور الوظيفي. يرجى المحاولة لاحقاً.");
         }
     }

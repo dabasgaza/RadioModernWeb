@@ -48,4 +48,7 @@ public class ApplicationRole : IdentityRole<int>
 
     /// <summary>هل الدور نشط؟</summary>
     public bool IsActive { get; set; } = true;
+
+    /// <summary>مسؤول أعلى يتجاوز جدول الصلاحيات (RolePermissions)</summary>
+    public bool IsSuperAdmin { get; set; }
 }

@@ -1,30 +1,36 @@
 ﻿using DataAccess.Common;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace DataAccess.Services
 {
     public class AuditLogService : IAuditLogService
     {
         private readonly IDbContextFactory<BroadcastWorkflowDBContext> _dbContextFactory;
+        private readonly ILogger<AuditLogService> _logger;
 
-        public AuditLogService(IDbContextFactory<BroadcastWorkflowDBContext> dbContextFactory)
+        public AuditLogService(
+            IDbContextFactory<BroadcastWorkflowDBContext> dbContextFactory,
+            ILogger<AuditLogService> logger)
         {
             _dbContextFactory = dbContextFactory;
+            _logger = logger;
         }
 
-        public async Task<Result<List<AuditLogDto>>> GetFilteredAuditLogsAsync(
+        public async Task<Result<PagedAuditLogResult>> GetFilteredAuditLogsAsync(
             string? tableName = null,
             int? userId = null,
             string? action = null,
             DateTime? fromDate = null,
-            DateTime? toDate = null)
+            DateTime? toDate = null,
+            int page = 1,
+            int pageSize = 100)
         {
             try
             {
                 using var context = await _dbContextFactory.CreateDbContextAsync();
 
-                // ✅ AsNoTracking + بناء الاستعلام ديناميكياً قبل التنفيذ
                 var logsQuery = context.AuditLogs.AsNoTracking().AsQueryable();
 
                 if (!string.IsNullOrEmpty(tableName))
@@ -45,33 +51,38 @@ namespace DataAccess.Services
                     logsQuery = logsQuery.Where(x => x.ChangedAt <= endOfDay);
                 }
 
-                // ✅ Left join مع Users — الفلترة تطبّقت أولاً فيُقلّل حجم الـ join
-                var list = await (from log in logsQuery.OrderByDescending(x => x.ChangedAt).Take(500)
-                                  join u in context.Users.AsNoTracking()
-                                      on log.UserId equals u.UserId into userJoin
-                                  from u in userJoin.DefaultIfEmpty()
-                                  select new AuditLogDto
-                                  {
-                                      AuditLogId = log.AuditLogId,
-                                      TableName = log.TableName,
-                                      RecordId = log.RecordId,
-                                      Action = log.Action,
-                                      OldValues = log.OldValues,
-                                      NewValues = log.NewValues,
-                                      Reason = log.Reason,
-                                      UserId = log.UserId,
-                                      Username = u != null ? u.Username : "غير معروف",
-                                      UserFullName = u != null ? u.FullName : "غير معروف",
-                                      ChangedAt = log.ChangedAt
-                                  })
-                                 .ToListAsync();
+                var totalCount = await logsQuery.CountAsync();
 
-                return Result<List<AuditLogDto>>.Success(list);
+                var items = await (from log in logsQuery.OrderByDescending(x => x.ChangedAt).Skip((page - 1) * pageSize).Take(pageSize)
+                                   join u in context.Users.AsNoTracking()
+                                       on log.UserId equals u.UserId into userJoin
+                                   from u in userJoin.DefaultIfEmpty()
+                                   select new AuditLogDto
+                                   {
+                                       AuditLogId = log.AuditLogId,
+                                       TableName = log.TableName,
+                                       RecordId = log.RecordId,
+                                       Action = log.Action,
+                                       OldValues = log.OldValues,
+                                       NewValues = log.NewValues,
+                                       Reason = log.Reason,
+                                       UserId = log.UserId,
+                                       Username = u != null ? u.Username : "غير معروف",
+                                       UserFullName = u != null ? u.FullName : "غير معروف",
+                                       ChangedAt = log.ChangedAt
+                                   })
+                                  .ToListAsync();
+
+                return Result<PagedAuditLogResult>.Success(new PagedAuditLogResult
+                {
+                    Items = items,
+                    TotalCount = totalCount
+                });
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "An unexpected error occurred during processing");
-                return Result<List<AuditLogDto>>.Fail($"حدث خطأ أثناء جلب سجل العمليات: {ex.Message}");
+                _logger.LogError(ex, "An unexpected error occurred during processing");
+                return Result<PagedAuditLogResult>.Fail($"حدث خطأ أثناء جلب سجل العمليات: {ex.Message}");
             }
         }
 
@@ -91,7 +102,7 @@ namespace DataAccess.Services
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "An unexpected error occurred during processing");
+                _logger.LogError(ex, "An unexpected error occurred during processing");
                 return Result<List<User>>.Fail($"حدث خطأ أثناء جلب المستخدمين: {ex.Message}");
             }
         }

@@ -3,16 +3,28 @@ using DataAccess.DTOs;
 using DataAccess.Validation;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace DataAccess.Services;
 
-public class PlatformService(
-    IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
-    ICachedLookupService cachedLookup) : IPlatformService
+public class PlatformService : IPlatformService
 {
+    private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
+    private readonly ICachedLookupService _cachedLookup;
+    private readonly ILogger<PlatformService> _logger;
+
+    public PlatformService(
+        IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
+        ICachedLookupService cachedLookup,
+        ILogger<PlatformService> logger)
+    {
+        _contextFactory = contextFactory;
+        _cachedLookup = cachedLookup;
+        _logger = logger;
+    }
     public async Task<List<SocialMediaPlatformDto>> GetAllActiveAsync()
     {
-        using var context = await contextFactory.CreateDbContextAsync();
+        using var context = await _contextFactory.CreateDbContextAsync();
         return await context.SocialMediaPlatforms
             .AsNoTracking()
             .Where(p => p.IsActive)
@@ -31,7 +43,7 @@ public class PlatformService(
 
         try
         {
-            using var context = await contextFactory.CreateDbContextAsync();
+            using var context = await _contextFactory.CreateDbContextAsync();
 
             var platform = new SocialMediaPlatform
             {
@@ -42,13 +54,13 @@ public class PlatformService(
 
             context.SocialMediaPlatforms.Add(platform);
             await context.SaveChangesAsync();
-            cachedLookup.InvalidateByEntity("SocialMediaPlatform");
+            _cachedLookup.InvalidateByEntity("SocialMediaPlatform");
 
             return Result<int>.Success(platform.SocialMediaPlatformId);
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Failed to create Platform: {PlatformName}", dto.Name);
+            _logger.LogError(ex, "Failed to create Platform: {PlatformName}", dto.Name);
             return Result<int>.Fail("حدث خطأ في قاعدة البيانات أثناء إضافة المنصة. يرجى المحاولة لاحقاً.");
         }
     }
@@ -63,7 +75,7 @@ public class PlatformService(
 
         try
         {
-            using var context = await contextFactory.CreateDbContextAsync();
+            using var context = await _contextFactory.CreateDbContextAsync();
 
             var platform = await context.SocialMediaPlatforms.FindAsync(dto.SocialMediaPlatformId);
             if (platform == null)
@@ -74,12 +86,12 @@ public class PlatformService(
             platform.BaseUrl = dto.BaseUrl;
 
             await context.SaveChangesAsync();
-            cachedLookup.InvalidateByEntity("SocialMediaPlatform");
+            _cachedLookup.InvalidateByEntity("SocialMediaPlatform");
             return Result.Success();
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Failed to update Platform: {PlatformId}, {PlatformName}", dto.SocialMediaPlatformId, dto.Name);
+            _logger.LogError(ex, "Failed to update Platform: {PlatformId}, {PlatformName}", dto.SocialMediaPlatformId, dto.Name);
             return Result.Fail("حدث خطأ في قاعدة البيانات أثناء تعديل المنصة. يرجى المحاولة لاحقاً.");
         }
     }
@@ -91,7 +103,7 @@ public class PlatformService(
 
         try
         {
-            using var context = await contextFactory.CreateDbContextAsync();
+            using var context = await _contextFactory.CreateDbContextAsync();
 
             var platform = await context.SocialMediaPlatforms.FindAsync(platformId);
             if (platform == null)
@@ -99,12 +111,12 @@ public class PlatformService(
 
             platform.IsActive = false;
             await context.SaveChangesAsync();
-            cachedLookup.InvalidateByEntity("SocialMediaPlatform");
+            _cachedLookup.InvalidateByEntity("SocialMediaPlatform");
             return Result.Success();
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Failed to soft delete Platform: {PlatformId}", platformId);
+            _logger.LogError(ex, "Failed to soft delete Platform: {PlatformId}", platformId);
             return Result.Fail("حدث خطأ في قاعدة البيانات أثناء حذف المنصة. يرجى المحاولة لاحقاً.");
         }
     }

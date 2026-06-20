@@ -3,6 +3,7 @@ using DataAccess.DTOs;
 using DataAccess.Validation;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace DataAccess.Services;
 
@@ -16,10 +17,21 @@ public interface IProgramService
 }
 
 // ✨ استخدام Primary Constructor
-public class ProgramService(
-    IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
-    ICachedLookupService cachedLookup) : IProgramService
+public class ProgramService : IProgramService
 {
+    private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
+    private readonly ICachedLookupService _cachedLookup;
+    private readonly ILogger<ProgramService> _logger;
+
+    public ProgramService(
+        IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
+        ICachedLookupService cachedLookup,
+        ILogger<ProgramService> logger)
+    {
+        _contextFactory = contextFactory;
+        _cachedLookup = cachedLookup;
+        _logger = logger;
+    }
     // ──────────────────────────────────────────────────────────────
     // Compiled Query — تقليل وقت ترجمة LINQ في المسارات الساخنة
     // ──────────────────────────────────────────────────────────────
@@ -36,7 +48,7 @@ public class ProgramService(
 
     public async Task<List<ProgramDto>> GetAllActiveAsync()
     {
-        using var context = await contextFactory.CreateDbContextAsync();
+        using var context = await _contextFactory.CreateDbContextAsync();
 
         var result = new List<ProgramDto>();
         await foreach (var dto in s_compiledGetAllActive(context))
@@ -54,7 +66,7 @@ public class ProgramService(
 
         try
         {
-            using var context = await contextFactory.CreateDbContextAsync();
+            using var context = await _contextFactory.CreateDbContextAsync();
 
             context.Programs.Add(new Program
             {
@@ -64,12 +76,12 @@ public class ProgramService(
             });
 
             await context.SaveChangesAsync();
-            cachedLookup.InvalidateByEntity("Program");
+            _cachedLookup.InvalidateByEntity("Program");
             return Result.Success();
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Failed to create Program: {ProgramName}", dto.ProgramName);
+            _logger.LogError(ex, "Failed to create Program: {ProgramName}", dto.ProgramName);
             return Result.Fail("حدث خطأ في قاعدة البيانات أثناء إضافة البرنامج. يرجى المحاولة لاحقاً.");
         }
     }
@@ -84,7 +96,7 @@ public class ProgramService(
 
         try
         {
-            using var context = await contextFactory.CreateDbContextAsync();
+            using var context = await _contextFactory.CreateDbContextAsync();
 
             var prog = await context.Programs.FindAsync(dto.ProgramId);
 
@@ -95,12 +107,12 @@ public class ProgramService(
             prog.ProgramDescription = dto.ProgramDescription;
 
             await context.SaveChangesAsync();
-            cachedLookup.InvalidateByEntity("Program");
+            _cachedLookup.InvalidateByEntity("Program");
             return Result.Success();
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Failed to update Program: {ProgramId}, {ProgramName}", dto.ProgramId, dto.ProgramName);
+            _logger.LogError(ex, "Failed to update Program: {ProgramId}, {ProgramName}", dto.ProgramId, dto.ProgramName);
             return Result.Fail("حدث خطأ في قاعدة البيانات أثناء تعديل البرنامج. يرجى المحاولة لاحقاً.");
         }
     }
@@ -118,7 +130,7 @@ public class ProgramService(
 
         try
         {
-            await using var context = await contextFactory.CreateDbContextAsync();
+            await using var context = await _contextFactory.CreateDbContextAsync();
 
             var program = await context.Programs.FindAsync(programId);
 
@@ -132,12 +144,12 @@ public class ProgramService(
             program.IsActive = false;
 
             await context.SaveChangesAsync();
-            cachedLookup.InvalidateByEntity("Program");
+            _cachedLookup.InvalidateByEntity("Program");
             return Result.Success();
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Failed to soft delete Program: {ProgramId}", programId);
+            _logger.LogError(ex, "Failed to soft delete Program: {ProgramId}", programId);
             return Result.Fail("حدث خطأ في قاعدة البيانات أثناء حذف البرنامج. يرجى المحاولة لاحقاً.");
         }
     }
