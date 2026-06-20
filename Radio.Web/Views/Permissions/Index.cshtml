@@ -1,0 +1,101 @@
+@model PermissionMatrixViewModel
+@{
+    ViewData["Title"] = "مصفوفة الصلاحيات";
+    var permissionsByModule = Model.Permissions.ToLookup(p => p.Module);
+}
+
+<div class="page-header">
+    <div class="relative z-10">
+        <nav class="breadcrumb">
+            <a href="/">الرئيسية</a>
+            <span class="material-icons">chevron_left</span>
+            <span>الصلاحيات</span>
+        </nav>
+        <h1>
+            <span class="material-icons">security</span>
+            مصفوفة الصلاحيات
+        </h1>
+        <p>تخصيص صلاحيات كل دور في النظام</p>
+    </div>
+</div>
+
+<div class="card-premium mb-4">
+    <div class="card-body">
+        <form method="get" class="flex items-center gap-3">
+            <label class="form-label mb-0">اختر الدور:</label>
+            <select name="roleId" class="form-input flex-1 max-w-xs" onchange="this.form.submit()">
+                @foreach (var r in Model.Roles)
+                {
+                    <option value="@r.RoleId" selected="@(Model.SelectedRoleId == r.RoleId)">@r.RoleName — @(r.RoleDescription ?? "")</option>
+                }
+            </select>
+        </form>
+    </div>
+</div>
+
+@if (Model.SelectedRoleId > 0 && permissionsByModule.Any())
+{
+    <form method="post" action="/Permissions/Update">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="roleId" value="@Model.SelectedRoleId" />
+
+        <div class="card-premium">
+            <div class="card-header">
+                <h3 class="font-bold text-ink flex items-center gap-2">
+                    <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">security</span>
+                    صلاحيات الدور: @Model.SelectedRoleName
+                </h3>
+                <div class="flex gap-2">
+                    <button type="button" class="btn-secondary text-xs py-1.5 px-3" onclick="document.querySelectorAll('.perm-toggle').forEach(t => { if(!t.checked) t.click(); })">
+                        <span class="material-icons text-sm">check_box</span>
+                        تحديد الكل
+                    </button>
+                    <button type="button" class="btn-secondary text-xs py-1.5 px-3" onclick="document.querySelectorAll('.perm-toggle').forEach(t => { if(t.checked) t.click(); })">
+                        <span class="material-icons text-sm">check_box_outline_blank</span>
+                        إلغاء الكل
+                    </button>
+                </div>
+            </div>
+            <div class="card-body space-y-5">
+                @foreach (var module in permissionsByModule)
+                {
+                    <div>
+                        <h4 class="font-bold text-ink text-sm mb-3 pb-2 border-b border-border/60 flex items-center gap-2">
+                            <span class="material-icons text-primary/70 text-sm">folder</span>
+                            @module.Key
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                            @foreach (var p in module)
+                            {
+                                <label class="flex items-center gap-3 p-3 hover:bg-surface-3 rounded-xl cursor-pointer transition border border-border/40">
+                                    <div class="relative">
+                                        <input type="checkbox" name="selectedPermissionIds" value="@p.PermissionId" @(p.IsAssigned ? "checked" : "") class="perm-toggle sr-only peer" />
+                                        <div class="w-10 h-5 bg-border rounded-full peer-checked:bg-primary transition-colors duration-200 cursor-pointer"></div>
+                                        <div class="absolute top-0.5 right-0.5 w-4 h-4 bg-white rounded-full shadow-sm peer-checked:translate-x-5 transition-transform duration-200"></div>
+                                    </div>
+                                    <span class="text-sm font-medium text-ink">@p.DisplayName</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="card-header border-t border-border/60">
+                <button type="submit" class="btn-primary">
+                    <span class="material-icons">save</span>
+                    حفظ التغييرات
+                </button>
+            </div>
+        </div>
+    </form>
+}
+else if (Model.SelectedRoleId > 0)
+{
+    <div class="card-premium">
+        <div class="empty-state p-12">
+            <span class="material-icons empty-icon">security</span>
+            <h3 class="font-bold text-ink text-lg mb-2">لا توجد صلاحيات</h3>
+            <p class="text-ink-muted text-sm">لم يتم تعريف صلاحيات لهذا الدور بعد.</p>
+        </div>
+    </div>
+}

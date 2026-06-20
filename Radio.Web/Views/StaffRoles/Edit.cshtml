@@ -1,0 +1,38 @@
+@model StaffRoleDto
+@{
+    ViewData["Title"] = Model.StaffRoleId == 0 ? "دور جديد" : "تعديل دور";
+    var isEdit = Model.StaffRoleId != 0;
+}
+
+<div class="page-header">
+    <div class="relative z-10">
+        <nav class="breadcrumb">
+            <a href="/StaffRoles">المسميات الوظيفية</a>
+            <span class="material-icons">chevron_left</span>
+            <span>@(isEdit ? "تعديل" : "جديد")</span>
+        </nav>
+        <h1>
+            <span class="material-icons">@(isEdit ? "edit" : "add")</span>
+            @(isEdit ? "تعديل دور" : "دور جديد")
+        </h1>
+    </div>
+</div>
+
+<form method="post" action="@(isEdit ? $"/StaffRoles/Edit/{Model.StaffRoleId}" : "/StaffRoles/Create")" class="max-w-md">
+    @Html.AntiForgeryToken()
+    @if (isEdit) { <input type="hidden" name="StaffRoleId" value="@Model.StaffRoleId" /> }
+    @if (ViewContext.ModelState.ErrorCount > 0)
+    {
+        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-4"></div>
+    }
+
+    <div class="card-premium p-5">
+        <label class="form-label">اسم الدور *</label>
+        <input type="text" name="RoleName" value="@Model.RoleName" class="form-input" required />
+    </div>
+
+    <div class="flex items-center justify-end gap-2 mt-4">
+        <a href="/StaffRoles" class="btn-secondary"><span class="material-icons">cancel</span> إلغاء</a>
+        <button type="submit" class="btn-primary"><span class="material-icons">save</span> حفظ</button>
+    </div>
+</form>

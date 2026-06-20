@@ -1,0 +1,110 @@
+@model List<DatabaseBackupLog>
+@{ ViewData["Title"] = "إدارة قاعدة البيانات"; }
+
+<div class="page-header">
+    <div class="relative z-10">
+        <nav class="breadcrumb">
+            <a href="/">الرئيسية</a>
+            <span class="material-icons">chevron_left</span>
+            <span>قاعدة البيانات</span>
+        </nav>
+        <h1>
+            <span class="material-icons">storage</span>
+            إدارة قاعدة البيانات
+        </h1>
+        <p>النسخ الاحتياطي والاستعادة والصيانة</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    <div class="card-premium">
+        <div class="card-body">
+            <h3 class="font-bold text-ink mb-3 flex items-center gap-2">
+                <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">backup</span>
+                نسخ احتياطي
+            </h3>
+            <p class="text-ink-muted text-sm mb-4">إنشاء نسخة احتياطية كاملة من قاعدة البيانات الحالية.</p>
+            @if (User.HasPermission(AppPermissions.DatabaseManage))
+            {
+                <form method="post" action="/Database/Backup" onsubmit="return confirm('إنشاء نسخة احتياطية الآن؟');">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-primary"><span class="material-icons">backup</span> نسخة احتياطية الآن</button>
+                </form>
+            }
+        </div>
+    </div>
+
+    <div class="card-premium">
+        <div class="card-body">
+            <h3 class="font-bold text-ink mb-3 flex items-center gap-2">
+                <span class="material-icons text-warning p-1 bg-warning/10 rounded-lg">cleaning_services</span>
+                صيانة
+            </h3>
+            <p class="text-ink-muted text-sm mb-4">تهيئة قاعدة البيانات (إنشاء الجداول والبيانات الأولية).</p>
+            @if (User.HasPermission(AppPermissions.DatabaseManage))
+            {
+                <form method="post" action="/Database/Initialize" onsubmit="return confirm('تهيئة قاعدة البيانات؟');">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-secondary"><span class="material-icons">build</span> تهيئة قاعدة البيانات</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="table-premium">
+    <div class="card-header">
+        <h3 class="font-bold text-ink flex items-center gap-2">
+            <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">history</span>
+            سجل النسخ الاحتياطي
+        </h3>
+    </div>
+    @if (!Model.Any())
+    {
+        <div class="empty-state p-12">
+            <span class="material-icons empty-icon">history</span>
+            <h3 class="font-bold text-ink text-lg mb-2">لا نسخ احتياطية</h3>
+            <p class="text-ink-muted text-sm">لم تُنشأ أي نسخ احتياطية بعد.</p>
+        </div>
+    }
+    else
+    {
+        <div class="overflow-x-auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th>التاريخ</th>
+                        <th>النوع</th>
+                        <th>الحجم</th>
+                        <th>الحالة</th>
+                        <th>المسار</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var b in Model)
+                    {
+                        <tr class="hover:bg-surface-2 transition duration-200">
+                            <td class="text-ink-muted">@b.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td class="text-ink-muted">@b.BackupType</td>
+                            <td class="text-ink-muted">@FormatSize(b.FileSize)</td>
+                            <td>
+                                <span class="badge-premium @(b.Status == "Success" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-red-50 text-red-700 border-red-200")">@b.Status</span>
+                            </td>
+                            <td class="text-xs text-ink-muted">@b.BackupPath</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@functions {
+    string FormatSize(long bytes) => bytes switch
+    {
+        < 1024 => $"{bytes} B",
+        < 1024 * 1024 => $"{bytes / 1024.0:F1} KB",
+        < 1024 * 1024 * 1024 => $"{bytes / (1024.0 * 1024):F1} MB",
+        _ => $"{bytes / (1024.0 * 1024 * 1024):F2} GB"
+    };
+}

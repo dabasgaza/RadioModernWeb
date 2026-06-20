@@ -1,0 +1,67 @@
+@model List<StaffRoleDto>
+@{ ViewData["Title"] = "المسميات الوظيفية"; }
+
+<div class="page-header">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <a href="/">الرئيسية</a>
+                <span class="material-icons">chevron_left</span>
+                <span>المسميات الوظيفية</span>
+            </nav>
+            <h1>
+                <span class="material-icons">work</span>
+                المسميات الوظيفية
+            </h1>
+            <p>إدارة أدوار طاقم العمل والمسميات الوظيفية</p>
+        </div>
+        @if (User.HasPermission(AppPermissions.StaffManage))
+        {
+            <a href="/StaffRoles/Create" class="btn-primary"><span class="material-icons">add</span> دور جديد</a>
+        }
+    </div>
+</div>
+
+<div class="table-premium">
+    @if (!Model.Any())
+    {
+        <div class="empty-state p-12">
+            <span class="material-icons empty-icon">work</span>
+            <h3 class="font-bold text-ink text-lg mb-2">لا أدوار</h3>
+            <a href="/StaffRoles/Create" class="btn-primary"><span class="material-icons">add</span> دور جديد</a>
+        </div>
+    }
+    else
+    {
+        <div class="overflow-x-auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th>الدور</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model)
+                    {
+                        <tr class="hover:bg-surface-2 transition duration-200">
+                            <td class="font-bold text-ink">@r.RoleName</td>
+                            <td>
+                                @if (User.HasPermission(AppPermissions.StaffManage))
+                                {
+                                    <div class="flex items-center gap-1">
+                                        <a href="/StaffRoles/Edit/@r.StaffRoleId" class="icon-btn icon-btn-primary"><span class="material-icons">edit</span></a>
+                                        <form method="post" action="/StaffRoles/Delete/@r.StaffRoleId" class="inline" onsubmit="return confirm('حذف الدور؟');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="icon-btn icon-btn-danger"><span class="material-icons">delete</span></button>
+                                        </form>
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

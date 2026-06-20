@@ -1,0 +1,191 @@
+@model List<PublishingRecordDto>
+@{
+    ViewData["Title"] = "نشر الموقع";
+    var todayCount = Model.Count(r => r.RecordDate.Date == DateTime.UtcNow.Date);
+    var thisMonth = Model.Count(r => r.RecordDate.Year == DateTime.UtcNow.Year && r.RecordDate.Month == DateTime.UtcNow.Month);
+}
+
+<div class="page-header">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <a href="/">الرئيسية</a>
+                <span class="material-icons">chevron_left</span>
+                <span>نشر الموقع</span>
+            </nav>
+            <h1>
+                <span class="material-icons">public</span>
+                نشر الموقع
+            </h1>
+            <p>إدارة عمليات نشر الحلقات على الموقع الرسمي للإذاعة</p>
+        </div>
+        <div class="flex items-center gap-2">
+            @if (User.HasPermission(AppPermissions.EpisodeWebPublish))
+            {
+                <a href="/Episodes" class="btn-primary">
+                    <span class="material-icons">add</span>
+                    نشر حلقة
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="stat-card-premium" style="color: var(--color-accent);">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-cyan-50 flex items-center justify-center shrink-0">
+                <span class="material-icons text-3xl" style="color: var(--color-accent);">language</span>
+            </div>
+            <div>
+                <div class="text-2xl font-black text-ink">@Model.Count</div>
+                <div class="text-xs font-semibold text-ink-muted">إجمالي النشر</div>
+            </div>
+        </div>
+    </div>
+    <div class="stat-card-premium" style="color: var(--color-success);">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+                <span class="material-icons text-3xl" style="color: var(--color-success);">today</span>
+            </div>
+            <div>
+                <div class="text-2xl font-black text-ink">@todayCount</div>
+                <div class="text-xs font-semibold text-ink-muted">نشر اليوم</div>
+            </div>
+        </div>
+    </div>
+    <div class="stat-card-premium" style="color: var(--color-primary);">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
+                <span class="material-icons text-3xl" style="color: var(--color-primary);">date_range</span>
+            </div>
+            <div>
+                <div class="text-2xl font-black text-ink">@thisMonth</div>
+                <div class="text-xs font-semibold text-ink-muted">نشر هذا الشهر</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="table-premium">
+    @if (!Model.Any())
+    {
+        <div class="empty-state p-12">
+            <span class="material-icons empty-icon">public</span>
+            <h3 class="font-bold text-ink text-lg mb-2">لا توجد سجلات نشر موقع</h3>
+            <p class="text-ink-muted text-sm mb-4">لم يتم نشر أي حلقات على الموقع بعد.</p>
+            @if (User.HasPermission(AppPermissions.EpisodeWebPublish))
+            {
+                <a href="/Episodes" class="btn-primary">
+                    <span class="material-icons">add</span>
+                    نشر حلقة
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="overflow-x-auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th>الحلقة</th>
+                        <th>البرنامج</th>
+                        <th>العنوان</th>
+                        <th>نوع الوسائط</th>
+                        <th>بواسطة</th>
+                        <th>التاريخ</th>
+                        @if (User.HasPermission(AppPermissions.EpisodeWebPublish))
+                        {
+                            <th class="text-center">إجراءات</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model)
+                    {
+                        <tr class="hover:bg-surface-2 transition duration-200">
+                            <td>
+                                <a href="/Episodes/Details/@r.EpisodeId" class="text-primary font-bold hover:underline" target="_blank">
+                                    @(r.EpisodeName ?? "—")
+                                </a>
+                            </td>
+                            <td class="text-ink-muted">@r.ProgramName</td>
+                            <td class="text-ink-muted max-w-xs truncate">@r.Summary</td>
+                            <td><span class="badge-premium bg-blue-50 text-blue-700 border-blue-200">@GetMediaTypeText(r.Summary)</span></td>
+                            <td class="text-ink-muted">@r.RecordedBy</td>
+                            <td class="text-ink-muted whitespace-nowrap" dir="ltr">
+                                <span class="text-ink">@r.RecordDate.ToString("yyyy-MM-dd")</span>
+                                <span class="text-ink-soft"> @r.RecordDate.ToString("HH:mm")</span>
+                            </td>
+                            @if (User.HasPermission(AppPermissions.EpisodeWebPublish))
+                            {
+                                <td>
+                                    <div class="flex items-center justify-center gap-1">
+                                        <a href="/WebsitePublishing/Edit/@r.RecordId" class="icon-btn icon-btn-primary" title="تعديل">
+                                            <span class="material-icons">edit</span>
+                                        </a>
+                                        <button type="button" class="icon-btn icon-btn-danger" title="حذف"
+                                                onclick="confirmDelete(@r.RecordId, '@(r.EpisodeName ?? "سجل")')">
+                                            <span class="material-icons">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+<div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
+    <div class="bg-surface rounded-2xl shadow-xl max-w-sm w-full p-6 border border-border/80">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="material-icons text-danger text-3xl">delete_forever</span>
+            </div>
+            <h3 class="text-lg font-bold text-ink mb-2">حذف سجل نشر الموقع</h3>
+            <p class="text-ink-muted text-sm mb-6" id="deleteMessage">هل أنت متأكد من حذف هذا السجل؟</p>
+            <form id="deleteForm" method="post" action="">
+                @Html.AntiForgeryToken()
+                <div class="flex gap-2 justify-center">
+                    <button type="button" class="btn-secondary" onclick="closeDeleteModal()">إلغاء</button>
+                    <button type="submit" class="btn-danger">
+                        <span class="material-icons">delete</span>
+                        حذف
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete(id, name) {
+            document.getElementById('deleteMessage').textContent = 'هل أنت متأكد من حذف سجل نشر الموقع للحلقة "' + name + '"؟';
+            document.getElementById('deleteForm').action = '/WebsitePublishing/Delete/' + id;
+            document.getElementById('deleteModal').classList.remove('hidden');
+            document.getElementById('deleteModal').classList.add('flex');
+        }
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+            document.getElementById('deleteModal').classList.remove('flex');
+        }
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('bg-black/50')) closeDeleteModal();
+        });
+    </script>
+}
+
+@functions {
+    string GetMediaTypeText(string? summary)
+    {
+        if (string.IsNullOrEmpty(summary)) return "—";
+        if (summary.Contains("صوت")) return "صوت";
+        if (summary.Contains("فيديو")) return "فيديو";
+        return "صوت";
+    }
+}

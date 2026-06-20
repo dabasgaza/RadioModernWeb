@@ -1,0 +1,214 @@
+@model CoverageListViewModel
+@{
+    ViewData["Title"] = "التغطيات الميدانية";
+}
+
+<div class="page-header">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <a href="/">الرئيسية</a>
+                <span class="material-icons">chevron_left</span>
+                <span>التغطيات الميدانية</span>
+            </nav>
+            <h1>
+                <span class="material-icons">edit_location_alt</span>
+                التغطيات الميدانية
+            </h1>
+            <p>إدارة تغطيات المراسلين في الميدان</p>
+        </div>
+        @if (User.HasPermission(AppPermissions.CoordinationManage))
+        {
+            <button type="button" class="btn-primary" onclick="openModal('createCoverageModal')">
+                <span class="material-icons">add</span> تغطية جديدة
+            </button>
+        }
+    </div>
+</div>
+
+<div class="table-premium">
+    @if (!Model.Coverages.Any())
+    {
+        <div class="empty-state p-12">
+            <span class="material-icons empty-icon">edit_location_alt</span>
+            <h3 class="font-bold text-ink text-lg mb-2">لا تغطيات</h3>
+            <p class="text-ink-muted text-sm">لم تتم إضافة تغطيات بعد.</p>
+        </div>
+    }
+    else
+    {
+        <div class="overflow-x-auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th>المراسل</th>
+                        <th>الضيف</th>
+                        <th>الموقع</th>
+                        <th>الموضوع</th>
+                        <th>الوقت المجدول</th>
+                        <th>الوقت الفعلي</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model.Coverages)
+                    {
+                        <tr class="hover:bg-surface-2 transition duration-200">
+                            <td class="font-bold text-ink">@c.CorrespondentName</td>
+                            <td class="text-ink-muted">@(c.GuestName ?? "—")</td>
+                            <td class="text-ink-muted">@(c.Location ?? "—")</td>
+                            <td class="text-ink-muted">@(c.Topic ?? "—")</td>
+                            <td class="text-ink-muted">@(c.ScheduledTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                            <td class="text-ink-muted">@(c.ActualTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                            <td>
+                                @if (User.HasPermission(AppPermissions.CoordinationManage))
+                                {
+                                    <div class="flex items-center gap-1">
+                                        <button type="button" class="icon-btn icon-btn-primary" onclick='openEditCoverageModal(@System.Text.Json.JsonSerializer.Serialize(c))'><span class="material-icons">edit</span></button>
+                                        <form method="post" action="/Coverage/Delete/@c.CoverageId" class="inline" onsubmit="return confirm('حذف التغطية؟');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="icon-btn icon-btn-danger"><span class="material-icons">delete</span></button>
+                                        </form>
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+<div id="createCoverageModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
+    <div class="bg-surface rounded-2xl shadow-xl max-w-lg w-full p-6 border border-border/80 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold text-ink">تغطية جديدة</h3>
+            <button type="button" class="text-ink-soft hover:text-ink p-1 rounded-lg hover:bg-surface-3 transition" onclick="closeModal('createCoverageModal')">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        <form method="post" action="/Coverage/Create">
+            @Html.AntiForgeryToken()
+            <div class="space-y-3">
+                <div>
+                    <label class="form-label">المراسل *</label>
+                    <select name="CorrespondentId" class="form-input" required>
+                        <option value="">— اختر —</option>
+                        @foreach (var c in Model.Correspondents) { <option value="@c.CorrespondentId">@c.FullName</option> }
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label">الضيف</label>
+                    <select name="GuestId" class="form-input">
+                        <option value="">— بدون —</option>
+                        @foreach (var g in Model.Guests) { <option value="@g.GuestId">@g.FullName</option> }
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label">الموقع</label>
+                    <input type="text" name="Location" class="form-input" />
+                </div>
+                <div>
+                    <label class="form-label">الموضوع *</label>
+                    <input type="text" name="Topic" class="form-input" required />
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="form-label">الوقت المجدول</label>
+                        <input type="datetime-local" name="ScheduledTime" class="form-input" />
+                    </div>
+                    <div>
+                        <label class="form-label">الوقت الفعلي</label>
+                        <input type="datetime-local" name="ActualTime" class="form-input" />
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-2 justify-end mt-4">
+                <button type="button" class="btn-secondary" onclick="closeModal('createCoverageModal')">إلغاء</button>
+                <button type="submit" class="btn-primary">حفظ</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="editCoverageModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
+    <div class="bg-surface rounded-2xl shadow-xl max-w-lg w-full p-6 border border-border/80 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold text-ink">تعديل تغطية</h3>
+            <button type="button" class="text-ink-soft hover:text-ink p-1 rounded-lg hover:bg-surface-3 transition" onclick="closeModal('editCoverageModal')">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        <form id="editCoverageForm" method="post" action="">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="CoverageId" id="edit_CoverageId" />
+            <input type="hidden" name="CorrespondentId" id="edit_CorrespondentId" />
+            <input type="hidden" name="CorrespondentName" id="edit_CorrespondentName" />
+            <div class="space-y-3">
+                <div>
+                    <label class="form-label">المراسل</label>
+                    <select id="edit_CorrespondentSelect" class="form-input" onchange="document.getElementById('edit_CorrespondentId').value = this.value;">
+                        @foreach (var c in Model.Correspondents) { <option value="@c.CorrespondentId">@c.FullName</option> }
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label">الضيف</label>
+                    <select name="GuestId" id="edit_GuestId" class="form-input">
+                        <option value="">— بدون —</option>
+                        @foreach (var g in Model.Guests) { <option value="@g.GuestId">@g.FullName</option> }
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label">الموقع</label>
+                    <input type="text" name="Location" id="edit_Location" class="form-input" />
+                </div>
+                <div>
+                    <label class="form-label">الموضوع</label>
+                    <input type="text" name="Topic" id="edit_Topic" class="form-input" />
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="form-label">الوقت المجدول</label>
+                        <input type="datetime-local" name="ScheduledTime" id="edit_ScheduledTime" class="form-input" />
+                    </div>
+                    <div>
+                        <label class="form-label">الوقت الفعلي</label>
+                        <input type="datetime-local" name="ActualTime" id="edit_ActualTime" class="form-input" />
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-2 justify-end mt-4">
+                <button type="button" class="btn-secondary" onclick="closeModal('editCoverageModal')">إلغاء</button>
+                <button type="submit" class="btn-primary">حفظ</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openModal(id) {
+            const m = document.getElementById(id);
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+        }
+        function closeModal(id) {
+            const m = document.getElementById(id);
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        }
+        function openEditCoverageModal(data) {
+            document.getElementById('editCoverageForm').action = '/Coverage/Edit/' + data.coverageId;
+            document.getElementById('edit_CoverageId').value = data.coverageId;
+            document.getElementById('edit_CorrespondentId').value = data.correspondentId;
+            document.getElementById('edit_CorrespondentSelect').value = data.correspondentId;
+            document.getElementById('edit_GuestId').value = data.guestId || '';
+            document.getElementById('edit_Location').value = data.location || '';
+            document.getElementById('edit_Topic').value = data.topic || '';
+            if (data.scheduledTime) document.getElementById('edit_ScheduledTime').value = data.scheduledTime.substring(0, 16);
+            if (data.actualTime) document.getElementById('edit_ActualTime').value = data.actualTime.substring(0, 16);
+            openModal('editCoverageModal');
+        }
+    </script>
+}

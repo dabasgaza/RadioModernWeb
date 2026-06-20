@@ -1,0 +1,83 @@
+@model List<ProgramDto>
+@{
+    ViewData["Title"] = "البرامج";
+}
+
+<div class="page-header">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <a href="/">الرئيسية</a>
+                <span class="material-icons">chevron_left</span>
+                <span>البرامج</span>
+            </nav>
+            <h1>
+                <span class="material-icons">radio</span>
+                البرامج الإذاعية
+            </h1>
+            <p>إدارة البرامج الإذاعية وفئاتها</p>
+        </div>
+        @if (User.HasPermission(AppPermissions.ProgramManage))
+        {
+            <a href="/Programs/Create" class="btn-primary">
+                <span class="material-icons">add</span>
+                برنامج جديد
+            </a>
+        }
+    </div>
+</div>
+
+<div class="filter-premium">
+    <form method="get" class="flex gap-2">
+        <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث عن برنامج…" class="form-input flex-1" />
+        <button type="submit" class="btn-primary"><span class="material-icons">search</span></button>
+        <a href="/Programs" class="btn-secondary"><span class="material-icons">refresh</span></a>
+    </form>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="card-premium">
+        <div class="empty-state p-12">
+            <span class="material-icons empty-icon">radio</span>
+            <h3 class="font-bold text-ink text-lg mb-2">لا توجد برامج</h3>
+            <p class="text-ink-muted text-sm mb-4">لم تتم إضافة برامج بعد.</p>
+            <a href="/Programs/Create" class="btn-primary"><span class="material-icons">add</span> برنامج جديد</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        @foreach (var p in Model)
+        {
+            <div class="card-premium group">
+                <div class="card-body">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                            <span class="material-icons text-2xl">radio</span>
+                        </div>
+                        @if (User.HasPermission(AppPermissions.ProgramManage))
+                        {
+                            <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <a href="/Programs/Edit/@p.ProgramId" class="icon-btn icon-btn-primary"><span class="material-icons">edit</span></a>
+                                <form method="post" action="/Programs/Delete/@p.ProgramId" class="inline" onsubmit="return confirm('حذف البرنامج «@p.ProgramName»؟');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="icon-btn icon-btn-danger"><span class="material-icons">delete</span></button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                    <h3 class="font-bold text-ink text-base mb-1">@p.ProgramName</h3>
+                    @if (!string.IsNullOrWhiteSpace(p.Category))
+                    {
+                        <span class="badge-premium bg-blue-50 text-blue-700 border-blue-200 text-[10px] mb-2 inline-block">@p.Category</span>
+                    }
+                    <p class="text-ink-muted text-xs leading-relaxed">
+                        @(p.ProgramDescription?.Length > 100 ? p.ProgramDescription[..100] + "…" : p.ProgramDescription ?? "لا يوجد وصف")
+                    </p>
+                </div>
+            </div>
+        }
+    </div>
+}

@@ -1,0 +1,281 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "لوحة التحكم";
+}
+
+<div class="page-header">
+    <div class="relative z-10">
+        <h1>
+            <span class="material-icons">dashboard</span>
+            لوحة التحكم
+        </h1>
+        <p>إليك ملخص نشاط النظام اليوم</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="stat-card-premium" style="color: var(--color-primary);">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                <span class="material-icons text-3xl" style="color: var(--color-primary);">podcasts</span>
+            </div>
+            <div>
+                <div class="text-2xl font-black text-ink">@Model.TodayEpisodes.Count</div>
+                <div class="text-xs font-semibold text-ink-muted mt-0.5">حلقات اليوم</div>
+            </div>
+        </div>
+    </div>
+    <div class="stat-card-premium" style="color: var(--color-accent);">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-sky-50 flex items-center justify-center shrink-0">
+                <span class="material-icons text-3xl" style="color: var(--color-accent);">analytics</span>
+            </div>
+            <div>
+                <div class="text-2xl font-black text-ink">@Model.TotalEpisodes</div>
+                <div class="text-xs font-semibold text-ink-muted mt-0.5">إجمالي الحلقات</div>
+            </div>
+        </div>
+    </div>
+    <div class="stat-card-premium" style="color: var(--color-success);">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+                <span class="material-icons text-3xl" style="color: var(--color-success);">radio</span>
+            </div>
+            <div>
+                <div class="text-2xl font-black text-ink">@Model.TotalPrograms</div>
+                <div class="text-xs font-semibold text-ink-muted mt-0.5">البرامج النشطة</div>
+            </div>
+        </div>
+    </div>
+    <div class="stat-card-premium" style="color: var(--color-danger);">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
+                <span class="material-icons text-3xl" style="color: var(--color-danger);">cancel</span>
+            </div>
+            <div>
+                <div class="text-2xl font-black text-ink">@Model.CancelledEpisodes.Count</div>
+                <div class="text-xs font-semibold text-ink-muted mt-0.5">حلقات ملغاة</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+    <div class="card-premium">
+        <div class="card-header">
+            <h3 class="font-bold text-ink flex items-center gap-2">
+                <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">donut_large</span>
+                توزيع حالات الحلقات
+            </h3>
+        </div>
+        <div class="card-body">
+            <div class="relative h-64">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-premium">
+        <div class="card-header">
+            <h3 class="font-bold text-ink flex items-center gap-2">
+                <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">bar_chart</span>
+                أكثر البرامج نشاطاً
+            </h3>
+        </div>
+        <div class="card-body">
+            <div class="relative h-64">
+                <canvas id="programsChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card-premium mb-6">
+    <div class="card-header">
+        <h3 class="font-bold text-ink flex items-center gap-2">
+            <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">today</span>
+            حلقات اليوم
+        </h3>
+        <a href="/Episodes" class="text-sm text-primary font-bold hover:underline">عرض الكل</a>
+    </div>
+    <div class="overflow-x-auto">
+        @if (Model.TodayEpisodes.Any())
+        {
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="bg-surface-3 text-ink-muted">
+                        <th class="px-5 py-3 text-right font-bold text-xs">الحلقة</th>
+                        <th class="px-5 py-3 text-right font-bold text-xs">البرنامج</th>
+                        <th class="px-5 py-3 text-right font-bold text-xs">الضيوف</th>
+                        <th class="px-5 py-3 text-right font-bold text-xs">الوقت</th>
+                        <th class="px-5 py-3 text-right font-bold text-xs">الحالة</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                    @foreach (var ep in Model.TodayEpisodes)
+                    {
+                        <tr class="hover:bg-surface-2 transition duration-200">
+                            <td class="px-5 py-3">
+                                <a href="/Episodes/Details/@ep.EpisodeId" class="text-primary font-bold hover:underline">@ep.EpisodeName</a>
+                            </td>
+                            <td class="px-5 py-3 text-ink-muted">@ep.ProgramName</td>
+                            <td class="px-5 py-3 text-ink-muted">@ep.GuestsDisplay</td>
+                            <td class="px-5 py-3 text-ink-muted">@(ep.ScheduledExecutionTime?.ToString("HH:mm") ?? "—")</td>
+                            <td class="px-5 py-3">
+                                <span class="badge-premium @GetStatusCssClass(ep.StatusText)">@ep.StatusText</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="empty-state">
+                <span class="material-icons empty-icon">event_busy</span>
+                <h3 class="font-bold text-ink">لا توجد حلقات اليوم</h3>
+                <p class="text-ink-muted text-sm">لم تُجدول أي حلقات لليوم.</p>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div class="card-premium">
+        <div class="card-header">
+            <h3 class="font-bold text-ink flex items-center gap-2">
+                <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">trending_up</span>
+                أكثر البرامج نشاطاً
+            </h3>
+        </div>
+        <div class="card-body space-y-3">
+            @if (Model.TopPrograms.Any())
+            {
+                @foreach (var p in Model.TopPrograms.Take(5))
+                {
+                    <div class="flex items-center justify-between py-2 border-b border-border/60 last:border-0">
+                        <div>
+                            <div class="font-bold text-ink text-sm">@p.ProgramName</div>
+                            <div class="text-xs text-ink-muted">@p.Category</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-lg font-black text-primary">@p.TotalEpisodes</div>
+                            <div class="text-xs text-ink-muted">حلقة</div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-state">
+                    <span class="material-icons empty-icon">radio</span>
+                    <p class="text-ink-muted text-sm">لا توجد برامج</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="card-premium">
+        <div class="card-header">
+            <h3 class="font-bold text-ink flex items-center gap-2">
+                <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">people_alt</span>
+                أبرز الضيوف
+            </h3>
+        </div>
+        <div class="card-body space-y-3">
+            @if (Model.TopGuests.Any())
+            {
+                @foreach (var g in Model.TopGuests.Take(5))
+                {
+                    <div class="flex items-center justify-between py-2 border-b border-border/60 last:border-0">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center">@g.Rank</div>
+                            <div>
+                                <div class="font-bold text-ink text-sm">@g.FullName</div>
+                                <div class="text-xs text-ink-muted">@(g.Organization ?? "—")</div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-lg font-black text-success">@g.AppearanceCount</div>
+                            <div class="text-xs text-ink-muted">ظهور</div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-state">
+                    <span class="material-icons empty-icon">people_alt</span>
+                    <p class="text-ink-muted text-sm">لا توجد بيانات</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const statusData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.StatusStats));
+        const statusLabels = Object.keys(statusData).map(k => {
+            const map = { 'Planned': 'مجدولة', 'Executed': 'منفّذة', 'Published': 'منشورة رقمياً', 'WebsitePublished': 'منشورة على الموقع', 'Cancelled': 'ملغاة' };
+            return map[k] || k;
+        });
+        const statusValues = Object.values(statusData);
+
+        new Chart(document.getElementById('statusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: statusLabels,
+                datasets: [{
+                    data: statusValues,
+                    backgroundColor: ['#3B82F6', '#2563EB', '#10B981', '#0EA5E9', '#EF4444'],
+                    borderWidth: 2,
+                    borderColor: '#FFFFFF'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom', rtl: true, labels: { font: { family: 'Cairo' } } } }
+            }
+        });
+
+        const programsData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            Model.TopPrograms.Take(5).Select(p => new { name = p.ProgramName, total = p.TotalEpisodes }).ToList()));
+
+        new Chart(document.getElementById('programsChart'), {
+            type: 'bar',
+            data: {
+                labels: programsData.map(p => p.name),
+                datasets: [{
+                    label: 'عدد الحلقات',
+                    data: programsData.map(p => p.total),
+                    backgroundColor: '#2563EB',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: '#F1F5F9' }, ticks: { font: { family: 'Cairo' } } },
+                    y: { grid: { display: false }, ticks: { font: { family: 'Cairo' } } }
+                }
+            }
+        });
+    </script>
+}
+
+@functions {
+    string GetStatusCssClass(string statusText) => statusText switch
+    {
+        "مجدولة" or "مخطط لها" => "bg-blue-50 text-blue-700 border-blue-200",
+        "تم التنفيذ" or "منفّذة" => "bg-emerald-50 text-emerald-700 border-emerald-200",
+        "منشورة" or "منشورة رقمياً" => "bg-green-50 text-green-700 border-green-200",
+        "منشورة على الموقع" => "bg-cyan-50 text-cyan-700 border-cyan-200",
+        "ملغاة" => "bg-red-50 text-red-700 border-red-200",
+        _ => "bg-gray-50 text-gray-700 border-gray-200"
+    };
+}

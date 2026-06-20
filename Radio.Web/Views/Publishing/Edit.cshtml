@@ -1,0 +1,267 @@
+@model SocialPublishingEditViewModel
+@{
+    ViewData["Title"] = "تعديل سجل النشر الرقمي";
+    var log = Model.Log;
+    var episode = Model.Episode;
+}
+
+<div class="page-header">
+    <div class="relative z-10">
+        <nav class="breadcrumb">
+            <a href="/Publishing">النشر الرقمي</a>
+            <span class="material-icons">chevron_left</span>
+            <span>تعديل سجل النشر</span>
+        </nav>
+        <h1>
+            <span class="material-icons">edit</span>
+            تعديل سجل النشر الرقمي
+        </h1>
+    </div>
+</div>
+
+@if (log == null)
+{
+    <div class="bg-red-50 border border-red-200 text-danger rounded-xl p-4">سجل النشر غير موجود.</div>
+    return;
+}
+
+<div class="card-premium mb-4 p-5">
+    <div class="flex items-center justify-between">
+        <div>
+            <h3 class="text-lg font-bold text-ink">@(episode?.EpisodeName ?? "—")</h3>
+            <p class="text-sm text-ink-muted">@(episode?.ProgramName ?? "")</p>
+        </div>
+        <a href="/Episodes/Details/@log.EpisodeId" class="btn-secondary text-sm" target="_blank">
+            <span class="material-icons">open_in_new</span>
+            عرض الحلقة
+        </a>
+    </div>
+</div>
+
+<form method="post" action="/Publishing/Edit/@log.LogId">
+    @Html.AntiForgeryToken()
+
+    <div id="guests-container">
+        @if (Model.GuestLogs.Any())
+        {
+            @for (int i = 0; i < Model.GuestLogs.Count; i++)
+            {
+                var item = Model.GuestLogs[i];
+                <div class="card-premium mb-4 guest-card" data-index="@i">
+                    <div class="card-header bg-surface-3">
+                        <h3 class="font-bold text-ink flex items-center gap-2">
+                            <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">person</span>
+                            @item.GuestName
+                        </h3>
+                    </div>
+                    <div class="card-body space-y-4">
+                        <input type="hidden" name="GuestLogs[@i].LogId" value="@item.LogId" />
+                        <input type="hidden" name="GuestLogs[@i].EpisodeGuestId" value="@item.EpisodeGuestId" />
+                        <input type="hidden" name="GuestLogs[@i].EpisodeId" value="@item.EpisodeId" />
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="form-label">عنوان المقطع</label>
+                                <input type="text" name="GuestLogs[@i].ClipTitle" value="@item.ClipTitle" class="form-input" placeholder="عنوان المقطع المنشور" />
+                            </div>
+                            <div>
+                                <label class="form-label">المدة (دقيقة)</label>
+                                <input type="number" name="GuestLogs[@i].DurationMinutes" value="@item.DurationMinutes" class="form-input" placeholder="مدة المقطع بالدقائق" min="1" />
+                            </div>
+                            <div>
+                                <label class="form-label">نوع الوسائط</label>
+                                <select name="GuestLogs[@i].MediaType" class="form-input">
+                                    <option value="1" selected="@(item.MediaType == MediaType.Audio)">صوت</option>
+                                    <option value="2" selected="@(item.MediaType == MediaType.Video)">فيديو</option>
+                                    <option value="3" selected="@(item.MediaType == MediaType.Both)">صوت وفيديو</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="form-label">منصات النشر</label>
+                            <div class="platforms-container space-y-2" id="platforms-@i">
+                                @if (item.Platforms.Any())
+                                {
+                                    @for (int j = 0; j < item.Platforms.Count; j++)
+                                    {
+                                        var pf = item.Platforms[j];
+                                        <div class="platform-row flex gap-2 items-start">
+                                            <select name="GuestLogs[@i].Platforms[@j].PlatformId" class="form-input flex-1">
+                                                <option value="">— اختر المنصة —</option>
+                                                @foreach (var p in Model.Platforms)
+                                                {
+                                                    <option value="@p.SocialMediaPlatformId" selected="@(pf.PlatformId == p.SocialMediaPlatformId)">@p.Name</option>
+                                                }
+                                            </select>
+                                            <input type="url" name="GuestLogs[@i].Platforms[@j].Url" value="@pf.Url" class="form-input flex-[2]" placeholder="رابط النشر" dir="ltr" />
+                                            <button type="button" class="icon-btn icon-btn-danger" onclick="this.closest('.platform-row').remove()" title="حذف">
+                                                <span class="material-icons">close</span>
+                                            </button>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="platform-row flex gap-2 items-start">
+                                        <select name="GuestLogs[@i].Platforms[0].PlatformId" class="form-input flex-1">
+                                            <option value="">— اختر المنصة —</option>
+                                            @foreach (var p in Model.Platforms)
+                                            {
+                                                <option value="@p.SocialMediaPlatformId">@p.Name</option>
+                                            }
+                                        </select>
+                                        <input type="url" name="GuestLogs[@i].Platforms[0].Url" class="form-input flex-[2]" placeholder="رابط النشر" dir="ltr" />
+                                        <button type="button" class="icon-btn icon-btn-success add-platform-btn" onclick="addPlatform(@i)" title="إضافة">
+                                            <span class="material-icons">add</span>
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+                            <button type="button" class="btn-secondary text-sm mt-2" onclick="addPlatform(@i)">
+                                <span class="material-icons">add</span>
+                                إضافة منصة
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="card-premium p-8 text-center">
+                <span class="material-icons text-ink-soft text-4xl mb-2">people</span>
+                <p class="text-ink-muted">لا يوجد سجلات نشر لهذه الحلقة.</p>
+            </div>
+        }
+    </div>
+
+    <div class="flex items-center justify-end gap-2">
+        <a href="/Publishing" class="btn-secondary">
+            <span class="material-icons">cancel</span>
+            إلغاء
+        </a>
+        @if (Model.GuestLogs.Any())
+        {
+            <button type="submit" class="btn-primary">
+                <span class="material-icons">save</span>
+                حفظ التعديلات
+            </button>
+        }
+    </div>
+</form>
+
+<div class="card-premium mt-8">
+    <div class="card-header bg-surface-3">
+        <h3 class="font-bold text-ink flex items-center gap-2">
+            <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">history</span>
+            كافة سجلات النشر والإنتاج (@(Model.EpisodePublishingRecords?.Count ?? 0))
+        </h3>
+    </div>
+    <div class="card-body">
+        @if (Model.EpisodePublishingRecords == null || !Model.EpisodePublishingRecords.Any())
+        {
+            <p class="text-sm text-ink-muted">لا توجد سجلات أخرى لهذه الحلقة.</p>
+        }
+        else
+        {
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-ink-muted border-b border-border text-right text-xs">
+                            <th class="pb-3 font-bold">النوع</th>
+                            <th class="pb-3 font-bold">التفاصيل</th>
+                            <th class="pb-3 font-bold">بواسطة</th>
+                            <th class="pb-3 font-bold">التاريخ</th>
+                            <th class="pb-3 font-bold text-center">الإجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-border/60">
+                        @foreach (var r in Model.EpisodePublishingRecords)
+                        {
+                            <tr class="hover:bg-surface-2 transition duration-200">
+                                <td class="py-3">
+                                    <span class="badge-premium font-bold text-xs" style="background-color: @(r.RecordColor)15; color: @r.RecordColor; border-color: @(r.RecordColor)30">
+                                        @GetRecordTypeName(r.RecordType)
+                                    </span>
+                                </td>
+                                <td class="py-3 text-ink-muted">@r.Summary</td>
+                                <td class="py-3 text-ink-muted font-medium">@(r.RecordedBy ?? "تلقائي")</td>
+                                <td class="py-3 text-ink-soft text-xs" dir="ltr">@r.RecordDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td class="py-3 text-center">
+                                    @if (r.RecordType == "SocialMedia")
+                                    {
+                                        <a href="/Publishing/Edit/@r.RecordId" class="text-primary font-bold hover:underline">تعديل</a>
+                                    }
+                                    else if (r.RecordType == "Website")
+                                    {
+                                        <a href="/WebsitePublishing/Edit/@r.RecordId" class="text-primary font-bold hover:underline">تعديل</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-xs text-ink-soft">—</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const platformBaseUrls = @Html.Raw(Json.Serialize(Model.Platforms.ToDictionary(p => p.SocialMediaPlatformId.ToString(), p => p.BaseUrl ?? "")));
+
+        let platformCounters = {};
+        document.querySelectorAll('.guest-card').forEach(function(card) {
+            const idx = card.dataset.index;
+            platformCounters[idx] = card.querySelectorAll('.platform-row').length;
+        });
+
+        document.getElementById('guests-container').addEventListener('change', function(e) {
+            if (e.target.matches('select[name*=".PlatformId"]')) {
+                const row = e.target.closest('.platform-row');
+                if (!row) return;
+                const urlInput = row.querySelector('input[type="url"]');
+                const baseUrl = platformBaseUrls[e.target.value] || '';
+                if (baseUrl && !urlInput.value) {
+                    urlInput.value = baseUrl;
+                }
+            }
+        });
+
+        function addPlatform(guestIdx) {
+            const container = document.getElementById('platforms-' + guestIdx);
+            const count = platformCounters[guestIdx] || container.querySelectorAll('.platform-row').length;
+            const html = `
+                <div class="platform-row flex gap-2 items-start">
+                    <select name="GuestLogs[${guestIdx}].Platforms[${count}].PlatformId" class="form-input flex-1">
+                        <option value="">— اختر المنصة —</option>
+                        @foreach (var p in Model.Platforms)
+                        {
+                            <option value="@p.SocialMediaPlatformId">@p.Name</option>
+                        }
+                    </select>
+                    <input type="url" name="GuestLogs[${guestIdx}].Platforms[${count}].Url" class="form-input flex-[2]" placeholder="رابط النشر" dir="ltr" />
+                    <button type="button" class="icon-btn icon-btn-danger" onclick="this.closest('.platform-row').remove()">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>`;
+            container.insertAdjacentHTML('beforeend', html);
+            platformCounters[guestIdx] = count + 1;
+        }
+    </script>
+}
+
+@functions {
+    string GetRecordTypeName(string t) => t switch
+    {
+        "Execution" => "سجل الإنتاج",
+        "SocialMedia" => "نشر رقمي",
+        "Website" => "نشر موقع",
+        _ => t
+    };
+}

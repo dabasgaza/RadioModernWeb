@@ -1,0 +1,171 @@
+@model SocialPublishingViewModel
+@{
+    ViewData["Title"] = "تسجيل نشر رقمي";
+    var episode = Model.Episode;
+}
+
+<div class="page-header">
+    <div class="relative z-10">
+        <nav class="breadcrumb">
+            <a href="/Publishing">النشر الرقمي</a>
+            <span class="material-icons">chevron_left</span>
+            <span>تسجيل نشر</span>
+        </nav>
+        <h1>
+            <span class="material-icons">share</span>
+            تسجيل نشر رقمي
+        </h1>
+    </div>
+</div>
+
+@if (episode == null)
+{
+    <div class="bg-red-50 border border-red-200 text-danger rounded-xl p-4">الحلقة غير موجودة.</div>
+    return;
+}
+
+<div class="card-premium mb-4 p-5">
+    <div class="flex items-center justify-between">
+        <div>
+            <h3 class="text-lg font-bold text-ink">@episode.EpisodeName</h3>
+            <p class="text-sm text-ink-muted">@episode.ProgramName</p>
+        </div>
+        <a href="/Episodes/Details/@episode.EpisodeId" class="btn-secondary text-sm" target="_blank">
+            <span class="material-icons">open_in_new</span>
+            عرض الحلقة
+        </a>
+    </div>
+</div>
+
+<form method="post" action="/Publishing/LogSocial/@episode.EpisodeId">
+    @Html.AntiForgeryToken()
+
+    <div id="guests-container">
+        @if (Model.EpisodeGuests.Any())
+        {
+            @for (int i = 0; i < Model.EpisodeGuests.Count; i++)
+            {
+                var guest = Model.EpisodeGuests[i];
+                <div class="card-premium mb-4 guest-card" data-index="@i">
+                    <div class="card-header bg-surface-3">
+                        <h3 class="font-bold text-ink flex items-center gap-2">
+                            <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">person</span>
+                            @guest.FullName
+                            @if (!string.IsNullOrWhiteSpace(guest.Topic))
+                            {
+                                <span class="text-sm text-ink-muted font-normal">— @guest.Topic</span>
+                            }
+                        </h3>
+                    </div>
+                    <div class="card-body space-y-4">
+                        <input type="hidden" name="GuestLogs[@i].EpisodeGuestId" value="@guest.EpisodeGuestId" />
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="form-label">عنوان المقطع</label>
+                                <input type="text" name="GuestLogs[@i].ClipTitle" class="form-input" placeholder="عنوان المقطع المنشور" />
+                            </div>
+                            <div>
+                                <label class="form-label">المدة (دقيقة)</label>
+                                <input type="number" name="GuestLogs[@i].DurationMinutes" class="form-input" placeholder="مدة المقطع بالدقائق" min="1" />
+                            </div>
+                            <div>
+                                <label class="form-label">نوع الوسائط</label>
+                                <select name="GuestLogs[@i].MediaType" class="form-input">
+                                    <option value="1">صوت</option>
+                                    <option value="2">فيديو</option>
+                                    <option value="3">صوت وفيديو</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="form-label">منصات النشر</label>
+                            <div class="platforms-container space-y-2" id="platforms-@i">
+                                <div class="platform-row flex gap-2 items-start">
+                                    <select name="GuestLogs[@i].Platforms[0].PlatformId" class="form-input flex-1">
+                                        <option value="">— اختر المنصة —</option>
+                                        @foreach (var p in Model.Platforms)
+                                        {
+                                            <option value="@p.SocialMediaPlatformId">@p.Name</option>
+                                        }
+                                    </select>
+                                    <input type="url" name="GuestLogs[@i].Platforms[0].Url" class="form-input flex-[2]" placeholder="رابط النشر" dir="ltr" />
+                                    <button type="button" class="icon-btn icon-btn-success add-platform-btn" onclick="addPlatform(@i)" title="إضافة">
+                                        <span class="material-icons">add</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="card-premium p-8 text-center">
+                <span class="material-icons text-ink-soft text-4xl mb-2">people</span>
+                <p class="text-ink-muted">لا يوجد ضيوف في هذه الحلقة.</p>
+            </div>
+        }
+    </div>
+
+    <div class="flex items-center justify-end gap-2">
+        <a href="/Publishing" class="btn-secondary">
+            <span class="material-icons">cancel</span>
+            إلغاء
+        </a>
+        @if (Model.EpisodeGuests.Any())
+        {
+            <button type="submit" class="btn-primary">
+                <span class="material-icons">publish</span>
+                تسجيل النشر
+            </button>
+        }
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        const platformBaseUrls = @Html.Raw(Json.Serialize(Model.Platforms.ToDictionary(p => p.SocialMediaPlatformId.ToString(), p => p.BaseUrl ?? "")));
+
+        let platformCounters = {};
+        document.querySelectorAll('.guest-card').forEach(function (card) {
+            const idx = card.dataset.index;
+            platformCounters[idx] = 1;
+        });
+
+        document.getElementById('guests-container').addEventListener('change', function(e) {
+            if (e.target.matches('select[name*=".PlatformId"]')) {
+                const row = e.target.closest('.platform-row');
+                if (!row) return;
+                const urlInput = row.querySelector('input[type="url"]');
+                const baseUrl = platformBaseUrls[e.target.value] || '';
+                if (baseUrl && !urlInput.value) {
+                    urlInput.value = baseUrl;
+                }
+            }
+        });
+
+        function addPlatform(guestIdx) {
+            const container = document.getElementById('platforms-' + guestIdx);
+            const count = platformCounters[guestIdx] || container.querySelectorAll('.platform-row').length;
+            const html = `
+                <div class="platform-row flex gap-2 items-start">
+                    <select name="GuestLogs[${guestIdx}].Platforms[${count}].PlatformId" class="form-input flex-1">
+                        <option value="">— اختر المنصة —</option>
+                        @foreach (var p in Model.Platforms)
+                        {
+                            <option value="@p.SocialMediaPlatformId">@p.Name</option>
+                        }
+                    </select>
+                    <input type="url" name="GuestLogs[${guestIdx}].Platforms[${count}].Url" class="form-input flex-[2]" placeholder="رابط النشر" dir="ltr" />
+                    <button type="button" class="icon-btn icon-btn-danger" onclick="this.closest('.platform-row').remove()">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>`;
+            container.insertAdjacentHTML('beforeend', html);
+            platformCounters[guestIdx] = count + 1;
+        }
+    </script>
+}

@@ -1,0 +1,48 @@
+@model ProgramDto
+@{
+    ViewData["Title"] = Model.ProgramId == 0 ? "برنامج جديد" : "تعديل برنامج";
+    var isEdit = Model.ProgramId != 0;
+}
+
+<div class="page-header">
+    <div class="relative z-10">
+        <nav class="breadcrumb">
+            <a href="/Programs">البرامج</a>
+            <span class="material-icons">chevron_left</span>
+            <span>@(isEdit ? "تعديل" : "جديد")</span>
+        </nav>
+        <h1>
+            <span class="material-icons">@(isEdit ? "edit" : "add")</span>
+            @(isEdit ? "تعديل برنامج" : "برنامج جديد")
+        </h1>
+    </div>
+</div>
+
+<form method="post" action="@(isEdit ? $"/Programs/Edit/{Model.ProgramId}" : "/Programs/Create")" class="max-w-2xl">
+    @Html.AntiForgeryToken()
+    @if (isEdit) { <input type="hidden" name="ProgramId" value="@Model.ProgramId" /> }
+    @if (ViewContext.ModelState.ErrorCount > 0)
+    {
+        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-4"></div>
+    }
+
+    <div class="card-premium p-5 space-y-4">
+        <div>
+            <label class="form-label">اسم البرنامج *</label>
+            <input type="text" name="ProgramName" value="@Model.ProgramName" class="form-input" required />
+        </div>
+        <div>
+            <label class="form-label">الفئة</label>
+            <input type="text" name="Category" value="@Model.Category" class="form-input" />
+        </div>
+        <div>
+            <label class="form-label">الوصف</label>
+            <textarea name="ProgramDescription" rows="4" class="form-input">@Model.ProgramDescription</textarea>
+        </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-2 mt-4">
+        <a href="/Programs" class="btn-secondary"><span class="material-icons">cancel</span> إلغاء</a>
+        <button type="submit" class="btn-primary"><span class="material-icons">save</span> حفظ</button>
+    </div>
+</form>

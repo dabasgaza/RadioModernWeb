@@ -1,0 +1,74 @@
+@inject ICurrentUserService CurrentUser
+
+<header class="topbar-premium">
+    <!-- Mobile menu toggle -->
+    <button class="topbar-btn lg:hidden" onclick="openSidebar()">
+        <span class="material-icons">menu</span>
+    </button>
+
+    <!-- Brand (mobile) -->
+    <div class="flex items-center gap-2 lg:hidden">
+        <span class="material-icons text-primary">radio</span>
+        <span class="font-bold text-ink text-sm">نظام البث الإذاعي</span>
+    </div>
+
+    <!-- Search -->
+    <div class="search-premium flex-1 max-w-md mx-auto hidden md:block">
+        <form action="/Search" method="get">
+            <span class="material-icons">search</span>
+            <input type="text" name="q" placeholder="بحث سريع…" />
+        </form>
+    </div>
+
+    <!-- Right section -->
+    <div class="flex items-center gap-1 mr-auto">
+        <!-- Notifications -->
+        <div class="relative">
+            <button class="topbar-btn" onclick="toggleNotifications(event)">
+                <span class="material-icons">notifications</span>
+                <span id="notification-badge" class="hidden notification-badge">0</span>
+            </button>
+            <div id="notifications-dropdown" class="dropdown-premium" style="width: 320px;">
+                <div class="dropdown-header">
+                    <span>الإشعارات</span>
+                    <button class="text-xs text-primary font-semibold bg-transparent border-none cursor-pointer" onclick="clearNotifications()">مسح الكل</button>
+                </div>
+                <div id="notifications-list">
+                    <div class="dropdown-item justify-center text-ink-soft">لا توجد إشعارات</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User menu -->
+        <div class="relative">
+            <button class="flex items-center gap-2 p-1 pr-2 rounded-xl hover:bg-surface-3 transition-all duration-200 cursor-pointer border-none bg-transparent font-inherit" onclick="toggleUserMenu(event)">
+                <div class="user-avatar bg-gradient-to-br from-primary to-secondary">
+                    @(CurrentUser.FullName?.Substring(0, 1) ?? "U")
+                </div>
+                <div class="hidden md:block text-right">
+                    <div class="text-sm font-bold text-ink leading-tight">@(CurrentUser.FullName ?? "مستخدم")</div>
+                    <div class="text-xs text-ink-soft">@CurrentUser.PrimaryRole</div>
+                </div>
+                <span class="material-icons text-ink-soft hidden md:inline" style="font-size: 18px;">expand_more</span>
+            </button>
+            <div id="user-menu" class="dropdown-premium" style="width: 200px;">
+                <a href="/Account/Profile" class="dropdown-item">
+                    <span class="material-icons text-ink-muted" style="font-size: 18px;">person</span>
+                    الملف الشخصي
+                </a>
+                <a href="/Account/Settings" class="dropdown-item">
+                    <span class="material-icons text-ink-muted" style="font-size: 18px;">settings</span>
+                    الإعدادات
+                </a>
+                <div class="dropdown-divider"></div>
+                <form action="/Account/Logout" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="dropdown-item text-danger">
+                        <span class="material-icons" style="font-size: 18px;">logout</span>
+                        تسجيل الخروج
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</header>

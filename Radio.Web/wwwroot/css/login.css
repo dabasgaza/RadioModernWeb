@@ -1,0 +1,126 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   Login Page Styles — Modern Split-Screen
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.login-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+    background: #f8fafc;
+    font-family: 'Cairo', sans-serif;
+}
+
+.login-card {
+    background: white;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 0 60px rgba(15, 23, 42, 0.04);
+}
+
+.login-brand { text-align: center; margin-bottom: 2.5rem; }
+
+.login-logo {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 1rem;
+    background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 36px;
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+}
+
+.login-brand h1 { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin: 0 0 0.5rem 0; }
+.login-brand p { color: #64748b; font-size: 0.875rem; margin: 0; }
+
+.login-form { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.form-field { display: flex; flex-direction: column; gap: 0.5rem; }
+.form-field label { font-size: 0.875rem; font-weight: 600; color: #334155; }
+
+.input-wrapper { position: relative; display: flex; align-items: center; }
+.input-icon { position: absolute; right: 14px; color: #94a3b8; font-size: 20px; pointer-events: none; }
+
+.form-input {
+    width: 100%;
+    padding: 0.875rem 3rem 0.875rem 1rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 0.9375rem;
+    background: #f8fafc;
+    transition: all 0.2s;
+    direction: rtl;
+    text-align: right;
+}
+
+.form-input:focus { outline: none; border-color: #2563EB; background: white; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+
+.toggle-password { position: absolute; left: 14px; background: none; border: none; cursor: pointer; color: #94a3b8; padding: 0; display: flex; }
+.toggle-password:hover { color: #475569; }
+
+.form-options { display: flex; justify-content: space-between; align-items: center; font-size: 0.8125rem; color: #475569; }
+.checkbox-wrapper { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; }
+.checkbox-wrapper input[type="checkbox"] { width: 16px; height: 16px; accent-color: #2563EB; cursor: pointer; }
+
+.login-btn {
+    background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+    color: white;
+    border: none;
+    padding: 0.9375rem 1.5rem;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+}
+
+.login-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); }
+
+.login-error { background: #fef2f2; color: #b91c1c; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.8125rem; border: 1px solid #fecaca; }
+.field-error { color: #dc2626; font-size: 0.75rem; }
+.login-footer { text-align: center; margin-top: 2rem; color: #94a3b8; font-size: 0.75rem; }
+
+.login-info {
+    background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+    color: white;
+    padding: 4rem 3rem;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-info::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 50%, rgba(124, 58, 237, 0.15) 0%, transparent 50%);
+}
+
+.login-info-content { position: relative; max-width: 480px; }
+.login-info h2 { font-size: 2.25rem; font-weight: 700; margin: 0 0 1rem 0; line-height: 1.2; }
+.login-info p { font-size: 0.9375rem; line-height: 1.7; color: #cbd5e1; margin: 0 0 2rem 0; }
+
+.features-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem; }
+.features-list li { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: #e2e8f0; }
+.features-list .material-icons { color: #34d399; font-size: 18px; }
+
+@media (max-width: 960px) {
+    .login-wrapper { grid-template-columns: 1fr; }
+    .login-info { display: none; }
+}

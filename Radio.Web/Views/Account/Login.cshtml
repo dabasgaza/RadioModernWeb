@@ -1,0 +1,88 @@
+@{
+    Layout = "_LoginLayout";
+    ViewData["Title"] = "تسجيل الدخول";
+}
+
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="login-brand">
+            <div class="login-logo">
+                <span class="material-icons">radio</span>
+            </div>
+            <h1>نظام سير عمل البث الإذاعي</h1>
+            <p>سجّل دخولك للوصول إلى لوحة التحكم</p>
+        </div>
+
+        <form asp-action="Login" asp-controller="Account" method="post" class="login-form">
+            <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+            @if (ViewContext.ModelState.ErrorCount > 0)
+            {
+                <div asp-validation-summary="ModelOnly" class="login-error" role="alert"></div>
+            }
+
+            <div class="form-field">
+                <label for="Username">اسم المستخدم</label>
+                <div class="input-wrapper">
+                    <span class="material-icons input-icon">person</span>
+                    <input id="Username" name="Username" class="form-input" placeholder="أدخل اسم المستخدم" autocomplete="username" autofocus required />
+                </div>
+            </div>
+
+            <div class="form-field">
+                <label for="Password">كلمة المرور</label>
+                <div class="input-wrapper">
+                    <span class="material-icons input-icon">lock</span>
+                    <input id="Password" name="Password" type="password" class="form-input" placeholder="أدخل كلمة المرور" autocomplete="current-password" required />
+                    <button type="button" class="toggle-password" onclick="togglePassword(this)">
+                        <span class="material-icons">visibility</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-options">
+                <label class="checkbox-wrapper">
+                    <input id="RememberMe" name="RememberMe" type="checkbox" value="true" />
+                    <span>تذكّرني</span>
+                </label>
+            </div>
+
+            <button type="submit" class="login-btn">
+                <span class="material-icons">login</span>
+                <span>تسجيل الدخول</span>
+            </button>
+        </form>
+
+        <div class="login-footer">
+            <p>© @DateTime.UtcNow.Year نظام سير عمل البث الإذاعي — جميع الحقوق محفوظة</p>
+        </div>
+    </div>
+
+    <div class="login-info">
+        <div class="login-info-content">
+            <h2>أهلًا بك من جديد</h2>
+            <p>منصة متكاملة لإدارة سير عمل البث الإذاعي — من الجدولة والتنفيذ وحتى النشر الرقمي على جميع المنصات.</p>
+            <ul class="features-list">
+                <li><span class="material-icons">check_circle</span> إدارة شاملة للحلقات والبرامج</li>
+                <li><span class="material-icons">check_circle</span> متابعة لحظية لحالة كل حلقة</li>
+                <li><span class="material-icons">check_circle</span> نشر متعدد المنصات</li>
+                <li><span class="material-icons">check_circle</span> تقارير وإحصائيات متقدمة</li>
+                <li><span class="material-icons">check_circle</span> سجل تدقيق كامل لكل عملية</li>
+                <li><span class="material-icons">check_circle</span> صلاحيات دقيقة قائمة على الأدوار</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePassword(btn) {
+        const input = btn.parentElement.querySelector('input');
+        const icon = btn.querySelector('span');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.textContent = 'visibility_off';
+        } else {
+            input.type = 'password';
+            icon.textContent = 'visibility';
+        }
+    }
+</script>

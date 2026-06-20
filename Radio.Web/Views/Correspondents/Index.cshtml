@@ -1,0 +1,82 @@
+@model List<CorrespondentDto>
+@{
+    ViewData["Title"] = "المراسلون";
+}
+
+<div class="page-header">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <a href="/">الرئيسية</a>
+                <span class="material-icons">chevron_left</span>
+                <span>المراسلون</span>
+            </nav>
+            <h1>
+                <span class="material-icons">map</span>
+                المراسلون
+            </h1>
+            <p>إدارة بيانات المراسلين الميدانيين والمواقع المعينة</p>
+        </div>
+        @if (User.HasPermission(AppPermissions.CoordinationManage))
+        {
+            <a href="/Correspondents/Create" class="btn-primary"><span class="material-icons">add</span> مراسل جديد</a>
+        }
+    </div>
+</div>
+
+<div class="filter-premium">
+    <form method="get" class="flex gap-2">
+        <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث عن مراسل…" class="form-input flex-1" />
+        <button type="submit" class="btn-primary"><span class="material-icons">search</span></button>
+        <a href="/Correspondents" class="btn-secondary"><span class="material-icons">refresh</span></a>
+    </form>
+</div>
+
+<div class="table-premium">
+    @if (!Model.Any())
+    {
+        <div class="empty-state p-12">
+            <span class="material-icons empty-icon">map</span>
+            <h3 class="font-bold text-ink text-lg mb-2">لا مراسلين</h3>
+            <a href="/Correspondents/Create" class="btn-primary"><span class="material-icons">add</span> مراسل جديد</a>
+        </div>
+    }
+    else
+    {
+        <div class="overflow-x-auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th>الاسم</th>
+                        <th>الهاتف</th>
+                        <th>المواقع</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model)
+                    {
+                        <tr class="hover:bg-surface-2 transition duration-200">
+                            <td class="font-bold text-ink">@c.FullName</td>
+                            <td class="text-ink-muted">@(c.PhoneNumber ?? "—")</td>
+                            <td class="text-ink-muted">@(c.AssignedLocations ?? "—")</td>
+                            <td>
+                                <div class="flex items-center gap-1">
+                                    <a href="/Correspondents/Coverage/@c.CorrespondentId" class="icon-btn icon-btn-info" title="التغطيات"><span class="material-icons">list_alt</span></a>
+                                    @if (User.HasPermission(AppPermissions.CoordinationManage))
+                                    {
+                                        <a href="/Correspondents/Edit/@c.CorrespondentId" class="icon-btn icon-btn-primary"><span class="material-icons">edit</span></a>
+                                        <form method="post" action="/Correspondents/Delete/@c.CorrespondentId" class="inline" onsubmit="return confirm('حذف المراسل «@c.FullName»؟');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="icon-btn icon-btn-danger"><span class="material-icons">delete</span></button>
+                                        </form>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

@@ -1,0 +1,155 @@
+@using DataAccess.Common
+@inject ICurrentUserService CurrentUser
+
+@{
+    var controller = ViewContext.RouteData.Values["Controller"]?.ToString();
+}
+
+<aside class="sidebar-premium fixed right-0 top-0 h-screen" id="sidebar">
+    <!-- Brand -->
+    <div class="sidebar-brand bg-gradient-to-l from-primary to-secondary">
+        <a href="/" class="flex items-center gap-2.5 text-white no-underline">
+            <span class="material-icons text-2xl">radio</span>
+            <span class="font-bold text-base">نظام البث الإذاعي</span>
+        </a>
+        <button class="topbar-btn text-white/80 hover:bg-white/10 lg:hidden" onclick="closeSidebar()">
+            <span class="material-icons">close</span>
+        </button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sidebar-nav-wrapper">
+        <a href="/" class="nav-link @(controller == "Home" ? "active" : "")">
+            <span class="material-icons">dashboard</span>
+            <span>لوحة التحكم</span>
+        </a>
+
+        @if (CurrentUser.HasPermission(AppPermissions.EpisodeManage) || CurrentUser.HasPermission(AppPermissions.EpisodeEdit) || CurrentUser.HasPermission(AppPermissions.EpisodeExecute))
+        {
+            <a href="/Episodes" class="nav-link @(controller == "Episodes" ? "active" : "")">
+                <span class="material-icons">podcasts</span>
+                <span>الحلقات</span>
+            </a>
+        }
+
+        @if (CurrentUser.HasPermission(AppPermissions.ProgramManage))
+        {
+            <a href="/Programs" class="nav-link @(controller == "Programs" ? "active" : "")">
+                <span class="material-icons">radio</span>
+                <span>البرامج</span>
+            </a>
+        }
+
+        @if (CurrentUser.HasPermission(AppPermissions.GuestManage))
+        {
+            <a href="/Guests" class="nav-link @(controller == "Guests" ? "active" : "")">
+                <span class="material-icons">people_alt</span>
+                <span>الضيوف</span>
+            </a>
+        }
+
+        @if (CurrentUser.HasPermission(AppPermissions.CoordinationManage))
+        {
+            <span class="nav-section-label">التنسيق</span>
+            <a href="/Correspondents" class="nav-link @(controller == "Correspondents" ? "active" : "")">
+                <span class="material-icons">map</span>
+                <span>المراسلون</span>
+            </a>
+            <a href="/Coverage" class="nav-link @(controller == "Coverage" ? "active" : "")">
+                <span class="material-icons">edit_location_alt</span>
+                <span>التغطيات الميدانية</span>
+            </a>
+        }
+
+        @if (CurrentUser.HasPermission(AppPermissions.StaffManage))
+        {
+            <span class="nav-section-label">الموارد البشرية</span>
+            <div class="nav-group">
+                <button class="nav-link" onclick="toggleSubmenu(this)">
+                    <span class="material-icons">badge</span>
+                    <span class="flex-1 text-right">طاقم العمل</span>
+                    <span class="material-icons submenu-arrow mr-auto">expand_more</span>
+                </button>
+                <div class="submenu">
+                    <a href="/Employees" class="nav-link sub-link @(controller == "Employees" ? "active" : "")">
+                        <span>الموظفون</span>
+                    </a>
+                    <a href="/StaffRoles" class="nav-link sub-link @(controller == "StaffRoles" ? "active" : "")">
+                        <span>المسميات الوظيفية</span>
+                    </a>
+                </div>
+            </div>
+        }
+
+        @if (CurrentUser.HasPermission(AppPermissions.EpisodePublish) || CurrentUser.HasPermission(AppPermissions.EpisodeWebPublish))
+        {
+            <span class="nav-section-label">النشر</span>
+            <div class="nav-group">
+                <button class="nav-link" onclick="toggleSubmenu(this)">
+                    <span class="material-icons">publish</span>
+                    <span class="flex-1 text-right">النشر الرقمي</span>
+                    <span class="material-icons submenu-arrow mr-auto">expand_more</span>
+                </button>
+                <div class="submenu">
+                    <a href="/Publishing" class="nav-link sub-link @(controller == "Publishing" ? "active" : "")">
+                        <span>النشر الاجتماعي</span>
+                    </a>
+                    <a href="/WebsitePublishing" class="nav-link sub-link @(controller == "WebsitePublishing" ? "active" : "")">
+                        <span>نشر الموقع</span>
+                    </a>
+                    <a href="/ExecutionLogs" class="nav-link sub-link @(controller == "ExecutionLogs" ? "active" : "")">
+                        <span>سجلات التنفيذ</span>
+                    </a>
+                </div>
+            </div>
+        }
+
+        @if (CurrentUser.HasPermission(AppPermissions.StaffManage))
+        {
+            <a href="/SocialPlatforms" class="nav-link @(controller == "SocialPlatforms" ? "active" : "")">
+                <span class="material-icons">share</span>
+                <span>منصات النشر</span>
+            </a>
+        }
+
+        @if (CurrentUser.HasPermission(AppPermissions.ViewReports))
+        {
+            <a href="/Reports" class="nav-link @(controller == "Reports" ? "active" : "")">
+                <span class="material-icons">assessment</span>
+                <span>التقارير</span>
+            </a>
+        }
+
+        @if (CurrentUser.HasPermission(AppPermissions.UserManage))
+        {
+            <span class="nav-section-label">الإدارة</span>
+            <div class="nav-group">
+                <button class="nav-link" onclick="toggleSubmenu(this)">
+                    <span class="material-icons">admin_panel_settings</span>
+                    <span class="flex-1 text-right">إدارة النظام</span>
+                    <span class="material-icons submenu-arrow mr-auto">expand_more</span>
+                </button>
+                <div class="submenu">
+                    <a href="/Users" class="nav-link sub-link @(controller == "Users" ? "active" : "")">
+                        <span>المستخدمون</span>
+                    </a>
+                    <a href="/Roles" class="nav-link sub-link @(controller == "Roles" ? "active" : "")">
+                        <span>الأدوار</span>
+                    </a>
+                    <a href="/Permissions" class="nav-link sub-link @(controller == "Permissions" ? "active" : "")">
+                        <span>الصلاحيات</span>
+                    </a>
+                    <a href="/AuditLogs" class="nav-link sub-link @(controller == "AuditLogs" ? "active" : "")">
+                        <span>سجل التدقيق</span>
+                    </a>
+                    <a href="/Database" class="nav-link sub-link @(controller == "Database" ? "active" : "")">
+                        <span>قاعدة البيانات</span>
+                    </a>
+                    <a href="/Diagnostics" class="nav-link sub-link @(controller == "Diagnostics" ? "active" : "")">
+                        <span>تشخيص النظام</span>
+                    </a>
+                </div>
+            </div>
+        }
+    </nav>
+</aside>

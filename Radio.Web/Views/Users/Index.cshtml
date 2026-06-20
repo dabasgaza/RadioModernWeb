@@ -1,0 +1,93 @@
+@model List<UserDto>
+@{ ViewData["Title"] = "المستخدمون"; }
+
+<div class="page-header">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <a href="/">الرئيسية</a>
+                <span class="material-icons">chevron_left</span>
+                <span>المستخدمون</span>
+            </nav>
+            <h1>
+                <span class="material-icons">admin_panel_settings</span>
+                المستخدمون
+            </h1>
+            <p>إدارة حسابات المستخدمين وأدوارهم</p>
+        </div>
+        @if (User.HasPermission(AppPermissions.UserManage))
+        {
+            <a href="/Users/Create" class="btn-primary"><span class="material-icons">add</span> مستخدم جديد</a>
+        }
+    </div>
+</div>
+
+<div class="filter-premium">
+    <form method="get" class="flex gap-2">
+        <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث عن مستخدم…" class="form-input flex-1" />
+        <button type="submit" class="btn-primary"><span class="material-icons">search</span></button>
+        <a href="/Users" class="btn-secondary"><span class="material-icons">refresh</span></a>
+    </form>
+</div>
+
+<div class="table-premium">
+    @if (!Model.Any())
+    {
+        <div class="empty-state p-12">
+            <span class="material-icons empty-icon">admin_panel_settings</span>
+            <h3 class="font-bold text-ink text-lg mb-2">لا مستخدمين</h3>
+            <a href="/Users/Create" class="btn-primary"><span class="material-icons">add</span> مستخدم جديد</a>
+        </div>
+    }
+    else
+    {
+        <div class="overflow-x-auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th>الاسم</th>
+                        <th>اسم الدخول</th>
+                        <th>البريد</th>
+                        <th>الدور</th>
+                        <th>الحالة</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var u in Model)
+                    {
+                        <tr class="hover:bg-surface-2 transition duration-200">
+                            <td class="font-bold text-ink">@u.FullName</td>
+                            <td class="text-ink-muted">@u.Username</td>
+                            <td class="text-ink-muted">@u.EmailAddress</td>
+                            <td><span class="badge-premium bg-blue-50 text-blue-700 border-blue-200">@u.RoleName</span></td>
+                            <td>
+                                <span class="badge-premium @(u.IsActive ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-red-50 text-red-700 border-red-200")">
+                                    @(u.IsActive ? "نشط" : "معطّل")
+                                </span>
+                            </td>
+                            <td>
+                                @if (User.HasPermission(AppPermissions.UserManage))
+                                {
+                                    <div class="flex items-center gap-1">
+                                        <a href="/Users/Edit/@u.UserId" class="icon-btn icon-btn-primary"><span class="material-icons">edit</span></a>
+                                        <form method="post" action="/Users/ToggleStatus/@u.UserId" class="inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="icon-btn @(u.IsActive ? "icon-btn-warning" : "icon-btn-success")" title="@(u.IsActive ? "تعطيل" : "تفعيل")">
+                                                <span class="material-icons">@(u.IsActive ? "block" : "check_circle")</span>
+                                            </button>
+                                        </form>
+                                        <form method="post" action="/Users/Delete/@u.UserId" class="inline" onsubmit="return confirm('حذف المستخدم «@u.FullName»؟');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="icon-btn icon-btn-danger"><span class="material-icons">delete</span></button>
+                                        </form>
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

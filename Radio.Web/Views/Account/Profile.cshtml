@@ -1,0 +1,46 @@
+@{
+    ViewData["Title"] = "الملف الشخصي";
+}
+
+<div class="page-header">
+    <div class="relative z-10">
+        <nav class="breadcrumb">
+            <a href="/">الرئيسية</a>
+            <span class="material-icons">chevron_left</span>
+            <span>الملف الشخصي</span>
+        </nav>
+        <h1>
+            <span class="material-icons">person</span>
+            الملف الشخصي
+        </h1>
+        <p>إدارة بياناتك الشخصية</p>
+    </div>
+</div>
+
+<div class="card-premium p-6 max-w-2xl">
+    <div class="flex items-center gap-4 mb-6">
+        <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center text-3xl font-bold shadow-lg shrink-0">
+            @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
+        </div>
+        <div>
+            <h2 class="text-xl font-bold text-ink">@User.FindFirst("FullName")?.Value</h2>
+            <p class="text-ink-muted text-sm">@User.Identity?.Name</p>
+            <span class="badge-premium bg-blue-50 text-blue-700 border-blue-200 mt-1 inline-block">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
+        </div>
+    </div>
+
+    <div class="space-y-3 border-t border-border/60 pt-4">
+        <div class="flex items-center justify-between py-2.5 px-3 bg-surface-3 rounded-xl">
+            <span class="text-ink-muted font-medium">البريد الإلكتروني</span>
+            <span class="font-bold text-ink">@User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value</span>
+        </div>
+        <div class="flex items-center justify-between py-2.5 px-3 bg-surface-3 rounded-xl">
+            <span class="text-ink-muted font-medium">رقم الهاتف</span>
+            <span class="font-bold text-ink">@User.FindFirst("Phone")?.Value</span>
+        </div>
+        <div class="flex items-center justify-between py-2.5 px-3 bg-surface-3 rounded-xl">
+            <span class="text-ink-muted font-medium">معرّف المستخدم</span>
+            <span class="font-bold text-ink">@User.FindFirst("DomainUserId")?.Value</span>
+        </div>
+    </div>
+</div>

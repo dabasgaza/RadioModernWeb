@@ -1,0 +1,49 @@
+@model SocialMediaPlatformDto
+@{
+    ViewData["Title"] = Model.SocialMediaPlatformId == 0 ? "منصة جديدة" : "تعديل منصة";
+    var isEdit = Model.SocialMediaPlatformId != 0;
+}
+
+<div class="page-header">
+    <div class="relative z-10">
+        <nav class="breadcrumb">
+            <a href="/SocialPlatforms">منصات النشر</a>
+            <span class="material-icons">chevron_left</span>
+            <span>@(isEdit ? "تعديل" : "جديد")</span>
+        </nav>
+        <h1>
+            <span class="material-icons">@(isEdit ? "edit" : "add")</span>
+            @(isEdit ? "تعديل منصة" : "منصة جديدة")
+        </h1>
+    </div>
+</div>
+
+<form method="post" action="@(isEdit ? $"/SocialPlatforms/Edit/{Model.SocialMediaPlatformId}" : "/SocialPlatforms/Create")" class="max-w-md">
+    @Html.AntiForgeryToken()
+    @if (isEdit) { <input type="hidden" name="SocialMediaPlatformId" value="@Model.SocialMediaPlatformId" /> }
+    @if (ViewContext.ModelState.ErrorCount > 0)
+    {
+        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-4"></div>
+    }
+
+    <div class="card-premium p-5 space-y-4">
+        <div>
+            <label class="form-label">اسم المنصة *</label>
+            <input type="text" name="Name" value="@Model.Name" class="form-input" required />
+        </div>
+        <div>
+            <label class="form-label">أيقونة (Material Icon)</label>
+            <input type="text" name="Icon" value="@Model.Icon" class="form-input" placeholder="مثل: facebook, share" />
+        </div>
+        <div>
+            <label class="form-label">الرابط الأساسي (Base URL)</label>
+            <input type="url" name="BaseUrl" value="@Model.BaseUrl" class="form-input" dir="ltr" placeholder="https://www.youtube.com/watch?v=" />
+            <p class="text-xs text-ink-muted mt-1">يُستخدم كبادئة عند إدخال رابط النشر</p>
+        </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-2 mt-4">
+        <a href="/SocialPlatforms" class="btn-secondary"><span class="material-icons">cancel</span> إلغاء</a>
+        <button type="submit" class="btn-primary"><span class="material-icons">save</span> حفظ</button>
+    </div>
+</form>

@@ -1,0 +1,59 @@
+@model List<PublishingRecordDto>
+@{ ViewData["Title"] = "سجلات التنفيذ"; }
+
+<div class="page-header">
+    <div class="relative z-10">
+        <nav class="breadcrumb">
+            <a href="/">الرئيسية</a>
+            <span class="material-icons">chevron_left</span>
+            <span>سجلات التنفيذ</span>
+        </nav>
+        <h1>
+            <span class="material-icons">play_circle</span>
+            سجلات التنفيذ
+        </h1>
+        <p>سجل عمليات تنفيذ الحلقات</p>
+    </div>
+</div>
+
+<div class="table-premium">
+    @if (!Model.Any())
+    {
+        <div class="empty-state p-12">
+            <span class="material-icons empty-icon">play_circle</span>
+            <h3 class="font-bold text-ink text-lg mb-2">لا سجلات تنفيذ</h3>
+        </div>
+    }
+    else
+    {
+        <div class="overflow-x-auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th>الحلقة</th>
+                        <th>البرنامج</th>
+                        <th>الملخص</th>
+                        <th>بواسطة</th>
+                        <th>التاريخ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model)
+                    {
+                        <tr class="hover:bg-surface-2 transition duration-200">
+                            <td>
+                                <a href="/Episodes/Details/@r.EpisodeId" class="text-primary font-bold hover:underline">
+                                    @(r.EpisodeName ?? "—")
+                                </a>
+                            </td>
+                            <td class="text-ink-muted">@r.ProgramName</td>
+                            <td class="text-ink-muted">@r.Summary</td>
+                            <td class="text-ink-muted">@r.RecordedBy</td>
+                            <td class="text-ink-muted">@r.RecordDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

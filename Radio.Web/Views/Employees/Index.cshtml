@@ -1,0 +1,88 @@
+@model List<EmployeeDto>
+@{
+    ViewData["Title"] = "الموظفون";
+    var staffRoles = ViewBag.StaffRoles as List<StaffRoleDto>;
+}
+
+<div class="page-header">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <a href="/">الرئيسية</a>
+                <span class="material-icons">chevron_left</span>
+                <span>الموظفون</span>
+            </nav>
+            <h1>
+                <span class="material-icons">badge</span>
+                الموظفون
+            </h1>
+            <p>إدارة أعضاء طاقم العمل والإنتاج</p>
+        </div>
+        @if (User.HasPermission(AppPermissions.StaffManage))
+        {
+            <a href="/Employees/Create" class="btn-primary"><span class="material-icons">add</span> موظف جديد</a>
+        }
+    </div>
+</div>
+
+<div class="filter-premium">
+    <form method="get" class="flex gap-2">
+        <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث عن موظف…" class="form-input flex-1" />
+        <button type="submit" class="btn-primary"><span class="material-icons">search</span></button>
+        <a href="/Employees" class="btn-secondary"><span class="material-icons">refresh</span></a>
+    </form>
+</div>
+
+<div class="table-premium">
+    @if (!Model.Any())
+    {
+        <div class="empty-state p-12">
+            <span class="material-icons empty-icon">badge</span>
+            <h3 class="font-bold text-ink text-lg mb-2">لا موظفين</h3>
+            <a href="/Employees/Create" class="btn-primary"><span class="material-icons">add</span> موظف جديد</a>
+        </div>
+    }
+    else
+    {
+        <div class="overflow-x-auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th>الاسم</th>
+                        <th>الدور</th>
+                        <th>ملاحظات</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var e in Model)
+                    {
+                        <tr class="hover:bg-surface-2 transition duration-200">
+                            <td class="font-bold text-ink">@e.FullName</td>
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(e.StaffRoleName))
+                                {
+                                    <span class="badge-premium bg-blue-50 text-blue-700 border-blue-200">@e.StaffRoleName</span>
+                                }
+                                else { <span class="text-ink-soft">—</span> }
+                            </td>
+                            <td class="text-ink-muted">@(e.Notes ?? "—")</td>
+                            <td>
+                                @if (User.HasPermission(AppPermissions.StaffManage))
+                                {
+                                    <div class="flex items-center gap-1">
+                                        <a href="/Employees/Edit/@e.EmployeeId" class="icon-btn icon-btn-primary"><span class="material-icons">edit</span></a>
+                                        <form method="post" action="/Employees/Delete/@e.EmployeeId" class="inline" onsubmit="return confirm('حذف الموظف؟');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="icon-btn icon-btn-danger"><span class="material-icons">delete</span></button>
+                                        </form>
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

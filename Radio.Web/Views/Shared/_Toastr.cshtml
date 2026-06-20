@@ -1,0 +1,64 @@
+@using Microsoft.AspNetCore.Mvc.ViewFeatures
+@inject ITempDataDictionaryFactory TempDataFactory
+
+@{
+    var tempData = TempDataFactory.GetTempData(Context);
+    var notificationsJson = tempData["ToastrNotifications"] as string;
+    var success = tempData["Success"] as string;
+    var error = tempData["Error"] as string;
+    var info = tempData["Info"] as string;
+    var warning = tempData["Warning"] as string;
+}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Apply premium class to toastr container
+        var container = document.getElementById('toast-container');
+        if (container) container.classList.add('toast-premium');
+
+        function showToast(type, message) {
+            if (typeof toastr === 'undefined') return;
+            toastr[type](message, '', {
+                positionClass: 'toast-bottom-left',
+                timeOut: 5000,
+                extendedTimeOut: 2000,
+                closeButton: true,
+                progressBar: true,
+                rtl: true,
+                newestOnTop: true
+            });
+        }
+
+        @if (!string.IsNullOrEmpty(success))
+        {
+            <text>showToast('success', '@Html.Raw(success.Replace("'", "\\'"))');</text>
+        }
+        @if (!string.IsNullOrEmpty(error))
+        {
+            <text>showToast('error', '@Html.Raw(error.Replace("'", "\\'"))');</text>
+        }
+        @if (!string.IsNullOrEmpty(info))
+        {
+            <text>showToast('info', '@Html.Raw(info.Replace("'", "\\'"))');</text>
+        }
+        @if (!string.IsNullOrEmpty(warning))
+        {
+            <text>showToast('warning', '@Html.Raw(warning.Replace("'", "\\'"))');</text>
+        }
+
+        @if (!string.IsNullOrEmpty(notificationsJson))
+        {
+            <text>
+                try {
+                    var notifications = @Html.Raw(notificationsJson);
+                    if (!Array.isArray(notifications)) notifications = [notifications];
+                    notifications.forEach(function (n) {
+                        showToast(n.type || 'info', n.message || '');
+                    });
+                } catch (e) {
+                    console.error('Failed to parse notifications:', e);
+                }
+            </text>
+        }
+    });
+</script>

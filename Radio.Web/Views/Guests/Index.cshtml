@@ -1,0 +1,83 @@
+@model List<GuestDto>
+@{
+    ViewData["Title"] = "الضيوف";
+}
+
+<div class="page-header">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <a href="/">الرئيسية</a>
+                <span class="material-icons">chevron_left</span>
+                <span>الضيوف</span>
+            </nav>
+            <h1>
+                <span class="material-icons">people_alt</span>
+                الضيوف
+            </h1>
+            <p>إدارة بيانات ضيوف البرامج الإذاعية</p>
+        </div>
+        @if (User.HasPermission(AppPermissions.GuestManage))
+        {
+            <a href="/Guests/Create" class="btn-primary"><span class="material-icons">add</span> ضيف جديد</a>
+        }
+    </div>
+</div>
+
+<div class="filter-premium">
+    <form method="get" class="flex gap-2">
+        <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث عن ضيف…" class="form-input flex-1" />
+        <button type="submit" class="btn-primary"><span class="material-icons">search</span></button>
+        <a href="/Guests" class="btn-secondary"><span class="material-icons">refresh</span></a>
+    </form>
+</div>
+
+<div class="table-premium">
+    @if (!Model.Any())
+    {
+        <div class="empty-state p-12">
+            <span class="material-icons empty-icon">people_alt</span>
+            <h3 class="font-bold text-ink text-lg mb-2">لا ضيوف</h3>
+            <a href="/Guests/Create" class="btn-primary"><span class="material-icons">add</span> ضيف جديد</a>
+        </div>
+    }
+    else
+    {
+        <div class="overflow-x-auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th>الاسم</th>
+                        <th>الجهة</th>
+                        <th>الهاتف</th>
+                        <th>البريد</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var g in Model)
+                    {
+                        <tr class="hover:bg-surface-2 transition duration-200">
+                            <td class="font-bold text-ink">@g.FullName</td>
+                            <td class="text-ink-muted">@(g.Organization ?? "—")</td>
+                            <td class="text-ink-muted">@(g.PhoneNumber ?? "—")</td>
+                            <td class="text-ink-muted">@(g.EmailAddress ?? "—")</td>
+                            <td>
+                                @if (User.HasPermission(AppPermissions.GuestManage))
+                                {
+                                    <div class="flex items-center gap-1">
+                                        <a href="/Guests/Edit/@g.GuestId" class="icon-btn icon-btn-primary"><span class="material-icons">edit</span></a>
+                                        <form method="post" action="/Guests/Delete/@g.GuestId" class="inline" onsubmit="return confirm('حذف الضيف «@g.FullName»؟');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="icon-btn icon-btn-danger"><span class="material-icons">delete</span></button>
+                                        </form>
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

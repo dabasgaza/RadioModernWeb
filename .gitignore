@@ -1,0 +1,35 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+.idea/
+
+# Logs
+logs/
+*.log
+
+# App settings (override per-environment)
+appsettings.Production.json
+appsettings.Local.json
+secrets.json
+
+# Keys (Data Protection)
+keys/
+
+# Database backups
+backups/
+*.bak
+
+# Uploads (runtime content)
+wwwroot/uploads/*
+!wwwroot/uploads/.gitkeep
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Node (for Tailwind build, optional)
+node_modules/
+package-lock.json

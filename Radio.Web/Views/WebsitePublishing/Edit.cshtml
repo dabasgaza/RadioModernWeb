@@ -1,0 +1,152 @@
+@model WebsitePublishEditViewModel
+@{
+    ViewData["Title"] = "تعديل سجل نشر الموقع";
+    var log = Model.Log;
+    var episode = Model.Episode;
+}
+
+<div class="page-header">
+    <div class="relative z-10">
+        <nav class="breadcrumb">
+            <a href="/WebsitePublishing">نشر الموقع</a>
+            <span class="material-icons">chevron_left</span>
+            <span>تعديل</span>
+        </nav>
+        <h1>
+            <span class="material-icons">edit</span>
+            تعديل سجل نشر الموقع
+        </h1>
+    </div>
+</div>
+
+@if (log == null)
+{
+    <div class="bg-red-50 border border-red-200 text-danger rounded-xl p-4">سجل النشر غير موجود.</div>
+    return;
+}
+
+<div class="card-premium mb-4 p-5">
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center">
+                <span class="material-icons text-primary">podcasts</span>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold text-ink">@(episode?.EpisodeName ?? "—")</h3>
+                <p class="text-sm text-ink-muted">@(episode?.ProgramName ?? "")</p>
+            </div>
+        </div>
+        <a href="/Episodes/Details/@log.EpisodeId" class="btn-secondary text-sm" target="_blank">
+            <span class="material-icons">open_in_new</span>
+            عرض الحلقة
+        </a>
+    </div>
+</div>
+
+<form method="post" action="/WebsitePublishing/Edit/@log.Id">
+    @Html.AntiForgeryToken()
+
+    <div class="card-premium mb-4 p-5 space-y-4">
+        <div>
+            <label class="form-label">عنوان النشر *</label>
+            <input type="text" name="title" class="form-input" placeholder="عنوان الحلقة على الموقع" required
+                   value="@log.Title" />
+        </div>
+        <div>
+            <label class="form-label">نوع الوسائط *</label>
+            <select name="mediaType" class="form-input" required>
+                <option value="Audio" selected="@(log.MediaType == "Audio")">صوت</option>
+                <option value="Video" selected="@(log.MediaType == "Video")">فيديو</option>
+                <option value="Both" selected="@(log.MediaType == "Both")">صوت وفيديو</option>
+            </select>
+        </div>
+        <div>
+            <label class="form-label">ملاحظات النشر</label>
+            <textarea name="notes" rows="4" class="form-input" placeholder="أي ملاحظات إضافية حول النشر…">@log.Notes</textarea>
+        </div>
+        <div class="text-xs text-ink-muted">
+            تاريخ النشر: <span class="text-ink" dir="ltr">@log.PublishedAt.ToString("yyyy-MM-dd HH:mm")</span>
+        </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-2">
+        <a href="/WebsitePublishing" class="btn-secondary">
+            <span class="material-icons">cancel</span>
+            إلغاء
+        </a>
+        <button type="submit" class="btn-primary">
+            <span class="material-icons">save</span>
+            حفظ التعديلات
+        </button>
+    </div>
+</form>
+
+<div class="card-premium mt-8">
+    <div class="card-header">
+        <h3 class="font-bold text-ink flex items-center gap-2">
+            <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">history</span>
+            كافة سجلات النشر والإنتاج (@(Model.EpisodePublishingRecords?.Count ?? 0))
+        </h3>
+    </div>
+    <div class="card-body">
+        @if (Model.EpisodePublishingRecords == null || !Model.EpisodePublishingRecords.Any())
+        {
+            <p class="text-sm text-ink-muted">لا توجد سجلات أخرى لهذه الحلقة.</p>
+        }
+        else
+        {
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-ink-muted border-b border-border text-right text-xs">
+                            <th class="pb-3 font-bold">النوع</th>
+                            <th class="pb-3 font-bold">التفاصيل</th>
+                            <th class="pb-3 font-bold">بواسطة</th>
+                            <th class="pb-3 font-bold">التاريخ</th>
+                            <th class="pb-3 font-bold text-center">الإجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-border/60">
+                        @foreach (var r in Model.EpisodePublishingRecords)
+                        {
+                            <tr class="hover:bg-surface-2 transition duration-200">
+                                <td class="py-3">
+                                    <span class="badge-premium text-xs font-bold" style="background-color: @(r.RecordColor)15; color: @r.RecordColor; border-color: @(r.RecordColor)30">
+                                        @GetRecordTypeName(r.RecordType)
+                                    </span>
+                                </td>
+                                <td class="py-3 text-ink-muted">@r.Summary</td>
+                                <td class="py-3 text-ink-muted font-medium">@(r.RecordedBy ?? "تلقائي")</td>
+                                <td class="py-3 text-ink-soft text-xs" dir="ltr">@r.RecordDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td class="py-3 text-center">
+                                    @if (r.RecordType == "SocialMedia")
+                                    {
+                                        <a href="/Publishing/Edit/@r.RecordId" class="text-primary font-bold hover:underline">تعديل</a>
+                                    }
+                                    else if (r.RecordType == "Website")
+                                    {
+                                        <a href="/WebsitePublishing/Edit/@r.RecordId" class="text-primary font-bold hover:underline">تعديل</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-xs text-ink-soft">—</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@functions {
+    string GetRecordTypeName(string t) => t switch
+    {
+        "Execution" => "سجل الإنتاج",
+        "SocialMedia" => "نشر رقمي",
+        "Website" => "نشر موقع",
+        _ => t
+    };
+}

@@ -1,0 +1,63 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Domain.Models.Configurations;
+
+public class EpisodeGuestConfiguration : IEntityTypeConfiguration<EpisodeGuest>
+{
+    public void Configure(EntityTypeBuilder<EpisodeGuest> builder)
+    {
+        // 1. المفتاح الأساسي (إزالة الاسم القبيح)
+        builder.HasKey(e => e.EpisodeGuestId);
+
+        // 2. الفهارس (Indexes)
+        // ✨ فهرس فريد مركب لمنع إضافة نفس الضيف لنفس الحلقة مرتين
+        builder.HasIndex(e => new { e.EpisodeId, e.GuestId }, "UQ_EpisodeGuests")
+              .IsUnique();
+
+        // فهرس لتسريع البحث والتحقق والربط للضيوف
+        builder.HasIndex(e => e.GuestId)
+              .HasDatabaseName("IX_EpisodeGuests_GuestId");
+
+        // 3. إعدادات الخصائص (Properties)
+        builder.Property(e => e.Topic)
+               .HasMaxLength(500);
+
+        builder.Property(eg => eg.HostingTime)
+       .HasColumnType("TIME")              // PostgreSQL: TIME / SQL Server: TIME
+       .IsRequired(false);                // اختياري — بعض الضيوف قد لا يوجد وقت محدد
+
+
+        builder.Property(e => e.CreatedAt)
+               .HasDefaultValueSql("GETUTCDATE()");
+
+        builder.Property(e => e.IsActive)
+               .HasDefaultValue(true);
+
+        builder.Property(e => e.RowVersion)
+               .IsRowVersion()
+               .IsConcurrencyToken();
+
+        // 4. العلاقات (Relationships)
+
+
+
+        // علاقة الحلقة (Episode)
+        // ✨ جدول الربط عادة يتبع دورة حياة الآباء، لذا Cascade هنا منطقي
+        // إذا حُذفت الحلقة فعلياً من قاعدة البيانات، يُحذف سجل الربط
+        builder.HasOne(d => d.Episode)
+              .WithMany(p => p.EpisodeGuests)
+              .HasForeignKey(d => d.EpisodeId)
+              .OnDelete(DeleteBehavior.Cascade);
+
+        // علاقة الضيف (Guest)
+        builder.HasOne(d => d.Guest)
+              .WithMany(p => p.EpisodeGuests)
+              .HasForeignKey(d => d.GuestId)
+              .OnDelete(DeleteBehavior.Cascade);
+
+        // 5. فلتر الحذف المنطقي (Soft Delete)
+        // ✨ تم إزالة HasQueryFilter — الفلتر يُطبّق مركزياً عبر GenerateSoftDeleteFilter في BroadcastWorkflowDBContext
+        // EpisodeGuest يرث من BaseEntity لذلك يغطيه الفلتر الديناميكي تلقائياً
+    }
+}

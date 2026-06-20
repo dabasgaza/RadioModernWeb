@@ -1,0 +1,81 @@
+@model UserViewModel
+@{
+    ViewData["Title"] = Model.UserId == 0 ? "مستخدم جديد" : "تعديل مستخدم";
+    var isEdit = Model.UserId != 0;
+    var roles = ViewBag.Roles as List<RoleDto>;
+}
+
+<div class="page-header">
+    <div class="relative z-10">
+        <nav class="breadcrumb">
+            <a href="/Users">المستخدمون</a>
+            <span class="material-icons">chevron_left</span>
+            <span>@(isEdit ? "تعديل" : "جديد")</span>
+        </nav>
+        <h1>
+            <span class="material-icons">@(isEdit ? "edit" : "add")</span>
+            @(isEdit ? "تعديل مستخدم" : "مستخدم جديد")
+        </h1>
+    </div>
+</div>
+
+<form method="post" action="@(isEdit ? $"/Users/Edit/{Model.UserId}" : "/Users/Create")" class="max-w-2xl">
+    @Html.AntiForgeryToken()
+    @if (isEdit) { <input type="hidden" name="UserId" value="@Model.UserId" /> }
+    <input type="hidden" name="IsActive" value="@Model.IsActive.ToString().ToLower()" />
+    @if (ViewContext.ModelState.ErrorCount > 0)
+    {
+        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-4"></div>
+    }
+
+    <div class="card-premium p-5 space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="form-label">الاسم الكامل *</label>
+                <input type="text" name="FullName" value="@Model.FullName" class="form-input" required />
+            </div>
+            <div>
+                <label class="form-label">اسم الدخول *</label>
+                <input type="text" name="Username" value="@Model.Username" class="form-input" required @(isEdit ? "readonly" : "") />
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="form-label">البريد الإلكتروني</label>
+                <input type="email" name="EmailAddress" value="@Model.EmailAddress" class="form-input" />
+            </div>
+            <div>
+                <label class="form-label">رقم الهاتف</label>
+                <input type="text" name="PhoneNumber" value="@Model.PhoneNumber" class="form-input" />
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="form-label">الدور *</label>
+                <select name="RoleId" class="form-input" required>
+                    <option value="">— اختر —</option>
+                    @foreach (var r in roles ?? new())
+                    {
+                        <option value="@r.RoleId" selected="@(Model.RoleId == r.RoleId)">@r.RoleName</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label class="form-label">@if (isEdit) { <text>كلمة مرور جديدة (اتركها فارغة للإبقاء)</text> } else { <text>كلمة المرور *</text> }</label>
+                <input type="password" name="Password" class="form-input" />
+            </div>
+        </div>
+        @if (isEdit)
+        {
+            <div class="flex items-center gap-2 pt-2 border-t border-border/60">
+                <input type="checkbox" name="IsActive" value="true" id="IsActive" @(Model.IsActive ? "checked" : "") class="w-4 h-4 rounded border-border text-primary focus:ring-primary/20" />
+                <label for="IsActive" class="text-sm font-medium text-ink">الحساب نشط</label>
+            </div>
+        }
+    </div>
+
+    <div class="flex items-center justify-end gap-2 mt-4">
+        <a href="/Users" class="btn-secondary"><span class="material-icons">cancel</span> إلغاء</a>
+        <button type="submit" class="btn-primary"><span class="material-icons">save</span> حفظ</button>
+    </div>
+</form>

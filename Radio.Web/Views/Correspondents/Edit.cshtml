@@ -1,0 +1,48 @@
+@model CorrespondentDto
+@{
+    ViewData["Title"] = Model.CorrespondentId == 0 ? "مراسل جديد" : "تعديل مراسل";
+    var isEdit = Model.CorrespondentId != 0;
+}
+
+<div class="page-header">
+    <div class="relative z-10">
+        <nav class="breadcrumb">
+            <a href="/Correspondents">المراسلون</a>
+            <span class="material-icons">chevron_left</span>
+            <span>@(isEdit ? "تعديل" : "جديد")</span>
+        </nav>
+        <h1>
+            <span class="material-icons">@(isEdit ? "edit" : "add")</span>
+            @(isEdit ? "تعديل مراسل" : "مراسل جديد")
+        </h1>
+    </div>
+</div>
+
+<form method="post" action="@(isEdit ? $"/Correspondents/Edit/{Model.CorrespondentId}" : "/Correspondents/Create")" class="max-w-2xl">
+    @Html.AntiForgeryToken()
+    @if (isEdit) { <input type="hidden" name="CorrespondentId" value="@Model.CorrespondentId" /> }
+    @if (ViewContext.ModelState.ErrorCount > 0)
+    {
+        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-4"></div>
+    }
+
+    <div class="card-premium p-5 space-y-4">
+        <div>
+            <label class="form-label">الاسم الكامل *</label>
+            <input type="text" name="FullName" value="@Model.FullName" class="form-input" required />
+        </div>
+        <div>
+            <label class="form-label">رقم الهاتف *</label>
+            <input type="text" name="PhoneNumber" value="@Model.PhoneNumber" class="form-input" required />
+        </div>
+        <div>
+            <label class="form-label">المواقع المعيّنة</label>
+            <textarea name="AssignedLocations" rows="3" class="form-input">@Model.AssignedLocations</textarea>
+        </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-2 mt-4">
+        <a href="/Correspondents" class="btn-secondary"><span class="material-icons">cancel</span> إلغاء</a>
+        <button type="submit" class="btn-primary"><span class="material-icons">save</span> حفظ</button>
+    </div>
+</form>
