@@ -26,26 +26,26 @@
 
         @if (!string.IsNullOrEmpty(success))
         {
-            <text>showToast('success', '@Html.Raw(success.Replace("'", "\\'"))');</text>
+            <text>showToast('success', @Json.Serialize(success));</text>
         }
         @if (!string.IsNullOrEmpty(error))
         {
-            <text>showToast('error', '@Html.Raw(error.Replace("'", "\\'"))');</text>
+            <text>showToast('error', @Json.Serialize(error));</text>
         }
         @if (!string.IsNullOrEmpty(info))
         {
-            <text>showToast('info', '@Html.Raw(info.Replace("'", "\\'"))');</text>
+            <text>showToast('info', @Json.Serialize(info));</text>
         }
         @if (!string.IsNullOrEmpty(warning))
         {
-            <text>showToast('warning', '@Html.Raw(warning.Replace("'", "\\'"))');</text>
+            <text>showToast('warning', @Json.Serialize(warning));</text>
         }
 
         @if (!string.IsNullOrEmpty(notificationsJson))
         {
             <text>
                 try {
-                    var notifications = @Html.Raw(notificationsJson);
+                    var notifications = @Json.Serialize(notificationsJson);
                     if (!Array.isArray(notifications)) notifications = [notifications];
                     notifications.forEach(function (n) {
                         showToast(n.type || 'info', n.message || '');

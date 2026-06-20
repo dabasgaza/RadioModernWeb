@@ -84,5 +84,5 @@ public class ViewDataService : IViewDataService
 
     public Task<Dictionary<byte, string>> GetEpisodeStatusesAsync() => _lookup.GetEpisodeStatusesAsync();
     public Task<List<StaffRoleDto>> GetStaffRolesAsync() => _lookup.GetStaffRolesAsync();
-    public Task<List<SocialMediaPlatformDto>> GetSocialPlatformsAsync() => _lookup.GetGuestsAsync().ContinueWith(_ => new List<SocialMediaPlatformDto>());
+    public Task<List<SocialMediaPlatformDto>> GetSocialPlatformsAsync() => _lookup.GetSocialPlatformsAsync();
 }

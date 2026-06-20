@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Radio.Web.Security;
 using Radio.Web.Services;
 using Radio.Web.ViewModels;
@@ -326,15 +327,18 @@ public class DatabaseController : Controller
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IDbContextFactory<BroadcastWorkflowDBContext> _ctxFactory;
     private readonly ILogger<DatabaseController> _logger;
+    private readonly IConfiguration _configuration;
 
     public DatabaseController(
         IDatabaseManagementService db,
         IIdentitySynchronizer sync,
         UserManager<ApplicationUser> userManager,
         IDbContextFactory<BroadcastWorkflowDBContext> ctxFactory,
-        ILogger<DatabaseController> logger)
+        ILogger<DatabaseController> logger,
+        IConfiguration configuration)
     {
         _db = db; _sync = sync; _userManager = userManager; _ctxFactory = ctxFactory; _logger = logger;
+        _configuration = configuration;
     }
 
     public async Task<IActionResult> Index()
@@ -366,11 +370,20 @@ public class DatabaseController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = AppPermissions.DatabaseManage)]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SeedIdentity()
     {
+        var defaultPassword = _configuration["Admin:InitialPassword"]
+            ?? throw new InvalidOperationException("Admin:InitialPassword must be set in configuration");
+
+        if (defaultPassword == "Admin@123")
+        {
+            TempData["Error"] = "كلمة المرور الافتراضية Admin@123 غير مسموح بها في الإنتاج";
+            return RedirectToAction(nameof(Index));
+        }
+
         await using var context = await _ctxFactory.CreateDbContextAsync();
 
         var domainUsers = await context.Users
@@ -378,7 +391,7 @@ public class DatabaseController : Controller
             .ToListAsync();
 
         var synced = 0;
-        var fixed_domain = 0;
+        var fixedDomain = 0;
         foreach (var du in domainUsers)
         {
             try
@@ -386,7 +399,6 @@ public class DatabaseController : Controller
                 var existing = await _userManager.FindByNameAsync(du.Username);
                 if (existing != null)
                 {
-                    // ponytail: fix existing Identity user with DomainUserId == 0
                     if (existing.DomainUserId == 0)
                     {
                         existing.DomainUserId = du.UserId;
@@ -394,17 +406,16 @@ public class DatabaseController : Controller
                         existing.Email = du.EmailAddress;
                         existing.FullName = du.FullName;
                         await _userManager.UpdateAsync(existing);
-                        fixed_domain++;
+                        fixedDomain++;
                     }
                     continue;
                 }
 
                 await _sync.CreateUserAsync(
-                    du.Username, "Admin@123", du.FullName,
+                    du.Username, defaultPassword, du.FullName,
                     du.EmailAddress, du.PhoneNumber, du.RoleId);
                 synced++;
 
-                // ponytail: assign role in Identity
                 var roleName = await context.Roles
                     .Where(r => r.RoleId == du.RoleId)
                     .Select(r => r.RoleName)
@@ -422,7 +433,7 @@ public class DatabaseController : Controller
             }
         }
 
-        TempData["Success"] = $"تمت مزامنة {synced} مستخدم/مستخدمين إلى Identity، وتم إصلاح {fixed_domain}.";
+        TempData["Success"] = $"تمت مزامنة {synced} مستخدم/مستخدمين إلى Identity، وتم إصلاح {fixedDomain}.";
         return RedirectToAction(nameof(Index));
     }
 }

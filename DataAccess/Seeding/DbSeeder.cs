@@ -10,7 +10,7 @@ namespace DataAccess.Seeding;
 /// </summary>
 public static class DbSeeder
 {
-    public static async Task SeedAsync(IDbContextFactory<BroadcastWorkflowDBContext> dbFactory)
+    public static async Task SeedAsync(IDbContextFactory<BroadcastWorkflowDBContext> dbFactory, string? adminPassword = null)
     {
         await using var context = await dbFactory.CreateDbContextAsync();
 
@@ -21,7 +21,7 @@ public static class DbSeeder
         await SeedPermissionsAsync(context);   // يجب أن يسبق SeedRolesAsync
         await SeedRolesAsync(context);
         await SeedRolePermissionsAsync(context);
-        await SeedAdminUserAsync(context);
+        await SeedAdminUserAsync(context, adminPassword);
         await SeedSocialMediaPlatformsAsync(context);
         await SeedStaffRolesAsync(context);
     }
@@ -224,7 +224,7 @@ public static class DbSeeder
     // مستخدم Admin الافتراضي
     // ═══════════════════════════════════════════
 
-    private static async Task SeedAdminUserAsync(BroadcastWorkflowDBContext context)
+    private static async Task SeedAdminUserAsync(BroadcastWorkflowDBContext context, string? adminPassword = null)
     {
         if (await context.Set<User>().AnyAsync())
             return;
@@ -240,7 +240,7 @@ public static class DbSeeder
         context.Set<User>().Add(new User
         {
             Username = "admin",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(adminPassword ?? SecurePasswordGenerator.Generate()),
             FullName = "مسؤول النظام",
             EmailAddress = "admin@broadcast.pro",
             PhoneNumber = "",

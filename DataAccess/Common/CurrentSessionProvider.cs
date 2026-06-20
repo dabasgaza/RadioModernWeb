@@ -4,12 +4,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DataAccess.Common
 {
-    /// <summary>
-    /// كلاس وحيد (Singleton) يحتفظ ببيانات المستخدم الحالي لكي تصل إليها قاعدة البيانات تلقائياً
-    /// </summary>
     public class CurrentSessionProvider(IServiceProvider serviceProvider)
     {
-        public UserSession? CurrentSession { get; set; }
+        private static readonly AsyncLocal<UserSession?> _current = new();
+
+        public UserSession? CurrentSession
+        {
+            get => _current.Value;
+            set => _current.Value = value;
+        }
 
         public async Task RefreshPermissionsAsync()
         {
@@ -40,5 +43,3 @@ namespace DataAccess.Common
         }
     }
 }
-
-

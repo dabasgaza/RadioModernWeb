@@ -1,12 +1,9 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Radio.Web.Hubs;
 
-/// <summary>
-/// Hub الإشعارات اللحظية — يربط الـ Services بالواجهة عبر WebSocket.
-/// كل عميل (متصفح) يتصل بهذا الـ Hub ويستقبل الإشعارات المُبثّة (تُعرض عبر Toastr).
-/// </summary>
 [Authorize]
 public class NotificationHub : Hub
 {
@@ -21,6 +18,20 @@ public class NotificationHub : Hub
     {
         var user = Context.User?.Identity?.Name ?? "anonymous";
         _logger.LogInformation("SignalR: اتصال جديد - {User} ({ConnectionId})", user, Context.ConnectionId);
+
+        var userId = Context.User?.FindFirstValue("DomainUserId");
+        if (userId != null)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"user:{userId}");
+        }
+
+        var roles = Context.User?.FindAll(ClaimsIdentity.DefaultRoleClaimType)
+            .Select(c => c.Value) ?? Enumerable.Empty<string>();
+        foreach (var role in roles)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"role:{role}");
+        }
+
         await base.OnConnectedAsync();
     }
 

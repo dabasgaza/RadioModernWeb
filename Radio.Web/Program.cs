@@ -8,13 +8,18 @@ using Domain.Identity;
 using Domain.Models;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
+using System.IO.Compression;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Radio.Web;
 using Radio.Web.Hubs;
+using Radio.Web.Middleware;
 using Radio.Web.Security;
 using Radio.Web.Services;
 using Serilog;
@@ -40,24 +45,37 @@ builder.Services.AddSingleton<SecureConfigurationProvider>();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("DefaultConnection is required");
 
-AuditInterceptor? s_auditInterceptor = null; // cached, resolved on first DbContext creation
+var adminPassword = builder.Configuration["Admin:InitialPassword"]
+    ?? SecurePasswordGenerator.Generate();
 
 // DbContext Factory
 builder.Services.AddDbContextFactory<BroadcastWorkflowDBContext>(
-    options => ConfigureDbContext(options, connectionString),
+    (sp, options) =>
+    {
+        options.UseSqlServer(connectionString, sql =>
+        {
+            sql.CommandTimeout(30);
+            sql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+        });
+
+        var auditInterceptor = sp.GetRequiredService<AuditInterceptor>();
+        options.AddInterceptors(auditInterceptor);
+    },
     ServiceLifetime.Scoped);
 
 // Identity
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 {
-    options.User.RequireUniqueEmail = false;
-    options.Password.RequiredLength = 6;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireDigit = false;
-    options.Password.RequireLowercase = false;
-    options.Password.RequireUppercase = false;
+    options.User.RequireUniqueEmail = true;
+    options.Password.RequiredLength = 12;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequiredUniqueChars = 4;
     options.Lockout.MaxFailedAccessAttempts = 5;
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+    options.SecurityStampValidationInterval = TimeSpan.FromMinutes(30);
 })
 .AddEntityFrameworkStores<BroadcastWorkflowDBContext>()
 .AddUserStore<UserStore<ApplicationUser, ApplicationRole, BroadcastWorkflowDBContext, int>>()
@@ -77,7 +95,9 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromDays(1);
     options.SlidingExpiration = true;
     options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.IsEssential = true;
 });
 
 // --- Authorization ---
@@ -97,6 +117,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(AppPermissions.DatabaseManage, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.DatabaseManage)));
     options.AddPolicy(AppPermissions.ViewAuditLogs, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.ViewAuditLogs)));
     options.AddPolicy(AppPermissions.EpisodeWebPublish, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.EpisodeWebPublish)));
+    options.AddPolicy(AppPermissions.UserManage, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.UserManage)));
 });
 
 // --- Database Interceptors ---
@@ -108,6 +129,9 @@ builder.Services.AddSingleton<DbQueryPerformanceInterceptor>(sp =>
 });
 builder.Services.AddSingleton<CurrentSessionProvider>();
 builder.Services.AddSingleton<AuditInterceptor>();
+
+// Session Capture Middleware
+builder.Services.AddScoped<SessionCaptureMiddleware>();
 builder.Services.AddScoped<IMessageService, MvcMessageService>();
 builder.Services.AddHostedService<MessageServiceInitializer>();
 
@@ -137,6 +161,24 @@ builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 builder.Services.AddScoped<ISystemDiagnosticsService, SystemDiagnosticsService>();
 builder.Services.AddHostedService<DatabaseBackupScheduler>();
 
+// --- Localization ---
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[]
+    {
+        new System.Globalization.CultureInfo("ar"),
+        new System.Globalization.CultureInfo("ar-SA"),
+        new System.Globalization.CultureInfo("en"),
+        new System.Globalization.CultureInfo("en-US")
+    };
+
+    options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("ar");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+    options.RequestCultureProviders.Insert(0,
+        new Microsoft.AspNetCore.Localization.CookieRequestCultureProvider());
+});
+
 // --- Caching ---
 builder.Services.AddHybridCache();
 
@@ -158,9 +200,37 @@ else
     }));
 }
 
+// --- Health Checks ---
+builder.Services.AddHealthChecks()
+    .AddSqlServer(connectionString, name: "sql-server");
+
+// --- Rate Limiting ---
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 100,
+                Window = TimeSpan.FromMinutes(1)
+            }));
+});
+
+// --- Response Compression ---
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
+});
+
+builder.Services.Configure<BrotliCompressionProviderOptions>(o => o.Level = CompressionLevel.Fastest);
+
 // --- MVC + Runtime Compilation ---
 builder.Services.AddControllersWithViews(options =>
 {
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
     options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(_ => "القيمة مطلوبة");
     options.ModelBindingMessageProvider.SetMissingBindRequiredValueAccessor(_ => "حقل مطلوب");
     options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((x, y) => $"القيمة '{x}' غير صالحة لـ {y}");
@@ -245,7 +315,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
                 IsActive = true,
                 EmailConfirmed = true,
             };
-            var result = await devUserManager.CreateAsync(appUser, "Admin@123");
+            var result = await devUserManager.CreateAsync(appUser, adminPassword);
             if (!result.Succeeded)
                 Log.Warning("Failed to seed Identity user {Username}: {Errors}",
                     du.Username, string.Join(", ", result.Errors.Select(e => e.Description)));
@@ -265,13 +335,24 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 
 app.UseSerilogRequestLogging();
 
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+    app.UseHttpsRedirection();
+}
+
 app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
 app.UseExceptionHandler("/Home/Error/500");
+
+app.UseResponseCompression();
+app.UseRateLimiter();
 
 app.UseStaticFiles();
 
 var locOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value;
 app.UseRequestLocalization(locOptions);
+
+app.UseMiddleware<SessionCaptureMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -284,6 +365,8 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 app.MapHub<NotificationHub>("/hubs/notifications");
+
+app.MapHealthChecks("/health");
 
 // ───────────────────────────────────────────────────────────────────────
 // Database Health Check
@@ -305,18 +388,4 @@ catch (Exception ex)
 
 await app.RunAsync();
 
-// ───────────────────────────────────────────────────────────────────────
-// Local Functions
-// ───────────────────────────────────────────────────────────────────────
 
-void ConfigureDbContext(DbContextOptionsBuilder options, string connectionString)
-{
-    options.UseSqlServer(connectionString, sql =>
-    {
-        sql.CommandTimeout(30);
-        sql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
-    });
-
-    s_auditInterceptor ??= builder.Services.BuildServiceProvider().GetRequiredService<AuditInterceptor>();
-    options.AddInterceptors(s_auditInterceptor);
-}
