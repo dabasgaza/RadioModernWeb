@@ -1,51 +1,66 @@
 @model List<DatabaseBackupLog>
-@{ ViewData["Title"] = "إدارة قاعدة البيانات"; }
+@{
+    ViewData["Title"] = "إدارة قاعدة البيانات";
+}
 
 <div class="page-header">
-    <div class="relative z-10">
-        <nav class="breadcrumb">
-            <a href="/">الرئيسية</a>
-            <span class="material-icons">chevron_left</span>
-            <span>قاعدة البيانات</span>
-        </nav>
-        <h1>
-            <span class="material-icons">storage</span>
-            إدارة قاعدة البيانات
-        </h1>
-        <p>النسخ الاحتياطي والاستعادة والصيانة</p>
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <span class="material-symbols-rounded">home</span>
+                <a href="/">الرئيسية</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <span>إدارة قاعدة البيانات</span>
+            </nav>
+            <h1>
+                <span class="material-symbols-rounded">storage</span>
+                إدارة قاعدة البيانات
+            </h1>
+            <p>النسخ الاحتياطي الكامل، الصيانة الوقائية والتهيئة وتتبع سجل العمليات</p>
+        </div>
     </div>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
     <div class="card-premium">
+        <div class="card-header">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-primary">backup</span>
+                <h3 class="font-bold text-ink text-base">نسخ احتياطي فوري</h3>
+            </div>
+        </div>
         <div class="card-body">
-            <h3 class="font-bold text-ink mb-3 flex items-center gap-2">
-                <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">backup</span>
-                نسخ احتياطي
-            </h3>
-            <p class="text-ink-muted text-sm mb-4">إنشاء نسخة احتياطية كاملة من قاعدة البيانات الحالية.</p>
+            <p class="text-ink-muted text-xs leading-relaxed mb-4">يُقترح إنشاء نسخة احتياطية بشكل دوري قبل القيام بأي عمليات صيانة أو تهيئة للبيانات لضمان حفظ حالة النظام.</p>
             @if (User.HasPermission(AppPermissions.DatabaseManage))
             {
-                <form method="post" action="/Database/Backup" onsubmit="return confirm('إنشاء نسخة احتياطية الآن؟');">
+                <form method="post" action="/Database/Backup" data-confirm="هل أنت متأكد من رغبتك في إنشاء نسخة احتياطية كاملة الآن؟">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="btn-primary"><span class="material-icons">backup</span> نسخة احتياطية الآن</button>
+                    <button type="submit" class="btn-primary flex items-center gap-1.5 w-full md:w-auto">
+                        <span class="material-symbols-rounded">backup</span>
+                        إنشاء نسخة احتياطية الآن
+                    </button>
                 </form>
             }
         </div>
     </div>
 
     <div class="card-premium">
+        <div class="card-header">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-warning">cleaning_services</span>
+                <h3 class="font-bold text-ink text-base">تهيئة وصيانة الجداول</h3>
+            </div>
+        </div>
         <div class="card-body">
-            <h3 class="font-bold text-ink mb-3 flex items-center gap-2">
-                <span class="material-icons text-warning p-1 bg-warning/10 rounded-lg">cleaning_services</span>
-                صيانة
-            </h3>
-            <p class="text-ink-muted text-sm mb-4">تهيئة قاعدة البيانات (إنشاء الجداول والبيانات الأولية).</p>
+            <p class="text-ink-muted text-xs leading-relaxed mb-4">إعادة تهيئة وتعمير قاعدة البيانات بالقيم والبيانات الأولية للتنفيذ الافتراضي للنظام.</p>
             @if (User.HasPermission(AppPermissions.DatabaseManage))
             {
-                <form method="post" action="/Database/Initialize" onsubmit="return confirm('تهيئة قاعدة البيانات؟');">
+                <form method="post" action="/Database/Initialize" data-confirm="إنتباه: هذه الخطوة قد تقوم بإعادة تهيئة الجداول الحالية والبيانات، هل تريد المتابعة فعلاً؟">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="btn-secondary"><span class="material-icons">build</span> تهيئة قاعدة البيانات</button>
+                    <button type="submit" class="btn-secondary flex items-center gap-1.5 w-full md:w-auto text-amber-700 border-amber-300">
+                        <span class="material-symbols-rounded text-warning">build</span>
+                        تهيئة قاعدة البيانات
+                    </button>
                 </form>
             }
         </div>
@@ -53,18 +68,18 @@
 </div>
 
 <div class="table-premium">
-    <div class="card-header">
-        <h3 class="font-bold text-ink flex items-center gap-2">
-            <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">history</span>
-            سجل النسخ الاحتياطي
+    <div class="p-5 border-b border-border flex items-center justify-between">
+        <h3 class="font-bold text-ink flex items-center gap-2 text-base">
+            <span class="material-symbols-rounded text-primary">history</span>
+            سجل النسخ الاحتياطي التاريخي
         </h3>
     </div>
     @if (!Model.Any())
     {
-        <div class="empty-state p-12">
-            <span class="material-icons empty-icon">history</span>
+        <div class="empty-state p-12 text-center">
+            <span class="material-symbols-rounded empty-icon">history</span>
             <h3 class="font-bold text-ink text-lg mb-2">لا نسخ احتياطية</h3>
-            <p class="text-ink-muted text-sm">لم تُنشأ أي نسخ احتياطية بعد.</p>
+            <p class="text-ink-muted text-sm">لم يتم تسجيل أي عمليات نسخ احتياطي تاريخية بعد.</p>
         </div>
     }
     else
@@ -73,24 +88,26 @@
             <table>
                 <thead>
                     <tr>
-                        <th>التاريخ</th>
-                        <th>النوع</th>
-                        <th>الحجم</th>
-                        <th>الحالة</th>
-                        <th>المسار</th>
+                        <th class="px-5 py-3 text-right font-semibold">التاريخ والوقت</th>
+                        <th class="px-5 py-3 text-right font-semibold">النوع</th>
+                        <th class="px-5 py-3 text-right font-semibold">الحجم</th>
+                        <th class="px-5 py-3 text-right font-semibold">الحالة</th>
+                        <th class="px-5 py-3 text-right font-semibold">مسار الملف</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var b in Model)
                     {
-                        <tr class="hover:bg-surface-2 transition duration-200">
-                            <td class="text-ink-muted">@b.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
-                            <td class="text-ink-muted">@b.BackupType</td>
-                            <td class="text-ink-muted">@FormatSize(b.FileSize)</td>
-                            <td>
-                                <span class="badge-premium @(b.Status == "Success" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-red-50 text-red-700 border-red-200")">@b.Status</span>
+                        <tr>
+                            <td class="px-5 py-3 text-ink font-semibold">@b.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td class="px-5 py-3 text-ink-muted">@b.BackupType</td>
+                            <td class="px-5 py-3 text-primary font-bold">@FormatSize(b.FileSize)</td>
+                            <td class="px-5 py-3">
+                                <span class="badge @(b.Status == "Success" ? "badge-success" : "badge-danger") font-bold text-[10px]">
+                                    @(b.Status == "Success" ? "ناجحة" : "فاشلة")
+                                </span>
                             </td>
-                            <td class="text-xs text-ink-muted">@b.BackupPath</td>
+                            <td class="px-5 py-3 text-[11px] text-ink-soft max-w-xs truncate" title="@b.BackupPath">@b.BackupPath</td>
                         </tr>
                     }
                 </tbody>

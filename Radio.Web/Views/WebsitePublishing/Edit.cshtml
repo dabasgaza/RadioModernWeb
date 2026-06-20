@@ -5,31 +5,30 @@
     var episode = Model.Episode;
 }
 
-<div class="page-header">
-    <div class="relative z-10">
-        <nav class="breadcrumb">
-            <a href="/WebsitePublishing">نشر الموقع</a>
-            <span class="material-icons">chevron_left</span>
-            <span>تعديل</span>
-        </nav>
-        <h1>
-            <span class="material-icons">edit</span>
-            تعديل سجل نشر الموقع
-        </h1>
-    </div>
+<div class="mb-6">
+    <nav class="text-sm text-ink-muted mb-2">
+        <a href="/WebsitePublishing" class="hover:text-primary">نشر الموقع</a>
+        <span class="mx-1">/</span>
+        <span class="text-ink">تعديل</span>
+    </nav>
+    <h1 class="text-2xl font-bold text-ink flex items-center gap-2">
+        <span class="material-symbols-rounded text-primary">edit</span>
+        تعديل سجل نشر الموقع
+    </h1>
 </div>
 
 @if (log == null)
 {
-    <div class="bg-red-50 border border-red-200 text-danger rounded-xl p-4">سجل النشر غير موجود.</div>
+    <div class="bg-red-50 border border-red-200 text-danger rounded-lg p-4">سجل النشر غير موجود.</div>
     return;
 }
 
-<div class="card-premium mb-4 p-5">
+<!-- Episode Info -->
+<div class="bg-surface rounded-xl border border-border p-5 mb-4">
     <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
             <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center">
-                <span class="material-icons text-primary">podcasts</span>
+                <span class="material-symbols-rounded text-primary">podcasts</span>
             </div>
             <div>
                 <h3 class="text-lg font-bold text-ink">@(episode?.EpisodeName ?? "—")</h3>
@@ -37,7 +36,7 @@
             </div>
         </div>
         <a href="/Episodes/Details/@log.EpisodeId" class="btn-secondary text-sm" target="_blank">
-            <span class="material-icons">open_in_new</span>
+            <span class="material-symbols-rounded">open_in_new</span>
             عرض الحلقة
         </a>
     </div>
@@ -46,49 +45,58 @@
 <form method="post" action="/WebsitePublishing/Edit/@log.Id">
     @Html.AntiForgeryToken()
 
-    <div class="card-premium mb-4 p-5 space-y-4">
-        <div>
-            <label class="form-label">عنوان النشر *</label>
-            <input type="text" name="title" class="form-input" placeholder="عنوان الحلقة على الموقع" required
-                   value="@log.Title" />
+    <div class="bg-surface rounded-xl border border-border mb-4">
+        <div class="p-5 border-b border-border">
+            <h3 class="font-bold text-ink flex items-center gap-2">
+                <span class="material-symbols-rounded text-primary">article</span>
+                تفاصيل النشر
+            </h3>
         </div>
-        <div>
-            <label class="form-label">نوع الوسائط *</label>
-            <select name="mediaType" class="form-input" required>
-                <option value="Audio" selected="@(log.MediaType == "Audio")">صوت</option>
-                <option value="Video" selected="@(log.MediaType == "Video")">فيديو</option>
-                <option value="Both" selected="@(log.MediaType == "Both")">صوت وفيديو</option>
-            </select>
-        </div>
-        <div>
-            <label class="form-label">ملاحظات النشر</label>
-            <textarea name="notes" rows="4" class="form-input" placeholder="أي ملاحظات إضافية حول النشر…">@log.Notes</textarea>
-        </div>
-        <div class="text-xs text-ink-muted">
-            تاريخ النشر: <span class="text-ink" dir="ltr">@log.PublishedAt.ToString("yyyy-MM-dd HH:mm")</span>
+        <div class="p-5 space-y-4">
+            <div>
+                <label class="form-label">عنوان النشر *</label>
+                <input type="text" name="title" class="form-input" placeholder="عنوان الحلقة على الموقع" required
+                       value="@log.Title" />
+            </div>
+            <div>
+                <label class="form-label">نوع الوسائط *</label>
+                <select name="mediaType" class="form-input" required>
+                    <option value="Audio" selected="@(log.MediaType == "Audio")">صوت</option>
+                    <option value="Video" selected="@(log.MediaType == "Video")">فيديو</option>
+                    <option value="Both" selected="@(log.MediaType == "Both")">صوت وفيديو</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label">ملاحظات النشر</label>
+                <textarea name="notes" rows="4" class="form-input" placeholder="أي ملاحظات إضافية حول النشر…">@log.Notes</textarea>
+            </div>
+            <div class="text-xs text-ink-muted">
+                تاريخ النشر: <span class="text-ink" dir="ltr">@log.PublishedAt.ToString("yyyy-MM-dd HH:mm")</span>
+            </div>
         </div>
     </div>
 
     <div class="flex items-center justify-end gap-2">
         <a href="/WebsitePublishing" class="btn-secondary">
-            <span class="material-icons">cancel</span>
+            <span class="material-symbols-rounded">cancel</span>
             إلغاء
         </a>
         <button type="submit" class="btn-primary">
-            <span class="material-icons">save</span>
+            <span class="material-symbols-rounded">save</span>
             حفظ التعديلات
         </button>
     </div>
 </form>
 
-<div class="card-premium mt-8">
-    <div class="card-header">
+<!-- All Publishing Records for this Episode -->
+<div class="bg-surface rounded-xl border border-border mt-8 shadow-sm">
+    <div class="p-5 border-b border-border bg-surface-3 rounded-t-xl">
         <h3 class="font-bold text-ink flex items-center gap-2">
-            <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">history</span>
-            كافة سجلات النشر والإنتاج (@(Model.EpisodePublishingRecords?.Count ?? 0))
+            <span class="material-symbols-rounded text-primary">history</span>
+            كافة سجلات النشر والإنتاج الخاصة بهذه الحلقة (@(Model.EpisodePublishingRecords?.Count ?? 0))
         </h3>
     </div>
-    <div class="card-body">
+    <div class="p-5">
         @if (Model.EpisodePublishingRecords == null || !Model.EpisodePublishingRecords.Any())
         {
             <p class="text-sm text-ink-muted">لا توجد سجلات أخرى لهذه الحلقة.</p>
@@ -100,18 +108,18 @@
                     <thead>
                         <tr class="text-ink-muted border-b border-border text-right text-xs">
                             <th class="pb-3 font-bold">النوع</th>
-                            <th class="pb-3 font-bold">التفاصيل</th>
+                            <th class="pb-3 font-bold">التفاصيل / الملخص</th>
                             <th class="pb-3 font-bold">بواسطة</th>
-                            <th class="pb-3 font-bold">التاريخ</th>
+                            <th class="pb-3 font-bold">التاريخ والتوقيت</th>
                             <th class="pb-3 font-bold text-center">الإجراء</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-border/60">
+                    <tbody class="divide-y divide-border">
                         @foreach (var r in Model.EpisodePublishingRecords)
                         {
                             <tr class="hover:bg-surface-2 transition duration-200">
                                 <td class="py-3">
-                                    <span class="badge-premium text-xs font-bold" style="background-color: @(r.RecordColor)15; color: @r.RecordColor; border-color: @(r.RecordColor)30">
+                                    <span class="badge font-bold text-xs" style="background-color: @(r.RecordColor)15; color: @r.RecordColor">
                                         @GetRecordTypeName(r.RecordType)
                                     </span>
                                 </td>
@@ -121,11 +129,11 @@
                                 <td class="py-3 text-center">
                                     @if (r.RecordType == "SocialMedia")
                                     {
-                                        <a href="/Publishing/Edit/@r.RecordId" class="text-primary font-bold hover:underline">تعديل</a>
+                                        <a href="/Publishing/Edit/@r.RecordId" class="text-primary font-bold hover:underline inline-flex items-center gap-1"><span class="material-symbols-rounded" style="font-size: 14px;">edit</span> تعديل</a>
                                     }
                                     else if (r.RecordType == "Website")
                                     {
-                                        <a href="/WebsitePublishing/Edit/@r.RecordId" class="text-primary font-bold hover:underline">تعديل</a>
+                                        <a href="/WebsitePublishing/Edit/@r.RecordId" class="text-primary font-bold hover:underline inline-flex items-center gap-1"><span class="material-symbols-rounded" style="font-size: 14px;">edit</span> تعديل</a>
                                     }
                                     else
                                     {

@@ -5,16 +5,28 @@
 }
 
 <div class="page-header">
-    <div class="relative z-10">
-        <nav class="breadcrumb">
-            <a href="/Guests">الضيوف</a>
-            <span class="material-icons">chevron_left</span>
-            <span>@(isEdit ? "تعديل" : "جديد")</span>
-        </nav>
-        <h1>
-            <span class="material-icons">@(isEdit ? "edit" : "add")</span>
-            @(isEdit ? "تعديل ضيف" : "ضيف جديد")
-        </h1>
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <span class="material-symbols-rounded">home</span>
+                <a href="/">الرئيسية</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <a href="/Guests">الضيوف</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <span>@(isEdit ? "تعديل ضيف" : "ضيف جديد")</span>
+            </nav>
+            <h1>
+                <span class="material-symbols-rounded">people_alt</span>
+                @(isEdit ? "تعديل ضيف" : "ضيف جديد")
+            </h1>
+            <p>إدخال وتحديث البيانات الشخصية وتفاصيل الاتصال الخاصة بالضيف</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="/Guests" class="btn-secondary">
+                <span class="material-symbols-rounded">arrow_forward</span>
+                الرجوع للضيوف
+            </a>
+        </div>
     </div>
 </div>
 
@@ -23,46 +35,60 @@
     @if (isEdit) { <input type="hidden" name="GuestId" value="@Model.GuestId" /> }
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-4"></div>
+        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-6 font-semibold text-sm"></div>
     }
 
-    <div class="card-premium p-5 space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label class="form-label">الاسم الكامل *</label>
-                <input type="text" name="FullName" value="@Model.FullName" class="form-input" required />
-            </div>
-            <div>
-                <label class="form-label">الجنس</label>
-                <select name="Gender" class="form-input">
-                    <option value="">— اختر —</option>
-                    <option value="ذكر" selected="@(Model.Gender == "ذكر")">ذكر</option>
-                    <option value="أنثى" selected="@(Model.Gender == "أنثى")">أنثى</option>
-                </select>
+    <div class="card-premium">
+        <div class="card-header">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-primary">person</span>
+                <h3 class="font-bold text-ink text-base">الملف التعريفي للضيف</h3>
             </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label class="form-label">الجهة</label>
-                <input type="text" name="Organization" value="@Model.Organization" class="form-input" />
+        <div class="card-body space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="form-label">الاسم الكامل *</label>
+                    <input type="text" name="FullName" value="@Model.FullName" class="form-input" required placeholder="مثال: د. محمد علي" />
+                </div>
+                <div>
+                    <label class="form-label">الجنس</label>
+                    <select name="Gender" class="form-input">
+                        <option value="">— اختر —</option>
+                        <option value="ذكر" selected="@(Model.Gender == "ذكر")">ذكر</option>
+                        <option value="أنثى" selected="@(Model.Gender == "أنثى")">أنثى</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="form-label">الجهة / المؤسسة</label>
+                    <input type="text" name="Organization" value="@Model.Organization" class="form-input" placeholder="مثال: وزارة الاقتصاد" />
+                </div>
+                <div>
+                    <label class="form-label">رقم الهاتف</label>
+                    <input type="text" name="PhoneNumber" value="@Model.PhoneNumber" class="form-input" placeholder="مثال: +966500000000" />
+                </div>
             </div>
             <div>
-                <label class="form-label">رقم الهاتف</label>
-                <input type="text" name="PhoneNumber" value="@Model.PhoneNumber" class="form-input" />
+                <label class="form-label">البريد الإلكتروني</label>
+                <input type="email" name="EmailAddress" value="@Model.EmailAddress" class="form-input" placeholder="مثال: guest@example.com" />
             </div>
-        </div>
-        <div>
-            <label class="form-label">البريد الإلكتروني</label>
-            <input type="email" name="EmailAddress" value="@Model.EmailAddress" class="form-input" />
-        </div>
-        <div>
-            <label class="form-label">نبذة</label>
-            <textarea name="Bio" rows="4" class="form-input">@Model.Bio</textarea>
+            <div>
+                <label class="form-label">نبذة شخصية (Bio)</label>
+                <textarea name="Bio" rows="4" class="form-input" placeholder="أدخل نبذة مختصرة عن مؤهلات الضيف وخبراته المهنية..."></textarea>
+            </div>
         </div>
     </div>
 
-    <div class="flex items-center justify-end gap-2 mt-4">
-        <a href="/Guests" class="btn-secondary"><span class="material-icons">cancel</span> إلغاء</a>
-        <button type="submit" class="btn-primary"><span class="material-icons">save</span> حفظ</button>
+    <div class="flex items-center justify-end gap-2 mt-6">
+        <a href="/Guests" class="btn-secondary">
+            <span class="material-symbols-rounded">cancel</span>
+            إلغاء
+        </a>
+        <button type="submit" class="btn-primary">
+            <span class="material-symbols-rounded">save</span>
+            حفظ البيانات
+        </button>
     </div>
 </form>

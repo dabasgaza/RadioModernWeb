@@ -1,82 +1,123 @@
-@model List<ProgramDto>
+@model List<ProgramViewModel>
 @{
-    ViewData["Title"] = "البرامج";
+    ViewData["Title"] = "البرامج الإذاعية";
 }
 
 <div class="page-header">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
         <div>
             <nav class="breadcrumb">
+                <span class="material-symbols-rounded">home</span>
                 <a href="/">الرئيسية</a>
-                <span class="material-icons">chevron_left</span>
-                <span>البرامج</span>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <span>البرامج الإذاعية</span>
             </nav>
             <h1>
-                <span class="material-icons">radio</span>
+                <span class="material-symbols-rounded">radio</span>
                 البرامج الإذاعية
             </h1>
-            <p>إدارة البرامج الإذاعية وفئاتها</p>
+            <p>إدارة البرامج الإذاعية ومتابعة إحصائياتها وتصنيفاتها</p>
         </div>
-        @if (User.HasPermission(AppPermissions.ProgramManage))
-        {
-            <a href="/Programs/Create" class="btn-primary">
-                <span class="material-icons">add</span>
-                برنامج جديد
-            </a>
-        }
+        <div class="flex items-center gap-2">
+            @if (User.HasPermission(AppPermissions.ProgramManage))
+            {
+                <a href="/Programs/Create" class="btn-primary">
+                    <span class="material-symbols-rounded">add</span>
+                    برنامج جديد
+                </a>
+            }
+        </div>
     </div>
 </div>
 
+<!-- Filters -->
 <div class="filter-premium">
-    <form method="get" class="flex gap-2">
-        <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث عن برنامج…" class="form-input flex-1" />
-        <button type="submit" class="btn-primary"><span class="material-icons">search</span></button>
-        <a href="/Programs" class="btn-secondary"><span class="material-icons">refresh</span></a>
+    <form method="get" class="flex gap-3">
+        <div class="relative flex-1">
+            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-ink-soft">search</span>
+            <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث باسم البرنامج أو الفئة…" class="form-input pr-10" />
+        </div>
+        <button type="submit" class="btn-primary">
+            <span class="material-symbols-rounded">search</span>
+            بحث
+        </button>
+        <a href="/Programs" class="btn-secondary" title="إعادة ضبط">
+            <span class="material-symbols-rounded">refresh</span>
+        </a>
     </form>
 </div>
 
+<!-- Programs Grid -->
 @if (!Model.Any())
 {
-    <div class="card-premium">
-        <div class="empty-state p-12">
-            <span class="material-icons empty-icon">radio</span>
-            <h3 class="font-bold text-ink text-lg mb-2">لا توجد برامج</h3>
-            <p class="text-ink-muted text-sm mb-4">لم تتم إضافة برامج بعد.</p>
-            <a href="/Programs/Create" class="btn-primary"><span class="material-icons">add</span> برنامج جديد</a>
+    <div class="table-premium p-12 text-center">
+        <div class="empty-state">
+            <span class="material-symbols-rounded empty-icon">radio</span>
+            <h3 class="font-bold text-ink text-lg mb-2">لا توجد برامج إذاعية</h3>
+            <p class="text-ink-muted text-sm mb-4">لم تتم إضافة أي برامج إذاعية بعد مطابقة للبحث.</p>
+            @if (User.HasPermission(AppPermissions.ProgramManage))
+            {
+                <a href="/Programs/Create" class="btn-primary">
+                    <span class="material-symbols-rounded">add</span>
+                    إضافة برنامج جديد
+                </a>
+            }
         </div>
     </div>
 }
 else
 {
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        @foreach (var p in Model)
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @foreach (var item in Model)
         {
-            <div class="card-premium group">
-                <div class="card-body">
-                    <div class="flex items-start justify-between mb-3">
-                        <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                            <span class="material-icons text-2xl">radio</span>
-                        </div>
-                        @if (User.HasPermission(AppPermissions.ProgramManage))
-                        {
-                            <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <a href="/Programs/Edit/@p.ProgramId" class="icon-btn icon-btn-primary"><span class="material-icons">edit</span></a>
-                                <form method="post" action="/Programs/Delete/@p.ProgramId" class="inline" onsubmit="return confirm('حذف البرنامج «@p.ProgramName»؟');">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="icon-btn icon-btn-danger"><span class="material-icons">delete</span></button>
-                                </form>
-                            </div>
-                        }
+            var p = item.Program;
+            <div class="card-premium flex flex-col justify-between h-full group hover:shadow-lg transition-all duration-300">
+                <div class="card-body flex-1 space-y-4">
+                    <!-- Top Category & Icon -->
+                    <div class="flex items-center justify-between">
+                        <span class="badge @(p.Category == "سياسي" ? "badge-danger" : p.Category == "ثقافي" ? "badge-accent" : p.Category == "اجتماعي" ? "badge-success" : "badge-info") text-xs font-bold px-2.5 py-1 rounded-full">
+                            @(p.Category ?? "عام")
+                        </span>
+                        <span class="material-symbols-rounded text-ink-soft group-hover:text-primary transition-colors duration-300">radio</span>
                     </div>
-                    <h3 class="font-bold text-ink text-base mb-1">@p.ProgramName</h3>
-                    @if (!string.IsNullOrWhiteSpace(p.Category))
-                    {
-                        <span class="badge-premium bg-blue-50 text-blue-700 border-blue-200 text-[10px] mb-2 inline-block">@p.Category</span>
-                    }
-                    <p class="text-ink-muted text-xs leading-relaxed">
-                        @(p.ProgramDescription?.Length > 100 ? p.ProgramDescription[..100] + "…" : p.ProgramDescription ?? "لا يوجد وصف")
-                    </p>
+
+                    <!-- Program Title & Description -->
+                    <div class="space-y-1.5">
+                        <h3 class="text-base font-extrabold text-ink group-hover:text-primary transition-colors duration-300">
+                            @p.ProgramName
+                        </h3>
+                        <p class="text-xs text-ink-muted leading-relaxed line-clamp-3 min-h-[4.5rem]">
+                            @(p.ProgramDescription ?? "لا يوجد وصف متوفر للبرنامج حالياً.")
+                        </p>
+                    </div>
+
+                    <!-- Stat branding -->
+                    <div class="pt-3 border-t border-border/60 flex items-center justify-between text-xs">
+                        <span class="text-ink-muted font-medium flex items-center gap-1">
+                            <span class="material-symbols-rounded text-ink-soft" style="font-size: 16px;">podcasts</span>
+                            الحلقات النشطة
+                        </span>
+                        <span class="font-black text-primary bg-primary/10 px-3 py-1 rounded-lg">
+                            @item.EpisodeCount
+                        </span>
+                    </div>
                 </div>
+
+                <!-- Card Actions Footer -->
+                @if (User.HasPermission(AppPermissions.ProgramManage))
+                {
+                    <div class="px-5 py-3 bg-surface-2 border-t border-border/60 flex items-center justify-end gap-1.5">
+                        <a href="/Programs/Edit/@p.ProgramId" class="icon-btn icon-btn-primary" title="تعديل">
+                            <span class="material-symbols-rounded">edit</span>
+                        </a>
+                        <form method="post" action="/Programs/Delete/@p.ProgramId" class="inline" data-confirm="هل أنت متأكد من حذف البرنامج «@p.ProgramName»؟">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="icon-btn icon-btn-danger" title="حذف">
+                                <span class="material-symbols-rounded">delete</span>
+                            </button>
+                        </form>
+                    </div>
+                }
             </div>
         }
     </div>

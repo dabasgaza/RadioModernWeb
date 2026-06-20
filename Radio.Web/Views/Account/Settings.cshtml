@@ -2,37 +2,31 @@
     ViewData["Title"] = "الإعدادات";
 }
 
-<div class="page-header">
-    <div class="relative z-10">
-        <nav class="breadcrumb">
-            <a href="/">الرئيسية</a>
-            <span class="material-icons">chevron_left</span>
-            <span>الإعدادات</span>
-        </nav>
-        <h1>
-            <span class="material-icons">settings</span>
-            الإعدادات
-        </h1>
-        <p>تخصيص تجربتك في النظام</p>
-    </div>
+<div class="mb-6">
+    <h1 class="text-2xl font-bold text-ink mb-1 flex items-center gap-2">
+        <span class="material-symbols-rounded text-primary">settings</span>
+        الإعدادات
+    </h1>
+    <p class="text-ink-muted text-sm">تخصيص تجربتك في النظام</p>
 </div>
 
-<div class="card-premium p-6 max-w-2xl">
-    <h3 class="font-bold text-ink mb-4 pb-3 border-b border-border/60">التفضيلات</h3>
+<div class="bg-surface rounded-xl border border-border p-6 max-w-2xl">
+    <h3 class="font-bold text-ink mb-4 pb-2 border-b border-border">التفضيلات</h3>
     <div class="space-y-4">
-        <div class="flex items-center justify-between py-2">
+        <div class="flex items-center justify-between">
             <div>
-                <div class="font-bold text-ink">الإشعارات</div>
+                <div class="font-semibold text-ink">الإشعارات</div>
                 <div class="text-sm text-ink-muted">استقبال إشعارات لحظية للتغييرات</div>
             </div>
             <label class="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" class="sr-only peer" checked>
-                <div class="w-11 h-6 bg-border rounded-full peer peer-checked:bg-primary after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+                <div class="w-11 h-6 bg-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
             </label>
         </div>
-        <div class="flex items-center justify-between border-t border-border/60 pt-4">
+
+        <div class="flex items-center justify-between border-t border-border pt-4">
             <div>
-                <div class="font-bold text-ink">اللغة</div>
+                <div class="font-semibold text-ink">اللغة</div>
                 <div class="text-sm text-ink-muted">لغة الواجهة</div>
             </div>
             <select class="form-input" style="width: 200px;">

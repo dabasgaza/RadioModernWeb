@@ -38,28 +38,13 @@ window.RadioWeb = {
     }
 };
 
-// ─── Sidebar ───
-function openSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebar-overlay');
-    if (sidebar) sidebar.classList.add('open');
-    if (overlay) overlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebar-overlay');
-    if (sidebar) sidebar.classList.remove('open');
-    if (overlay) overlay.classList.remove('open');
-    document.body.style.overflow = '';
-}
-
 // ─── Sidebar submenu toggling ───
 function toggleSubmenu(btn) {
     const group = btn.closest('.nav-group');
     if (!group) return;
     group.classList.toggle('open');
+    const submenu = group.querySelector('.submenu');
+    if (submenu) submenu.classList.toggle('hidden');
 }
 
 // ─── Modal helpers ───
@@ -77,13 +62,13 @@ function closeModal(id) {
 function toggleUserMenu(e) {
     e.stopPropagation();
     const menu = document.getElementById('user-menu');
-    if (menu) menu.classList.toggle('open');
+    if (menu) menu.classList.toggle('hidden');
 }
 
 function toggleNotifications(e) {
     e.stopPropagation();
     const dropdown = document.getElementById('notifications-dropdown');
-    if (dropdown) dropdown.classList.toggle('open');
+    if (dropdown) dropdown.classList.toggle('hidden');
 }
 
 // Close dropdowns on outside click
@@ -91,16 +76,54 @@ document.addEventListener('click', function (e) {
     const userMenu = document.getElementById('user-menu');
     const notifDropdown = document.getElementById('notifications-dropdown');
     if (userMenu && !userMenu.contains(e.target) && !e.target.closest('[onclick*="toggleUserMenu"]')) {
-        userMenu.classList.remove('open');
+        userMenu.classList.add('hidden');
     }
     if (notifDropdown && !notifDropdown.contains(e.target) && !e.target.closest('[onclick*="toggleNotifications"]')) {
-        notifDropdown.classList.remove('open');
+        notifDropdown.classList.add('hidden');
     }
 });
 
+// ─── Toastr configuration ───
+toastr.options = {
+    positionClass: 'toast-bottom-left',
+    timeOut: 5000,
+    extendedTimeOut: 2000,
+    closeButton: true,
+    progressBar: true,
+    rtl: true,
+    newestOnTop: false,
+    preventDuplicates: false
+};
+
 document.addEventListener('DOMContentLoaded', function () {
-    // Apply toast-premium class
-    var container = document.getElementById('toast-container');
-    if (container) container.classList.add('toast-premium');
     console.log('✓ Radio Web MVC initialized');
+
+    // ─── Global SweetAlert2 Confirmation for Forms ───
+    document.addEventListener('submit', function (e) {
+        const form = e.target;
+        if (form.hasAttribute('data-confirm')) {
+            e.preventDefault();
+            const message = form.getAttribute('data-confirm');
+            Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#94A3B8',
+                confirmButtonText: 'نعم، المتابعة',
+                cancelButtonText: 'إلغاء',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'btn-danger',
+                    cancelButton: 'btn-secondary'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.removeAttribute('data-confirm');
+                    form.submit();
+                }
+            });
+        }
+    });
 });

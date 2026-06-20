@@ -5,16 +5,28 @@
 }
 
 <div class="page-header">
-    <div class="relative z-10">
-        <nav class="breadcrumb">
-            <a href="/Episodes">الحلقات</a>
-            <span class="material-icons">chevron_left</span>
-            <span>@(isEdit ? "تعديل" : "جديدة")</span>
-        </nav>
-        <h1>
-            <span class="material-icons">@(isEdit ? "edit" : "add")</span>
-            @(isEdit ? "تعديل حلقة" : "حلقة جديدة")
-        </h1>
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <span class="material-symbols-rounded">home</span>
+                <a href="/">الرئيسية</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <a href="/Episodes">الحلقات</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <span>@(isEdit ? "تعديل حلقة" : "حلقة جديدة")</span>
+            </nav>
+            <h1>
+                <span class="material-symbols-rounded">podcasts</span>
+                @(isEdit ? "تعديل حلقة" : "حلقة جديدة")
+            </h1>
+            <p>إدخال وتعديل البيانات والتفاصيل والضيوف المشاركين في الحلقة</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="/Episodes" class="btn-secondary">
+                <span class="material-symbols-rounded">arrow_forward</span>
+                الرجوع للحلقات
+            </a>
+        </div>
     </div>
 </div>
 
@@ -24,15 +36,16 @@
 
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-4"></div>
+        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-6 font-semibold text-sm"></div>
     }
 
-    <div class="card-premium mb-4">
+    <!-- Basic Info Card -->
+    <div class="card-premium mb-6">
         <div class="card-header">
-            <h3 class="font-bold text-ink flex items-center gap-2">
-                <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">info</span>
-                المعلومات الأساسية
-            </h3>
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-primary">info</span>
+                <h3 class="font-bold text-ink text-base">المعلومات الأساسية</h3>
+            </div>
         </div>
         <div class="card-body grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -47,7 +60,7 @@
             </div>
             <div>
                 <label class="form-label">عنوان الحلقة *</label>
-                <input type="text" name="EpisodeName" value="@Model.Episode.EpisodeName" class="form-input" required />
+                <input type="text" name="EpisodeName" value="@Model.Episode.EpisodeName" class="form-input" required placeholder="مثال: حلقة السبت" />
             </div>
             <div>
                 <label class="form-label">تاريخ التنفيذ</label>
@@ -59,7 +72,7 @@
             </div>
             <div class="md:col-span-2">
                 <label class="form-label">وصف الحلقة</label>
-                <textarea name="EpisodeDescription" rows="3" class="form-input" placeholder="وصف مختصر لمحتوى الحلقة وموضوعاتها الرئيسية">@Model.Episode.EpisodeDescription</textarea>
+                <textarea name="EpisodeDescription" rows="4" class="form-input" placeholder="وصف مختصر لمحتوى الحلقة وموضوعاتها الرئيسية">@Model.Episode.EpisodeDescription</textarea>
             </div>
             <div class="md:col-span-2">
                 <label class="form-label">ملاحظات خاصة</label>
@@ -68,25 +81,26 @@
         </div>
     </div>
 
-    <div class="card-premium mb-4">
+    <!-- Guests Card -->
+    <div class="card-premium mb-6">
         <div class="card-header">
-            <h3 class="font-bold text-ink flex items-center gap-2">
-                <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">people_alt</span>
-                الضيوف
-            </h3>
-            <button type="button" class="btn-secondary text-sm" onclick="addGuestRow()">
-                <span class="material-icons">add</span>
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-primary">people_alt</span>
+                <h3 class="font-bold text-ink text-base">الضيوف</h3>
+            </div>
+            <button type="button" class="btn-success text-xs" onclick="addGuestRow()">
+                <span class="material-symbols-rounded">add</span>
                 إضافة ضيف
             </button>
         </div>
         <div class="card-body">
-            <div id="guests-container" class="space-y-3">
+            <div id="guests-container" class="space-y-4">
                 @if (Model.Episode.Guests.Any())
                 {
                     @for (int i = 0; i < Model.Episode.Guests.Count; i++)
                     {
                         var g = Model.Episode.Guests[i];
-                        <div class="guest-row grid grid-cols-1 md:grid-cols-12 gap-2 items-end bg-surface-3 p-3 rounded-xl border border-border/50">
+                        <div class="guest-row grid grid-cols-1 md:grid-cols-12 gap-3 items-end bg-surface-2 p-4 rounded-xl border border-border relative group">
                             <input type="hidden" name="Guests[@i].EpisodeGuestId" value="@g.EpisodeGuestId" />
                             <div class="md:col-span-4">
                                 <label class="form-label">الضيف</label>
@@ -100,15 +114,15 @@
                             </div>
                             <div class="md:col-span-4">
                                 <label class="form-label">الموضوع</label>
-                                <input type="text" name="Guests[@i].Topic" value="@g.Topic" class="form-input" />
+                                <input type="text" name="Guests[@i].Topic" value="@g.Topic" class="form-input" placeholder="مثال: تحليل اقتصادي" />
                             </div>
                             <div class="md:col-span-3">
                                 <label class="form-label">وقت الاستضافة</label>
                                 <input type="time" name="Guests[@i].HostingTime" value="@(g.HostingTime?.ToString(@"hh\:mm"))" class="form-input" />
                             </div>
-                            <div class="md:col-span-1">
-                                <button type="button" class="icon-btn icon-btn-danger w-full" onclick="this.closest('.guest-row').remove()">
-                                    <span class="material-icons">delete</span>
+                            <div class="md:col-span-1 flex justify-center md:justify-end">
+                                <button type="button" class="icon-btn icon-btn-danger w-10 h-10 border border-border bg-surface hover:bg-red-50 rounded-xl" onclick="this.closest('.guest-row').remove(); reindexRows('#guests-container','guest-row','Guests');" title="حذف">
+                                    <span class="material-symbols-rounded">delete</span>
                                 </button>
                             </div>
                         </div>
@@ -116,31 +130,35 @@
                 }
                 else
                 {
-                    <div class="text-ink-muted text-sm">لم تتم إضافة ضيوف بعد.</div>
+                    <div class="text-ink-muted text-xs text-center py-6 bg-surface-2 rounded-xl border border-dashed border-border flex flex-col items-center justify-center gap-1.5">
+                        <span class="material-symbols-rounded text-ink-soft text-xl">groups</span>
+                        لم تتم إضافة ضيوف بعد. انقر على زر الإضافة لتسجيل ضيف.
+                    </div>
                 }
             </div>
         </div>
     </div>
 
-    <div class="card-premium mb-4">
+    <!-- Correspondents Card -->
+    <div class="card-premium mb-6">
         <div class="card-header">
-            <h3 class="font-bold text-ink flex items-center gap-2">
-                <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">map</span>
-                المراسلون
-            </h3>
-            <button type="button" class="btn-secondary text-sm" onclick="addCorrespondentRow()">
-                <span class="material-icons">add</span>
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-primary">map</span>
+                <h3 class="font-bold text-ink text-base">المراسلون</h3>
+            </div>
+            <button type="button" class="btn-success text-xs" onclick="addCorrespondentRow()">
+                <span class="material-symbols-rounded">add</span>
                 إضافة مراسل
             </button>
         </div>
         <div class="card-body">
-            <div id="correspondents-container" class="space-y-3">
+            <div id="correspondents-container" class="space-y-4">
                 @if (Model.Episode.Correspondents.Any())
                 {
                     @for (int i = 0; i < Model.Episode.Correspondents.Count; i++)
                     {
                         var c = Model.Episode.Correspondents[i];
-                        <div class="corr-row grid grid-cols-1 md:grid-cols-12 gap-2 items-end bg-surface-3 p-3 rounded-xl border border-border/50">
+                        <div class="corr-row grid grid-cols-1 md:grid-cols-12 gap-3 items-end bg-surface-2 p-4 rounded-xl border border-border relative group">
                             <input type="hidden" name="Correspondents[@i].Id" value="@c.Id" />
                             <div class="md:col-span-4">
                                 <label class="form-label">المراسل</label>
@@ -154,15 +172,15 @@
                             </div>
                             <div class="md:col-span-5">
                                 <label class="form-label">الموضوع</label>
-                                <input type="text" name="Correspondents[@i].Topic" value="@c.Topic" class="form-input" />
+                                <input type="text" name="Correspondents[@i].Topic" value="@c.Topic" class="form-input" placeholder="مثال: تغطية ميدانية" />
                             </div>
                             <div class="md:col-span-2">
                                 <label class="form-label">الوقت</label>
                                 <input type="time" name="Correspondents[@i].HostingTime" value="@(c.HostingTime?.ToString(@"hh\:mm"))" class="form-input" />
                             </div>
-                            <div class="md:col-span-1">
-                                <button type="button" class="icon-btn icon-btn-danger w-full" onclick="this.closest('.corr-row').remove()">
-                                    <span class="material-icons">delete</span>
+                            <div class="md:col-span-1 flex justify-center md:justify-end">
+                                <button type="button" class="icon-btn icon-btn-danger w-10 h-10 border border-border bg-surface hover:bg-red-50 rounded-xl" onclick="this.closest('.corr-row').remove(); reindexRows('#correspondents-container','corr-row','Correspondents');" title="حذف">
+                                    <span class="material-symbols-rounded">delete</span>
                                 </button>
                             </div>
                         </div>
@@ -170,34 +188,38 @@
                 }
                 else
                 {
-                    <div class="text-ink-muted text-sm">لم تتم إضافة مراسلين بعد.</div>
+                    <div class="text-ink-muted text-xs text-center py-6 bg-surface-2 rounded-xl border border-dashed border-border flex flex-col items-center justify-center gap-1.5">
+                        <span class="material-symbols-rounded text-ink-soft text-xl">map</span>
+                        لم تتم إضافة مراسلين بعد. انقر على زر الإضافة لتسجيل مراسل ميداني.
+                    </div>
                 }
             </div>
         </div>
     </div>
 
-    <div class="card-premium mb-4">
+    <!-- Employees Card -->
+    <div class="card-premium mb-6">
         <div class="card-header">
-            <h3 class="font-bold text-ink flex items-center gap-2">
-                <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">badge</span>
-                الطاقم
-            </h3>
-            <button type="button" class="btn-secondary text-sm" onclick="addEmployeeRow()">
-                <span class="material-icons">add</span>
-                إضافة عضو
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-primary">badge</span>
+                <h3 class="font-bold text-ink text-base">طاقم العمل والإنتاج</h3>
+            </div>
+            <button type="button" class="btn-success text-xs" onclick="addEmployeeRow()">
+                <span class="material-symbols-rounded">add</span>
+                إضافة عضو للطاقم
             </button>
         </div>
         <div class="card-body">
-            <div id="employees-container" class="space-y-3">
+            <div id="employees-container" class="space-y-4">
                 @if (Model.Episode.Employees.Any())
                 {
                     @for (int i = 0; i < Model.Episode.Employees.Count; i++)
                     {
                         var e = Model.Episode.Employees[i];
-                        <div class="emp-row grid grid-cols-1 md:grid-cols-12 gap-2 items-end bg-surface-3 p-3 rounded-xl border border-border/50">
+                        <div class="emp-row grid grid-cols-1 md:grid-cols-12 gap-3 items-end bg-surface-2 p-4 rounded-xl border border-border relative group">
                             <input type="hidden" name="Employees[@i].Id" value="@e.Id" />
                             <div class="md:col-span-11">
-                                <label class="form-label">الموظف</label>
+                                <label class="form-label">الموظف (مع دوره)</label>
                                 <select name="Employees[@i].EmployeeId" class="form-input">
                                     <option value="">— اختر —</option>
                                     @foreach (var emp in Model.Employees)
@@ -206,9 +228,9 @@
                                     }
                                 </select>
                             </div>
-                            <div class="md:col-span-1">
-                                <button type="button" class="icon-btn icon-btn-danger w-full" onclick="this.closest('.emp-row').remove()">
-                                    <span class="material-icons">delete</span>
+                            <div class="md:col-span-1 flex justify-center md:justify-end">
+                                <button type="button" class="icon-btn icon-btn-danger w-10 h-10 border border-border bg-surface hover:bg-red-50 rounded-xl" onclick="this.closest('.emp-row').remove(); reindexRows('#employees-container','emp-row','Employees');" title="حذف">
+                                    <span class="material-symbols-rounded">delete</span>
                                 </button>
                             </div>
                         </div>
@@ -216,26 +238,31 @@
                 }
                 else
                 {
-                    <div class="text-ink-muted text-sm">لم تتم إضافة طاقم بعد.</div>
+                    <div class="text-ink-muted text-xs text-center py-6 bg-surface-2 rounded-xl border border-dashed border-border flex flex-col items-center justify-center gap-1.5">
+                        <span class="material-symbols-rounded text-ink-soft text-xl">badge</span>
+                        لم يتم إضافة أي موظف للطاقم بعد. انقر على زر الإضافة لتسجيل عضو.
+                    </div>
                 }
             </div>
         </div>
     </div>
 
-    <div class="flex items-center justify-end gap-2">
+    <!-- Actions -->
+    <div class="flex items-center justify-end gap-3 mt-6">
         <a href="/Episodes" class="btn-secondary">
-            <span class="material-icons">cancel</span>
+            <span class="material-symbols-rounded">cancel</span>
             إلغاء
         </a>
         <button type="submit" class="btn-primary">
-            <span class="material-icons">save</span>
-            حفظ
+            <span class="material-symbols-rounded">save</span>
+            حفظ الحلقة
         </button>
     </div>
 </form>
 
 @section Scripts {
     <script>
+        // Dynamic rows for nested collections
         function reindexRows(containerSelector, rowClass, prefix) {
             const rows = document.querySelectorAll(containerSelector + ' .' + rowClass);
             rows.forEach((row, idx) => {
@@ -248,9 +275,13 @@
 
         function addGuestRow() {
             const container = document.getElementById('guests-container');
+            // Remove empty state if present
+            if (container.querySelector('.text-ink-muted')) {
+                container.innerHTML = '';
+            }
             const idx = container.querySelectorAll('.guest-row').length;
             const html = `
-                <div class="guest-row grid grid-cols-1 md:grid-cols-12 gap-2 items-end bg-surface-3 p-3 rounded-xl border border-border/50">
+                <div class="guest-row grid grid-cols-1 md:grid-cols-12 gap-3 items-end bg-surface-2 p-4 rounded-xl border border-border relative group">
                     <input type="hidden" name="Guests[${idx}].EpisodeGuestId" value="0" />
                     <div class="md:col-span-4">
                         <label class="form-label">الضيف</label>
@@ -264,15 +295,15 @@
                     </div>
                     <div class="md:col-span-4">
                         <label class="form-label">الموضوع</label>
-                        <input type="text" name="Guests[${idx}].Topic" class="form-input" />
+                        <input type="text" name="Guests[${idx}].Topic" class="form-input" placeholder="مثال: تحليل اقتصادي" />
                     </div>
                     <div class="md:col-span-3">
                         <label class="form-label">وقت الاستضافة</label>
                         <input type="time" name="Guests[${idx}].HostingTime" class="form-input" />
                     </div>
-                    <div class="md:col-span-1">
-                        <button type="button" class="icon-btn icon-btn-danger w-full" onclick="this.closest('.guest-row').remove(); reindexRows('#guests-container','guest-row','Guests');">
-                            <span class="material-icons">delete</span>
+                    <div class="md:col-span-1 flex justify-center md:justify-end">
+                        <button type="button" class="icon-btn icon-btn-danger w-10 h-10 border border-border bg-surface hover:bg-red-50 rounded-xl" onclick="this.closest('.guest-row').remove(); reindexRows('#guests-container','guest-row','Guests');" title="حذف">
+                            <span class="material-symbols-rounded">delete</span>
                         </button>
                     </div>
                 </div>`;
@@ -281,9 +312,13 @@
 
         function addCorrespondentRow() {
             const container = document.getElementById('correspondents-container');
+            // Remove empty state if present
+            if (container.querySelector('.text-ink-muted')) {
+                container.innerHTML = '';
+            }
             const idx = container.querySelectorAll('.corr-row').length;
             const html = `
-                <div class="corr-row grid grid-cols-1 md:grid-cols-12 gap-2 items-end bg-surface-3 p-3 rounded-xl border border-border/50">
+                <div class="corr-row grid grid-cols-1 md:grid-cols-12 gap-3 items-end bg-surface-2 p-4 rounded-xl border border-border relative group">
                     <input type="hidden" name="Correspondents[${idx}].Id" value="0" />
                     <div class="md:col-span-4">
                         <label class="form-label">المراسل</label>
@@ -297,15 +332,15 @@
                     </div>
                     <div class="md:col-span-5">
                         <label class="form-label">الموضوع</label>
-                        <input type="text" name="Correspondents[${idx}].Topic" class="form-input" />
+                        <input type="text" name="Correspondents[${idx}].Topic" class="form-input" placeholder="مثال: تغطية ميدانية" />
                     </div>
                     <div class="md:col-span-2">
                         <label class="form-label">الوقت</label>
                         <input type="time" name="Correspondents[${idx}].HostingTime" class="form-input" />
                     </div>
-                    <div class="md:col-span-1">
-                        <button type="button" class="icon-btn icon-btn-danger w-full" onclick="this.closest('.corr-row').remove(); reindexRows('#correspondents-container','corr-row','Correspondents');">
-                            <span class="material-icons">delete</span>
+                    <div class="md:col-span-1 flex justify-center md:justify-end">
+                        <button type="button" class="icon-btn icon-btn-danger w-10 h-10 border border-border bg-surface hover:bg-red-50 rounded-xl" onclick="this.closest('.corr-row').remove(); reindexRows('#correspondents-container','corr-row','Correspondents');" title="حذف">
+                            <span class="material-symbols-rounded">delete</span>
                         </button>
                     </div>
                 </div>`;
@@ -314,12 +349,16 @@
 
         function addEmployeeRow() {
             const container = document.getElementById('employees-container');
+            // Remove empty state if present
+            if (container.querySelector('.text-ink-muted')) {
+                container.innerHTML = '';
+            }
             const idx = container.querySelectorAll('.emp-row').length;
             const html = `
-                <div class="emp-row grid grid-cols-1 md:grid-cols-12 gap-2 items-end bg-surface-3 p-3 rounded-xl border border-border/50">
+                <div class="emp-row grid grid-cols-1 md:grid-cols-12 gap-3 items-end bg-surface-2 p-4 rounded-xl border border-border relative group">
                     <input type="hidden" name="Employees[${idx}].Id" value="0" />
                     <div class="md:col-span-11">
-                        <label class="form-label">الموظف</label>
+                        <label class="form-label">الموظف (مع دوره)</label>
                         <select name="Employees[${idx}].EmployeeId" class="form-input">
                             <option value="">— اختر —</option>
                             @foreach (var emp in Model.Employees)
@@ -328,9 +367,9 @@
                             }
                         </select>
                     </div>
-                    <div class="md:col-span-1">
-                        <button type="button" class="icon-btn icon-btn-danger w-full" onclick="this.closest('.emp-row').remove(); reindexRows('#employees-container','emp-row','Employees');">
-                            <span class="material-icons">delete</span>
+                    <div class="md:col-span-1 flex justify-center md:justify-end">
+                        <button type="button" class="icon-btn icon-btn-danger w-10 h-10 border border-border bg-surface hover:bg-red-50 rounded-xl" onclick="this.closest('.emp-row').remove(); reindexRows('#employees-container','emp-row','Employees');" title="حذف">
+                            <span class="material-symbols-rounded">delete</span>
                         </button>
                     </div>
                 </div>`;

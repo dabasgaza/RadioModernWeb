@@ -5,16 +5,28 @@
 }
 
 <div class="page-header">
-    <div class="relative z-10">
-        <nav class="breadcrumb">
-            <a href="/Correspondents">المراسلون</a>
-            <span class="material-icons">chevron_left</span>
-            <span>@(isEdit ? "تعديل" : "جديد")</span>
-        </nav>
-        <h1>
-            <span class="material-icons">@(isEdit ? "edit" : "add")</span>
-            @(isEdit ? "تعديل مراسل" : "مراسل جديد")
-        </h1>
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <span class="material-symbols-rounded">home</span>
+                <a href="/">الرئيسية</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <a href="/Correspondents">المراسلون</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <span>@(isEdit ? "تعديل مراسل" : "مراسل جديد")</span>
+            </nav>
+            <h1>
+                <span class="material-symbols-rounded">map</span>
+                @(isEdit ? "تعديل مراسل" : "مراسل جديد")
+            </h1>
+            <p>إدخال وتحديث البيانات الأساسية وتفاصيل مواقع التغطية للمراسل الميداني</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="/Correspondents" class="btn-secondary">
+                <span class="material-symbols-rounded">arrow_forward</span>
+                الرجوع للمراسلين
+            </a>
+        </div>
     </div>
 </div>
 
@@ -23,26 +35,40 @@
     @if (isEdit) { <input type="hidden" name="CorrespondentId" value="@Model.CorrespondentId" /> }
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-4"></div>
+        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-6 font-semibold text-sm"></div>
     }
 
-    <div class="card-premium p-5 space-y-4">
-        <div>
-            <label class="form-label">الاسم الكامل *</label>
-            <input type="text" name="FullName" value="@Model.FullName" class="form-input" required />
+    <div class="card-premium">
+        <div class="card-header">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-primary">my_location</span>
+                <h3 class="font-bold text-ink text-base">بيانات المراسل</h3>
+            </div>
         </div>
-        <div>
-            <label class="form-label">رقم الهاتف *</label>
-            <input type="text" name="PhoneNumber" value="@Model.PhoneNumber" class="form-input" required />
-        </div>
-        <div>
-            <label class="form-label">المواقع المعيّنة</label>
-            <textarea name="AssignedLocations" rows="3" class="form-input">@Model.AssignedLocations</textarea>
+        <div class="card-body space-y-4">
+            <div>
+                <label class="form-label">الاسم الكامل *</label>
+                <input type="text" name="FullName" value="@Model.FullName" class="form-input" required placeholder="مثال: أحمد مصطفى" />
+            </div>
+            <div>
+                <label class="form-label">رقم الهاتف *</label>
+                <input type="text" name="PhoneNumber" value="@Model.PhoneNumber" class="form-input" required placeholder="مثال: +966500000000" />
+            </div>
+            <div>
+                <label class="form-label">المواقع المعيّنة (مفصولة بفاصلة)</label>
+                <textarea name="AssignedLocations" rows="3" class="form-input" placeholder="مثال: الرياض، جدة، الدمام"></textarea>
+            </div>
         </div>
     </div>
 
-    <div class="flex items-center justify-end gap-2 mt-4">
-        <a href="/Correspondents" class="btn-secondary"><span class="material-icons">cancel</span> إلغاء</a>
-        <button type="submit" class="btn-primary"><span class="material-icons">save</span> حفظ</button>
+    <div class="flex items-center justify-end gap-2 mt-6">
+        <a href="/Correspondents" class="btn-secondary">
+            <span class="material-symbols-rounded">cancel</span>
+            إلغاء
+        </a>
+        <button type="submit" class="btn-primary">
+            <span class="material-symbols-rounded">save</span>
+            حفظ البيانات
+        </button>
     </div>
 </form>

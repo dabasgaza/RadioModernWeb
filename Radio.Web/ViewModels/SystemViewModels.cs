@@ -63,3 +63,10 @@ public class DiagnosticsViewModel
     public DiagnosticsSummaryDto Summary { get; set; } = new();
     public List<DiagnosticLogDto> Logs { get; set; } = new();
 }
+
+public class ProgramViewModel
+{
+    public DataAccess.DTOs.ProgramDto Program { get; set; } = null!;
+    public int EpisodeCount { get; set; }
+}
+

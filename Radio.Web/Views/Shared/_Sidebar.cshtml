@@ -1,80 +1,72 @@
 @using DataAccess.Common
 @inject ICurrentUserService CurrentUser
 
-@{
-    var controller = ViewContext.RouteData.Values["Controller"]?.ToString();
-}
-
-<aside class="sidebar-premium fixed right-0 top-0 h-screen" id="sidebar">
-    <!-- Brand -->
-    <div class="sidebar-brand bg-gradient-to-l from-primary to-secondary">
-        <a href="/" class="flex items-center gap-2.5 text-white no-underline">
-            <span class="material-icons text-2xl">radio</span>
-            <span class="font-bold text-base">نظام البث الإذاعي</span>
+<aside class="fixed top-0 right-0 z-40 h-screen w-72 bg-surface border-l border-border transform transition-transform duration-300 -translate-x-full lg:translate-x-0" id="sidebar">
+    <div class="flex items-center justify-between h-16 px-5 border-b border-border bg-gradient-to-l from-primary to-secondary">
+        <a href="/" class="flex items-center gap-2 text-white">
+            <span class="material-symbols-rounded text-2xl">radio</span>
+            <span class="font-bold text-lg">نظام البث الإذاعي</span>
         </a>
-        <button class="topbar-btn text-white/80 hover:bg-white/10 lg:hidden" onclick="closeSidebar()">
-            <span class="material-icons">close</span>
+        <button class="lg:hidden text-white" onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full')">
+            <span class="material-symbols-rounded">close</span>
         </button>
     </div>
 
-    <!-- Navigation -->
-    <nav class="sidebar-nav-wrapper">
-        <a href="/" class="nav-link @(controller == "Home" ? "active" : "")">
-            <span class="material-icons">dashboard</span>
+    <nav class="p-3 overflow-y-auto h-[calc(100vh-4rem)] sidebar-nav">
+        <a href="/" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
+            <span class="material-symbols-rounded">dashboard</span>
             <span>لوحة التحكم</span>
         </a>
 
         @if (CurrentUser.HasPermission(AppPermissions.EpisodeManage) || CurrentUser.HasPermission(AppPermissions.EpisodeEdit) || CurrentUser.HasPermission(AppPermissions.EpisodeExecute))
         {
-            <a href="/Episodes" class="nav-link @(controller == "Episodes" ? "active" : "")">
-                <span class="material-icons">podcasts</span>
+            <a href="/Episodes" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Episodes" ? "active" : "")">
+                <span class="material-symbols-rounded">podcasts</span>
                 <span>الحلقات</span>
             </a>
         }
 
         @if (CurrentUser.HasPermission(AppPermissions.ProgramManage))
         {
-            <a href="/Programs" class="nav-link @(controller == "Programs" ? "active" : "")">
-                <span class="material-icons">radio</span>
+            <a href="/Programs" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Programs" ? "active" : "")">
+                <span class="material-symbols-rounded">radio</span>
                 <span>البرامج</span>
             </a>
         }
 
         @if (CurrentUser.HasPermission(AppPermissions.GuestManage))
         {
-            <a href="/Guests" class="nav-link @(controller == "Guests" ? "active" : "")">
-                <span class="material-icons">people_alt</span>
+            <a href="/Guests" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Guests" ? "active" : "")">
+                <span class="material-symbols-rounded">people_alt</span>
                 <span>الضيوف</span>
             </a>
         }
 
         @if (CurrentUser.HasPermission(AppPermissions.CoordinationManage))
         {
-            <span class="nav-section-label">التنسيق</span>
-            <a href="/Correspondents" class="nav-link @(controller == "Correspondents" ? "active" : "")">
-                <span class="material-icons">map</span>
+            <a href="/Correspondents" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Correspondents" ? "active" : "")">
+                <span class="material-symbols-rounded">map</span>
                 <span>المراسلون</span>
             </a>
-            <a href="/Coverage" class="nav-link @(controller == "Coverage" ? "active" : "")">
-                <span class="material-icons">edit_location_alt</span>
+            <a href="/Coverage" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Coverage" ? "active" : "")">
+                <span class="material-symbols-rounded">edit_location_alt</span>
                 <span>التغطيات الميدانية</span>
             </a>
         }
 
         @if (CurrentUser.HasPermission(AppPermissions.StaffManage))
         {
-            <span class="nav-section-label">الموارد البشرية</span>
             <div class="nav-group">
-                <button class="nav-link" onclick="toggleSubmenu(this)">
-                    <span class="material-icons">badge</span>
-                    <span class="flex-1 text-right">طاقم العمل</span>
-                    <span class="material-icons submenu-arrow mr-auto">expand_more</span>
+                <button class="nav-link w-full text-right" onclick="toggleSubmenu(this)">
+                    <span class="material-symbols-rounded">badge</span>
+                    <span class="flex-1">طاقم العمل</span>
+                    <span class="material-symbols-rounded submenu-arrow">expand_more</span>
                 </button>
-                <div class="submenu">
-                    <a href="/Employees" class="nav-link sub-link @(controller == "Employees" ? "active" : "")">
+                <div class="submenu hidden">
+                    <a href="/Employees" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Employees" ? "active" : "")">
                         <span>الموظفون</span>
                     </a>
-                    <a href="/StaffRoles" class="nav-link sub-link @(controller == "StaffRoles" ? "active" : "")">
+                    <a href="/StaffRoles" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "StaffRoles" ? "active" : "")">
                         <span>المسميات الوظيفية</span>
                     </a>
                 </div>
@@ -83,21 +75,20 @@
 
         @if (CurrentUser.HasPermission(AppPermissions.EpisodePublish) || CurrentUser.HasPermission(AppPermissions.EpisodeWebPublish))
         {
-            <span class="nav-section-label">النشر</span>
             <div class="nav-group">
-                <button class="nav-link" onclick="toggleSubmenu(this)">
-                    <span class="material-icons">publish</span>
-                    <span class="flex-1 text-right">النشر الرقمي</span>
-                    <span class="material-icons submenu-arrow mr-auto">expand_more</span>
+                <button class="nav-link w-full text-right" onclick="toggleSubmenu(this)">
+                    <span class="material-symbols-rounded">publish</span>
+                    <span class="flex-1">النشر الرقمي</span>
+                    <span class="material-symbols-rounded submenu-arrow">expand_more</span>
                 </button>
-                <div class="submenu">
-                    <a href="/Publishing" class="nav-link sub-link @(controller == "Publishing" ? "active" : "")">
+                <div class="submenu hidden">
+                    <a href="/Publishing" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Publishing" ? "active" : "")">
                         <span>النشر الاجتماعي</span>
                     </a>
-                    <a href="/WebsitePublishing" class="nav-link sub-link @(controller == "WebsitePublishing" ? "active" : "")">
+                    <a href="/WebsitePublishing" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "WebsitePublishing" ? "active" : "")">
                         <span>نشر الموقع</span>
                     </a>
-                    <a href="/ExecutionLogs" class="nav-link sub-link @(controller == "ExecutionLogs" ? "active" : "")">
+                    <a href="/ExecutionLogs" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ExecutionLogs" ? "active" : "")">
                         <span>سجلات التنفيذ</span>
                     </a>
                 </div>
@@ -106,46 +97,45 @@
 
         @if (CurrentUser.HasPermission(AppPermissions.StaffManage))
         {
-            <a href="/SocialPlatforms" class="nav-link @(controller == "SocialPlatforms" ? "active" : "")">
-                <span class="material-icons">share</span>
+            <a href="/SocialPlatforms" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "SocialPlatforms" ? "active" : "")">
+                <span class="material-symbols-rounded">share</span>
                 <span>منصات النشر</span>
             </a>
         }
 
         @if (CurrentUser.HasPermission(AppPermissions.ViewReports))
         {
-            <a href="/Reports" class="nav-link @(controller == "Reports" ? "active" : "")">
-                <span class="material-icons">assessment</span>
+            <a href="/Reports" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reports" ? "active" : "")">
+                <span class="material-symbols-rounded">assessment</span>
                 <span>التقارير</span>
             </a>
         }
 
         @if (CurrentUser.HasPermission(AppPermissions.UserManage))
         {
-            <span class="nav-section-label">الإدارة</span>
             <div class="nav-group">
-                <button class="nav-link" onclick="toggleSubmenu(this)">
-                    <span class="material-icons">admin_panel_settings</span>
-                    <span class="flex-1 text-right">إدارة النظام</span>
-                    <span class="material-icons submenu-arrow mr-auto">expand_more</span>
+                <button class="nav-link w-full text-right" onclick="toggleSubmenu(this)">
+                    <span class="material-symbols-rounded">admin_panel_settings</span>
+                    <span class="flex-1">إدارة النظام</span>
+                    <span class="material-symbols-rounded submenu-arrow">expand_more</span>
                 </button>
-                <div class="submenu">
-                    <a href="/Users" class="nav-link sub-link @(controller == "Users" ? "active" : "")">
+                <div class="submenu hidden">
+                    <a href="/Users" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Users" ? "active" : "")">
                         <span>المستخدمون</span>
                     </a>
-                    <a href="/Roles" class="nav-link sub-link @(controller == "Roles" ? "active" : "")">
+                    <a href="/Roles" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Roles" ? "active" : "")">
                         <span>الأدوار</span>
                     </a>
-                    <a href="/Permissions" class="nav-link sub-link @(controller == "Permissions" ? "active" : "")">
+                    <a href="/Permissions" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Permissions" ? "active" : "")">
                         <span>الصلاحيات</span>
                     </a>
-                    <a href="/AuditLogs" class="nav-link sub-link @(controller == "AuditLogs" ? "active" : "")">
+                    <a href="/AuditLogs" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "AuditLogs" ? "active" : "")">
                         <span>سجل التدقيق</span>
                     </a>
-                    <a href="/Database" class="nav-link sub-link @(controller == "Database" ? "active" : "")">
+                    <a href="/Database" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Database" ? "active" : "")">
                         <span>قاعدة البيانات</span>
                     </a>
-                    <a href="/Diagnostics" class="nav-link sub-link @(controller == "Diagnostics" ? "active" : "")">
+                    <a href="/Diagnostics" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Diagnostics" ? "active" : "")">
                         <span>تشخيص النظام</span>
                     </a>
                 </div>

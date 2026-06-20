@@ -12,10 +12,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Apply premium class to toastr container
-        var container = document.getElementById('toast-container');
-        if (container) container.classList.add('toast-premium');
-
         function showToast(type, message) {
             if (typeof toastr === 'undefined') return;
             toastr[type](message, '', {
@@ -24,8 +20,7 @@
                 extendedTimeOut: 2000,
                 closeButton: true,
                 progressBar: true,
-                rtl: true,
-                newestOnTop: true
+                rtl: true
             });
         }
 

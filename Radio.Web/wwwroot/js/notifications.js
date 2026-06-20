@@ -49,11 +49,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const item = document.createElement('div');
-        item.className = 'dropdown-item flex-col items-start gap-0';
+        item.className = 'p-3 border-b border-border hover:bg-surface-3 cursor-pointer';
         item.innerHTML = `
-            <div class="font-semibold text-sm">${notification.title}</div>
-            <div class="text-xs text-ink-muted mt-0.5">${notification.message}</div>
-            <div class="text-xs text-ink-soft mt-0.5">${new Date(notification.timestamp).toLocaleString('ar-SA')}</div>
+            <div class="font-semibold text-sm text-ink">${notification.title}</div>
+            <div class="text-xs text-ink-muted mt-1">${notification.message}</div>
+            <div class="text-xs text-ink-soft mt-1">${new Date(notification.timestamp).toLocaleString('ar-SA')}</div>
         `;
         list.prepend(item);
     }

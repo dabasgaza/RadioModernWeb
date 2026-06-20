@@ -7,13 +7,13 @@
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
         <div>
             <nav class="breadcrumb">
-                <span class="material-icons">home</span>
+                <span class="material-symbols-rounded">home</span>
                 <a href="/">الرئيسية</a>
-                <span class="material-icons">chevron_left</span>
+                <span class="material-symbols-rounded">chevron_left</span>
                 <span>الحلقات</span>
             </nav>
             <h1>
-                <span class="material-icons">podcasts</span>
+                <span class="material-symbols-rounded">podcasts</span>
                 الحلقات
             </h1>
             <p>إدارة حلقات البرامج الإذاعية ومتابعة دورة حياتها</p>
@@ -22,7 +22,7 @@
             @if (User.HasPermission(AppPermissions.EpisodeManage))
             {
                 <a href="/Episodes/Create" class="btn-primary">
-                    <span class="material-icons">add</span>
+                    <span class="material-symbols-rounded">add</span>
                     حلقة جديدة
                 </a>
             }
@@ -30,6 +30,7 @@
     </div>
 </div>
 
+<!-- Filters -->
 <div class="filter-premium">
     <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="md:col-span-2">
@@ -59,28 +60,29 @@
         </div>
         <div class="md:col-span-4 flex gap-2 justify-end">
             <button type="submit" class="btn-primary">
-                <span class="material-icons">search</span>
+                <span class="material-symbols-rounded">search</span>
                 تطبيق
             </button>
             <a href="/Episodes" class="btn-secondary">
-                <span class="material-icons">refresh</span>
+                <span class="material-symbols-rounded">refresh</span>
                 إعادة ضبط
             </a>
         </div>
     </form>
 </div>
 
+<!-- Episodes Table -->
 <div class="table-premium">
     @if (!Model.Episodes.Any())
     {
         <div class="empty-state p-12">
-            <span class="material-icons empty-icon">podcasts</span>
+            <span class="material-symbols-rounded empty-icon">podcasts</span>
             <h3 class="font-bold text-ink text-lg mb-2">لا توجد حلقات</h3>
             <p class="text-ink-muted text-sm mb-4">لم تُجدول أي حلقات بعد. ابدأ بإضافة حلقة جديدة.</p>
             @if (User.HasPermission(AppPermissions.EpisodeManage))
             {
                 <a href="/Episodes/Create" class="btn-primary">
-                    <span class="material-icons">add</span>
+                    <span class="material-symbols-rounded">add</span>
                     حلقة جديدة
                 </a>
             }
@@ -92,32 +94,32 @@
             <table>
                 <thead>
                     <tr>
-                        <th>الحلقة</th>
-                        <th>البرنامج</th>
-                        <th>الموعد</th>
-                        <th>الضيوف</th>
-                        <th>الحالة</th>
-                        <th>إجراءات</th>
+                        <th class="px-5 py-3 text-right font-semibold">الحلقة</th>
+                        <th class="px-5 py-3 text-right font-semibold">البرنامج</th>
+                        <th class="px-5 py-3 text-right font-semibold">الموعد</th>
+                        <th class="px-5 py-3 text-right font-semibold">الضيوف</th>
+                        <th class="px-5 py-3 text-right font-semibold">الحالة</th>
+                        <th class="px-5 py-3 text-right font-semibold">إجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var ep in Model.Episodes)
                     {
-                        <tr class="hover:bg-surface-2 transition duration-200">
-                            <td>
-                                <a href="/Episodes/Details/@ep.EpisodeId" class="text-primary font-bold hover:underline">
+                        <tr>
+                            <td class="px-5 py-3">
+                                <a href="/Episodes/Details/@ep.EpisodeId" class="text-primary font-semibold hover:underline">
                                     @ep.EpisodeName
                                 </a>
                                 @if (!string.IsNullOrWhiteSpace(ep.SpecialNotes))
                                 {
-                                    <div class="text-xs text-ink-muted mt-0.5">@ep.SpecialNotes</div>
+                                    <div class="text-xs text-ink-muted mt-1">@ep.SpecialNotes</div>
                                 }
                             </td>
-                            <td class="text-ink-muted">@ep.ProgramName</td>
-                            <td>
+                            <td class="px-5 py-3 text-ink-muted">@ep.ProgramName</td>
+                            <td class="px-5 py-3">
                                 @if (ep.ScheduledExecutionTime.HasValue)
                                 {
-                                    <div class="text-ink font-medium">@ep.ScheduledExecutionTime.Value.ToString("yyyy-MM-dd")</div>
+                                    <div class="text-ink font-semibold">@ep.ScheduledExecutionTime.Value.ToString("yyyy-MM-dd")</div>
                                     <div class="text-xs text-ink-muted">@ep.ScheduledExecutionTime.Value.ToString("HH:mm")</div>
                                 }
                                 else
@@ -125,7 +127,7 @@
                                     <span class="text-ink-soft">—</span>
                                 }
                             </td>
-                            <td>
+                            <td class="px-5 py-3">
                                 @if (ep.GuestItems.Any())
                                 {
                                     <span class="badge badge-info">@ep.GuestItems.Count ضيف</span>
@@ -135,33 +137,33 @@
                                     <span class="text-ink-soft">—</span>
                                 }
                             </td>
-                            <td>
-                                <span class="badge-premium @GetStatusCssClass(ep.StatusId)">@ep.StatusText</span>
+                            <td class="px-5 py-3">
+                                <span class="status-badge @GetStatusCssClass(ep.StatusId)">@ep.StatusText</span>
                             </td>
-                            <td>
-                                <div class="flex items-center gap-1">
+                            <td class="px-5 py-3">
+                                <div class="flex items-center gap-1.5">
                                     <a href="/Episodes/Details/@ep.EpisodeId" class="icon-btn icon-btn-info" title="عرض">
-                                        <span class="material-icons">visibility</span>
+                                        <span class="material-symbols-rounded">visibility</span>
                                     </a>
-                                    <a href="/Publishing?episodeId=@ep.EpisodeId" class="icon-btn bg-purple-50 text-purple-600 hover:bg-purple-100 p-2 rounded-lg" title="سجل النشر والإنتاج">
-                                        <span class="material-icons">share</span>
+                                    <a href="/Publishing?episodeId=@ep.EpisodeId" class="icon-btn icon-btn-secondary" title="سجل النشر والإنتاج">
+                                        <span class="material-symbols-rounded">share</span>
                                     </a>
                                     @if (User.HasPermission(AppPermissions.EpisodeEdit))
                                     {
                                         <a href="/Episodes/Edit/@ep.EpisodeId" class="icon-btn icon-btn-primary" title="تعديل">
-                                            <span class="material-icons">edit</span>
+                                            <span class="material-symbols-rounded">edit</span>
                                         </a>
                                     }
                                     @if (User.HasPermission(AppPermissions.EpisodeExecute) && ep.StatusId == 0)
                                     {
                                         <button type="button" class="icon-btn icon-btn-success" title="تسجيل تنفيذ" onclick="openExecuteModal(@ep.EpisodeId, '@ep.EpisodeName')">
-                                            <span class="material-icons">play_circle</span>
+                                            <span class="material-symbols-rounded">play_circle</span>
                                         </button>
                                     }
                                     @if (User.HasPermission(AppPermissions.EpisodeRevert) && ep.CanCancel)
                                     {
                                         <button type="button" class="icon-btn icon-btn-danger" title="إلغاء" onclick="openCancelModal(@ep.EpisodeId, '@ep.EpisodeName')">
-                                            <span class="material-icons">cancel</span>
+                                            <span class="material-symbols-rounded">cancel</span>
                                         </button>
                                     }
                                 </div>
@@ -174,12 +176,13 @@
     }
 </div>
 
+<!-- Execute Modal -->
 <div id="executeModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
-    <div class="bg-surface rounded-2xl shadow-xl max-w-md w-full p-6 border border-border/80">
+    <div class="bg-surface rounded-xl shadow-xl max-w-md w-full p-6">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-bold text-ink">تسجيل تنفيذ الحلقة</h3>
-            <button type="button" class="text-ink-soft hover:text-ink p-1 rounded-lg hover:bg-surface-3 transition" onclick="closeModal('executeModal')">
-                <span class="material-icons">close</span>
+            <button type="button" class="text-ink-soft hover:text-ink" onclick="closeModal('executeModal')">
+                <span class="material-symbols-rounded">close</span>
             </button>
         </div>
         <form id="executeForm" method="post" action="">
@@ -204,12 +207,13 @@
     </div>
 </div>
 
+<!-- Cancel Modal -->
 <div id="cancelModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
-    <div class="bg-surface rounded-2xl shadow-xl max-w-md w-full p-6 border border-border/80">
+    <div class="bg-surface rounded-xl shadow-xl max-w-md w-full p-6">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-bold text-ink">إلغاء الحلقة</h3>
-            <button type="button" class="text-ink-soft hover:text-ink p-1 rounded-lg hover:bg-surface-3 transition" onclick="closeModal('cancelModal')">
-                <span class="material-icons">close</span>
+            <button type="button" class="text-ink-soft hover:text-ink" onclick="closeModal('cancelModal')">
+                <span class="material-symbols-rounded">close</span>
             </button>
         </div>
         <form id="cancelForm" method="post" action="">
@@ -233,27 +237,36 @@
             document.getElementById('executeModal').classList.remove('hidden');
             document.getElementById('executeModal').classList.add('flex');
         }
+
         function openCancelModal(id, name) {
             document.getElementById('cancelForm').action = '/Episodes/Cancel/' + id;
             document.getElementById('cancelModal').classList.remove('hidden');
             document.getElementById('cancelModal').classList.add('flex');
         }
+
         function closeModal(id) {
             const modal = document.getElementById(id);
             modal.classList.add('hidden');
             modal.classList.remove('flex');
         }
+
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('bg-black/50')) {
+                closeModal('executeModal');
+                closeModal('cancelModal');
+            }
+        });
     </script>
 }
 
 @functions {
     string GetStatusCssClass(byte statusId) => statusId switch
     {
-        0 => "bg-blue-50 text-blue-700 border-blue-200",
-        1 => "bg-emerald-50 text-emerald-700 border-emerald-200",
-        2 => "bg-green-50 text-green-700 border-green-200",
-        3 => "bg-cyan-50 text-cyan-700 border-cyan-200",
-        4 => "bg-red-50 text-red-700 border-red-200",
-        _ => "bg-gray-50 text-gray-700 border-gray-200"
+        0 => "planned",
+        1 => "executed",
+        2 => "published",
+        3 => "website-published",
+        4 => "cancelled",
+        _ => "planned"
     };
 }

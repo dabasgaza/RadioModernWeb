@@ -3,40 +3,30 @@
     ViewData["Title"] = "حلقات حسب الفترة";
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <a href="/Reports">التقارير</a>
-                <span class="material-icons">chevron_left</span>
-                <span>حسب الفترة</span>
-            </nav>
-            <h1>
-                <span class="material-icons">date_range</span>
-                حلقات حسب الفترة
-            </h1>
-            <p>من @ViewBag.From إلى @ViewBag.To</p>
-        </div>
-        <a href="/Reports" class="btn-secondary">
-            <span class="material-icons">arrow_back</span>
-            رجوع للتقارير
-        </a>
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <h1 class="text-2xl font-bold text-ink mb-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary">date_range</span>
+            حلقات حسب الفترة
+        </h1>
+        <p class="text-ink-muted text-sm">من @ViewBag.From إلى @ViewBag.To</p>
     </div>
+    <a href="/Reports" class="btn-secondary"><span class="material-symbols-rounded">arrow_back</span> رجوع للتقارير</a>
 </div>
 
-<div class="filter-premium">
+<div class="bg-surface rounded-xl border border-border p-4 mb-4">
     <form method="get" class="flex gap-2">
         <input type="date" name="from" value="@ViewBag.From" class="form-input" />
         <input type="date" name="to" value="@ViewBag.To" class="form-input" />
-        <button type="submit" class="btn-primary"><span class="material-icons">search</span> تطبيق</button>
+        <button type="submit" class="btn-primary"><span class="material-symbols-rounded">search</span> تطبيق</button>
     </form>
 </div>
 
-<div class="table-premium">
+<div class="bg-surface rounded-xl border border-border">
     @if (!Model.Any())
     {
         <div class="empty-state p-12">
-            <span class="material-icons empty-icon">event_busy</span>
+            <span class="material-symbols-rounded empty-icon">event_busy</span>
             <h3 class="font-bold text-ink text-lg mb-2">لا حلقات</h3>
             <p class="text-ink-muted text-sm">لا توجد حلقات في هذه الفترة.</p>
         </div>
@@ -44,25 +34,25 @@
     else
     {
         <div class="overflow-x-auto">
-            <table>
-                <thead>
+            <table class="w-full text-sm">
+                <thead class="bg-surface-3 text-ink-muted">
                     <tr>
-                        <th>الحلقة</th>
-                        <th>البرنامج</th>
-                        <th>الضيوف</th>
-                        <th>الموعد</th>
-                        <th>الحالة</th>
+                        <th class="px-5 py-3 text-right font-semibold">الحلقة</th>
+                        <th class="px-5 py-3 text-right font-semibold">البرنامج</th>
+                        <th class="px-5 py-3 text-right font-semibold">الضيوف</th>
+                        <th class="px-5 py-3 text-right font-semibold">الموعد</th>
+                        <th class="px-5 py-3 text-right font-semibold">الحالة</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-border">
                     @foreach (var ep in Model)
                     {
-                        <tr class="hover:bg-surface-2 transition duration-200">
-                            <td class="font-bold text-ink">@ep.EpisodeName</td>
-                            <td class="text-ink-muted">@ep.ProgramName</td>
-                            <td class="text-ink-muted">@ep.GuestsDisplay</td>
-                            <td class="text-ink-muted">@(ep.ScheduledExecutionTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
-                            <td><span class="badge-premium bg-gray-50 text-gray-700 border-gray-200">@ep.StatusText</span></td>
+                        <tr class="hover:bg-surface-3">
+                            <td class="px-5 py-3 font-semibold text-ink">@ep.EpisodeName</td>
+                            <td class="px-5 py-3 text-ink-muted">@ep.ProgramName</td>
+                            <td class="px-5 py-3 text-ink-muted">@ep.GuestsDisplay</td>
+                            <td class="px-5 py-3 text-ink-muted">@(ep.ScheduledExecutionTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                            <td class="px-5 py-3"><span class="badge badge-default">@ep.StatusText</span></td>
                         </tr>
                     }
                 </tbody>

@@ -3,34 +3,27 @@
     ViewData["Title"] = "التغطيات الميدانية";
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <a href="/">الرئيسية</a>
-                <span class="material-icons">chevron_left</span>
-                <span>التغطيات الميدانية</span>
-            </nav>
-            <h1>
-                <span class="material-icons">edit_location_alt</span>
-                التغطيات الميدانية
-            </h1>
-            <p>إدارة تغطيات المراسلين في الميدان</p>
-        </div>
-        @if (User.HasPermission(AppPermissions.CoordinationManage))
-        {
-            <button type="button" class="btn-primary" onclick="openModal('createCoverageModal')">
-                <span class="material-icons">add</span> تغطية جديدة
-            </button>
-        }
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <h1 class="text-2xl font-bold text-ink mb-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary">edit_location_alt</span>
+            التغطيات الميدانية
+        </h1>
+        <p class="text-ink-muted text-sm">إدارة تغطيات المراسلين</p>
     </div>
+    @if (User.HasPermission(AppPermissions.CoordinationManage))
+    {
+        <button type="button" class="btn-primary" onclick="openModal('createCoverageModal')">
+            <span class="material-symbols-rounded">add</span> تغطية جديدة
+        </button>
+    }
 </div>
 
-<div class="table-premium">
+<div class="bg-surface rounded-xl border border-border">
     @if (!Model.Coverages.Any())
     {
         <div class="empty-state p-12">
-            <span class="material-icons empty-icon">edit_location_alt</span>
+            <span class="material-symbols-rounded empty-icon">edit_location_alt</span>
             <h3 class="font-bold text-ink text-lg mb-2">لا تغطيات</h3>
             <p class="text-ink-muted text-sm">لم تتم إضافة تغطيات بعد.</p>
         </div>
@@ -38,38 +31,36 @@
     else
     {
         <div class="overflow-x-auto">
-            <table>
-                <thead>
+            <table class="w-full text-sm">
+                <thead class="bg-surface-3 text-ink-muted">
                     <tr>
-                        <th>المراسل</th>
-                        <th>الضيف</th>
-                        <th>الموقع</th>
-                        <th>الموضوع</th>
-                        <th>الوقت المجدول</th>
-                        <th>الوقت الفعلي</th>
-                        <th>إجراءات</th>
+                        <th class="px-5 py-3 text-right font-semibold">المراسل</th>
+                        <th class="px-5 py-3 text-right font-semibold">الضيف</th>
+                        <th class="px-5 py-3 text-right font-semibold">الموقع</th>
+                        <th class="px-5 py-3 text-right font-semibold">الموضوع</th>
+                        <th class="px-5 py-3 text-right font-semibold">الوقت المجدول</th>
+                        <th class="px-5 py-3 text-right font-semibold">الوقت الفعلي</th>
+                        <th class="px-5 py-3 text-right font-semibold">إجراءات</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-border">
                     @foreach (var c in Model.Coverages)
                     {
-                        <tr class="hover:bg-surface-2 transition duration-200">
-                            <td class="font-bold text-ink">@c.CorrespondentName</td>
-                            <td class="text-ink-muted">@(c.GuestName ?? "—")</td>
-                            <td class="text-ink-muted">@(c.Location ?? "—")</td>
-                            <td class="text-ink-muted">@(c.Topic ?? "—")</td>
-                            <td class="text-ink-muted">@(c.ScheduledTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
-                            <td class="text-ink-muted">@(c.ActualTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
-                            <td>
+                        <tr class="hover:bg-surface-3">
+                            <td class="px-5 py-3 font-semibold text-ink">@c.CorrespondentName</td>
+                            <td class="px-5 py-3 text-ink-muted">@(c.GuestName ?? "—")</td>
+                            <td class="px-5 py-3 text-ink-muted">@(c.Location ?? "—")</td>
+                            <td class="px-5 py-3 text-ink-muted">@(c.Topic ?? "—")</td>
+                            <td class="px-5 py-3 text-ink-muted">@(c.ScheduledTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                            <td class="px-5 py-3 text-ink-muted">@(c.ActualTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                            <td class="px-5 py-3">
                                 @if (User.HasPermission(AppPermissions.CoordinationManage))
                                 {
-                                    <div class="flex items-center gap-1">
-                                        <button type="button" class="icon-btn icon-btn-primary" onclick='openEditCoverageModal(@System.Text.Json.JsonSerializer.Serialize(c))'><span class="material-icons">edit</span></button>
-                                        <form method="post" action="/Coverage/Delete/@c.CoverageId" class="inline" onsubmit="return confirm('حذف التغطية؟');">
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="icon-btn icon-btn-danger"><span class="material-icons">delete</span></button>
-                                        </form>
-                                    </div>
+                                    <button type="button" class="icon-btn icon-btn-primary" onclick='openEditCoverageModal(@System.Text.Json.JsonSerializer.Serialize(c))'><span class="material-symbols-rounded">edit</span></button>
+                                    <form method="post" action="/Coverage/Delete/@c.CoverageId" class="inline" data-confirm="هل أنت متأكد من حذف هذه التغطية؟">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="icon-btn icon-btn-danger"><span class="material-symbols-rounded">delete</span></button>
+                                    </form>
                                 }
                             </td>
                         </tr>
@@ -80,12 +71,13 @@
     }
 </div>
 
+<!-- Create Modal -->
 <div id="createCoverageModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
-    <div class="bg-surface rounded-2xl shadow-xl max-w-lg w-full p-6 border border-border/80 max-h-[90vh] overflow-y-auto">
+    <div class="bg-surface rounded-xl shadow-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-bold text-ink">تغطية جديدة</h3>
-            <button type="button" class="text-ink-soft hover:text-ink p-1 rounded-lg hover:bg-surface-3 transition" onclick="closeModal('createCoverageModal')">
-                <span class="material-icons">close</span>
+            <button type="button" class="text-ink-soft hover:text-ink" onclick="closeModal('createCoverageModal')">
+                <span class="material-symbols-rounded">close</span>
             </button>
         </div>
         <form method="post" action="/Coverage/Create">
@@ -132,12 +124,13 @@
     </div>
 </div>
 
+<!-- Edit Modal -->
 <div id="editCoverageModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
-    <div class="bg-surface rounded-2xl shadow-xl max-w-lg w-full p-6 border border-border/80 max-h-[90vh] overflow-y-auto">
+    <div class="bg-surface rounded-xl shadow-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-bold text-ink">تعديل تغطية</h3>
-            <button type="button" class="text-ink-soft hover:text-ink p-1 rounded-lg hover:bg-surface-3 transition" onclick="closeModal('editCoverageModal')">
-                <span class="material-icons">close</span>
+            <button type="button" class="text-ink-soft hover:text-ink" onclick="closeModal('editCoverageModal')">
+                <span class="material-symbols-rounded">close</span>
             </button>
         </div>
         <form id="editCoverageForm" method="post" action="">
@@ -193,11 +186,13 @@
             m.classList.remove('hidden');
             m.classList.add('flex');
         }
+
         function closeModal(id) {
             const m = document.getElementById(id);
             m.classList.add('hidden');
             m.classList.remove('flex');
         }
+
         function openEditCoverageModal(data) {
             document.getElementById('editCoverageForm').action = '/Coverage/Edit/' + data.coverageId;
             document.getElementById('edit_CoverageId').value = data.coverageId;
@@ -206,6 +201,7 @@
             document.getElementById('edit_GuestId').value = data.guestId || '';
             document.getElementById('edit_Location').value = data.location || '';
             document.getElementById('edit_Topic').value = data.topic || '';
+            // Format datetimes
             if (data.scheduledTime) document.getElementById('edit_ScheduledTime').value = data.scheduledTime.substring(0, 16);
             if (data.actualTime) document.getElementById('edit_ActualTime').value = data.actualTime.substring(0, 16);
             openModal('editCoverageModal');

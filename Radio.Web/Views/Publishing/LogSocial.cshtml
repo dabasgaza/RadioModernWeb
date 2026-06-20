@@ -4,34 +4,33 @@
     var episode = Model.Episode;
 }
 
-<div class="page-header">
-    <div class="relative z-10">
-        <nav class="breadcrumb">
-            <a href="/Publishing">النشر الرقمي</a>
-            <span class="material-icons">chevron_left</span>
-            <span>تسجيل نشر</span>
-        </nav>
-        <h1>
-            <span class="material-icons">share</span>
-            تسجيل نشر رقمي
-        </h1>
-    </div>
+<div class="mb-6">
+    <nav class="text-sm text-ink-muted mb-2">
+        <a href="/Publishing" class="hover:text-primary">النشر الرقمي</a>
+        <span class="mx-1">/</span>
+        <span class="text-ink">تسجيل نشر</span>
+    </nav>
+    <h1 class="text-2xl font-bold text-ink flex items-center gap-2">
+        <span class="material-symbols-rounded text-primary">share</span>
+        تسجيل نشر رقمي
+    </h1>
 </div>
 
 @if (episode == null)
 {
-    <div class="bg-red-50 border border-red-200 text-danger rounded-xl p-4">الحلقة غير موجودة.</div>
+    <div class="bg-red-50 border border-red-200 text-danger rounded-lg p-4">الحلقة غير موجودة.</div>
     return;
 }
 
-<div class="card-premium mb-4 p-5">
+<!-- Episode Info -->
+<div class="bg-surface rounded-xl border border-border p-5 mb-4">
     <div class="flex items-center justify-between">
         <div>
             <h3 class="text-lg font-bold text-ink">@episode.EpisodeName</h3>
             <p class="text-sm text-ink-muted">@episode.ProgramName</p>
         </div>
         <a href="/Episodes/Details/@episode.EpisodeId" class="btn-secondary text-sm" target="_blank">
-            <span class="material-icons">open_in_new</span>
+            <span class="material-symbols-rounded">open_in_new</span>
             عرض الحلقة
         </a>
     </div>
@@ -46,10 +45,10 @@
             @for (int i = 0; i < Model.EpisodeGuests.Count; i++)
             {
                 var guest = Model.EpisodeGuests[i];
-                <div class="card-premium mb-4 guest-card" data-index="@i">
-                    <div class="card-header bg-surface-3">
+                <div class="bg-surface rounded-xl border border-border mb-4 guest-card" data-index="@i">
+                    <div class="p-5 border-b border-border bg-surface-3 rounded-t-xl">
                         <h3 class="font-bold text-ink flex items-center gap-2">
-                            <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">person</span>
+                            <span class="material-symbols-rounded text-primary">person</span>
                             @guest.FullName
                             @if (!string.IsNullOrWhiteSpace(guest.Topic))
                             {
@@ -57,7 +56,7 @@
                             }
                         </h3>
                     </div>
-                    <div class="card-body space-y-4">
+                    <div class="p-5 space-y-4">
                         <input type="hidden" name="GuestLogs[@i].EpisodeGuestId" value="@guest.EpisodeGuestId" />
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -79,6 +78,7 @@
                             </div>
                         </div>
 
+                        <!-- Platforms -->
                         <div>
                             <label class="form-label">منصات النشر</label>
                             <div class="platforms-container space-y-2" id="platforms-@i">
@@ -91,8 +91,8 @@
                                         }
                                     </select>
                                     <input type="url" name="GuestLogs[@i].Platforms[0].Url" class="form-input flex-[2]" placeholder="رابط النشر" dir="ltr" />
-                                    <button type="button" class="icon-btn icon-btn-success add-platform-btn" onclick="addPlatform(@i)" title="إضافة">
-                                        <span class="material-icons">add</span>
+                                    <button type="button" class="icon-btn icon-btn-success add-platform-btn" onclick="addPlatform(@i)" title="إضافة منصة">
+                                        <span class="material-symbols-rounded">add</span>
                                     </button>
                                 </div>
                             </div>
@@ -103,8 +103,8 @@
         }
         else
         {
-            <div class="card-premium p-8 text-center">
-                <span class="material-icons text-ink-soft text-4xl mb-2">people</span>
+            <div class="bg-surface rounded-xl border border-border p-8 text-center">
+                <span class="material-symbols-rounded text-ink-soft text-4xl mb-2">people</span>
                 <p class="text-ink-muted">لا يوجد ضيوف في هذه الحلقة.</p>
             </div>
         }
@@ -112,13 +112,13 @@
 
     <div class="flex items-center justify-end gap-2">
         <a href="/Publishing" class="btn-secondary">
-            <span class="material-icons">cancel</span>
+            <span class="material-symbols-rounded">cancel</span>
             إلغاء
         </a>
         @if (Model.EpisodeGuests.Any())
         {
             <button type="submit" class="btn-primary">
-                <span class="material-icons">publish</span>
+                <span class="material-symbols-rounded">publish</span>
                 تسجيل النشر
             </button>
         }
@@ -161,7 +161,7 @@
                     </select>
                     <input type="url" name="GuestLogs[${guestIdx}].Platforms[${count}].Url" class="form-input flex-[2]" placeholder="رابط النشر" dir="ltr" />
                     <button type="button" class="icon-btn icon-btn-danger" onclick="this.closest('.platform-row').remove()">
-                        <span class="material-icons">close</span>
+                        <span class="material-symbols-rounded">close</span>
                     </button>
                 </div>`;
             container.insertAdjacentHTML('beforeend', html);

@@ -31,7 +31,7 @@
 ## 🏗️ البنية المعمارية
 
 ```
-Radio.BlazorWeb/
+RadioModernWeb/
 ├── Domain/                          # EF Core models + Identity (ApplicationUser, ApplicationRole)
 │   ├── Identity/                    # ApplicationUser, ApplicationRole (IdentityUser<int>)
 │   ├── Models/                      # 21 entity model + BroadcastWorkflowDBContext

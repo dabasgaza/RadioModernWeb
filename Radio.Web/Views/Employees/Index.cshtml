@@ -4,79 +4,70 @@
     var staffRoles = ViewBag.StaffRoles as List<StaffRoleDto>;
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <a href="/">الرئيسية</a>
-                <span class="material-icons">chevron_left</span>
-                <span>الموظفون</span>
-            </nav>
-            <h1>
-                <span class="material-icons">badge</span>
-                الموظفون
-            </h1>
-            <p>إدارة أعضاء طاقم العمل والإنتاج</p>
-        </div>
-        @if (User.HasPermission(AppPermissions.StaffManage))
-        {
-            <a href="/Employees/Create" class="btn-primary"><span class="material-icons">add</span> موظف جديد</a>
-        }
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <h1 class="text-2xl font-bold text-ink mb-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary">badge</span>
+            الموظفون
+        </h1>
+        <p class="text-ink-muted text-sm">إدارة أعضاء طاقم العمل</p>
     </div>
+    @if (User.HasPermission(AppPermissions.StaffManage))
+    {
+        <a href="/Employees/Create" class="btn-primary"><span class="material-symbols-rounded">add</span> موظف جديد</a>
+    }
 </div>
 
-<div class="filter-premium">
+<div class="bg-surface rounded-xl border border-border p-4 mb-4">
     <form method="get" class="flex gap-2">
-        <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث عن موظف…" class="form-input flex-1" />
-        <button type="submit" class="btn-primary"><span class="material-icons">search</span></button>
-        <a href="/Employees" class="btn-secondary"><span class="material-icons">refresh</span></a>
+        <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث…" class="form-input flex-1" />
+        <button type="submit" class="btn-primary"><span class="material-symbols-rounded">search</span></button>
+        <a href="/Employees" class="btn-secondary"><span class="material-symbols-rounded">refresh</span></a>
     </form>
 </div>
 
-<div class="table-premium">
+<div class="bg-surface rounded-xl border border-border">
     @if (!Model.Any())
     {
         <div class="empty-state p-12">
-            <span class="material-icons empty-icon">badge</span>
+            <span class="material-symbols-rounded empty-icon">badge</span>
             <h3 class="font-bold text-ink text-lg mb-2">لا موظفين</h3>
-            <a href="/Employees/Create" class="btn-primary"><span class="material-icons">add</span> موظف جديد</a>
+            <a href="/Employees/Create" class="btn-primary"><span class="material-symbols-rounded">add</span> موظف جديد</a>
         </div>
     }
     else
     {
         <div class="overflow-x-auto">
-            <table>
-                <thead>
+            <table class="w-full text-sm">
+                <thead class="bg-surface-3 text-ink-muted">
                     <tr>
-                        <th>الاسم</th>
-                        <th>الدور</th>
-                        <th>ملاحظات</th>
-                        <th>إجراءات</th>
+                        <th class="px-5 py-3 text-right font-semibold">الاسم</th>
+                        <th class="px-5 py-3 text-right font-semibold">الدور</th>
+                        <th class="px-5 py-3 text-right font-semibold">ملاحظات</th>
+                        <th class="px-5 py-3 text-right font-semibold">إجراءات</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-border">
                     @foreach (var e in Model)
                     {
-                        <tr class="hover:bg-surface-2 transition duration-200">
-                            <td class="font-bold text-ink">@e.FullName</td>
-                            <td>
+                        <tr class="hover:bg-surface-3">
+                            <td class="px-5 py-3 font-semibold text-ink">@e.FullName</td>
+                            <td class="px-5 py-3">
                                 @if (!string.IsNullOrWhiteSpace(e.StaffRoleName))
                                 {
-                                    <span class="badge-premium bg-blue-50 text-blue-700 border-blue-200">@e.StaffRoleName</span>
+                                    <span class="badge badge-info">@e.StaffRoleName</span>
                                 }
                                 else { <span class="text-ink-soft">—</span> }
                             </td>
-                            <td class="text-ink-muted">@(e.Notes ?? "—")</td>
-                            <td>
+                            <td class="px-5 py-3 text-ink-muted">@(e.Notes ?? "—")</td>
+                            <td class="px-5 py-3">
                                 @if (User.HasPermission(AppPermissions.StaffManage))
                                 {
-                                    <div class="flex items-center gap-1">
-                                        <a href="/Employees/Edit/@e.EmployeeId" class="icon-btn icon-btn-primary"><span class="material-icons">edit</span></a>
-                                        <form method="post" action="/Employees/Delete/@e.EmployeeId" class="inline" onsubmit="return confirm('حذف الموظف؟');">
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="icon-btn icon-btn-danger"><span class="material-icons">delete</span></button>
-                                        </form>
-                                    </div>
+                                    <a href="/Employees/Edit/@e.EmployeeId" class="icon-btn icon-btn-primary"><span class="material-symbols-rounded">edit</span></a>
+                                    <form method="post" action="/Employees/Delete/@e.EmployeeId" class="inline" data-confirm="هل أنت متأكد من حذف الموظف «@e.FullName»؟">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="icon-btn icon-btn-danger"><span class="material-symbols-rounded">delete</span></button>
+                                    </form>
                                 }
                             </td>
                         </tr>

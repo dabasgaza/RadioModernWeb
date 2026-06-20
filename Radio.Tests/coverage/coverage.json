@@ -19188,14 +19188,14 @@
       "AspNetCoreGeneratedDocument.Views_Correspondents_Edit/<>c__DisplayClass12_0/<<ExecuteAsync>b__0>d": {
         "System.Void AspNetCoreGeneratedDocument.Views_Correspondents_Edit/<>c__DisplayClass12_0/<<ExecuteAsync>b__0>d::MoveNext()": {
           "Lines": {
-            "21": 0,
-            "22": 0,
-            "23": 0,
-            "25": 0
+            "35": 0,
+            "36": 0,
+            "37": 0,
+            "39": 0
           },
           "Branches": [
             {
-              "Line": 21,
+              "Line": 35,
               "Offset": 124,
               "EndOffset": 129,
               "Path": 0,
@@ -19203,7 +19203,7 @@
               "Hits": 0
             },
             {
-              "Line": 21,
+              "Line": 35,
               "Offset": 124,
               "EndOffset": 296,
               "Path": 1,
@@ -19211,7 +19211,7 @@
               "Hits": 0
             },
             {
-              "Line": 22,
+              "Line": 36,
               "Offset": 327,
               "EndOffset": 332,
               "Path": 0,
@@ -19219,7 +19219,7 @@
               "Hits": 0
             },
             {
-              "Line": 23,
+              "Line": 37,
               "Offset": 769,
               "EndOffset": 771,
               "Path": 0,
@@ -19227,7 +19227,7 @@
               "Hits": 0
             },
             {
-              "Line": 23,
+              "Line": 37,
               "Offset": 769,
               "EndOffset": 888,
               "Path": 1,
@@ -19235,7 +19235,7 @@
               "Hits": 0
             },
             {
-              "Line": 22,
+              "Line": 36,
               "Offset": 327,
               "EndOffset": 986,
               "Path": 1,
@@ -19302,50 +19302,34 @@
             },
             {
               "Line": 4,
-              "Offset": 281,
-              "EndOffset": 283,
+              "Offset": 530,
+              "EndOffset": 532,
               "Path": 0,
               "Ordinal": 6,
               "Hits": 0
             },
             {
               "Line": 4,
-              "Offset": 281,
-              "EndOffset": 290,
+              "Offset": 530,
+              "EndOffset": 539,
               "Path": 1,
               "Ordinal": 7,
               "Hits": 0
             },
             {
               "Line": 4,
-              "Offset": 584,
-              "EndOffset": 586,
+              "Offset": 796,
+              "EndOffset": 798,
               "Path": 0,
               "Ordinal": 8,
               "Hits": 0
             },
             {
               "Line": 4,
-              "Offset": 584,
-              "EndOffset": 593,
+              "Offset": 796,
+              "EndOffset": 909,
               "Path": 1,
               "Ordinal": 9,
-              "Hits": 0
-            },
-            {
-              "Line": 4,
-              "Offset": 850,
-              "EndOffset": 852,
-              "Path": 0,
-              "Ordinal": 10,
-              "Hits": 0
-            },
-            {
-              "Line": 4,
-              "Offset": 850,
-              "EndOffset": 963,
-              "Path": 1,
-              "Ordinal": 11,
               "Hits": 0
             }
           ]
@@ -19357,24 +19341,35 @@
         "System.Void AspNetCoreGeneratedDocument.Views_Correspondents_Index/<ExecuteAsync>d__12::MoveNext()": {
           "Lines": {
             "3": 0,
-            "14": 0,
-            "15": 0,
-            "17": 0,
-            "29": 0,
-            "30": 0,
-            "36": 0,
-            "38": 0,
-            "50": 0,
+            "22": 0,
+            "23": 0,
+            "28": 0,
             "51": 0,
+            "52": 0,
             "58": 0,
             "59": 0,
-            "65": 0,
-            "68": 0,
-            "72": 0
+            "64": 0,
+            "67": 0,
+            "69": 0,
+            "71": 0,
+            "72": 0,
+            "93": 0,
+            "94": 0,
+            "95": 0,
+            "96": 0,
+            "98": 0,
+            "99": 0,
+            "101": 0,
+            "103": 0,
+            "114": 0,
+            "115": 0,
+            "127": 0,
+            "130": 0,
+            "132": 0
           },
           "Branches": [
             {
-              "Line": 14,
+              "Line": 22,
               "Offset": 114,
               "EndOffset": 116,
               "Path": 0,
@@ -19382,7 +19377,7 @@
               "Hits": 0
             },
             {
-              "Line": 14,
+              "Line": 22,
               "Offset": 114,
               "EndOffset": 135,
               "Path": 1,
@@ -19390,7 +19385,7 @@
               "Hits": 0
             },
             {
-              "Line": 17,
+              "Line": 28,
               "Offset": 528,
               "EndOffset": 530,
               "Path": 0,
@@ -19398,7 +19393,7 @@
               "Hits": 0
             },
             {
-              "Line": 17,
+              "Line": 28,
               "Offset": 528,
               "EndOffset": 641,
               "Path": 1,
@@ -19406,7 +19401,7 @@
               "Hits": 0
             },
             {
-              "Line": 29,
+              "Line": 51,
               "Offset": 736,
               "EndOffset": 738,
               "Path": 0,
@@ -19414,91 +19409,123 @@
               "Hits": 0
             },
             {
-              "Line": 29,
-              "Offset": 736,
-              "EndOffset": 762,
-              "Path": 1,
-              "Ordinal": 5,
-              "Hits": 0
-            },
-            {
-              "Line": 50,
-              "Offset": 2348,
-              "EndOffset": 831,
-              "Path": 1,
-              "Ordinal": 15,
-              "Hits": 0
-            },
-            {
-              "Line": 51,
-              "Offset": 924,
-              "EndOffset": 926,
+              "Line": 58,
+              "Offset": 781,
+              "EndOffset": 783,
               "Path": 0,
               "Ordinal": 6,
               "Hits": 0
             },
             {
-              "Line": 51,
-              "Offset": 924,
-              "EndOffset": 932,
+              "Line": 58,
+              "Offset": 781,
+              "EndOffset": 802,
               "Path": 1,
               "Ordinal": 7,
               "Hits": 0
             },
             {
               "Line": 51,
-              "Offset": 973,
-              "EndOffset": 975,
+              "Offset": 736,
+              "EndOffset": 825,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 0
+            },
+            {
+              "Line": 71,
+              "Offset": 2470,
+              "EndOffset": 894,
+              "Path": 1,
+              "Ordinal": 19,
+              "Hits": 0
+            },
+            {
+              "Line": 72,
+              "Offset": 987,
+              "EndOffset": 989,
               "Path": 0,
               "Ordinal": 8,
               "Hits": 0
             },
             {
-              "Line": 51,
-              "Offset": 973,
-              "EndOffset": 981,
+              "Line": 72,
+              "Offset": 987,
+              "EndOffset": 995,
               "Path": 1,
               "Ordinal": 9,
               "Hits": 0
             },
             {
-              "Line": 58,
-              "Offset": 1177,
-              "EndOffset": 1182,
+              "Line": 93,
+              "Offset": 1041,
+              "EndOffset": 1046,
               "Path": 0,
               "Ordinal": 10,
               "Hits": 0
             },
             {
-              "Line": 59,
-              "Offset": 2126,
-              "EndOffset": 2128,
-              "Path": 0,
-              "Ordinal": 12,
-              "Hits": 0
-            },
-            {
-              "Line": 59,
-              "Offset": 2126,
-              "EndOffset": 2239,
+              "Line": 95,
+              "Offset": 1202,
+              "EndOffset": 1089,
               "Path": 1,
               "Ordinal": 13,
               "Hits": 0
             },
             {
-              "Line": 58,
-              "Offset": 1177,
-              "EndOffset": 2312,
+              "Line": 95,
+              "Offset": 1202,
+              "EndOffset": 1204,
+              "Path": 0,
+              "Ordinal": 12,
+              "Hits": 0
+            },
+            {
+              "Line": 93,
+              "Offset": 1041,
+              "EndOffset": 1214,
               "Path": 1,
               "Ordinal": 11,
               "Hits": 0
             },
             {
-              "Line": 50,
-              "Offset": 2348,
-              "EndOffset": 2353,
+              "Line": 114,
+              "Offset": 1423,
+              "EndOffset": 1428,
               "Path": 0,
               "Ordinal": 14,
+              "Hits": 0
+            },
+            {
+              "Line": 115,
+              "Offset": 2248,
+              "EndOffset": 2250,
+              "Path": 0,
+              "Ordinal": 16,
+              "Hits": 0
+            },
+            {
+              "Line": 115,
+              "Offset": 2248,
+              "EndOffset": 2361,
+              "Path": 1,
+              "Ordinal": 17,
+              "Hits": 0
+            },
+            {
+              "Line": 114,
+              "Offset": 1423,
+              "EndOffset": 2434,
+              "Path": 1,
+              "Ordinal": 15,
+              "Hits": 0
+            },
+            {
+              "Line": 71,
+              "Offset": 2470,
+              "EndOffset": 2475,
+              "Path": 0,
+              "Ordinal": 18,
               "Hits": 0
             }
           ]
@@ -19954,17 +19981,17 @@
       "AspNetCoreGeneratedDocument.Views_Database_Index": {
         "System.String AspNetCoreGeneratedDocument.Views_Database_Index::FormatSize(System.Int64)": {
           "Lines": {
-            "94": 0,
-            "95": 0,
-            "96": 0,
-            "97": 0,
-            "98": 0,
-            "99": 0,
-            "100": 0
+            "120": 0,
+            "121": 0,
+            "122": 0,
+            "123": 0,
+            "124": 0,
+            "125": 0,
+            "126": 0
           },
           "Branches": [
             {
-              "Line": 94,
+              "Line": 120,
               "Offset": 11,
               "EndOffset": 13,
               "Path": 0,
@@ -19972,7 +19999,7 @@
               "Hits": 0
             },
             {
-              "Line": 94,
+              "Line": 120,
               "Offset": 11,
               "EndOffset": 24,
               "Path": 1,
@@ -19980,7 +20007,7 @@
               "Hits": 0
             },
             {
-              "Line": 94,
+              "Line": 120,
               "Offset": 20,
               "EndOffset": 38,
               "Path": 1,
@@ -19988,7 +20015,7 @@
               "Hits": 0
             },
             {
-              "Line": 94,
+              "Line": 120,
               "Offset": 20,
               "EndOffset": 82,
               "Path": 0,
@@ -19996,7 +20023,7 @@
               "Hits": 0
             },
             {
-              "Line": 94,
+              "Line": 120,
               "Offset": 31,
               "EndOffset": 139,
               "Path": 1,
@@ -20004,7 +20031,7 @@
               "Hits": 0
             },
             {
-              "Line": 94,
+              "Line": 120,
               "Offset": 31,
               "EndOffset": 196,
               "Path": 0,
@@ -20017,133 +20044,149 @@
       "AspNetCoreGeneratedDocument.Views_Database_Index/<ExecuteAsync>d__13": {
         "System.Void AspNetCoreGeneratedDocument.Views_Database_Index/<ExecuteAsync>d__13::MoveNext()": {
           "Lines": {
-            "2": 0,
-            "21": 0,
-            "22": 0,
-            "27": 0,
-            "36": 0,
-            "37": 0,
-            "42": 0,
-            "53": 0,
-            "54": 0,
-            "60": 0,
-            "62": 0,
-            "75": 0,
-            "76": 0,
+            "3": 0,
+            "34": 0,
+            "35": 0,
+            "43": 0,
+            "56": 0,
+            "57": 0,
+            "65": 0,
+            "77": 0,
+            "78": 0,
+            "84": 0,
             "86": 0,
-            "90": 0
+            "99": 0,
+            "100": 0,
+            "112": 0,
+            "116": 0
           },
           "Branches": [
             {
-              "Line": 21,
-              "Offset": 119,
-              "EndOffset": 124,
+              "Line": 34,
+              "Offset": 136,
+              "EndOffset": 141,
               "Path": 0,
               "Ordinal": 0,
               "Hits": 0
             },
             {
-              "Line": 22,
-              "Offset": 540,
-              "EndOffset": 542,
+              "Line": 35,
+              "Offset": 557,
+              "EndOffset": 559,
               "Path": 0,
               "Ordinal": 2,
               "Hits": 0
             },
             {
-              "Line": 22,
-              "Offset": 540,
-              "EndOffset": 653,
+              "Line": 35,
+              "Offset": 557,
+              "EndOffset": 670,
               "Path": 1,
               "Ordinal": 3,
               "Hits": 0
             },
             {
-              "Line": 21,
-              "Offset": 119,
-              "EndOffset": 726,
+              "Line": 34,
+              "Offset": 136,
+              "EndOffset": 743,
               "Path": 1,
               "Ordinal": 1,
               "Hits": 0
             },
             {
-              "Line": 36,
-              "Offset": 768,
-              "EndOffset": 773,
+              "Line": 56,
+              "Offset": 785,
+              "EndOffset": 790,
               "Path": 0,
               "Ordinal": 4,
               "Hits": 0
             },
             {
-              "Line": 37,
-              "Offset": 1192,
-              "EndOffset": 1194,
+              "Line": 57,
+              "Offset": 1209,
+              "EndOffset": 1211,
               "Path": 0,
               "Ordinal": 6,
               "Hits": 0
             },
             {
-              "Line": 37,
-              "Offset": 1192,
-              "EndOffset": 1305,
+              "Line": 57,
+              "Offset": 1209,
+              "EndOffset": 1322,
               "Path": 1,
               "Ordinal": 7,
               "Hits": 0
             },
             {
-              "Line": 36,
-              "Offset": 768,
-              "EndOffset": 1378,
+              "Line": 56,
+              "Offset": 785,
+              "EndOffset": 1395,
               "Path": 1,
               "Ordinal": 5,
               "Hits": 0
             },
             {
-              "Line": 53,
-              "Offset": 1418,
-              "EndOffset": 1420,
+              "Line": 77,
+              "Offset": 1435,
+              "EndOffset": 1437,
               "Path": 0,
               "Ordinal": 8,
               "Hits": 0
             },
             {
-              "Line": 53,
-              "Offset": 1418,
-              "EndOffset": 1444,
+              "Line": 77,
+              "Offset": 1435,
+              "EndOffset": 1461,
               "Path": 1,
               "Ordinal": 9,
               "Hits": 0
             },
             {
-              "Line": 75,
-              "Offset": 1935,
-              "EndOffset": 1490,
+              "Line": 99,
+              "Offset": 2154,
+              "EndOffset": 1507,
               "Path": 1,
-              "Ordinal": 13,
+              "Ordinal": 15,
               "Hits": 0
             },
             {
-              "Line": 76,
-              "Offset": 1779,
-              "EndOffset": 1781,
+              "Line": 100,
+              "Offset": 1796,
+              "EndOffset": 1798,
               "Path": 0,
               "Ordinal": 10,
               "Hits": 0
             },
             {
-              "Line": 76,
-              "Offset": 1779,
-              "EndOffset": 1788,
+              "Line": 100,
+              "Offset": 1796,
+              "EndOffset": 1805,
               "Path": 1,
               "Ordinal": 11,
               "Hits": 0
             },
             {
-              "Line": 75,
-              "Offset": 1935,
-              "EndOffset": 1940,
+              "Line": 100,
+              "Offset": 1950,
+              "EndOffset": 1952,
               "Path": 0,
               "Ordinal": 12,
+              "Hits": 0
+            },
+            {
+              "Line": 100,
+              "Offset": 1950,
+              "EndOffset": 1959,
+              "Path": 1,
+              "Ordinal": 13,
+              "Hits": 0
+            },
+            {
+              "Line": 99,
+              "Offset": 2154,
+              "EndOffset": 2159,
+              "Path": 0,
+              "Ordinal": 14,
               "Hits": 0
             }
           ]
@@ -20154,17 +20197,17 @@
       "AspNetCoreGeneratedDocument.Views_Diagnostics_Index": {
         "System.String AspNetCoreGeneratedDocument.Views_Diagnostics_Index::GetLevelBadgeClass(System.String)": {
           "Lines": {
-            "75": 0,
-            "76": 0,
-            "77": 0,
-            "78": 0,
-            "79": 0,
-            "80": 0,
-            "81": 0
+            "112": 0,
+            "113": 0,
+            "114": 0,
+            "115": 0,
+            "116": 0,
+            "117": 0,
+            "118": 0
           },
           "Branches": [
             {
-              "Line": 75,
+              "Line": 112,
               "Offset": 15,
               "EndOffset": 17,
               "Path": 0,
@@ -20172,7 +20215,7 @@
               "Hits": 0
             },
             {
-              "Line": 75,
+              "Line": 112,
               "Offset": 28,
               "EndOffset": 30,
               "Path": 0,
@@ -20180,7 +20223,7 @@
               "Hits": 0
             },
             {
-              "Line": 75,
+              "Line": 112,
               "Offset": 41,
               "EndOffset": 43,
               "Path": 0,
@@ -20188,7 +20231,7 @@
               "Hits": 0
             },
             {
-              "Line": 75,
+              "Line": 112,
               "Offset": 15,
               "EndOffset": 58,
               "Path": 1,
@@ -20196,7 +20239,7 @@
               "Hits": 0
             },
             {
-              "Line": 75,
+              "Line": 112,
               "Offset": 28,
               "EndOffset": 58,
               "Path": 1,
@@ -20204,7 +20247,7 @@
               "Hits": 0
             },
             {
-              "Line": 75,
+              "Line": 112,
               "Offset": 41,
               "EndOffset": 66,
               "Path": 1,
@@ -20212,7 +20255,7 @@
               "Hits": 0
             },
             {
-              "Line": 75,
+              "Line": 112,
               "Offset": 54,
               "EndOffset": 74,
               "Path": 1,
@@ -20220,7 +20263,7 @@
               "Hits": 0
             },
             {
-              "Line": 75,
+              "Line": 112,
               "Offset": 54,
               "EndOffset": 82,
               "Path": 0,
@@ -20233,24 +20276,24 @@
       "AspNetCoreGeneratedDocument.Views_Diagnostics_Index/<ExecuteAsync>d__0": {
         "System.Void AspNetCoreGeneratedDocument.Views_Diagnostics_Index/<ExecuteAsync>d__0::MoveNext()": {
           "Lines": {
-            "2": 0,
-            "58": 0,
-            "59": 0,
-            "68": 0
+            "3": 0,
+            "93": 0,
+            "94": 0,
+            "105": 0
           },
           "Branches": [
             {
-              "Line": 58,
-              "Offset": 685,
-              "EndOffset": 305,
+              "Line": 93,
+              "Offset": 880,
+              "EndOffset": 322,
               "Path": 1,
               "Ordinal": 1,
               "Hits": 0
             },
             {
-              "Line": 58,
-              "Offset": 685,
-              "EndOffset": 690,
+              "Line": 93,
+              "Offset": 880,
+              "EndOffset": 885,
               "Path": 0,
               "Ordinal": 0,
               "Hits": 0
@@ -20528,8 +20571,8 @@
       }
     },
     "D:\\MVC\\RadioMVC\\Radio.BlazorWeb\\Radio.Web\\Views\\Employees\\Index.cshtml": {
-      "AspNetCoreGeneratedDocument.Views_Employees_Index/<ExecuteAsync>d__13": {
-        "System.Void AspNetCoreGeneratedDocument.Views_Employees_Index/<ExecuteAsync>d__13::MoveNext()": {
+      "AspNetCoreGeneratedDocument.Views_Employees_Index/<ExecuteAsync>d__12": {
+        "System.Void AspNetCoreGeneratedDocument.Views_Employees_Index/<ExecuteAsync>d__12::MoveNext()": {
           "Lines": {
             "3": 0,
             "4": 0,
@@ -20619,7 +20662,7 @@
             },
             {
               "Line": 51,
-              "Offset": 2128,
+              "Offset": 2247,
               "EndOffset": 929,
               "Path": 1,
               "Ordinal": 17,
@@ -20667,16 +20710,16 @@
             },
             {
               "Line": 65,
-              "Offset": 1906,
-              "EndOffset": 1908,
+              "Offset": 2025,
+              "EndOffset": 2027,
               "Path": 0,
               "Ordinal": 14,
               "Hits": 0
             },
             {
               "Line": 65,
-              "Offset": 1906,
-              "EndOffset": 2019,
+              "Offset": 2025,
+              "EndOffset": 2138,
               "Path": 1,
               "Ordinal": 15,
               "Hits": 0
@@ -20684,15 +20727,15 @@
             {
               "Line": 64,
               "Offset": 1200,
-              "EndOffset": 2092,
+              "EndOffset": 2211,
               "Path": 1,
               "Ordinal": 13,
               "Hits": 0
             },
             {
               "Line": 51,
-              "Offset": 2128,
-              "EndOffset": 2133,
+              "Offset": 2247,
+              "EndOffset": 2252,
               "Path": 0,
               "Ordinal": 16,
               "Hits": 0
@@ -22178,52 +22221,52 @@
       "AspNetCoreGeneratedDocument.Views_Episodes_Edit/<<ExecuteAsync>b__14_0>d": {
         "System.Void AspNetCoreGeneratedDocument.Views_Episodes_Edit/<<ExecuteAsync>b__14_0>d::MoveNext()": {
           "Lines": {
-            "23": 0,
-            "24": 0,
-            "26": 0,
-            "41": 0,
-            "42": 0,
-            "44": 0,
-            "84": 0,
-            "85": 0,
-            "86": 0,
-            "87": 0,
-            "88": 0,
-            "95": 0,
-            "96": 0,
+            "37": 0,
+            "38": 0,
+            "40": 0,
+            "55": 0,
+            "56": 0,
+            "58": 0,
             "98": 0,
-            "115": 0,
-            "116": 0,
-            "118": 0,
-            "120": 0,
-            "139": 0,
-            "140": 0,
-            "141": 0,
-            "142": 0,
-            "143": 0,
-            "150": 0,
-            "151": 0,
-            "153": 0,
+            "99": 0,
+            "100": 0,
+            "101": 0,
+            "102": 0,
+            "109": 0,
+            "110": 0,
+            "112": 0,
+            "129": 0,
+            "130": 0,
+            "132": 0,
+            "137": 0,
+            "156": 0,
+            "157": 0,
+            "158": 0,
+            "159": 0,
+            "160": 0,
+            "167": 0,
+            "168": 0,
             "170": 0,
-            "171": 0,
-            "173": 0,
-            "175": 0,
-            "194": 0,
+            "187": 0,
+            "188": 0,
+            "190": 0,
             "195": 0,
-            "196": 0,
-            "197": 0,
-            "198": 0,
-            "205": 0,
-            "206": 0,
-            "208": 0,
+            "214": 0,
+            "215": 0,
+            "216": 0,
             "217": 0,
             "218": 0,
-            "220": 0,
-            "222": 0
+            "225": 0,
+            "226": 0,
+            "228": 0,
+            "237": 0,
+            "238": 0,
+            "240": 0,
+            "245": 0
           },
           "Branches": [
             {
-              "Line": 23,
+              "Line": 37,
               "Offset": 369,
               "EndOffset": 374,
               "Path": 0,
@@ -22231,7 +22274,7 @@
               "Hits": 0
             },
             {
-              "Line": 24,
+              "Line": 38,
               "Offset": 740,
               "EndOffset": 742,
               "Path": 0,
@@ -22239,7 +22282,7 @@
               "Hits": 0
             },
             {
-              "Line": 24,
+              "Line": 38,
               "Offset": 740,
               "EndOffset": 853,
               "Path": 1,
@@ -22247,7 +22290,7 @@
               "Hits": 0
             },
             {
-              "Line": 23,
+              "Line": 37,
               "Offset": 369,
               "EndOffset": 926,
               "Path": 1,
@@ -22255,7 +22298,7 @@
               "Hits": 0
             },
             {
-              "Line": 26,
+              "Line": 40,
               "Offset": 1250,
               "EndOffset": 1252,
               "Path": 0,
@@ -22263,7 +22306,7 @@
               "Hits": 0
             },
             {
-              "Line": 26,
+              "Line": 40,
               "Offset": 1250,
               "EndOffset": 1363,
               "Path": 1,
@@ -22271,7 +22314,7 @@
               "Hits": 0
             },
             {
-              "Line": 41,
+              "Line": 55,
               "Offset": 2277,
               "EndOffset": 1491,
               "Path": 1,
@@ -22279,7 +22322,7 @@
               "Hits": 0
             },
             {
-              "Line": 42,
+              "Line": 56,
               "Offset": 2073,
               "EndOffset": 2075,
               "Path": 0,
@@ -22287,7 +22330,7 @@
               "Hits": 0
             },
             {
-              "Line": 42,
+              "Line": 56,
               "Offset": 2073,
               "EndOffset": 2186,
               "Path": 1,
@@ -22295,7 +22338,7 @@
               "Hits": 0
             },
             {
-              "Line": 41,
+              "Line": 55,
               "Offset": 2277,
               "EndOffset": 2282,
               "Path": 0,
@@ -22303,7 +22346,7 @@
               "Hits": 0
             },
             {
-              "Line": 41,
+              "Line": 55,
               "Offset": 2539,
               "EndOffset": 2541,
               "Path": 0,
@@ -22311,7 +22354,7 @@
               "Hits": 0
             },
             {
-              "Line": 41,
+              "Line": 55,
               "Offset": 2539,
               "EndOffset": 2545,
               "Path": 1,
@@ -22319,7 +22362,7 @@
               "Hits": 0
             },
             {
-              "Line": 41,
+              "Line": 55,
               "Offset": 2692,
               "EndOffset": 2694,
               "Path": 0,
@@ -22327,7 +22370,7 @@
               "Hits": 0
             },
             {
-              "Line": 41,
+              "Line": 55,
               "Offset": 2692,
               "EndOffset": 2698,
               "Path": 1,
@@ -22335,7 +22378,7 @@
               "Hits": 0
             },
             {
-              "Line": 84,
+              "Line": 98,
               "Offset": 2890,
               "EndOffset": 2895,
               "Path": 0,
@@ -22343,7 +22386,7 @@
               "Hits": 0
             },
             {
-              "Line": 86,
+              "Line": 100,
               "Offset": 5428,
               "EndOffset": 2908,
               "Path": 1,
@@ -22351,7 +22394,7 @@
               "Hits": 0
             },
             {
-              "Line": 88,
+              "Line": 102,
               "Offset": 3719,
               "EndOffset": 3721,
               "Path": 0,
@@ -22359,7 +22402,7 @@
               "Hits": 0
             },
             {
-              "Line": 88,
+              "Line": 102,
               "Offset": 3719,
               "EndOffset": 3832,
               "Path": 1,
@@ -22367,7 +22410,7 @@
               "Hits": 0
             },
             {
-              "Line": 95,
+              "Line": 109,
               "Offset": 4738,
               "EndOffset": 3961,
               "Path": 1,
@@ -22375,7 +22418,7 @@
               "Hits": 0
             },
             {
-              "Line": 96,
+              "Line": 110,
               "Offset": 4533,
               "EndOffset": 4535,
               "Path": 0,
@@ -22383,7 +22426,7 @@
               "Hits": 0
             },
             {
-              "Line": 96,
+              "Line": 110,
               "Offset": 4533,
               "EndOffset": 4647,
               "Path": 1,
@@ -22391,7 +22434,7 @@
               "Hits": 0
             },
             {
-              "Line": 95,
+              "Line": 109,
               "Offset": 4738,
               "EndOffset": 4743,
               "Path": 0,
@@ -22399,7 +22442,7 @@
               "Hits": 0
             },
             {
-              "Line": 95,
+              "Line": 109,
               "Offset": 5296,
               "EndOffset": 5298,
               "Path": 0,
@@ -22407,7 +22450,7 @@
               "Hits": 0
             },
             {
-              "Line": 95,
+              "Line": 109,
               "Offset": 5296,
               "EndOffset": 5302,
               "Path": 1,
@@ -22415,7 +22458,7 @@
               "Hits": 0
             },
             {
-              "Line": 86,
+              "Line": 100,
               "Offset": 5428,
               "EndOffset": 5433,
               "Path": 0,
@@ -22423,7 +22466,7 @@
               "Hits": 0
             },
             {
-              "Line": 84,
+              "Line": 98,
               "Offset": 2890,
               "EndOffset": 5436,
               "Path": 1,
@@ -22431,7 +22474,7 @@
               "Hits": 0
             },
             {
-              "Line": 139,
+              "Line": 156,
               "Offset": 5502,
               "EndOffset": 5507,
               "Path": 0,
@@ -22439,7 +22482,7 @@
               "Hits": 0
             },
             {
-              "Line": 141,
+              "Line": 158,
               "Offset": 8046,
               "EndOffset": 5520,
               "Path": 1,
@@ -22447,7 +22490,7 @@
               "Hits": 0
             },
             {
-              "Line": 143,
+              "Line": 160,
               "Offset": 6332,
               "EndOffset": 6334,
               "Path": 0,
@@ -22455,7 +22498,7 @@
               "Hits": 0
             },
             {
-              "Line": 143,
+              "Line": 160,
               "Offset": 6332,
               "EndOffset": 6446,
               "Path": 1,
@@ -22463,7 +22506,7 @@
               "Hits": 0
             },
             {
-              "Line": 150,
+              "Line": 167,
               "Offset": 7354,
               "EndOffset": 6576,
               "Path": 1,
@@ -22471,7 +22514,7 @@
               "Hits": 0
             },
             {
-              "Line": 151,
+              "Line": 168,
               "Offset": 7149,
               "EndOffset": 7151,
               "Path": 0,
@@ -22479,7 +22522,7 @@
               "Hits": 0
             },
             {
-              "Line": 151,
+              "Line": 168,
               "Offset": 7149,
               "EndOffset": 7263,
               "Path": 1,
@@ -22487,7 +22530,7 @@
               "Hits": 0
             },
             {
-              "Line": 150,
+              "Line": 167,
               "Offset": 7354,
               "EndOffset": 7359,
               "Path": 0,
@@ -22495,7 +22538,7 @@
               "Hits": 0
             },
             {
-              "Line": 150,
+              "Line": 167,
               "Offset": 7914,
               "EndOffset": 7916,
               "Path": 0,
@@ -22503,7 +22546,7 @@
               "Hits": 0
             },
             {
-              "Line": 150,
+              "Line": 167,
               "Offset": 7914,
               "EndOffset": 7920,
               "Path": 1,
@@ -22511,7 +22554,7 @@
               "Hits": 0
             },
             {
-              "Line": 141,
+              "Line": 158,
               "Offset": 8046,
               "EndOffset": 8051,
               "Path": 0,
@@ -22519,7 +22562,7 @@
               "Hits": 0
             },
             {
-              "Line": 139,
+              "Line": 156,
               "Offset": 5502,
               "EndOffset": 8054,
               "Path": 1,
@@ -22527,7 +22570,7 @@
               "Hits": 0
             },
             {
-              "Line": 194,
+              "Line": 214,
               "Offset": 8120,
               "EndOffset": 8125,
               "Path": 0,
@@ -22535,7 +22578,7 @@
               "Hits": 0
             },
             {
-              "Line": 196,
+              "Line": 216,
               "Offset": 10095,
               "EndOffset": 8138,
               "Path": 1,
@@ -22543,7 +22586,7 @@
               "Hits": 0
             },
             {
-              "Line": 198,
+              "Line": 218,
               "Offset": 8950,
               "EndOffset": 8952,
               "Path": 0,
@@ -22551,7 +22594,7 @@
               "Hits": 0
             },
             {
-              "Line": 198,
+              "Line": 218,
               "Offset": 8950,
               "EndOffset": 9064,
               "Path": 1,
@@ -22559,7 +22602,7 @@
               "Hits": 0
             },
             {
-              "Line": 205,
+              "Line": 225,
               "Offset": 9972,
               "EndOffset": 9194,
               "Path": 1,
@@ -22567,7 +22610,7 @@
               "Hits": 0
             },
             {
-              "Line": 206,
+              "Line": 226,
               "Offset": 9767,
               "EndOffset": 9769,
               "Path": 0,
@@ -22575,7 +22618,7 @@
               "Hits": 0
             },
             {
-              "Line": 206,
+              "Line": 226,
               "Offset": 9767,
               "EndOffset": 9881,
               "Path": 1,
@@ -22583,7 +22626,7 @@
               "Hits": 0
             },
             {
-              "Line": 205,
+              "Line": 225,
               "Offset": 9972,
               "EndOffset": 9977,
               "Path": 0,
@@ -22591,7 +22634,7 @@
               "Hits": 0
             },
             {
-              "Line": 196,
+              "Line": 216,
               "Offset": 10095,
               "EndOffset": 10100,
               "Path": 0,
@@ -22599,7 +22642,7 @@
               "Hits": 0
             },
             {
-              "Line": 194,
+              "Line": 214,
               "Offset": 8120,
               "EndOffset": 10103,
               "Path": 1,
@@ -22612,19 +22655,19 @@
       "AspNetCoreGeneratedDocument.Views_Episodes_Edit/<<ExecuteAsync>b__14_1>d": {
         "System.Void AspNetCoreGeneratedDocument.Views_Episodes_Edit/<<ExecuteAsync>b__14_1>d::MoveNext()": {
           "Lines": {
-            "263": 0,
-            "264": 0,
-            "266": 0,
-            "296": 0,
-            "297": 0,
-            "299": 0,
-            "329": 0,
+            "290": 0,
+            "291": 0,
+            "293": 0,
+            "327": 0,
+            "328": 0,
             "330": 0,
-            "332": 0
+            "364": 0,
+            "365": 0,
+            "367": 0
           },
           "Branches": [
             {
-              "Line": 263,
+              "Line": 290,
               "Offset": 795,
               "EndOffset": 141,
               "Path": 1,
@@ -22632,7 +22675,7 @@
               "Hits": 0
             },
             {
-              "Line": 264,
+              "Line": 291,
               "Offset": 591,
               "EndOffset": 593,
               "Path": 0,
@@ -22640,7 +22683,7 @@
               "Hits": 0
             },
             {
-              "Line": 264,
+              "Line": 291,
               "Offset": 591,
               "EndOffset": 704,
               "Path": 1,
@@ -22648,7 +22691,7 @@
               "Hits": 0
             },
             {
-              "Line": 263,
+              "Line": 290,
               "Offset": 795,
               "EndOffset": 800,
               "Path": 0,
@@ -22656,65 +22699,65 @@
               "Hits": 0
             },
             {
-              "Line": 296,
-              "Offset": 1586,
-              "EndOffset": 927,
+              "Line": 327,
+              "Offset": 1603,
+              "EndOffset": 944,
               "Path": 1,
               "Ordinal": 7,
               "Hits": 0
             },
             {
-              "Line": 297,
-              "Offset": 1382,
-              "EndOffset": 1384,
+              "Line": 328,
+              "Offset": 1399,
+              "EndOffset": 1401,
               "Path": 0,
               "Ordinal": 4,
               "Hits": 0
             },
             {
-              "Line": 297,
-              "Offset": 1382,
-              "EndOffset": 1495,
+              "Line": 328,
+              "Offset": 1399,
+              "EndOffset": 1512,
               "Path": 1,
               "Ordinal": 5,
               "Hits": 0
             },
             {
-              "Line": 296,
-              "Offset": 1586,
-              "EndOffset": 1591,
+              "Line": 327,
+              "Offset": 1603,
+              "EndOffset": 1608,
               "Path": 0,
               "Ordinal": 6,
               "Hits": 0
             },
             {
-              "Line": 329,
-              "Offset": 2377,
-              "EndOffset": 1718,
+              "Line": 364,
+              "Offset": 2411,
+              "EndOffset": 1752,
               "Path": 1,
               "Ordinal": 11,
               "Hits": 0
             },
             {
-              "Line": 330,
-              "Offset": 2173,
-              "EndOffset": 2175,
+              "Line": 365,
+              "Offset": 2207,
+              "EndOffset": 2209,
               "Path": 0,
               "Ordinal": 8,
               "Hits": 0
             },
             {
-              "Line": 330,
-              "Offset": 2173,
-              "EndOffset": 2286,
+              "Line": 365,
+              "Offset": 2207,
+              "EndOffset": 2320,
               "Path": 1,
               "Ordinal": 9,
               "Hits": 0
             },
             {
-              "Line": 329,
-              "Offset": 2377,
-              "EndOffset": 2382,
+              "Line": 364,
+              "Offset": 2411,
+              "EndOffset": 2416,
               "Path": 0,
               "Ordinal": 10,
               "Hits": 0
@@ -22779,50 +22822,34 @@
             },
             {
               "Line": 4,
-              "Offset": 243,
-              "EndOffset": 245,
+              "Offset": 492,
+              "EndOffset": 494,
               "Path": 0,
               "Ordinal": 6,
               "Hits": 0
             },
             {
               "Line": 4,
-              "Offset": 243,
-              "EndOffset": 252,
+              "Offset": 492,
+              "EndOffset": 501,
               "Path": 1,
               "Ordinal": 7,
               "Hits": 0
             },
             {
               "Line": 4,
-              "Offset": 541,
-              "EndOffset": 543,
+              "Offset": 763,
+              "EndOffset": 765,
               "Path": 0,
               "Ordinal": 8,
               "Hits": 0
             },
             {
               "Line": 4,
-              "Offset": 541,
-              "EndOffset": 550,
+              "Offset": 763,
+              "EndOffset": 876,
               "Path": 1,
               "Ordinal": 9,
-              "Hits": 0
-            },
-            {
-              "Line": 4,
-              "Offset": 812,
-              "EndOffset": 814,
-              "Path": 0,
-              "Ordinal": 10,
-              "Hits": 0
-            },
-            {
-              "Line": 4,
-              "Offset": 812,
-              "EndOffset": 925,
-              "Path": 1,
-              "Ordinal": 11,
               "Hits": 0
             }
           ]
@@ -22833,19 +22860,19 @@
       "AspNetCoreGeneratedDocument.Views_Episodes_Index": {
         "System.String AspNetCoreGeneratedDocument.Views_Episodes_Index::GetStatusCssClass(System.Byte)": {
           "Lines": {
-            "258": 0,
-            "259": 0,
-            "260": 0,
-            "261": 0,
-            "262": 0,
             "263": 0,
             "264": 0,
             "265": 0,
-            "266": 0
+            "266": 0,
+            "267": 0,
+            "268": 0,
+            "269": 0,
+            "270": 0,
+            "271": 0
           },
           "Branches": [
             {
-              "Line": 258,
+              "Line": 263,
               "Offset": 5,
               "EndOffset": 32,
               "Path": 1,
@@ -22853,7 +22880,7 @@
               "Hits": 0
             },
             {
-              "Line": 258,
+              "Line": 263,
               "Offset": 5,
               "EndOffset": 40,
               "Path": 2,
@@ -22861,7 +22888,7 @@
               "Hits": 0
             },
             {
-              "Line": 258,
+              "Line": 263,
               "Offset": 5,
               "EndOffset": 48,
               "Path": 3,
@@ -22869,7 +22896,7 @@
               "Hits": 0
             },
             {
-              "Line": 258,
+              "Line": 263,
               "Offset": 5,
               "EndOffset": 56,
               "Path": 4,
@@ -22877,7 +22904,7 @@
               "Hits": 0
             },
             {
-              "Line": 258,
+              "Line": 263,
               "Offset": 5,
               "EndOffset": 64,
               "Path": 5,
@@ -22885,7 +22912,7 @@
               "Hits": 0
             },
             {
-              "Line": 258,
+              "Line": 263,
               "Offset": 5,
               "EndOffset": 72,
               "Path": 0,
@@ -22898,13 +22925,13 @@
       "AspNetCoreGeneratedDocument.Views_Episodes_Index/<<ExecuteAsync>b__21_0>d": {
         "System.Void AspNetCoreGeneratedDocument.Views_Episodes_Index/<<ExecuteAsync>b__21_0>d::MoveNext()": {
           "Lines": {
-            "47": 0,
-            "48": 0,
-            "50": 0
+            "55": 0,
+            "56": 0,
+            "58": 0
           },
           "Branches": [
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 587,
               "EndOffset": 589,
               "Path": 0,
@@ -22912,7 +22939,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 587,
               "EndOffset": 700,
               "Path": 1,
@@ -22920,7 +22947,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 1002,
               "EndOffset": 1004,
               "Path": 0,
@@ -22928,7 +22955,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 1002,
               "EndOffset": 1016,
               "Path": 1,
@@ -22936,7 +22963,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 1242,
               "EndOffset": 1244,
               "Path": 0,
@@ -22944,7 +22971,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 1242,
               "EndOffset": 1355,
               "Path": 1,
@@ -22952,7 +22979,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 1657,
               "EndOffset": 1659,
               "Path": 0,
@@ -22960,7 +22987,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 1657,
               "EndOffset": 1671,
               "Path": 1,
@@ -22968,7 +22995,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 1885,
               "EndOffset": 1887,
               "Path": 0,
@@ -22976,7 +23003,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 1885,
               "EndOffset": 1998,
               "Path": 1,
@@ -22984,7 +23011,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 2300,
               "EndOffset": 2302,
               "Path": 0,
@@ -22992,7 +23019,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 2300,
               "EndOffset": 2314,
               "Path": 1,
@@ -23000,7 +23027,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 2528,
               "EndOffset": 2530,
               "Path": 0,
@@ -23008,7 +23035,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 2528,
               "EndOffset": 2641,
               "Path": 1,
@@ -23016,7 +23043,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 2943,
               "EndOffset": 2945,
               "Path": 0,
@@ -23024,7 +23051,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 2943,
               "EndOffset": 2957,
               "Path": 1,
@@ -23032,7 +23059,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 3171,
               "EndOffset": 3173,
               "Path": 0,
@@ -23040,7 +23067,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 3171,
               "EndOffset": 3285,
               "Path": 1,
@@ -23048,7 +23075,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 3587,
               "EndOffset": 3589,
               "Path": 0,
@@ -23056,7 +23083,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 3587,
               "EndOffset": 3601,
               "Path": 1,
@@ -23064,7 +23091,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 3816,
               "EndOffset": 3818,
               "Path": 0,
@@ -23072,7 +23099,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 3816,
               "EndOffset": 3930,
               "Path": 1,
@@ -23080,7 +23107,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 4310,
               "EndOffset": 4312,
               "Path": 0,
@@ -23088,7 +23115,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 4310,
               "EndOffset": 4424,
               "Path": 1,
@@ -23096,7 +23123,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 5358,
               "EndOffset": 4554,
               "Path": 1,
@@ -23104,7 +23131,7 @@
               "Hits": 0
             },
             {
-              "Line": 48,
+              "Line": 56,
               "Offset": 5153,
               "EndOffset": 5155,
               "Path": 0,
@@ -23112,7 +23139,7 @@
               "Hits": 0
             },
             {
-              "Line": 48,
+              "Line": 56,
               "Offset": 5153,
               "EndOffset": 5267,
               "Path": 1,
@@ -23120,7 +23147,7 @@
               "Hits": 0
             },
             {
-              "Line": 47,
+              "Line": 55,
               "Offset": 5358,
               "EndOffset": 5363,
               "Path": 0,
@@ -23134,46 +23161,46 @@
         "System.Void AspNetCoreGeneratedDocument.Views_Episodes_Index/<ExecuteAsync>d__21::MoveNext()": {
           "Lines": {
             "3": 0,
-            "15": 0,
-            "16": 0,
-            "21": 0,
-            "68": 0,
-            "69": 0,
-            "74": 0,
-            "75": 0,
-            "80": 0,
+            "22": 0,
+            "23": 0,
+            "28": 0,
+            "76": 0,
+            "77": 0,
             "82": 0,
-            "84": 0,
-            "98": 0,
-            "99": 0,
-            "105": 0,
+            "83": 0,
+            "88": 0,
+            "90": 0,
+            "92": 0,
             "106": 0,
-            "108": 0,
-            "112": 0,
+            "107": 0,
             "113": 0,
+            "114": 0,
             "116": 0,
-            "118": 0,
             "120": 0,
-            "123": 0,
+            "121": 0,
             "124": 0,
             "126": 0,
             "128": 0,
-            "130": 0,
-            "143": 0,
-            "144": 0,
-            "148": 0,
-            "149": 0,
-            "150": 0,
-            "154": 0,
-            "155": 0,
+            "131": 0,
+            "132": 0,
+            "134": 0,
+            "136": 0,
+            "138": 0,
+            "151": 0,
+            "152": 0,
             "156": 0,
-            "160": 0,
+            "157": 0,
+            "158": 0,
+            "162": 0,
+            "163": 0,
             "164": 0,
-            "168": 0
+            "168": 0,
+            "172": 0,
+            "176": 0
           },
           "Branches": [
             {
-              "Line": 15,
+              "Line": 22,
               "Offset": 137,
               "EndOffset": 139,
               "Path": 0,
@@ -23181,7 +23208,7 @@
               "Hits": 0
             },
             {
-              "Line": 15,
+              "Line": 22,
               "Offset": 137,
               "EndOffset": 158,
               "Path": 1,
@@ -23189,7 +23216,7 @@
               "Hits": 0
             },
             {
-              "Line": 21,
+              "Line": 28,
               "Offset": 551,
               "EndOffset": 553,
               "Path": 0,
@@ -23197,7 +23224,7 @@
               "Hits": 0
             },
             {
-              "Line": 21,
+              "Line": 28,
               "Offset": 551,
               "EndOffset": 664,
               "Path": 1,
@@ -23205,7 +23232,7 @@
               "Hits": 0
             },
             {
-              "Line": 68,
+              "Line": 76,
               "Offset": 764,
               "EndOffset": 766,
               "Path": 0,
@@ -23213,7 +23240,7 @@
               "Hits": 0
             },
             {
-              "Line": 74,
+              "Line": 82,
               "Offset": 809,
               "EndOffset": 811,
               "Path": 0,
@@ -23221,7 +23248,7 @@
               "Hits": 0
             },
             {
-              "Line": 74,
+              "Line": 82,
               "Offset": 809,
               "EndOffset": 830,
               "Path": 1,
@@ -23229,7 +23256,7 @@
               "Hits": 0
             },
             {
-              "Line": 68,
+              "Line": 76,
               "Offset": 764,
               "EndOffset": 853,
               "Path": 1,
@@ -23237,7 +23264,7 @@
               "Hits": 0
             },
             {
-              "Line": 98,
+              "Line": 106,
               "Offset": 3047,
               "EndOffset": 904,
               "Path": 1,
@@ -23245,7 +23272,7 @@
               "Hits": 0
             },
             {
-              "Line": 105,
+              "Line": 113,
               "Offset": 1150,
               "EndOffset": 1152,
               "Path": 0,
@@ -23253,7 +23280,7 @@
               "Hits": 0
             },
             {
-              "Line": 105,
+              "Line": 113,
               "Offset": 1150,
               "EndOffset": 1211,
               "Path": 1,
@@ -23261,7 +23288,7 @@
               "Hits": 0
             },
             {
-              "Line": 112,
+              "Line": 120,
               "Offset": 1292,
               "EndOffset": 1297,
               "Path": 0,
@@ -23269,7 +23296,7 @@
               "Hits": 0
             },
             {
-              "Line": 112,
+              "Line": 120,
               "Offset": 1292,
               "EndOffset": 1444,
               "Path": 1,
@@ -23277,7 +23304,7 @@
               "Hits": 0
             },
             {
-              "Line": 123,
+              "Line": 131,
               "Offset": 1500,
               "EndOffset": 1502,
               "Path": 0,
@@ -23285,7 +23312,7 @@
               "Hits": 0
             },
             {
-              "Line": 123,
+              "Line": 131,
               "Offset": 1500,
               "EndOffset": 1573,
               "Path": 1,
@@ -23293,7 +23320,7 @@
               "Hits": 0
             },
             {
-              "Line": 143,
+              "Line": 151,
               "Offset": 2124,
               "EndOffset": 2129,
               "Path": 0,
@@ -23301,7 +23328,7 @@
               "Hits": 0
             },
             {
-              "Line": 143,
+              "Line": 151,
               "Offset": 2124,
               "EndOffset": 2296,
               "Path": 1,
@@ -23309,7 +23336,7 @@
               "Hits": 0
             },
             {
-              "Line": 149,
+              "Line": 157,
               "Offset": 2317,
               "EndOffset": 2319,
               "Path": 0,
@@ -23317,7 +23344,7 @@
               "Hits": 0
             },
             {
-              "Line": 149,
+              "Line": 157,
               "Offset": 2317,
               "EndOffset": 2335,
               "Path": 1,
@@ -23325,7 +23352,7 @@
               "Hits": 0
             },
             {
-              "Line": 149,
+              "Line": 157,
               "Offset": 2340,
               "EndOffset": 2345,
               "Path": 0,
@@ -23333,7 +23360,7 @@
               "Hits": 0
             },
             {
-              "Line": 149,
+              "Line": 157,
               "Offset": 2340,
               "EndOffset": 2655,
               "Path": 1,
@@ -23341,7 +23368,7 @@
               "Hits": 0
             },
             {
-              "Line": 155,
+              "Line": 163,
               "Offset": 2676,
               "EndOffset": 2678,
               "Path": 0,
@@ -23349,7 +23376,7 @@
               "Hits": 0
             },
             {
-              "Line": 155,
+              "Line": 163,
               "Offset": 2676,
               "EndOffset": 2691,
               "Path": 1,
@@ -23357,7 +23384,7 @@
               "Hits": 0
             },
             {
-              "Line": 155,
+              "Line": 163,
               "Offset": 2696,
               "EndOffset": 2701,
               "Path": 0,
@@ -23365,7 +23392,7 @@
               "Hits": 0
             },
             {
-              "Line": 155,
+              "Line": 163,
               "Offset": 2696,
               "EndOffset": 3011,
               "Path": 1,
@@ -23373,7 +23400,7 @@
               "Hits": 0
             },
             {
-              "Line": 98,
+              "Line": 106,
               "Offset": 3047,
               "EndOffset": 3052,
               "Path": 0,
@@ -23381,7 +23408,7 @@
               "Hits": 0
             },
             {
-              "Line": 168,
+              "Line": 176,
               "Offset": 3525,
               "EndOffset": 3527,
               "Path": 0,
@@ -23389,7 +23416,7 @@
               "Hits": 0
             },
             {
-              "Line": 168,
+              "Line": 176,
               "Offset": 3525,
               "EndOffset": 3638,
               "Path": 1,
@@ -23397,7 +23424,7 @@
               "Hits": 0
             },
             {
-              "Line": 168,
+              "Line": 176,
               "Offset": 4111,
               "EndOffset": 4113,
               "Path": 0,
@@ -23405,7 +23432,7 @@
               "Hits": 0
             },
             {
-              "Line": 168,
+              "Line": 176,
               "Offset": 4111,
               "EndOffset": 4224,
               "Path": 1,
@@ -23487,14 +23514,14 @@
       "AspNetCoreGeneratedDocument.Views_Guests_Edit/<>c__DisplayClass16_0/<<ExecuteAsync>b__0>d": {
         "System.Void AspNetCoreGeneratedDocument.Views_Guests_Edit/<>c__DisplayClass16_0/<<ExecuteAsync>b__0>d::MoveNext()": {
           "Lines": {
-            "21": 0,
-            "22": 0,
-            "23": 0,
-            "25": 0
+            "35": 0,
+            "36": 0,
+            "37": 0,
+            "39": 0
           },
           "Branches": [
             {
-              "Line": 21,
+              "Line": 35,
               "Offset": 183,
               "EndOffset": 188,
               "Path": 0,
@@ -23502,7 +23529,7 @@
               "Hits": 0
             },
             {
-              "Line": 21,
+              "Line": 35,
               "Offset": 183,
               "EndOffset": 355,
               "Path": 1,
@@ -23510,7 +23537,7 @@
               "Hits": 0
             },
             {
-              "Line": 22,
+              "Line": 36,
               "Offset": 386,
               "EndOffset": 391,
               "Path": 0,
@@ -23518,7 +23545,7 @@
               "Hits": 0
             },
             {
-              "Line": 23,
+              "Line": 37,
               "Offset": 828,
               "EndOffset": 830,
               "Path": 0,
@@ -23526,7 +23553,7 @@
               "Hits": 0
             },
             {
-              "Line": 23,
+              "Line": 37,
               "Offset": 828,
               "EndOffset": 947,
               "Path": 1,
@@ -23534,7 +23561,7 @@
               "Hits": 0
             },
             {
-              "Line": 22,
+              "Line": 36,
               "Offset": 386,
               "EndOffset": 1045,
               "Path": 1,
@@ -23542,7 +23569,7 @@
               "Hits": 0
             },
             {
-              "Line": 25,
+              "Line": 39,
               "Offset": 1255,
               "EndOffset": 1257,
               "Path": 0,
@@ -23550,7 +23577,7 @@
               "Hits": 0
             },
             {
-              "Line": 25,
+              "Line": 39,
               "Offset": 1255,
               "EndOffset": 1291,
               "Path": 1,
@@ -23558,7 +23585,7 @@
               "Hits": 0
             },
             {
-              "Line": 25,
+              "Line": 39,
               "Offset": 1599,
               "EndOffset": 1601,
               "Path": 0,
@@ -23566,7 +23593,7 @@
               "Hits": 0
             },
             {
-              "Line": 25,
+              "Line": 39,
               "Offset": 1599,
               "EndOffset": 1718,
               "Path": 1,
@@ -23574,7 +23601,7 @@
               "Hits": 0
             },
             {
-              "Line": 25,
+              "Line": 39,
               "Offset": 1865,
               "EndOffset": 1867,
               "Path": 0,
@@ -23582,7 +23609,7 @@
               "Hits": 0
             },
             {
-              "Line": 25,
+              "Line": 39,
               "Offset": 1865,
               "EndOffset": 1901,
               "Path": 1,
@@ -23590,7 +23617,7 @@
               "Hits": 0
             },
             {
-              "Line": 25,
+              "Line": 39,
               "Offset": 2353,
               "EndOffset": 2355,
               "Path": 0,
@@ -23598,7 +23625,7 @@
               "Hits": 0
             },
             {
-              "Line": 25,
+              "Line": 39,
               "Offset": 2353,
               "EndOffset": 2472,
               "Path": 1,
@@ -23606,7 +23633,7 @@
               "Hits": 0
             },
             {
-              "Line": 25,
+              "Line": 39,
               "Offset": 2619,
               "EndOffset": 2621,
               "Path": 0,
@@ -23614,7 +23641,7 @@
               "Hits": 0
             },
             {
-              "Line": 25,
+              "Line": 39,
               "Offset": 2619,
               "EndOffset": 2655,
               "Path": 1,
@@ -23622,7 +23649,7 @@
               "Hits": 0
             },
             {
-              "Line": 25,
+              "Line": 39,
               "Offset": 3107,
               "EndOffset": 3109,
               "Path": 0,
@@ -23630,7 +23657,7 @@
               "Hits": 0
             },
             {
-              "Line": 25,
+              "Line": 39,
               "Offset": 3107,
               "EndOffset": 3226,
               "Path": 1,
@@ -23697,50 +23724,34 @@
             },
             {
               "Line": 4,
-              "Offset": 281,
-              "EndOffset": 283,
+              "Offset": 530,
+              "EndOffset": 532,
               "Path": 0,
               "Ordinal": 6,
               "Hits": 0
             },
             {
               "Line": 4,
-              "Offset": 281,
-              "EndOffset": 290,
+              "Offset": 530,
+              "EndOffset": 539,
               "Path": 1,
               "Ordinal": 7,
               "Hits": 0
             },
             {
               "Line": 4,
-              "Offset": 584,
-              "EndOffset": 586,
+              "Offset": 796,
+              "EndOffset": 798,
               "Path": 0,
               "Ordinal": 8,
               "Hits": 0
             },
             {
               "Line": 4,
-              "Offset": 584,
-              "EndOffset": 593,
+              "Offset": 796,
+              "EndOffset": 909,
               "Path": 1,
               "Ordinal": 9,
-              "Hits": 0
-            },
-            {
-              "Line": 4,
-              "Offset": 850,
-              "EndOffset": 852,
-              "Path": 0,
-              "Ordinal": 10,
-              "Hits": 0
-            },
-            {
-              "Line": 4,
-              "Offset": 850,
-              "EndOffset": 963,
-              "Path": 1,
-              "Ordinal": 11,
               "Hits": 0
             }
           ]
@@ -23752,24 +23763,27 @@
         "System.Void AspNetCoreGeneratedDocument.Views_Guests_Index/<ExecuteAsync>d__12::MoveNext()": {
           "Lines": {
             "3": 0,
-            "14": 0,
-            "15": 0,
-            "17": 0,
-            "29": 0,
-            "30": 0,
-            "36": 0,
-            "38": 0,
+            "22": 0,
+            "23": 0,
+            "28": 0,
             "51": 0,
             "52": 0,
+            "58": 0,
             "59": 0,
-            "60": 0,
-            "66": 0,
+            "64": 0,
+            "67": 0,
             "69": 0,
-            "73": 0
+            "71": 0,
+            "72": 0,
+            "100": 0,
+            "101": 0,
+            "113": 0,
+            "115": 0,
+            "117": 0
           },
           "Branches": [
             {
-              "Line": 14,
+              "Line": 22,
               "Offset": 114,
               "EndOffset": 116,
               "Path": 0,
@@ -23777,7 +23791,7 @@
               "Hits": 0
             },
             {
-              "Line": 14,
+              "Line": 22,
               "Offset": 114,
               "EndOffset": 135,
               "Path": 1,
@@ -23785,7 +23799,7 @@
               "Hits": 0
             },
             {
-              "Line": 17,
+              "Line": 28,
               "Offset": 528,
               "EndOffset": 530,
               "Path": 0,
@@ -23793,7 +23807,7 @@
               "Hits": 0
             },
             {
-              "Line": 17,
+              "Line": 28,
               "Offset": 528,
               "EndOffset": 641,
               "Path": 1,
@@ -23801,7 +23815,7 @@
               "Hits": 0
             },
             {
-              "Line": 29,
+              "Line": 51,
               "Offset": 736,
               "EndOffset": 738,
               "Path": 0,
@@ -23809,107 +23823,139 @@
               "Hits": 0
             },
             {
-              "Line": 29,
-              "Offset": 736,
-              "EndOffset": 762,
-              "Path": 1,
-              "Ordinal": 5,
-              "Hits": 0
-            },
-            {
-              "Line": 51,
-              "Offset": 2249,
-              "EndOffset": 831,
-              "Path": 1,
-              "Ordinal": 17,
-              "Hits": 0
-            },
-            {
-              "Line": 52,
-              "Offset": 924,
-              "EndOffset": 926,
+              "Line": 58,
+              "Offset": 781,
+              "EndOffset": 783,
               "Path": 0,
               "Ordinal": 6,
               "Hits": 0
             },
             {
-              "Line": 52,
-              "Offset": 924,
-              "EndOffset": 932,
+              "Line": 58,
+              "Offset": 781,
+              "EndOffset": 802,
               "Path": 1,
               "Ordinal": 7,
               "Hits": 0
             },
             {
-              "Line": 52,
-              "Offset": 973,
-              "EndOffset": 975,
+              "Line": 51,
+              "Offset": 736,
+              "EndOffset": 825,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 0
+            },
+            {
+              "Line": 71,
+              "Offset": 2274,
+              "EndOffset": 894,
+              "Path": 1,
+              "Ordinal": 21,
+              "Hits": 0
+            },
+            {
+              "Line": 72,
+              "Offset": 952,
+              "EndOffset": 954,
               "Path": 0,
               "Ordinal": 8,
               "Hits": 0
             },
             {
-              "Line": 52,
-              "Offset": 973,
-              "EndOffset": 981,
+              "Line": 72,
+              "Offset": 952,
+              "EndOffset": 961,
               "Path": 1,
               "Ordinal": 9,
               "Hits": 0
             },
             {
-              "Line": 52,
-              "Offset": 1022,
-              "EndOffset": 1024,
+              "Line": 72,
+              "Offset": 1073,
+              "EndOffset": 1075,
               "Path": 0,
               "Ordinal": 10,
               "Hits": 0
             },
             {
-              "Line": 52,
-              "Offset": 1022,
-              "EndOffset": 1030,
+              "Line": 72,
+              "Offset": 1073,
+              "EndOffset": 1081,
               "Path": 1,
               "Ordinal": 11,
               "Hits": 0
             },
             {
-              "Line": 59,
-              "Offset": 1078,
-              "EndOffset": 1083,
+              "Line": 72,
+              "Offset": 1122,
+              "EndOffset": 1124,
               "Path": 0,
               "Ordinal": 12,
               "Hits": 0
             },
             {
-              "Line": 60,
-              "Offset": 2027,
-              "EndOffset": 2029,
-              "Path": 0,
-              "Ordinal": 14,
-              "Hits": 0
-            },
-            {
-              "Line": 60,
-              "Offset": 2027,
-              "EndOffset": 2140,
-              "Path": 1,
-              "Ordinal": 15,
-              "Hits": 0
-            },
-            {
-              "Line": 59,
-              "Offset": 1078,
-              "EndOffset": 2213,
+              "Line": 72,
+              "Offset": 1122,
+              "EndOffset": 1130,
               "Path": 1,
               "Ordinal": 13,
               "Hits": 0
             },
             {
-              "Line": 51,
-              "Offset": 2249,
-              "EndOffset": 2254,
+              "Line": 72,
+              "Offset": 1171,
+              "EndOffset": 1173,
+              "Path": 0,
+              "Ordinal": 14,
+              "Hits": 0
+            },
+            {
+              "Line": 72,
+              "Offset": 1171,
+              "EndOffset": 1179,
+              "Path": 1,
+              "Ordinal": 15,
+              "Hits": 0
+            },
+            {
+              "Line": 100,
+              "Offset": 1227,
+              "EndOffset": 1232,
               "Path": 0,
               "Ordinal": 16,
+              "Hits": 0
+            },
+            {
+              "Line": 101,
+              "Offset": 2052,
+              "EndOffset": 2054,
+              "Path": 0,
+              "Ordinal": 18,
+              "Hits": 0
+            },
+            {
+              "Line": 101,
+              "Offset": 2052,
+              "EndOffset": 2165,
+              "Path": 1,
+              "Ordinal": 19,
+              "Hits": 0
+            },
+            {
+              "Line": 100,
+              "Offset": 1227,
+              "EndOffset": 2238,
+              "Path": 1,
+              "Ordinal": 17,
+              "Hits": 0
+            },
+            {
+              "Line": 71,
+              "Offset": 2274,
+              "EndOffset": 2279,
+              "Path": 0,
+              "Ordinal": 20,
               "Hits": 0
             }
           ]
@@ -23920,19 +23966,19 @@
       "AspNetCoreGeneratedDocument.Views_Home_Index": {
         "System.String AspNetCoreGeneratedDocument.Views_Home_Index::GetStatusCssClass(System.String)": {
           "Lines": {
-            "272": 0,
-            "273": 0,
-            "274": 0,
-            "275": 0,
-            "276": 0,
-            "277": 0,
-            "278": 0,
-            "279": 0,
-            "280": 0
+            "296": 0,
+            "297": 0,
+            "298": 0,
+            "299": 0,
+            "300": 0,
+            "301": 0,
+            "302": 0,
+            "303": 0,
+            "304": 0
           },
           "Branches": [
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 17,
               "EndOffset": 19,
               "Path": 0,
@@ -23940,7 +23986,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 25,
               "EndOffset": 27,
               "Path": 0,
@@ -23948,7 +23994,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 33,
               "EndOffset": 40,
               "Path": 0,
@@ -23956,7 +24002,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 25,
               "EndOffset": 53,
               "Path": 1,
@@ -23964,7 +24010,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 59,
               "EndOffset": 66,
               "Path": 0,
@@ -23972,7 +24018,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 17,
               "EndOffset": 79,
               "Path": 1,
@@ -23980,7 +24026,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 85,
               "EndOffset": 87,
               "Path": 0,
@@ -23988,7 +24034,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 93,
               "EndOffset": 97,
               "Path": 0,
@@ -23996,7 +24042,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 85,
               "EndOffset": 110,
               "Path": 1,
@@ -24004,7 +24050,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 116,
               "EndOffset": 120,
               "Path": 0,
@@ -24012,7 +24058,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 46,
               "EndOffset": 133,
               "Path": 1,
@@ -24020,7 +24066,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 72,
               "EndOffset": 151,
               "Path": 1,
@@ -24028,7 +24074,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 116,
               "EndOffset": 169,
               "Path": 1,
@@ -24036,7 +24082,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 93,
               "EndOffset": 184,
               "Path": 1,
@@ -24044,7 +24090,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 126,
               "EndOffset": 199,
               "Path": 1,
@@ -24052,7 +24098,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 33,
               "EndOffset": 214,
               "Path": 1,
@@ -24060,7 +24106,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 103,
               "EndOffset": 229,
               "Path": 1,
@@ -24068,7 +24114,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 59,
               "EndOffset": 244,
               "Path": 1,
@@ -24076,7 +24122,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 144,
               "EndOffset": 259,
               "Path": 1,
@@ -24084,7 +24130,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 162,
               "EndOffset": 259,
               "Path": 1,
@@ -24092,7 +24138,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 180,
               "EndOffset": 267,
               "Path": 1,
@@ -24100,7 +24146,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 195,
               "EndOffset": 267,
               "Path": 1,
@@ -24108,7 +24154,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 210,
               "EndOffset": 275,
               "Path": 1,
@@ -24116,7 +24162,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 225,
               "EndOffset": 275,
               "Path": 1,
@@ -24124,7 +24170,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 240,
               "EndOffset": 283,
               "Path": 1,
@@ -24132,7 +24178,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 255,
               "EndOffset": 291,
               "Path": 1,
@@ -24140,7 +24186,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 46,
               "EndOffset": 299,
               "Path": 0,
@@ -24148,7 +24194,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 72,
               "EndOffset": 299,
               "Path": 0,
@@ -24156,7 +24202,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 103,
               "EndOffset": 299,
               "Path": 0,
@@ -24164,7 +24210,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 126,
               "EndOffset": 299,
               "Path": 0,
@@ -24172,7 +24218,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 144,
               "EndOffset": 299,
               "Path": 0,
@@ -24180,7 +24226,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 162,
               "EndOffset": 299,
               "Path": 0,
@@ -24188,7 +24234,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 180,
               "EndOffset": 299,
               "Path": 0,
@@ -24196,7 +24242,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 195,
               "EndOffset": 299,
               "Path": 0,
@@ -24204,7 +24250,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 210,
               "EndOffset": 299,
               "Path": 0,
@@ -24212,7 +24258,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 225,
               "EndOffset": 299,
               "Path": 0,
@@ -24220,7 +24266,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 240,
               "EndOffset": 299,
               "Path": 0,
@@ -24228,7 +24274,7 @@
               "Hits": 0
             },
             {
-              "Line": 272,
+              "Line": 296,
               "Offset": 255,
               "EndOffset": 299,
               "Path": 0,
@@ -24241,7 +24287,7 @@
       "AspNetCoreGeneratedDocument.Views_Home_Index/<>c": {
         "<>f__AnonymousType5`2<System.String,System.Int32> AspNetCoreGeneratedDocument.Views_Home_Index/<>c::<ExecuteAsync>b__0_1(DataAccess.DTOs.ActiveProgramDto)": {
           "Lines": {
-            "244": 0
+            "268": 0
           },
           "Branches": []
         }
@@ -24250,34 +24296,34 @@
         "System.Void AspNetCoreGeneratedDocument.Views_Home_Index/<ExecuteAsync>d__0::MoveNext()": {
           "Lines": {
             "3": 0,
-            "91": 0,
-            "92": 0,
-            "104": 0,
-            "105": 0,
-            "117": 0,
-            "120": 0,
-            "122": 0,
-            "128": 0,
+            "113": 0,
+            "114": 0,
+            "126": 0,
+            "127": 0,
+            "139": 0,
             "142": 0,
-            "143": 0,
             "144": 0,
-            "145": 0,
-            "156": 0,
-            "157": 0,
-            "159": 0,
+            "150": 0,
             "164": 0,
-            "176": 0,
-            "177": 0,
+            "165": 0,
+            "166": 0,
+            "167": 0,
             "178": 0,
             "179": 0,
-            "193": 0,
-            "194": 0,
-            "196": 0,
-            "201": 0
+            "181": 0,
+            "186": 0,
+            "198": 0,
+            "199": 0,
+            "200": 0,
+            "201": 0,
+            "217": 0,
+            "218": 0,
+            "220": 0,
+            "225": 0
           },
           "Branches": [
             {
-              "Line": 91,
+              "Line": 113,
               "Offset": 302,
               "EndOffset": 307,
               "Path": 0,
@@ -24285,7 +24331,7 @@
               "Hits": 0
             },
             {
-              "Line": 104,
+              "Line": 126,
               "Offset": 956,
               "EndOffset": 358,
               "Path": 1,
@@ -24293,7 +24339,7 @@
               "Hits": 0
             },
             {
-              "Line": 105,
+              "Line": 127,
               "Offset": 687,
               "EndOffset": 689,
               "Path": 0,
@@ -24301,7 +24347,7 @@
               "Hits": 0
             },
             {
-              "Line": 105,
+              "Line": 127,
               "Offset": 687,
               "EndOffset": 693,
               "Path": 1,
@@ -24309,7 +24355,7 @@
               "Hits": 0
             },
             {
-              "Line": 105,
+              "Line": 127,
               "Offset": 712,
               "EndOffset": 714,
               "Path": 0,
@@ -24317,7 +24363,7 @@
               "Hits": 0
             },
             {
-              "Line": 105,
+              "Line": 127,
               "Offset": 712,
               "EndOffset": 720,
               "Path": 1,
@@ -24325,7 +24371,7 @@
               "Hits": 0
             },
             {
-              "Line": 104,
+              "Line": 126,
               "Offset": 956,
               "EndOffset": 961,
               "Path": 0,
@@ -24333,7 +24379,7 @@
               "Hits": 0
             },
             {
-              "Line": 91,
+              "Line": 113,
               "Offset": 302,
               "EndOffset": 1018,
               "Path": 1,
@@ -24341,7 +24387,7 @@
               "Hits": 0
             },
             {
-              "Line": 142,
+              "Line": 164,
               "Offset": 1079,
               "EndOffset": 1084,
               "Path": 0,
@@ -24349,75 +24395,91 @@
               "Hits": 0
             },
             {
-              "Line": 144,
-              "Offset": 1303,
+              "Line": 166,
+              "Offset": 1312,
               "EndOffset": 1124,
               "Path": 1,
-              "Ordinal": 11,
+              "Ordinal": 13,
               "Hits": 0
             },
             {
-              "Line": 144,
-              "Offset": 1303,
-              "EndOffset": 1308,
+              "Line": 167,
+              "Offset": 1217,
+              "EndOffset": 1219,
               "Path": 0,
               "Ordinal": 10,
               "Hits": 0
             },
             {
-              "Line": 142,
-              "Offset": 1079,
-              "EndOffset": 1345,
+              "Line": 167,
+              "Offset": 1217,
+              "EndOffset": 1225,
               "Path": 1,
-              "Ordinal": 9,
+              "Ordinal": 11,
               "Hits": 0
             },
             {
-              "Line": 176,
-              "Offset": 1406,
-              "EndOffset": 1411,
+              "Line": 166,
+              "Offset": 1312,
+              "EndOffset": 1317,
               "Path": 0,
               "Ordinal": 12,
               "Hits": 0
             },
             {
-              "Line": 178,
-              "Offset": 1684,
-              "EndOffset": 1451,
+              "Line": 164,
+              "Offset": 1079,
+              "EndOffset": 1354,
               "Path": 1,
-              "Ordinal": 17,
+              "Ordinal": 9,
               "Hits": 0
             },
             {
-              "Line": 179,
-              "Offset": 1589,
-              "EndOffset": 1591,
+              "Line": 198,
+              "Offset": 1415,
+              "EndOffset": 1420,
               "Path": 0,
               "Ordinal": 14,
               "Hits": 0
             },
             {
-              "Line": 179,
-              "Offset": 1589,
-              "EndOffset": 1597,
+              "Line": 200,
+              "Offset": 1693,
+              "EndOffset": 1460,
               "Path": 1,
-              "Ordinal": 15,
+              "Ordinal": 19,
               "Hits": 0
             },
             {
-              "Line": 178,
-              "Offset": 1684,
-              "EndOffset": 1689,
+              "Line": 201,
+              "Offset": 1598,
+              "EndOffset": 1600,
               "Path": 0,
               "Ordinal": 16,
               "Hits": 0
             },
             {
-              "Line": 176,
-              "Offset": 1406,
-              "EndOffset": 1726,
+              "Line": 201,
+              "Offset": 1598,
+              "EndOffset": 1606,
               "Path": 1,
-              "Ordinal": 13,
+              "Ordinal": 17,
+              "Hits": 0
+            },
+            {
+              "Line": 200,
+              "Offset": 1693,
+              "EndOffset": 1698,
+              "Path": 0,
+              "Ordinal": 18,
+              "Hits": 0
+            },
+            {
+              "Line": 198,
+              "Offset": 1415,
+              "EndOffset": 1735,
+              "Path": 1,
+              "Ordinal": 15,
               "Hits": 0
             }
           ]
@@ -24436,13 +24498,13 @@
       "AspNetCoreGeneratedDocument.Views_Permissions_Index/<>c__DisplayClass13_0/<<ExecuteAsync>b__1>d": {
         "System.Void AspNetCoreGeneratedDocument.Views_Permissions_Index/<>c__DisplayClass13_0/<<ExecuteAsync>b__1>d::MoveNext()": {
           "Lines": {
-            "21": 0,
-            "22": 0,
-            "24": 0
+            "33": 0,
+            "34": 0,
+            "36": 0
           },
           "Branches": [
             {
-              "Line": 21,
+              "Line": 33,
               "Offset": 1024,
               "EndOffset": 98,
               "Path": 1,
@@ -24450,7 +24512,7 @@
               "Hits": 0
             },
             {
-              "Line": 22,
+              "Line": 34,
               "Offset": 790,
               "EndOffset": 792,
               "Path": 0,
@@ -24458,7 +24520,7 @@
               "Hits": 0
             },
             {
-              "Line": 22,
+              "Line": 34,
               "Offset": 790,
               "EndOffset": 908,
               "Path": 1,
@@ -24466,7 +24528,7 @@
               "Hits": 0
             },
             {
-              "Line": 21,
+              "Line": 33,
               "Offset": 1024,
               "EndOffset": 1029,
               "Path": 0,
@@ -24479,16 +24541,16 @@
       "AspNetCoreGeneratedDocument.Views_Permissions_Index/<>c__DisplayClass13_0/<<ExecuteAsync>b__2>d": {
         "System.Void AspNetCoreGeneratedDocument.Views_Permissions_Index/<>c__DisplayClass13_0/<<ExecuteAsync>b__2>d::MoveNext()": {
           "Lines": {
-            "48": 0,
-            "49": 0,
-            "53": 0,
-            "54": 0,
-            "59": 0,
-            "62": 0
+            "67": 0,
+            "68": 0,
+            "75": 0,
+            "76": 0,
+            "85": 0,
+            "88": 0
           },
           "Branches": [
             {
-              "Line": 48,
+              "Line": 67,
               "Offset": 820,
               "EndOffset": 321,
               "Path": 1,
@@ -24496,7 +24558,7 @@
               "Hits": 0
             },
             {
-              "Line": 53,
+              "Line": 75,
               "Offset": 740,
               "EndOffset": 434,
               "Path": 1,
@@ -24504,23 +24566,23 @@
               "Hits": 0
             },
             {
-              "Line": 54,
-              "Offset": 629,
-              "EndOffset": 631,
+              "Line": 76,
+              "Offset": 679,
+              "EndOffset": 681,
               "Path": 0,
               "Ordinal": 0,
               "Hits": 0
             },
             {
-              "Line": 54,
-              "Offset": 629,
-              "EndOffset": 638,
+              "Line": 76,
+              "Offset": 679,
+              "EndOffset": 688,
               "Path": 1,
               "Ordinal": 1,
               "Hits": 0
             },
             {
-              "Line": 53,
+              "Line": 75,
               "Offset": 740,
               "EndOffset": 745,
               "Path": 0,
@@ -24528,7 +24590,7 @@
               "Hits": 0
             },
             {
-              "Line": 48,
+              "Line": 67,
               "Offset": 820,
               "EndOffset": 825,
               "Path": 0,
@@ -24542,9 +24604,9 @@
         "System.Void AspNetCoreGeneratedDocument.Views_Permissions_Index/<ExecuteAsync>d__13::MoveNext()": {
           "Lines": {
             "3": 0,
-            "29": 0,
-            "30": 0,
-            "71": 0
+            "42": 0,
+            "43": 0,
+            "99": 0
           },
           "Branches": [
             {
@@ -24564,7 +24626,7 @@
               "Hits": 0
             },
             {
-              "Line": 29,
+              "Line": 42,
               "Offset": 763,
               "EndOffset": 765,
               "Path": 0,
@@ -24572,7 +24634,7 @@
               "Hits": 0
             },
             {
-              "Line": 29,
+              "Line": 42,
               "Offset": 763,
               "EndOffset": 783,
               "Path": 1,
@@ -24580,7 +24642,7 @@
               "Hits": 0
             },
             {
-              "Line": 29,
+              "Line": 42,
               "Offset": 788,
               "EndOffset": 793,
               "Path": 0,
@@ -24588,7 +24650,7 @@
               "Hits": 0
             },
             {
-              "Line": 30,
+              "Line": 43,
               "Offset": 1190,
               "EndOffset": 1192,
               "Path": 0,
@@ -24596,7 +24658,7 @@
               "Hits": 0
             },
             {
-              "Line": 30,
+              "Line": 43,
               "Offset": 1190,
               "EndOffset": 1303,
               "Path": 1,
@@ -24604,7 +24666,7 @@
               "Hits": 0
             },
             {
-              "Line": 29,
+              "Line": 42,
               "Offset": 788,
               "EndOffset": 1376,
               "Path": 1,
@@ -24619,14 +24681,14 @@
       "AspNetCoreGeneratedDocument.Views_Programs_Edit/<>c__DisplayClass12_0/<<ExecuteAsync>b__0>d": {
         "System.Void AspNetCoreGeneratedDocument.Views_Programs_Edit/<>c__DisplayClass12_0/<<ExecuteAsync>b__0>d::MoveNext()": {
           "Lines": {
-            "21": 0,
-            "22": 0,
-            "23": 0,
-            "25": 0
+            "35": 0,
+            "36": 0,
+            "37": 0,
+            "39": 0
           },
           "Branches": [
             {
-              "Line": 21,
+              "Line": 35,
               "Offset": 124,
               "EndOffset": 129,
               "Path": 0,
@@ -24634,7 +24696,7 @@
               "Hits": 0
             },
             {
-              "Line": 21,
+              "Line": 35,
               "Offset": 124,
               "EndOffset": 296,
               "Path": 1,
@@ -24642,7 +24704,7 @@
               "Hits": 0
             },
             {
-              "Line": 22,
+              "Line": 36,
               "Offset": 327,
               "EndOffset": 332,
               "Path": 0,
@@ -24650,7 +24712,7 @@
               "Hits": 0
             },
             {
-              "Line": 23,
+              "Line": 37,
               "Offset": 769,
               "EndOffset": 771,
               "Path": 0,
@@ -24658,7 +24720,7 @@
               "Hits": 0
             },
             {
-              "Line": 23,
+              "Line": 37,
               "Offset": 769,
               "EndOffset": 888,
               "Path": 1,
@@ -24666,7 +24728,7 @@
               "Hits": 0
             },
             {
-              "Line": 22,
+              "Line": 36,
               "Offset": 327,
               "EndOffset": 986,
               "Path": 1,
@@ -24733,50 +24795,34 @@
             },
             {
               "Line": 4,
-              "Offset": 281,
-              "EndOffset": 283,
+              "Offset": 530,
+              "EndOffset": 532,
               "Path": 0,
               "Ordinal": 6,
               "Hits": 0
             },
             {
               "Line": 4,
-              "Offset": 281,
-              "EndOffset": 290,
+              "Offset": 530,
+              "EndOffset": 539,
               "Path": 1,
               "Ordinal": 7,
               "Hits": 0
             },
             {
               "Line": 4,
-              "Offset": 584,
-              "EndOffset": 586,
+              "Offset": 796,
+              "EndOffset": 798,
               "Path": 0,
               "Ordinal": 8,
               "Hits": 0
             },
             {
               "Line": 4,
-              "Offset": 584,
-              "EndOffset": 593,
+              "Offset": 796,
+              "EndOffset": 909,
               "Path": 1,
               "Ordinal": 9,
-              "Hits": 0
-            },
-            {
-              "Line": 4,
-              "Offset": 850,
-              "EndOffset": 852,
-              "Path": 0,
-              "Ordinal": 10,
-              "Hits": 0
-            },
-            {
-              "Line": 4,
-              "Offset": 850,
-              "EndOffset": 963,
-              "Path": 1,
-              "Ordinal": 11,
               "Hits": 0
             }
           ]
@@ -24788,28 +24834,28 @@
         "System.Void AspNetCoreGeneratedDocument.Views_Programs_Index/<ExecuteAsync>d__12::MoveNext()": {
           "Lines": {
             "3": 0,
-            "14": 0,
-            "15": 0,
-            "20": 0,
-            "32": 0,
-            "33": 0,
-            "40": 0,
-            "42": 0,
-            "54": 0,
-            "55": 0,
+            "22": 0,
+            "23": 0,
+            "28": 0,
+            "51": 0,
+            "52": 0,
+            "58": 0,
             "59": 0,
-            "60": 0,
-            "62": 0,
-            "63": 0,
+            "64": 0,
+            "67": 0,
             "69": 0,
-            "70": 0,
-            "76": 0,
-            "79": 0,
-            "83": 0
+            "71": 0,
+            "72": 0,
+            "73": 0,
+            "107": 0,
+            "108": 0,
+            "120": 0,
+            "122": 0,
+            "124": 0
           },
           "Branches": [
             {
-              "Line": 14,
+              "Line": 22,
               "Offset": 114,
               "EndOffset": 116,
               "Path": 0,
@@ -24817,7 +24863,7 @@
               "Hits": 0
             },
             {
-              "Line": 14,
+              "Line": 22,
               "Offset": 114,
               "EndOffset": 135,
               "Path": 1,
@@ -24825,7 +24871,7 @@
               "Hits": 0
             },
             {
-              "Line": 20,
+              "Line": 28,
               "Offset": 528,
               "EndOffset": 530,
               "Path": 0,
@@ -24833,7 +24879,7 @@
               "Hits": 0
             },
             {
-              "Line": 20,
+              "Line": 28,
               "Offset": 528,
               "EndOffset": 641,
               "Path": 1,
@@ -24841,7 +24887,7 @@
               "Hits": 0
             },
             {
-              "Line": 32,
+              "Line": 51,
               "Offset": 736,
               "EndOffset": 738,
               "Path": 0,
@@ -24849,123 +24895,155 @@
               "Hits": 0
             },
             {
-              "Line": 32,
-              "Offset": 736,
-              "EndOffset": 762,
-              "Path": 1,
-              "Ordinal": 5,
-              "Hits": 0
-            },
-            {
-              "Line": 54,
-              "Offset": 2334,
-              "EndOffset": 831,
-              "Path": 1,
-              "Ordinal": 19,
-              "Hits": 0
-            },
-            {
-              "Line": 59,
-              "Offset": 929,
-              "EndOffset": 931,
+              "Line": 58,
+              "Offset": 781,
+              "EndOffset": 783,
               "Path": 0,
               "Ordinal": 6,
               "Hits": 0
             },
             {
-              "Line": 59,
-              "Offset": 929,
-              "EndOffset": 992,
+              "Line": 58,
+              "Offset": 781,
+              "EndOffset": 802,
               "Path": 1,
               "Ordinal": 7,
               "Hits": 0
             },
             {
-              "Line": 63,
-              "Offset": 1046,
-              "EndOffset": 1048,
+              "Line": 51,
+              "Offset": 736,
+              "EndOffset": 825,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 0
+            },
+            {
+              "Line": 71,
+              "Offset": 2609,
+              "EndOffset": 894,
+              "Path": 1,
+              "Ordinal": 23,
+              "Hits": 0
+            },
+            {
+              "Line": 73,
+              "Offset": 1055,
+              "EndOffset": 1057,
               "Path": 0,
               "Ordinal": 8,
               "Hits": 0
             },
             {
-              "Line": 63,
-              "Offset": 1046,
-              "EndOffset": 1052,
-              "Path": 1,
-              "Ordinal": 9,
-              "Hits": 0
-            },
-            {
-              "Line": 63,
-              "Offset": 1061,
-              "EndOffset": 1063,
+              "Line": 73,
+              "Offset": 1078,
+              "EndOffset": 1080,
               "Path": 0,
               "Ordinal": 10,
               "Hits": 0
             },
             {
-              "Line": 63,
-              "Offset": 1075,
-              "EndOffset": 1077,
+              "Line": 73,
+              "Offset": 1101,
+              "EndOffset": 1103,
               "Path": 0,
               "Ordinal": 12,
               "Hits": 0
             },
             {
-              "Line": 63,
-              "Offset": 1061,
-              "EndOffset": 1085,
-              "Path": 1,
-              "Ordinal": 11,
-              "Hits": 0
-            },
-            {
-              "Line": 63,
-              "Offset": 1075,
-              "EndOffset": 1114,
+              "Line": 73,
+              "Offset": 1101,
+              "EndOffset": 1110,
               "Path": 1,
               "Ordinal": 13,
               "Hits": 0
             },
             {
-              "Line": 69,
-              "Offset": 1162,
-              "EndOffset": 1167,
+              "Line": 73,
+              "Offset": 1078,
+              "EndOffset": 1117,
+              "Path": 1,
+              "Ordinal": 11,
+              "Hits": 0
+            },
+            {
+              "Line": 73,
+              "Offset": 1055,
+              "EndOffset": 1124,
+              "Path": 1,
+              "Ordinal": 9,
+              "Hits": 0
+            },
+            {
+              "Line": 73,
+              "Offset": 1365,
+              "EndOffset": 1367,
               "Path": 0,
               "Ordinal": 14,
               "Hits": 0
             },
             {
-              "Line": 70,
-              "Offset": 2112,
-              "EndOffset": 2114,
-              "Path": 0,
-              "Ordinal": 16,
-              "Hits": 0
-            },
-            {
-              "Line": 70,
-              "Offset": 2112,
-              "EndOffset": 2225,
-              "Path": 1,
-              "Ordinal": 17,
-              "Hits": 0
-            },
-            {
-              "Line": 69,
-              "Offset": 1162,
-              "EndOffset": 2298,
+              "Line": 73,
+              "Offset": 1365,
+              "EndOffset": 1373,
               "Path": 1,
               "Ordinal": 15,
               "Hits": 0
             },
             {
-              "Line": 54,
-              "Offset": 2334,
-              "EndOffset": 2339,
+              "Line": 73,
+              "Offset": 1454,
+              "EndOffset": 1456,
+              "Path": 0,
+              "Ordinal": 16,
+              "Hits": 0
+            },
+            {
+              "Line": 73,
+              "Offset": 1454,
+              "EndOffset": 1462,
+              "Path": 1,
+              "Ordinal": 17,
+              "Hits": 0
+            },
+            {
+              "Line": 107,
+              "Offset": 1555,
+              "EndOffset": 1560,
               "Path": 0,
               "Ordinal": 18,
+              "Hits": 0
+            },
+            {
+              "Line": 108,
+              "Offset": 2380,
+              "EndOffset": 2382,
+              "Path": 0,
+              "Ordinal": 20,
+              "Hits": 0
+            },
+            {
+              "Line": 108,
+              "Offset": 2380,
+              "EndOffset": 2493,
+              "Path": 1,
+              "Ordinal": 21,
+              "Hits": 0
+            },
+            {
+              "Line": 107,
+              "Offset": 1555,
+              "EndOffset": 2566,
+              "Path": 1,
+              "Ordinal": 19,
+              "Hits": 0
+            },
+            {
+              "Line": 71,
+              "Offset": 2609,
+              "EndOffset": 2614,
+              "Path": 0,
+              "Ordinal": 22,
               "Hits": 0
             }
           ]
@@ -27055,19 +27133,19 @@
       "AspNetCoreGeneratedDocument.Views_Reports_Index": {
         "System.String AspNetCoreGeneratedDocument.Views_Reports_Index::GetStatusDisplayName(System.String)": {
           "Lines": {
-            "204": 0,
-            "205": 0,
-            "206": 0,
-            "207": 0,
-            "208": 0,
-            "209": 0,
-            "210": 0,
-            "211": 0,
-            "212": 0
+            "280": 0,
+            "281": 0,
+            "282": 0,
+            "283": 0,
+            "284": 0,
+            "285": 0,
+            "286": 0,
+            "287": 0,
+            "288": 0
           },
           "Branches": [
             {
-              "Line": 204,
+              "Line": 280,
               "Offset": 15,
               "EndOffset": 17,
               "Path": 0,
@@ -27075,7 +27153,7 @@
               "Hits": 0
             },
             {
-              "Line": 204,
+              "Line": 280,
               "Offset": 28,
               "EndOffset": 30,
               "Path": 0,
@@ -27083,7 +27161,7 @@
               "Hits": 0
             },
             {
-              "Line": 204,
+              "Line": 280,
               "Offset": 41,
               "EndOffset": 43,
               "Path": 0,
@@ -27091,7 +27169,7 @@
               "Hits": 0
             },
             {
-              "Line": 204,
+              "Line": 280,
               "Offset": 54,
               "EndOffset": 56,
               "Path": 0,
@@ -27099,7 +27177,7 @@
               "Hits": 0
             },
             {
-              "Line": 204,
+              "Line": 280,
               "Offset": 15,
               "EndOffset": 71,
               "Path": 1,
@@ -27107,7 +27185,7 @@
               "Hits": 0
             },
             {
-              "Line": 204,
+              "Line": 280,
               "Offset": 28,
               "EndOffset": 79,
               "Path": 1,
@@ -27115,7 +27193,7 @@
               "Hits": 0
             },
             {
-              "Line": 204,
+              "Line": 280,
               "Offset": 41,
               "EndOffset": 87,
               "Path": 1,
@@ -27123,7 +27201,7 @@
               "Hits": 0
             },
             {
-              "Line": 204,
+              "Line": 280,
               "Offset": 54,
               "EndOffset": 95,
               "Path": 1,
@@ -27131,7 +27209,7 @@
               "Hits": 0
             },
             {
-              "Line": 204,
+              "Line": 280,
               "Offset": 67,
               "EndOffset": 103,
               "Path": 1,
@@ -27139,7 +27217,7 @@
               "Hits": 0
             },
             {
-              "Line": 204,
+              "Line": 280,
               "Offset": 67,
               "EndOffset": 111,
               "Path": 0,
@@ -27153,221 +27231,226 @@
         "System.Void AspNetCoreGeneratedDocument.Views_Reports_Index/<ExecuteAsync>d__0::MoveNext()": {
           "Lines": {
             "3": 0,
-            "60": 0,
-            "61": 0,
-            "63": 0,
-            "64": 0,
-            "69": 0,
-            "71": 0,
-            "72": 0,
-            "76": 0,
-            "77": 0,
-            "88": 0,
-            "89": 0,
-            "96": 0,
-            "99": 0,
-            "100": 0,
-            "104": 0,
+            "94": 0,
+            "95": 0,
+            "97": 0,
+            "98": 0,
+            "103": 0,
             "105": 0,
+            "107": 0,
+            "109": 0,
+            "115": 0,
             "116": 0,
-            "117": 0,
-            "124": 0,
             "127": 0,
             "128": 0,
-            "132": 0,
-            "133": 0,
+            "135": 0,
+            "138": 0,
+            "140": 0,
             "145": 0,
-            "146": 0,
-            "154": 0,
-            "157": 0,
-            "158": 0,
-            "162": 0,
-            "163": 0,
-            "175": 0,
-            "176": 0,
+            "152": 0,
+            "153": 0,
+            "164": 0,
+            "165": 0,
+            "174": 0,
+            "177": 0,
+            "179": 0,
             "184": 0,
-            "187": 0,
-            "188": 0
+            "191": 0,
+            "192": 0,
+            "204": 0,
+            "205": 0,
+            "213": 0,
+            "216": 0,
+            "218": 0,
+            "223": 0,
+            "230": 0,
+            "231": 0,
+            "243": 0,
+            "244": 0,
+            "252": 0,
+            "255": 0,
+            "257": 0,
+            "262": 0
           },
           "Branches": [
             {
-              "Line": 60,
-              "Offset": 300,
-              "EndOffset": 305,
+              "Line": 94,
+              "Offset": 317,
+              "EndOffset": 322,
               "Path": 0,
               "Ordinal": 0,
               "Hits": 0
             },
             {
-              "Line": 63,
-              "Offset": 511,
-              "EndOffset": 356,
+              "Line": 97,
+              "Offset": 528,
+              "EndOffset": 373,
               "Path": 1,
               "Ordinal": 3,
               "Hits": 0
             },
             {
-              "Line": 63,
-              "Offset": 511,
-              "EndOffset": 516,
+              "Line": 97,
+              "Offset": 528,
+              "EndOffset": 533,
               "Path": 0,
               "Ordinal": 2,
               "Hits": 0
             },
             {
-              "Line": 60,
-              "Offset": 300,
-              "EndOffset": 573,
+              "Line": 94,
+              "Offset": 317,
+              "EndOffset": 590,
               "Path": 1,
               "Ordinal": 1,
               "Hits": 0
             },
             {
-              "Line": 76,
-              "Offset": 632,
-              "EndOffset": 637,
+              "Line": 115,
+              "Offset": 649,
+              "EndOffset": 654,
               "Path": 0,
               "Ordinal": 4,
               "Hits": 0
             },
             {
-              "Line": 88,
-              "Offset": 945,
-              "EndOffset": 688,
+              "Line": 127,
+              "Offset": 962,
+              "EndOffset": 705,
               "Path": 1,
               "Ordinal": 11,
               "Hits": 0
             },
             {
-              "Line": 89,
-              "Offset": 869,
-              "EndOffset": 871,
+              "Line": 128,
+              "Offset": 886,
+              "EndOffset": 888,
               "Path": 0,
               "Ordinal": 6,
               "Hits": 0
             },
             {
-              "Line": 89,
-              "Offset": 869,
-              "EndOffset": 875,
+              "Line": 128,
+              "Offset": 886,
+              "EndOffset": 892,
               "Path": 1,
               "Ordinal": 7,
               "Hits": 0
             },
             {
-              "Line": 89,
-              "Offset": 895,
-              "EndOffset": 897,
+              "Line": 128,
+              "Offset": 912,
+              "EndOffset": 914,
               "Path": 0,
               "Ordinal": 8,
               "Hits": 0
             },
             {
-              "Line": 89,
-              "Offset": 895,
-              "EndOffset": 903,
+              "Line": 128,
+              "Offset": 912,
+              "EndOffset": 920,
               "Path": 1,
               "Ordinal": 9,
               "Hits": 0
             },
             {
-              "Line": 88,
-              "Offset": 945,
-              "EndOffset": 950,
+              "Line": 127,
+              "Offset": 962,
+              "EndOffset": 967,
               "Path": 0,
               "Ordinal": 10,
               "Hits": 0
             },
             {
-              "Line": 76,
-              "Offset": 632,
-              "EndOffset": 1007,
+              "Line": 115,
+              "Offset": 649,
+              "EndOffset": 1024,
               "Path": 1,
               "Ordinal": 5,
               "Hits": 0
             },
             {
-              "Line": 104,
-              "Offset": 1068,
-              "EndOffset": 1073,
+              "Line": 152,
+              "Offset": 1085,
+              "EndOffset": 1090,
               "Path": 0,
               "Ordinal": 12,
               "Hits": 0
             },
             {
-              "Line": 116,
-              "Offset": 1348,
-              "EndOffset": 1124,
+              "Line": 164,
+              "Offset": 1374,
+              "EndOffset": 1141,
               "Path": 1,
-              "Ordinal": 15,
+              "Ordinal": 17,
               "Hits": 0
             },
             {
-              "Line": 116,
-              "Offset": 1348,
-              "EndOffset": 1353,
+              "Line": 165,
+              "Offset": 1234,
+              "EndOffset": 1236,
               "Path": 0,
               "Ordinal": 14,
               "Hits": 0
             },
             {
-              "Line": 104,
-              "Offset": 1068,
-              "EndOffset": 1410,
+              "Line": 165,
+              "Offset": 1234,
+              "EndOffset": 1242,
               "Path": 1,
-              "Ordinal": 13,
+              "Ordinal": 15,
               "Hits": 0
             },
             {
-              "Line": 132,
-              "Offset": 1471,
-              "EndOffset": 1476,
+              "Line": 164,
+              "Offset": 1374,
+              "EndOffset": 1379,
               "Path": 0,
               "Ordinal": 16,
               "Hits": 0
             },
             {
-              "Line": 145,
-              "Offset": 1843,
-              "EndOffset": 1527,
+              "Line": 152,
+              "Offset": 1085,
+              "EndOffset": 1436,
               "Path": 1,
-              "Ordinal": 25,
+              "Ordinal": 13,
               "Hits": 0
             },
             {
-              "Line": 146,
-              "Offset": 1665,
-              "EndOffset": 1667,
+              "Line": 191,
+              "Offset": 1497,
+              "EndOffset": 1502,
               "Path": 0,
               "Ordinal": 18,
               "Hits": 0
             },
             {
-              "Line": 146,
-              "Offset": 1665,
-              "EndOffset": 1673,
+              "Line": 204,
+              "Offset": 1869,
+              "EndOffset": 1553,
               "Path": 1,
-              "Ordinal": 19,
+              "Ordinal": 27,
               "Hits": 0
             },
             {
-              "Line": 146,
-              "Offset": 1767,
-              "EndOffset": 1769,
+              "Line": 205,
+              "Offset": 1691,
+              "EndOffset": 1693,
               "Path": 0,
               "Ordinal": 20,
               "Hits": 0
             },
             {
-              "Line": 146,
-              "Offset": 1767,
-              "EndOffset": 1773,
+              "Line": 205,
+              "Offset": 1691,
+              "EndOffset": 1699,
               "Path": 1,
               "Ordinal": 21,
               "Hits": 0
             },
             {
-              "Line": 146,
+              "Line": 205,
               "Offset": 1793,
               "EndOffset": 1795,
               "Path": 0,
@@ -27375,63 +27458,63 @@
               "Hits": 0
             },
             {
-              "Line": 146,
+              "Line": 205,
               "Offset": 1793,
-              "EndOffset": 1801,
+              "EndOffset": 1799,
               "Path": 1,
               "Ordinal": 23,
               "Hits": 0
             },
             {
-              "Line": 145,
-              "Offset": 1843,
-              "EndOffset": 1848,
+              "Line": 205,
+              "Offset": 1819,
+              "EndOffset": 1821,
               "Path": 0,
               "Ordinal": 24,
               "Hits": 0
             },
             {
-              "Line": 132,
-              "Offset": 1471,
-              "EndOffset": 1905,
+              "Line": 205,
+              "Offset": 1819,
+              "EndOffset": 1827,
               "Path": 1,
-              "Ordinal": 17,
+              "Ordinal": 25,
               "Hits": 0
             },
             {
-              "Line": 162,
-              "Offset": 1966,
-              "EndOffset": 1971,
+              "Line": 204,
+              "Offset": 1869,
+              "EndOffset": 1874,
               "Path": 0,
               "Ordinal": 26,
               "Hits": 0
             },
             {
-              "Line": 175,
-              "Offset": 2337,
-              "EndOffset": 2022,
+              "Line": 191,
+              "Offset": 1497,
+              "EndOffset": 1931,
               "Path": 1,
-              "Ordinal": 37,
+              "Ordinal": 19,
               "Hits": 0
             },
             {
-              "Line": 176,
-              "Offset": 2163,
-              "EndOffset": 2165,
+              "Line": 230,
+              "Offset": 1992,
+              "EndOffset": 1997,
               "Path": 0,
               "Ordinal": 28,
               "Hits": 0
             },
             {
-              "Line": 176,
-              "Offset": 2163,
-              "EndOffset": 2169,
+              "Line": 243,
+              "Offset": 2471,
+              "EndOffset": 2048,
               "Path": 1,
-              "Ordinal": 29,
+              "Ordinal": 39,
               "Hits": 0
             },
             {
-              "Line": 176,
+              "Line": 244,
               "Offset": 2189,
               "EndOffset": 2191,
               "Path": 0,
@@ -27439,59 +27522,75 @@
               "Hits": 0
             },
             {
-              "Line": 176,
+              "Line": 244,
               "Offset": 2189,
-              "EndOffset": 2197,
+              "EndOffset": 2195,
               "Path": 1,
               "Ordinal": 31,
               "Hits": 0
             },
             {
-              "Line": 176,
-              "Offset": 2238,
-              "EndOffset": 2240,
+              "Line": 244,
+              "Offset": 2215,
+              "EndOffset": 2217,
               "Path": 0,
               "Ordinal": 32,
               "Hits": 0
             },
             {
-              "Line": 176,
-              "Offset": 2238,
-              "EndOffset": 2246,
+              "Line": 244,
+              "Offset": 2215,
+              "EndOffset": 2223,
               "Path": 1,
               "Ordinal": 33,
               "Hits": 0
             },
             {
-              "Line": 176,
-              "Offset": 2287,
-              "EndOffset": 2289,
+              "Line": 244,
+              "Offset": 2372,
+              "EndOffset": 2374,
               "Path": 0,
               "Ordinal": 34,
               "Hits": 0
             },
             {
-              "Line": 176,
-              "Offset": 2287,
-              "EndOffset": 2295,
+              "Line": 244,
+              "Offset": 2372,
+              "EndOffset": 2380,
               "Path": 1,
               "Ordinal": 35,
               "Hits": 0
             },
             {
-              "Line": 175,
-              "Offset": 2337,
-              "EndOffset": 2342,
+              "Line": 244,
+              "Offset": 2421,
+              "EndOffset": 2423,
               "Path": 0,
               "Ordinal": 36,
               "Hits": 0
             },
             {
-              "Line": 162,
-              "Offset": 1966,
-              "EndOffset": 2399,
+              "Line": 244,
+              "Offset": 2421,
+              "EndOffset": 2429,
               "Path": 1,
-              "Ordinal": 27,
+              "Ordinal": 37,
+              "Hits": 0
+            },
+            {
+              "Line": 243,
+              "Offset": 2471,
+              "EndOffset": 2476,
+              "Path": 0,
+              "Ordinal": 38,
+              "Hits": 0
+            },
+            {
+              "Line": 230,
+              "Offset": 1992,
+              "EndOffset": 2533,
+              "Path": 1,
+              "Ordinal": 29,
               "Hits": 0
             }
           ]
@@ -27700,7 +27799,7 @@
             },
             {
               "Line": 30,
-              "Offset": 1669,
+              "Offset": 1545,
               "EndOffset": 174,
               "Path": 1,
               "Ordinal": 11,
@@ -27748,16 +27847,16 @@
             },
             {
               "Line": 43,
-              "Offset": 1446,
-              "EndOffset": 1448,
+              "Offset": 1322,
+              "EndOffset": 1324,
               "Path": 0,
               "Ordinal": 8,
               "Hits": 0
             },
             {
               "Line": 43,
-              "Offset": 1446,
-              "EndOffset": 1560,
+              "Offset": 1322,
+              "EndOffset": 1436,
               "Path": 1,
               "Ordinal": 9,
               "Hits": 0
@@ -27765,15 +27864,15 @@
             {
               "Line": 42,
               "Offset": 499,
-              "EndOffset": 1633,
+              "EndOffset": 1509,
               "Path": 1,
               "Ordinal": 7,
               "Hits": 0
             },
             {
               "Line": 30,
-              "Offset": 1669,
-              "EndOffset": 1674,
+              "Offset": 1545,
+              "EndOffset": 1550,
               "Path": 0,
               "Ordinal": 10,
               "Hits": 0
@@ -29051,8 +29150,8 @@
           ]
         }
       },
-      "AspNetCoreGeneratedDocument.Views_SocialPlatforms_Index/<ExecuteAsync>d__10": {
-        "System.Void AspNetCoreGeneratedDocument.Views_SocialPlatforms_Index/<ExecuteAsync>d__10::MoveNext()": {
+      "AspNetCoreGeneratedDocument.Views_SocialPlatforms_Index/<ExecuteAsync>d__9": {
+        "System.Void AspNetCoreGeneratedDocument.Views_SocialPlatforms_Index/<ExecuteAsync>d__9::MoveNext()": {
           "Lines": {
             "2": 0,
             "12": 0,
@@ -29105,7 +29204,7 @@
             },
             {
               "Line": 29,
-              "Offset": 1279,
+              "Offset": 1398,
               "EndOffset": 222,
               "Path": 1,
               "Ordinal": 9,
@@ -29121,16 +29220,16 @@
             },
             {
               "Line": 39,
-              "Offset": 1056,
-              "EndOffset": 1058,
+              "Offset": 1175,
+              "EndOffset": 1177,
               "Path": 0,
               "Ordinal": 6,
               "Hits": 0
             },
             {
               "Line": 39,
-              "Offset": 1056,
-              "EndOffset": 1170,
+              "Offset": 1175,
+              "EndOffset": 1289,
               "Path": 1,
               "Ordinal": 7,
               "Hits": 0
@@ -29138,15 +29237,15 @@
             {
               "Line": 38,
               "Offset": 371,
-              "EndOffset": 1243,
+              "EndOffset": 1362,
               "Path": 1,
               "Ordinal": 5,
               "Hits": 0
             },
             {
               "Line": 29,
-              "Offset": 1279,
-              "EndOffset": 1284,
+              "Offset": 1398,
+              "EndOffset": 1403,
               "Path": 0,
               "Ordinal": 8,
               "Hits": 0
@@ -29324,8 +29423,8 @@
       }
     },
     "D:\\MVC\\RadioMVC\\Radio.BlazorWeb\\Radio.Web\\Views\\StaffRoles\\Index.cshtml": {
-      "AspNetCoreGeneratedDocument.Views_StaffRoles_Index/<ExecuteAsync>d__11": {
-        "System.Void AspNetCoreGeneratedDocument.Views_StaffRoles_Index/<ExecuteAsync>d__11::MoveNext()": {
+      "AspNetCoreGeneratedDocument.Views_StaffRoles_Index/<ExecuteAsync>d__10": {
+        "System.Void AspNetCoreGeneratedDocument.Views_StaffRoles_Index/<ExecuteAsync>d__10::MoveNext()": {
           "Lines": {
             "2": 0,
             "12": 0,
@@ -29378,7 +29477,7 @@
             },
             {
               "Line": 38,
-              "Offset": 1267,
+              "Offset": 1386,
               "EndOffset": 239,
               "Path": 1,
               "Ordinal": 9,
@@ -29394,16 +29493,16 @@
             },
             {
               "Line": 44,
-              "Offset": 1044,
-              "EndOffset": 1046,
+              "Offset": 1163,
+              "EndOffset": 1165,
               "Path": 0,
               "Ordinal": 6,
               "Hits": 0
             },
             {
               "Line": 44,
-              "Offset": 1044,
-              "EndOffset": 1158,
+              "Offset": 1163,
+              "EndOffset": 1277,
               "Path": 1,
               "Ordinal": 7,
               "Hits": 0
@@ -29411,15 +29510,15 @@
             {
               "Line": 43,
               "Offset": 337,
-              "EndOffset": 1231,
+              "EndOffset": 1350,
               "Path": 1,
               "Ordinal": 5,
               "Hits": 0
             },
             {
               "Line": 38,
-              "Offset": 1267,
-              "EndOffset": 1272,
+              "Offset": 1386,
+              "EndOffset": 1391,
               "Path": 0,
               "Ordinal": 8,
               "Hits": 0
@@ -29835,7 +29934,7 @@
             },
             {
               "Line": 50,
-              "Offset": 3246,
+              "Offset": 3121,
               "EndOffset": 863,
               "Path": 1,
               "Ordinal": 17,
@@ -29899,16 +29998,16 @@
             },
             {
               "Line": 64,
-              "Offset": 3024,
-              "EndOffset": 3026,
+              "Offset": 2899,
+              "EndOffset": 2901,
               "Path": 0,
               "Ordinal": 14,
               "Hits": 0
             },
             {
               "Line": 64,
-              "Offset": 3024,
-              "EndOffset": 3137,
+              "Offset": 2899,
+              "EndOffset": 3012,
               "Path": 1,
               "Ordinal": 15,
               "Hits": 0
@@ -29916,15 +30015,15 @@
             {
               "Line": 63,
               "Offset": 1356,
-              "EndOffset": 3210,
+              "EndOffset": 3085,
               "Path": 1,
               "Ordinal": 11,
               "Hits": 0
             },
             {
               "Line": 50,
-              "Offset": 3246,
-              "EndOffset": 3251,
+              "Offset": 3121,
+              "EndOffset": 3126,
               "Path": 0,
               "Ordinal": 16,
               "Hits": 0
@@ -31265,6 +31364,20 @@
         "System.Collections.Generic.List`1<DataAccess.Services.DiagnosticLogDto> Radio.Web.ViewModels.DiagnosticsViewModel::get_Logs()": {
           "Lines": {
             "64": 0
+          },
+          "Branches": []
+        }
+      },
+      "Radio.Web.ViewModels.ProgramViewModel": {
+        "DataAccess.DTOs.ProgramDto Radio.Web.ViewModels.ProgramViewModel::get_Program()": {
+          "Lines": {
+            "69": 0
+          },
+          "Branches": []
+        },
+        "System.Int32 Radio.Web.ViewModels.ProgramViewModel::get_EpisodeCount()": {
+          "Lines": {
+            "70": 0
           },
           "Branches": []
         }
@@ -36094,39 +36207,55 @@
       "Radio.Web.Controllers.ProgramsController": {
         "Microsoft.AspNetCore.Mvc.IActionResult Radio.Web.Controllers.ProgramsController::Create()": {
           "Lines": {
-            "49": 0
+            "64": 0
           },
           "Branches": []
         },
-        "System.Void Radio.Web.Controllers.ProgramsController::.ctor(DataAccess.Services.IProgramService,Radio.Web.Services.ICurrentUserService,Microsoft.Extensions.Logging.ILogger`1<Radio.Web.Controllers.ProgramsController>)": {
+        "System.Void Radio.Web.Controllers.ProgramsController::.ctor(DataAccess.Services.IProgramService,DataAccess.Services.IEpisodeService,Radio.Web.Services.ICurrentUserService,Microsoft.Extensions.Logging.ILogger`1<Radio.Web.Controllers.ProgramsController>)": {
           "Lines": {
-            "19": 0,
             "20": 0,
             "21": 0,
             "22": 0,
             "23": 0,
-            "24": 0
+            "24": 0,
+            "25": 0,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "30": 0
           },
           "Branches": []
         }
       },
       "Radio.Web.Controllers.ProgramsController/<>c": {
-        "System.String Radio.Web.Controllers.ProgramsController/<>c::<Index>b__4_0(DataAccess.DTOs.ProgramDto)": {
+        "System.String Radio.Web.Controllers.ProgramsController/<>c::<Index>b__5_1(Radio.Web.ViewModels.ProgramViewModel)": {
           "Lines": {
-            "39": 0
+            "51": 0
           },
           "Branches": []
         }
       },
-      "Radio.Web.Controllers.ProgramsController/<>c__DisplayClass4_0": {
-        "System.Boolean Radio.Web.Controllers.ProgramsController/<>c__DisplayClass4_0::<Index>b__1(DataAccess.DTOs.ProgramDto)": {
+      "Radio.Web.Controllers.ProgramsController/<>c__DisplayClass5_0": {
+        "Radio.Web.ViewModels.ProgramViewModel Radio.Web.Controllers.ProgramsController/<>c__DisplayClass5_0::<Index>b__0(DataAccess.DTOs.ProgramDto)": {
           "Lines": {
-            "35": 0,
-            "36": 0
+            "47": 0,
+            "48": 0,
+            "49": 0,
+            "50": 0
+          },
+          "Branches": []
+        }
+      },
+      "Radio.Web.Controllers.ProgramsController/<>c__DisplayClass5_1": {
+        "System.Boolean Radio.Web.Controllers.ProgramsController/<>c__DisplayClass5_1::<Index>b__2(DataAccess.DTOs.ProgramDto)": {
+          "Lines": {
+            "41": 0,
+            "42": 0
           },
           "Branches": [
             {
-              "Line": 35,
+              "Line": 41,
               "Offset": 7,
               "EndOffset": 9,
               "Path": 0,
@@ -36134,7 +36263,7 @@
               "Hits": 0
             },
             {
-              "Line": 35,
+              "Line": 41,
               "Offset": 7,
               "EndOffset": 13,
               "Path": 1,
@@ -36142,7 +36271,7 @@
               "Hits": 0
             },
             {
-              "Line": 35,
+              "Line": 41,
               "Offset": 25,
               "EndOffset": 27,
               "Path": 0,
@@ -36150,7 +36279,7 @@
               "Hits": 0
             },
             {
-              "Line": 35,
+              "Line": 41,
               "Offset": 34,
               "EndOffset": 36,
               "Path": 0,
@@ -36158,7 +36287,7 @@
               "Hits": 0
             },
             {
-              "Line": 35,
+              "Line": 41,
               "Offset": 34,
               "EndOffset": 40,
               "Path": 1,
@@ -36166,7 +36295,7 @@
               "Hits": 0
             },
             {
-              "Line": 35,
+              "Line": 41,
               "Offset": 25,
               "EndOffset": 54,
               "Path": 1,
@@ -36176,34 +36305,34 @@
           ]
         }
       },
-      "Radio.Web.Controllers.ProgramsController/<>c__DisplayClass7_0": {
-        "System.Boolean Radio.Web.Controllers.ProgramsController/<>c__DisplayClass7_0::<Edit>b__0(DataAccess.DTOs.ProgramDto)": {
+      "Radio.Web.Controllers.ProgramsController/<>c__DisplayClass8_0": {
+        "System.Boolean Radio.Web.Controllers.ProgramsController/<>c__DisplayClass8_0::<Edit>b__0(DataAccess.DTOs.ProgramDto)": {
           "Lines": {
-            "76": 0
+            "91": 0
           },
           "Branches": []
         }
       },
-      "Radio.Web.Controllers.ProgramsController/<Create>d__6": {
-        "System.Void Radio.Web.Controllers.ProgramsController/<Create>d__6::MoveNext()": {
+      "Radio.Web.Controllers.ProgramsController/<Create>d__7": {
+        "System.Void Radio.Web.Controllers.ProgramsController/<Create>d__7::MoveNext()": {
           "Lines": {
-            "55": 0,
-            "56": 0,
-            "57": 0,
-            "59": 0,
-            "61": 0,
-            "62": 0,
-            "63": 0,
-            "64": 0,
-            "65": 0,
-            "66": 0,
-            "68": 0,
-            "69": 0,
-            "70": 0
+            "70": 0,
+            "71": 0,
+            "72": 0,
+            "74": 0,
+            "76": 0,
+            "77": 0,
+            "78": 0,
+            "79": 0,
+            "80": 0,
+            "81": 0,
+            "83": 0,
+            "84": 0,
+            "85": 0
           },
           "Branches": [
             {
-              "Line": 56,
+              "Line": 71,
               "Offset": 36,
               "EndOffset": 38,
               "Path": 0,
@@ -36211,7 +36340,7 @@
               "Hits": 0
             },
             {
-              "Line": 56,
+              "Line": 71,
               "Offset": 36,
               "EndOffset": 65,
               "Path": 1,
@@ -36219,7 +36348,7 @@
               "Hits": 0
             },
             {
-              "Line": 59,
+              "Line": 74,
               "Offset": 86,
               "EndOffset": 88,
               "Path": 0,
@@ -36227,7 +36356,7 @@
               "Hits": 0
             },
             {
-              "Line": 59,
+              "Line": 74,
               "Offset": 86,
               "EndOffset": 116,
               "Path": 1,
@@ -36235,7 +36364,7 @@
               "Hits": 0
             },
             {
-              "Line": 63,
+              "Line": 78,
               "Offset": 299,
               "EndOffset": 301,
               "Path": 0,
@@ -36243,7 +36372,7 @@
               "Hits": 0
             },
             {
-              "Line": 63,
+              "Line": 78,
               "Offset": 299,
               "EndOffset": 348,
               "Path": 1,
@@ -36253,20 +36382,20 @@
           ]
         }
       },
-      "Radio.Web.Controllers.ProgramsController/<Delete>d__9": {
-        "System.Void Radio.Web.Controllers.ProgramsController/<Delete>d__9::MoveNext()": {
+      "Radio.Web.Controllers.ProgramsController/<Delete>d__10": {
+        "System.Void Radio.Web.Controllers.ProgramsController/<Delete>d__10::MoveNext()": {
           "Lines": {
-            "107": 0,
-            "108": 0,
-            "109": 0,
-            "110": 0,
-            "111": 0,
-            "112": 0,
-            "113": 0
+            "122": 0,
+            "123": 0,
+            "124": 0,
+            "125": 0,
+            "126": 0,
+            "127": 0,
+            "128": 0
           },
           "Branches": [
             {
-              "Line": 110,
+              "Line": 125,
               "Offset": 194,
               "EndOffset": 196,
               "Path": 0,
@@ -36274,38 +36403,9 @@
               "Hits": 0
             },
             {
-              "Line": 110,
+              "Line": 125,
               "Offset": 194,
               "EndOffset": 225,
-              "Path": 1,
-              "Ordinal": 1,
-              "Hits": 0
-            }
-          ]
-        }
-      },
-      "Radio.Web.Controllers.ProgramsController/<Edit>d__7": {
-        "System.Void Radio.Web.Controllers.ProgramsController/<Edit>d__7::MoveNext()": {
-          "Lines": {
-            "74": 0,
-            "75": 0,
-            "77": 0,
-            "78": 0,
-            "79": 0
-          },
-          "Branches": [
-            {
-              "Line": 77,
-              "Offset": 223,
-              "EndOffset": 225,
-              "Path": 0,
-              "Ordinal": 0,
-              "Hits": 0
-            },
-            {
-              "Line": 77,
-              "Offset": 223,
-              "EndOffset": 239,
               "Path": 1,
               "Ordinal": 1,
               "Hits": 0
@@ -36316,24 +36416,53 @@
       "Radio.Web.Controllers.ProgramsController/<Edit>d__8": {
         "System.Void Radio.Web.Controllers.ProgramsController/<Edit>d__8::MoveNext()": {
           "Lines": {
-            "85": 0,
-            "86": 0,
-            "87": 0,
             "89": 0,
-            "91": 0,
+            "90": 0,
             "92": 0,
             "93": 0,
-            "94": 0,
-            "95": 0,
-            "96": 0,
-            "97": 0,
-            "99": 0,
-            "100": 0,
-            "101": 0
+            "94": 0
           },
           "Branches": [
             {
-              "Line": 86,
+              "Line": 92,
+              "Offset": 223,
+              "EndOffset": 225,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 92,
+              "Offset": 223,
+              "EndOffset": 239,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "Radio.Web.Controllers.ProgramsController/<Edit>d__9": {
+        "System.Void Radio.Web.Controllers.ProgramsController/<Edit>d__9::MoveNext()": {
+          "Lines": {
+            "100": 0,
+            "101": 0,
+            "102": 0,
+            "104": 0,
+            "106": 0,
+            "107": 0,
+            "108": 0,
+            "109": 0,
+            "110": 0,
+            "111": 0,
+            "112": 0,
+            "114": 0,
+            "115": 0,
+            "116": 0
+          },
+          "Branches": [
+            {
+              "Line": 101,
               "Offset": 36,
               "EndOffset": 38,
               "Path": 0,
@@ -36341,7 +36470,7 @@
               "Hits": 0
             },
             {
-              "Line": 86,
+              "Line": 101,
               "Offset": 36,
               "EndOffset": 65,
               "Path": 1,
@@ -36349,7 +36478,7 @@
               "Hits": 0
             },
             {
-              "Line": 89,
+              "Line": 104,
               "Offset": 86,
               "EndOffset": 88,
               "Path": 0,
@@ -36357,7 +36486,7 @@
               "Hits": 0
             },
             {
-              "Line": 89,
+              "Line": 104,
               "Offset": 86,
               "EndOffset": 111,
               "Path": 1,
@@ -36365,7 +36494,7 @@
               "Hits": 0
             },
             {
-              "Line": 94,
+              "Line": 109,
               "Offset": 324,
               "EndOffset": 326,
               "Path": 0,
@@ -36373,7 +36502,7 @@
               "Hits": 0
             },
             {
-              "Line": 94,
+              "Line": 109,
               "Offset": 324,
               "EndOffset": 373,
               "Path": 1,
@@ -36383,69 +36512,71 @@
           ]
         }
       },
-      "Radio.Web.Controllers.ProgramsController/<Index>d__4": {
-        "System.Void Radio.Web.Controllers.ProgramsController/<Index>d__4::MoveNext()": {
+      "Radio.Web.Controllers.ProgramsController/<Index>d__5": {
+        "System.Void Radio.Web.Controllers.ProgramsController/<Index>d__5::MoveNext()": {
           "Lines": {
-            "27": 0,
-            "29": 0,
-            "30": 0,
-            "31": 0,
-            "32": 0,
             "33": 0,
-            "34": 0,
+            "35": 0,
+            "36": 0,
             "37": 0,
             "38": 0,
-            "41": 0,
-            "42": 0,
+            "39": 0,
+            "40": 0,
             "43": 0,
             "44": 0,
-            "46": 0
+            "46": 0,
+            "53": 0,
+            "55": 0,
+            "56": 0,
+            "57": 0,
+            "58": 0,
+            "60": 0
           },
           "Branches": [
             {
-              "Line": 31,
-              "Offset": 172,
-              "EndOffset": 174,
+              "Line": 37,
+              "Offset": 195,
+              "EndOffset": 197,
               "Path": 0,
               "Ordinal": 0,
               "Hits": 0
             },
             {
-              "Line": 31,
-              "Offset": 172,
-              "EndOffset": 255,
+              "Line": 37,
+              "Offset": 195,
+              "EndOffset": 278,
               "Path": 1,
               "Ordinal": 1,
               "Hits": 0
             },
             {
-              "Line": 38,
-              "Offset": 260,
-              "EndOffset": 264,
+              "Line": 44,
+              "Offset": 283,
+              "EndOffset": 287,
               "Path": 1,
               "Ordinal": 3,
               "Hits": 0
             },
             {
-              "Line": 38,
-              "Offset": 260,
-              "EndOffset": 321,
+              "Line": 44,
+              "Offset": 283,
+              "EndOffset": 344,
               "Path": 0,
               "Ordinal": 2,
               "Hits": 0
             },
             {
-              "Line": 38,
-              "Offset": 354,
-              "EndOffset": 356,
+              "Line": 44,
+              "Offset": 377,
+              "EndOffset": 379,
               "Path": 0,
               "Ordinal": 4,
               "Hits": 0
             },
             {
-              "Line": 38,
-              "Offset": 354,
-              "EndOffset": 362,
+              "Line": 44,
+              "Offset": 377,
+              "EndOffset": 385,
               "Path": 1,
               "Ordinal": 5,
               "Hits": 0

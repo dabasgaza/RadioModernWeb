@@ -1,212 +1,267 @@
 @model ReportsViewModel
 @{
-    ViewData["Title"] = "التقارير";
+    ViewData["Title"] = "التقارير والإحصائيات";
 }
 
 <div class="page-header">
-    <div class="relative z-10">
-        <nav class="breadcrumb">
-            <a href="/">الرئيسية</a>
-            <span class="material-icons">chevron_left</span>
-            <span>التقارير</span>
-        </nav>
-        <h1>
-            <span class="material-icons">assessment</span>
-            التقارير
-        </h1>
-        <p>إحصائيات شاملة عن أداء النظام ومؤشرات الأداء الرئيسية</p>
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <span class="material-symbols-rounded">home</span>
+                <a href="/">الرئيسية</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <span>التقارير والإحصائيات</span>
+            </nav>
+            <h1>
+                <span class="material-symbols-rounded">assessment</span>
+                التقارير والإحصائيات
+            </h1>
+            <p>مؤشرات الأداء الرئيسية وتحليلات شاملة للبرامج والضيوف والحلقات</p>
+        </div>
     </div>
 </div>
 
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-    <div class="stat-card-premium" style="color: var(--color-primary);">
-        <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                <span class="material-icons text-3xl" style="color: var(--color-primary);">podcasts</span>
-            </div>
+<!-- Stats -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <div class="stat-card-premium text-primary">
+        <div class="flex items-center justify-between">
             <div>
                 <div class="text-2xl font-black text-ink">@Model.StatusStats.Values.Sum()</div>
-                <div class="text-xs font-semibold text-ink-muted">إجمالي الحلقات</div>
+                <div class="text-xs font-bold text-ink-muted mt-1">إجمالي الحلقات</div>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                <span class="material-symbols-rounded">podcasts</span>
             </div>
         </div>
     </div>
-    <div class="stat-card-premium" style="color: var(--color-success);">
-        <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
-                <span class="material-icons text-3xl" style="color: var(--color-success);">radio</span>
-            </div>
+
+    <div class="stat-card-premium text-success">
+        <div class="flex items-center justify-between">
             <div>
                 <div class="text-2xl font-black text-ink">@Model.TopPrograms.Count</div>
-                <div class="text-xs font-semibold text-ink-muted">البرامج النشطة</div>
+                <div class="text-xs font-bold text-ink-muted mt-1">البرامج النشطة</div>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-success/10 text-success flex items-center justify-center">
+                <span class="material-symbols-rounded">radio</span>
             </div>
         </div>
     </div>
-    <div class="stat-card-premium" style="color: var(--color-danger);">
-        <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
-                <span class="material-icons text-3xl" style="color: var(--color-danger);">cancel</span>
-            </div>
+
+    <div class="stat-card-premium text-danger">
+        <div class="flex items-center justify-between">
             <div>
                 <div class="text-2xl font-black text-ink">@Model.CancelledEpisodes.Count</div>
-                <div class="text-xs font-semibold text-ink-muted">حلقات ملغاة</div>
+                <div class="text-xs font-bold text-ink-muted mt-1">حلقات ملغاة</div>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-danger/10 text-danger flex items-center justify-center">
+                <span class="material-symbols-rounded">cancel</span>
             </div>
         </div>
     </div>
-    <div class="stat-card-premium" style="color: var(--color-accent);">
-        <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-xl bg-sky-50 flex items-center justify-center shrink-0">
-                <span class="material-icons text-3xl" style="color: var(--color-accent);">people_alt</span>
-            </div>
+
+    <div class="stat-card-premium text-accent">
+        <div class="flex items-center justify-between">
             <div>
                 <div class="text-2xl font-black text-ink">@Model.TopGuests.Count</div>
-                <div class="text-xs font-semibold text-ink-muted">أبرز الضيوف</div>
+                <div class="text-xs font-bold text-ink-muted mt-1">أبرز الضيوف</div>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
+                <span class="material-symbols-rounded">people_alt</span>
             </div>
         </div>
     </div>
 </div>
 
-<div class="card-premium mb-6">
-    <div class="border-b border-border/60">
-        <nav class="flex flex-wrap -mb-px px-5">
+<!-- Tabs Card -->
+<div class="card-premium">
+    <div class="card-header bg-surface-2">
+        <nav class="flex flex-wrap gap-1">
             <button class="tab-btn active" onclick="switchTab('overview')">نظرة عامة</button>
             <button class="tab-btn" onclick="switchTab('today')">حلقات اليوم</button>
-            <button class="tab-btn" onclick="switchTab('programs')">أكثر البرامج</button>
+            <button class="tab-btn" onclick="switchTab('programs')">نشاط البرامج</button>
             <button class="tab-btn" onclick="switchTab('guests')">أبرز الضيوف</button>
             <button class="tab-btn" onclick="switchTab('cancelled')">الحلقات الملغاة</button>
         </nav>
     </div>
 
-    <div id="tab-overview" class="tab-panel p-5">
-        <h3 class="font-bold text-ink mb-3">توزيع حالات الحلقات</h3>
-        @if (Model.StatusStats.Any())
-        {
-            <div class="space-y-2">
-                @foreach (var s in Model.StatusStats)
+    <div class="card-body p-0">
+        <!-- Overview Tab -->
+        <div id="tab-overview" class="tab-panel p-6">
+            <h3 class="font-extrabold text-ink text-sm mb-4 flex items-center gap-1.5">
+                <span class="w-1.5 h-3 bg-primary rounded-full"></span>
+                توزيع حالات الحلقات في النظام
+            </h3>
+            @if (Model.StatusStats.Any())
+            {
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @foreach (var s in Model.StatusStats)
+                    {
+                        <div class="flex items-center justify-between p-4 bg-surface-2 rounded-xl border border-border">
+                            <span class="text-xs font-bold text-ink-muted">@GetStatusDisplayName(s.Key)</span>
+                            <span class="badge badge-info font-black">@s.Value حلقة</span>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-state p-6">لا توجد بيانات إحصائية متاحة حالياً.</div>
+            }
+        </div>
+
+        <!-- Today Tab -->
+        <div id="tab-today" class="tab-panel hidden">
+            <div class="table-premium border-0 shadow-none rounded-none">
+                @if (Model.TodayEpisodes.Any())
                 {
-                    <div class="flex items-center justify-between py-2.5 px-3 border-b border-border/60 last:border-0 hover:bg-surface-3 rounded-lg transition">
-                        <span class="font-medium text-ink">@GetStatusDisplayName(s.Key)</span>
-                        <span class="badge-premium bg-blue-50 text-blue-700 border-blue-200">@s.Value</span>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="px-5 py-3 text-right">الحلقة</th>
+                                <th class="px-5 py-3 text-right">البرنامج</th>
+                                <th class="px-5 py-3 text-right">الضيوف</th>
+                                <th class="px-5 py-3 text-right">الموعد</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ep in Model.TodayEpisodes)
+                            {
+                                <tr>
+                                    <td class="px-5 py-3 font-bold text-primary">@ep.EpisodeName</td>
+                                    <td class="px-5 py-3 text-ink-muted">@ep.ProgramName</td>
+                                    <td class="px-5 py-3 text-ink-muted">@ep.GuestsDisplay</td>
+                                    <td class="px-5 py-3 text-ink font-semibold">@(ep.ScheduledExecutionTime?.ToString("HH:mm") ?? "—")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="empty-state p-10">
+                        <span class="material-symbols-rounded empty-icon">event_busy</span>
+                        <p class="text-ink-muted text-sm">لم يتم جدولة أي حلقات لليوم.</p>
                     </div>
                 }
             </div>
-        }
-        else { <div class="empty-state">لا بيانات</div> }
-    </div>
+        </div>
 
-    <div id="tab-today" class="tab-panel hidden p-5">
-        @if (Model.TodayEpisodes.Any())
-        {
-            <table class="w-full text-sm">
-                <thead class="bg-surface-3 text-ink-muted">
-                    <tr>
-                        <th class="px-3 py-2 text-right font-bold text-xs">الحلقة</th>
-                        <th class="px-3 py-2 text-right font-bold text-xs">البرنامج</th>
-                        <th class="px-3 py-2 text-right font-bold text-xs">الضيوف</th>
-                        <th class="px-3 py-2 text-right font-bold text-xs">الموعد</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-border">
-                    @foreach (var ep in Model.TodayEpisodes)
-                    {
-                        <tr class="hover:bg-surface-2 transition duration-200">
-                            <td class="px-3 py-2 font-medium text-ink">@ep.EpisodeName</td>
-                            <td class="px-3 py-2 text-ink-muted">@ep.ProgramName</td>
-                            <td class="px-3 py-2 text-ink-muted">@ep.GuestsDisplay</td>
-                            <td class="px-3 py-2 text-ink-muted">@(ep.ScheduledExecutionTime?.ToString("HH:mm") ?? "—")</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-        else { <div class="empty-state">لا حلقات اليوم</div> }
-    </div>
+        <!-- Programs Tab -->
+        <div id="tab-programs" class="tab-panel hidden">
+            <div class="table-premium border-0 shadow-none rounded-none">
+                @if (Model.TopPrograms.Any())
+                {
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="px-5 py-3 text-right">البرنامج</th>
+                                <th class="px-5 py-3 text-right">الفئة</th>
+                                <th class="px-5 py-3 text-right">إجمالي الحلقات</th>
+                                <th class="px-5 py-3 text-right">الحلقات المنشورة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in Model.TopPrograms)
+                            {
+                                <tr>
+                                    <td class="px-5 py-3 font-bold text-ink">@p.ProgramName</td>
+                                    <td class="px-5 py-3">
+                                        <span class="badge badge-info">@(p.Category ?? "عام")</span>
+                                    </td>
+                                    <td class="px-5 py-3 text-primary font-bold">@p.TotalEpisodes</td>
+                                    <td class="px-5 py-3 text-success font-bold">@p.PublishedEpisodes</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="empty-state p-10">
+                        <span class="material-symbols-rounded empty-icon">radio</span>
+                        <p class="text-ink-muted text-sm">لا توجد بيانات برامج حالياً.</p>
+                    </div>
+                }
+            </div>
+        </div>
 
-    <div id="tab-programs" class="tab-panel hidden p-5">
-        @if (Model.TopPrograms.Any())
-        {
-            <table class="w-full text-sm">
-                <thead class="bg-surface-3 text-ink-muted">
-                    <tr>
-                        <th class="px-3 py-2 text-right font-bold text-xs">البرنامج</th>
-                        <th class="px-3 py-2 text-right font-bold text-xs">الفئة</th>
-                        <th class="px-3 py-2 text-right font-bold text-xs">إجمالي الحلقات</th>
-                        <th class="px-3 py-2 text-right font-bold text-xs">المنشورة</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-border">
-                    @foreach (var p in Model.TopPrograms)
-                    {
-                        <tr class="hover:bg-surface-2 transition duration-200">
-                            <td class="px-3 py-2 font-medium text-ink">@p.ProgramName</td>
-                            <td class="px-3 py-2 text-ink-muted">@p.Category</td>
-                            <td class="px-3 py-2 text-ink">@p.TotalEpisodes</td>
-                            <td class="px-3 py-2 text-ink">@p.PublishedEpisodes</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-        else { <div class="empty-state">لا برامج</div> }
-    </div>
+        <!-- Guests Tab -->
+        <div id="tab-guests" class="tab-panel hidden">
+            <div class="table-premium border-0 shadow-none rounded-none">
+                @if (Model.TopGuests.Any())
+                {
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="px-5 py-3 text-right">#</th>
+                                <th class="px-5 py-3 text-right">الاسم</th>
+                                <th class="px-5 py-3 text-right">الجهة / المؤسسة</th>
+                                <th class="px-5 py-3 text-right">عدد الاستضافات</th>
+                                <th class="px-5 py-3 text-right">تاريخ آخر ظهور</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var g in Model.TopGuests)
+                            {
+                                <tr>
+                                    <td class="px-5 py-3 font-bold text-ink-muted">@g.Rank</td>
+                                    <td class="px-5 py-3 font-bold text-ink">@g.FullName</td>
+                                    <td class="px-5 py-3 text-ink-muted">@(g.Organization ?? "—")</td>
+                                    <td class="px-5 py-3 text-success font-black">@g.AppearanceCount</td>
+                                    <td class="px-5 py-3 text-ink font-semibold">@(g.LastAppearance?.ToString("yyyy-MM-dd") ?? "—")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="empty-state p-10">
+                        <span class="material-symbols-rounded empty-icon">people_alt</span>
+                        <p class="text-ink-muted text-sm">لا توجد بيانات استضافة ضيوف حالياً.</p>
+                    </div>
+                }
+            </div>
+        </div>
 
-    <div id="tab-guests" class="tab-panel hidden p-5">
-        @if (Model.TopGuests.Any())
-        {
-            <table class="w-full text-sm">
-                <thead class="bg-surface-3 text-ink-muted">
-                    <tr>
-                        <th class="px-3 py-2 text-right font-bold text-xs">#</th>
-                        <th class="px-3 py-2 text-right font-bold text-xs">الاسم</th>
-                        <th class="px-3 py-2 text-right font-bold text-xs">الجهة</th>
-                        <th class="px-3 py-2 text-right font-bold text-xs">عدد الظهور</th>
-                        <th class="px-3 py-2 text-right font-bold text-xs">آخر ظهور</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-border">
-                    @foreach (var g in Model.TopGuests)
-                    {
-                        <tr class="hover:bg-surface-2 transition duration-200">
-                            <td class="px-3 py-2 font-bold text-ink">@g.Rank</td>
-                            <td class="px-3 py-2 font-medium text-ink">@g.FullName</td>
-                            <td class="px-3 py-2 text-ink-muted">@(g.Organization ?? "—")</td>
-                            <td class="px-3 py-2 text-ink">@g.AppearanceCount</td>
-                            <td class="px-3 py-2 text-ink-muted">@(g.LastAppearance?.ToString("yyyy-MM-dd") ?? "—")</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-        else { <div class="empty-state">لا بيانات</div> }
-    </div>
-
-    <div id="tab-cancelled" class="tab-panel hidden p-5">
-        @if (Model.CancelledEpisodes.Any())
-        {
-            <table class="w-full text-sm">
-                <thead class="bg-surface-3 text-ink-muted">
-                    <tr>
-                        <th class="px-3 py-2 text-right font-bold text-xs">الحلقة</th>
-                        <th class="px-3 py-2 text-right font-bold text-xs">البرنامج</th>
-                        <th class="px-3 py-2 text-right font-bold text-xs">الموعد</th>
-                        <th class="px-3 py-2 text-right font-bold text-xs">السبب</th>
-                        <th class="px-3 py-2 text-right font-bold text-xs">بواسطة</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-border">
-                    @foreach (var c in Model.CancelledEpisodes)
-                    {
-                        <tr class="hover:bg-surface-2 transition duration-200">
-                            <td class="px-3 py-2 font-medium text-ink">@c.EpisodeName</td>
-                            <td class="px-3 py-2 text-ink-muted">@c.ProgramName</td>
-                            <td class="px-3 py-2 text-ink-muted">@(c.ScheduledExecutionTime?.ToString("yyyy-MM-dd") ?? "—")</td>
-                            <td class="px-3 py-2 text-ink-muted">@(c.CancellationReason ?? "—")</td>
-                            <td class="px-3 py-2 text-ink-muted">@(c.CancelledBy ?? "—")</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-        else { <div class="empty-state">لا حلقات ملغاة</div> }
+        <!-- Cancelled Tab -->
+        <div id="tab-cancelled" class="tab-panel hidden">
+            <div class="table-premium border-0 shadow-none rounded-none">
+                @if (Model.CancelledEpisodes.Any())
+                {
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="px-5 py-3 text-right">الحلقة</th>
+                                <th class="px-5 py-3 text-right">البرنامج</th>
+                                <th class="px-5 py-3 text-right">موعد البث الأصلي</th>
+                                <th class="px-5 py-3 text-right">سبب الإلغاء</th>
+                                <th class="px-5 py-3 text-right">بواسطة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in Model.CancelledEpisodes)
+                            {
+                                <tr>
+                                    <td class="px-5 py-3 font-bold text-danger">@c.EpisodeName</td>
+                                    <td class="px-5 py-3 text-ink-muted">@c.ProgramName</td>
+                                    <td class="px-5 py-3 text-ink font-semibold">@(c.ScheduledExecutionTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                                    <td class="px-5 py-3 text-ink-muted max-w-xs truncate" title="@c.CancellationReason">@(c.CancellationReason ?? "—")</td>
+                                    <td class="px-5 py-3 text-ink-soft">@(c.CancelledBy ?? "—")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="empty-state p-10">
+                        <span class="material-symbols-rounded empty-icon">check_circle</span>
+                        <p class="text-ink-muted text-sm">لا توجد حلقات ملغاة في النظام.</p>
+                    </div>
+                }
+            </div>
+        </div>
     </div>
 </div>
 

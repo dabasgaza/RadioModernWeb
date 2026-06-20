@@ -5,32 +5,38 @@
 }
 
 <div class="page-header">
-    <div class="relative z-10">
-        <nav class="breadcrumb">
-            <a href="/">الرئيسية</a>
-            <span class="material-icons">chevron_left</span>
-            <span>الصلاحيات</span>
-        </nav>
-        <h1>
-            <span class="material-icons">security</span>
-            مصفوفة الصلاحيات
-        </h1>
-        <p>تخصيص صلاحيات كل دور في النظام</p>
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <span class="material-symbols-rounded">home</span>
+                <a href="/">الرئيسية</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <span>الصلاحيات والأدوار</span>
+            </nav>
+            <h1>
+                <span class="material-symbols-rounded">security</span>
+                مصفوفة الصلاحيات
+            </h1>
+            <p>تخصيص وتعديل صلاحيات الوصول والعمليات لكل دور وظيفي في النظام</p>
+        </div>
     </div>
 </div>
 
-<div class="card-premium mb-4">
-    <div class="card-body">
-        <form method="get" class="flex items-center gap-3">
-            <label class="form-label mb-0">اختر الدور:</label>
-            <select name="roleId" class="form-input flex-1 max-w-xs" onchange="this.form.submit()">
+<!-- Role Selection Card -->
+<div class="filter-premium">
+    <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+        <div class="md:col-span-1 text-xs font-bold text-ink-muted uppercase tracking-wider">
+            اختر الدور الوظيفي للتعديل:
+        </div>
+        <div class="md:col-span-3">
+            <select name="roleId" class="form-input" onchange="this.form.submit()">
                 @foreach (var r in Model.Roles)
                 {
-                    <option value="@r.RoleId" selected="@(Model.SelectedRoleId == r.RoleId)">@r.RoleName — @(r.RoleDescription ?? "")</option>
+                    <option value="@r.RoleId" selected="@(Model.SelectedRoleId == r.RoleId)">@r.RoleName — @(r.RoleDescription ?? "لا يوجد وصف")</option>
                 }
             </select>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
 
 @if (Model.SelectedRoleId > 0 && permissionsByModule.Any())
@@ -41,61 +47,53 @@
 
         <div class="card-premium">
             <div class="card-header">
-                <h3 class="font-bold text-ink flex items-center gap-2">
-                    <span class="material-icons text-primary p-1 bg-primary/10 rounded-lg">security</span>
-                    صلاحيات الدور: @Model.SelectedRoleName
-                </h3>
-                <div class="flex gap-2">
-                    <button type="button" class="btn-secondary text-xs py-1.5 px-3" onclick="document.querySelectorAll('.perm-toggle').forEach(t => { if(!t.checked) t.click(); })">
-                        <span class="material-icons text-sm">check_box</span>
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-rounded text-primary">admin_panel_settings</span>
+                    <h3 class="font-bold text-ink text-base">صلاحيات الدور: <span class="text-primary font-black">@Model.SelectedRoleName</span></h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" class="btn-secondary py-1 px-3 text-xs flex items-center gap-1" onclick="document.querySelectorAll('input[name=selectedPermissionIds]').forEach(c => c.checked = true)">
+                        <span class="material-symbols-rounded" style="font-size: 16px;">check_box</span>
                         تحديد الكل
                     </button>
-                    <button type="button" class="btn-secondary text-xs py-1.5 px-3" onclick="document.querySelectorAll('.perm-toggle').forEach(t => { if(t.checked) t.click(); })">
-                        <span class="material-icons text-sm">check_box_outline_blank</span>
+                    <button type="button" class="btn-secondary py-1 px-3 text-xs flex items-center gap-1" onclick="document.querySelectorAll('input[name=selectedPermissionIds]').forEach(c => c.checked = false)">
+                        <span class="material-symbols-rounded" style="font-size: 16px;">check_box_outline_blank</span>
                         إلغاء الكل
                     </button>
                 </div>
             </div>
-            <div class="card-body space-y-5">
+            
+            <div class="card-body space-y-6">
                 @foreach (var module in permissionsByModule)
                 {
-                    <div>
-                        <h4 class="font-bold text-ink text-sm mb-3 pb-2 border-b border-border/60 flex items-center gap-2">
-                            <span class="material-icons text-primary/70 text-sm">folder</span>
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-ink text-xs mb-2 pb-2 border-b border-border/60 flex items-center gap-1.5">
+                            <span class="w-1.5 h-3 bg-primary rounded-full"></span>
                             @module.Key
                         </h4>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             @foreach (var p in module)
                             {
-                                <label class="flex items-center gap-3 p-3 hover:bg-surface-3 rounded-xl cursor-pointer transition border border-border/40">
-                                    <div class="relative">
-                                        <input type="checkbox" name="selectedPermissionIds" value="@p.PermissionId" @(p.IsAssigned ? "checked" : "") class="perm-toggle sr-only peer" />
-                                        <div class="w-10 h-5 bg-border rounded-full peer-checked:bg-primary transition-colors duration-200 cursor-pointer"></div>
-                                        <div class="absolute top-0.5 right-0.5 w-4 h-4 bg-white rounded-full shadow-sm peer-checked:translate-x-5 transition-transform duration-200"></div>
+                                <label class="flex items-center justify-between p-3.5 bg-surface-2 rounded-xl border border-border/60 hover:bg-primary/5 hover:border-primary/20 cursor-pointer transition-all duration-200">
+                                    <span class="text-xs font-bold text-ink-muted">@p.DisplayName</span>
+                                    <div class="relative inline-flex items-center">
+                                        <input type="checkbox" name="selectedPermissionIds" value="@p.PermissionId" @(p.IsAssigned ? "checked" : "") class="sr-only peer" />
+                                        <div class="w-11 h-6 bg-border peer-focus:outline-none rounded-full peer peer-checked:bg-primary transition-all duration-300
+                                                    after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:-translate-x-5"></div>
                                     </div>
-                                    <span class="text-sm font-medium text-ink">@p.DisplayName</span>
                                 </label>
                             }
                         </div>
                     </div>
                 }
             </div>
-            <div class="card-header border-t border-border/60">
+            
+            <div class="px-5 py-4 bg-surface-2 border-t border-border/60 flex justify-end">
                 <button type="submit" class="btn-primary">
-                    <span class="material-icons">save</span>
-                    حفظ التغييرات
+                    <span class="material-symbols-rounded">save</span>
+                    حفظ صلاحيات الدور
                 </button>
             </div>
         </div>
     </form>
-}
-else if (Model.SelectedRoleId > 0)
-{
-    <div class="card-premium">
-        <div class="empty-state p-12">
-            <span class="material-icons empty-icon">security</span>
-            <h3 class="font-bold text-ink text-lg mb-2">لا توجد صلاحيات</h3>
-            <p class="text-ink-muted text-sm">لم يتم تعريف صلاحيات لهذا الدور بعد.</p>
-        </div>
-    </div>
 }

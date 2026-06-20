@@ -13,12 +13,18 @@ namespace Radio.Web.Controllers;
 public class ProgramsController : Controller
 {
     private readonly IProgramService _programs;
+    private readonly IEpisodeService _episodes;
     private readonly ICurrentUserService _currentUser;
     private readonly ILogger<ProgramsController> _logger;
 
-    public ProgramsController(IProgramService programs, ICurrentUserService currentUser, ILogger<ProgramsController> logger)
+    public ProgramsController(
+        IProgramService programs,
+        IEpisodeService episodes,
+        ICurrentUserService currentUser,
+        ILogger<ProgramsController> logger)
     {
         _programs = programs;
+        _episodes = episodes;
         _currentUser = currentUser;
         _logger = logger;
     }
@@ -36,7 +42,15 @@ public class ProgramsController : Controller
                     (p.Category?.Contains(s, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
             }
             ViewBag.Search = search ?? "";
-            return View(programs.OrderBy(p => p.ProgramName).ToList());
+
+            var episodes = await _episodes.GetActiveEpisodesAsync();
+            var model = programs.Select(p => new ProgramViewModel
+            {
+                Program = p,
+                EpisodeCount = episodes.Count(e => e.ProgramName == p.ProgramName)
+            }).OrderBy(x => x.Program.ProgramName).ToList();
+
+            return View(model);
         }
         catch (Exception ex)
         {
@@ -44,6 +58,7 @@ public class ProgramsController : Controller
             return View("Error", new ErrorViewModel { ErrorMessage = ex.Message });
         }
     }
+
 
     [Authorize(Policy = AppPermissions.ProgramManage)]
     public IActionResult Create() => View("Edit", new ProgramDto(0, string.Empty, null, null));

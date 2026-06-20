@@ -4,31 +4,30 @@
     var episode = Model;
 }
 
-<div class="page-header">
-    <div class="relative z-10">
-        <nav class="breadcrumb">
-            <a href="/WebsitePublishing">نشر الموقع</a>
-            <span class="material-icons">chevron_left</span>
-            <span>نشر جديد</span>
-        </nav>
-        <h1>
-            <span class="material-icons">public</span>
-            نشر حلقة على الموقع
-        </h1>
-    </div>
+<div class="mb-6">
+    <nav class="text-sm text-ink-muted mb-2">
+        <a href="/WebsitePublishing" class="hover:text-primary">نشر الموقع</a>
+        <span class="mx-1">/</span>
+        <span class="text-ink">نشر جديد</span>
+    </nav>
+    <h1 class="text-2xl font-bold text-ink flex items-center gap-2">
+        <span class="material-symbols-rounded text-primary">public</span>
+        نشر حلقة على الموقع
+    </h1>
 </div>
 
 @if (episode == null)
 {
-    <div class="bg-red-50 border border-red-200 text-danger rounded-xl p-4">الحلقة غير موجودة.</div>
+    <div class="bg-red-50 border border-red-200 text-danger rounded-lg p-4">الحلقة غير موجودة.</div>
     return;
 }
 
-<div class="card-premium mb-4 p-5">
+<!-- Episode Info -->
+<div class="bg-surface rounded-xl border border-border p-5 mb-4">
     <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
             <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center">
-                <span class="material-icons text-primary">podcasts</span>
+                <span class="material-symbols-rounded text-primary">podcasts</span>
             </div>
             <div>
                 <h3 class="text-lg font-bold text-ink">@episode.EpisodeName</h3>
@@ -36,17 +35,17 @@
             </div>
         </div>
         <a href="/Episodes/Details/@episode.EpisodeId" class="btn-secondary text-sm" target="_blank">
-            <span class="material-icons">open_in_new</span>
+            <span class="material-symbols-rounded">open_in_new</span>
             عرض التفاصيل
         </a>
     </div>
     @if (episode.GuestItems.Any())
     {
-        <div class="mt-3 pt-3 border-t border-border/60">
+        <div class="mt-3 pt-3 border-t border-border">
             <span class="text-xs text-ink-muted">الضيوف: </span>
             @foreach (var g in episode.GuestItems)
             {
-                <span class="badge-premium bg-blue-50 text-blue-700 border-blue-200 ml-1">@g.Name</span>
+                <span class="badge badge-info ml-1">@g.Name</span>
             }
         </div>
     }
@@ -55,33 +54,41 @@
 <form method="post" action="/WebsitePublishing/Publish/@episode.EpisodeId">
     @Html.AntiForgeryToken()
 
-    <div class="card-premium mb-4 p-5 space-y-4">
-        <div>
-            <label class="form-label">عنوان النشر *</label>
-            <input type="text" name="title" class="form-input" placeholder="عنوان الحلقة على الموقع" required
-                   value="@episode.EpisodeName" />
+    <div class="bg-surface rounded-xl border border-border mb-4">
+        <div class="p-5 border-b border-border">
+            <h3 class="font-bold text-ink flex items-center gap-2">
+                <span class="material-symbols-rounded text-primary">article</span>
+                تفاصيل النشر
+            </h3>
         </div>
-        <div>
-            <label class="form-label">نوع الوسائط *</label>
-            <select name="mediaType" class="form-input" required>
-                <option value="1">صوت</option>
-                <option value="2">فيديو</option>
-                <option value="3">صوت وفيديو</option>
-            </select>
-        </div>
-        <div>
-            <label class="form-label">ملاحظات النشر</label>
-            <textarea name="notes" rows="4" class="form-input" placeholder="أي ملاحظات إضافية حول النشر…"></textarea>
+        <div class="p-5 space-y-4">
+            <div>
+                <label class="form-label">عنوان النشر *</label>
+                <input type="text" name="title" class="form-input" placeholder="عنوان الحلقة على الموقع" required
+                       value="@episode.EpisodeName" />
+            </div>
+            <div>
+                <label class="form-label">نوع الوسائط *</label>
+                <select name="mediaType" class="form-input" required>
+                    <option value="1">صوت</option>
+                    <option value="2">فيديو</option>
+                    <option value="3">صوت وفيديو</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label">ملاحظات النشر</label>
+                <textarea name="notes" rows="4" class="form-input" placeholder="أي ملاحظات إضافية حول النشر…"></textarea>
+            </div>
         </div>
     </div>
 
     <div class="flex items-center justify-end gap-2">
         <a href="/WebsitePublishing" class="btn-secondary">
-            <span class="material-icons">cancel</span>
+            <span class="material-symbols-rounded">cancel</span>
             إلغاء
         </a>
         <button type="submit" class="btn-primary">
-            <span class="material-icons">publish</span>
+            <span class="material-symbols-rounded">publish</span>
             نشر على الموقع
         </button>
     </div>

@@ -1,70 +1,57 @@
 @model List<SocialMediaPlatformDto>
 @{ ViewData["Title"] = "منصات النشر"; }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <a href="/">الرئيسية</a>
-                <span class="material-icons">chevron_left</span>
-                <span>منصات النشر</span>
-            </nav>
-            <h1>
-                <span class="material-icons">share</span>
-                منصات النشر
-            </h1>
-            <p>إدارة منصات السوشيال ميديا للنشر الرقمي</p>
-        </div>
-        @if (User.HasPermission(AppPermissions.StaffManage))
-        {
-            <a href="/SocialPlatforms/Create" class="btn-primary"><span class="material-icons">add</span> منصة جديدة</a>
-        }
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <h1 class="text-2xl font-bold text-ink mb-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary">share</span>
+            منصات النشر
+        </h1>
+        <p class="text-ink-muted text-sm">إدارة منصات السوشيال ميديا</p>
     </div>
+    @if (User.HasPermission(AppPermissions.StaffManage))
+    {
+        <a href="/SocialPlatforms/Create" class="btn-primary"><span class="material-symbols-rounded">add</span> منصة جديدة</a>
+    }
 </div>
 
-@if (!Model.Any())
-{
-    <div class="card-premium">
-        <div class="empty-state p-12">
-            <span class="material-icons empty-icon">share</span>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    @if (!Model.Any())
+    {
+        <div class="col-span-full empty-state p-12 bg-surface rounded-xl border border-border">
+            <span class="material-symbols-rounded empty-icon">share</span>
             <h3 class="font-bold text-ink text-lg mb-2">لا منصات</h3>
-            <a href="/SocialPlatforms/Create" class="btn-primary"><span class="material-icons">add</span> منصة جديدة</a>
+            <a href="/SocialPlatforms/Create" class="btn-primary"><span class="material-symbols-rounded">add</span> منصة جديدة</a>
         </div>
-    </div>
-}
-else
-{
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    }
+    else
+    {
         @foreach (var p in Model)
         {
-            <div class="card-premium group">
-                <div class="card-body flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                        <span class="material-icons text-2xl">@GetPlatformIcon(p.Name)</span>
-                    </div>
-                    <div class="flex-1">
-                        <div class="font-bold text-ink">@p.Name</div>
-                    </div>
-                    @if (User.HasPermission(AppPermissions.StaffManage))
-                    {
-                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <a href="/SocialPlatforms/Edit/@p.SocialMediaPlatformId" class="icon-btn icon-btn-primary"><span class="material-icons">edit</span></a>
-                            <form method="post" action="/SocialPlatforms/Delete/@p.SocialMediaPlatformId" onsubmit="return confirm('حذف المنصة؟');">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="icon-btn icon-btn-danger"><span class="material-icons">delete</span></button>
-                            </form>
-                        </div>
-                    }
+            <div class="bg-surface rounded-xl border border-border p-5 flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-blue-50 text-primary flex items-center justify-center">
+                    <span class="material-symbols-rounded">@GetPlatformIcon(p.Name)</span>
                 </div>
+                <div class="flex-1">
+                    <div class="font-bold text-ink">@p.Name</div>
+                </div>
+                @if (User.HasPermission(AppPermissions.StaffManage))
+                {
+                    <a href="/SocialPlatforms/Edit/@p.SocialMediaPlatformId" class="icon-btn icon-btn-primary"><span class="material-symbols-rounded">edit</span></a>
+                    <form method="post" action="/SocialPlatforms/Delete/@p.SocialMediaPlatformId" data-confirm="هل أنت متأكد من حذف منصة «@p.Name»؟">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="icon-btn icon-btn-danger"><span class="material-symbols-rounded">delete</span></button>
+                    </form>
+                }
             </div>
         }
-    </div>
-}
+    }
+</div>
 
 @functions {
     string GetPlatformIcon(string name) => name.ToLowerInvariant() switch
     {
-        "facebook" => "facebook",
+        "facebook" => "groups",
         "twitter" or "x" => "alternate_email",
         "youtube" => "smart_display",
         "instagram" => "photo_camera",

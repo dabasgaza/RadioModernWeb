@@ -5,18 +5,16 @@
     var staffRoles = ViewBag.StaffRoles as List<StaffRoleDto>;
 }
 
-<div class="page-header">
-    <div class="relative z-10">
-        <nav class="breadcrumb">
-            <a href="/Employees">الموظفون</a>
-            <span class="material-icons">chevron_left</span>
-            <span>@(isEdit ? "تعديل" : "جديد")</span>
-        </nav>
-        <h1>
-            <span class="material-icons">@(isEdit ? "edit" : "add")</span>
-            @(isEdit ? "تعديل موظف" : "موظف جديد")
-        </h1>
-    </div>
+<div class="mb-6">
+    <nav class="text-sm text-ink-muted mb-2">
+        <a href="/Employees" class="hover:text-primary">الموظفون</a>
+        <span class="mx-1">/</span>
+        <span class="text-ink">@(isEdit ? "تعديل" : "جديد")</span>
+    </nav>
+    <h1 class="text-2xl font-bold text-ink flex items-center gap-2">
+        <span class="material-symbols-rounded text-primary">@(isEdit ? "edit" : "add")</span>
+        @(isEdit ? "تعديل موظف" : "موظف جديد")
+    </h1>
 </div>
 
 <form method="post" action="@(isEdit ? $"/Employees/Edit/{Model.EmployeeId}" : "/Employees/Create")" class="max-w-2xl">
@@ -24,10 +22,10 @@
     @if (isEdit) { <input type="hidden" name="EmployeeId" value="@Model.EmployeeId" /> }
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-4"></div>
+        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-lg p-3 mb-4"></div>
     }
 
-    <div class="card-premium p-5 space-y-4">
+    <div class="bg-surface rounded-xl border border-border p-5 space-y-4">
         <div>
             <label class="form-label">الاسم الكامل *</label>
             <input type="text" name="FullName" value="@Model.FullName" class="form-input" required />
@@ -49,7 +47,7 @@
     </div>
 
     <div class="flex items-center justify-end gap-2 mt-4">
-        <a href="/Employees" class="btn-secondary"><span class="material-icons">cancel</span> إلغاء</a>
-        <button type="submit" class="btn-primary"><span class="material-icons">save</span> حفظ</button>
+        <a href="/Employees" class="btn-secondary"><span class="material-symbols-rounded">cancel</span> إلغاء</a>
+        <button type="submit" class="btn-primary"><span class="material-symbols-rounded">save</span> حفظ</button>
     </div>
 </form>
