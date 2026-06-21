@@ -41,8 +41,8 @@ public partial class BroadcastWorkflowDBContext : IdentityDbContext<ApplicationU
     public virtual DbSet<SocialMediaPublishingLog> SocialMediaPublishingLogs => Set<SocialMediaPublishingLog>();
     public virtual DbSet<SocialMediaPublishingLogPlatform> SocialMediaPublishingLogPlatforms => Set<SocialMediaPublishingLogPlatform>();
     public virtual DbSet<WebsitePublishingLog> WebsitePublishingLogs => Set<WebsitePublishingLog>();
-    public virtual DbSet<Role> Roles => Set<Role>();
-    public virtual DbSet<User> Users => Set<User>();
+    public new virtual DbSet<Role> Roles => Set<Role>();
+    public new virtual DbSet<User> Users => Set<User>();
     public virtual DbSet<Permission> Permissions => Set<Permission>();
     public virtual DbSet<RolePermission> RolePermissions => Set<RolePermission>();
     public virtual DbSet<DatabaseBackupLog> DatabaseBackupLogs => Set<DatabaseBackupLog>();
@@ -94,6 +94,7 @@ public partial class BroadcastWorkflowDBContext : IdentityDbContext<ApplicationU
         }
 
 
+        ConfigureAuditRelationships<Role>(modelBuilder);
         ConfigureAuditRelationships<Employee>(modelBuilder);
         ConfigureAuditRelationships<StaffRole>(modelBuilder);
         ConfigureAuditRelationships<EpisodeEmployee>(modelBuilder);
@@ -137,12 +138,6 @@ public partial class BroadcastWorkflowDBContext : IdentityDbContext<ApplicationU
         // تطبيق الفلتر هنا كان يسبب تكراراً: الفلتر يُطبّق مرتين (مرة من الحلقة ومرة من هنا)
         // المصدر الوحيد للحقيقة الآن هو حلقة GenerateSoftDeleteFilter في سطر 71-79
     }
-
-
-    // View DTOs for EF mapping
-    public record ActiveEpisodeView(int EpisodeId, string EpisodeName, string ProgramName, DateTime? ScheduledExecutionTime, DateTime? ActualExecutionTime, string StatusText, string? SpecialNotes, DateTime CreatedAt);
-    public record ActiveGuestView(int GuestId, string FullName, string? Organization, string? PhoneNumber, string? EmailAddress, int EpisodeCount);
-    public record TodayEpisodeView(int EpisodeId, string EpisodeName, string ProgramName, DateTime? ScheduledExecutionTime, string? GuestNames, string StatusText);
 
 
 }

@@ -5,6 +5,7 @@ using Domain.Models;
 using Radio.Tests.Helpers;
 using Radio.Tests.TestData.Builders;
 using Radio.Tests.TestData.Fixtures;
+using System.Threading;
 
 namespace Radio.Tests.Services;
 
@@ -31,7 +32,7 @@ public class CoverageServiceTests : IClassFixture<DatabaseFixture>
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.GetAllAsync();
+        var result = await _service.GetAllAsync(CancellationToken.None);
         result.Should().Contain(c => c.Location == "City Center");
     }
 
@@ -46,7 +47,7 @@ public class CoverageServiceTests : IClassFixture<DatabaseFixture>
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.DeleteAsync(50, _admin);
+        var result = await _service.DeleteAsync(50, _admin, CancellationToken.None);
         result.ShouldBeSuccess();
     }
 }

@@ -81,6 +81,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
                 Username = "admin",
                 PasswordHash = "$2a$11$24Mf/Vktd2tHGnC3f/iyTOmKMaQtcy4T0qOT07h22jC0Teor66hZa",
                 FullName = "مدير النظام",
+                EmailAddress = "admin@broadcast.pro",
                 RoleId = 1,
                 IsActive = true,
                 CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, DateTimeKind.Utc),

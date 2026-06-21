@@ -16,12 +16,12 @@ namespace DataAccess.DTOs
         public byte StatusId { get; init; }
         public string? SpecialNotes { get; init; }
 
-        public bool CanMarkExecuted => StatusId == EpisodeStatus.Planned;
-        public bool CanMarkPublished => StatusId == EpisodeStatus.Executed;
-        public bool CanToggleWebsitePublish => (StatusId == EpisodeStatus.Executed || StatusId == EpisodeStatus.Published);
-        public bool CanRevert => StatusId is EpisodeStatus.Executed or EpisodeStatus.Published or EpisodeStatus.WebsitePublished;
-        public bool CanCancel => StatusId is EpisodeStatus.Planned or EpisodeStatus.Executed;
-        public bool CanViewRecords => StatusId is EpisodeStatus.Executed or EpisodeStatus.Published or EpisodeStatus.WebsitePublished;
+        public bool CanMarkExecuted => StatusId == EpisodeStatusValues.Planned;
+        public bool CanMarkPublished => StatusId == EpisodeStatusValues.Executed;
+        public bool CanToggleWebsitePublish => (StatusId == EpisodeStatusValues.Executed || StatusId == EpisodeStatusValues.Published);
+        public bool CanRevert => StatusId is EpisodeStatusValues.Executed or EpisodeStatusValues.Published or EpisodeStatusValues.WebsitePublished;
+        public bool CanCancel => StatusId is EpisodeStatusValues.Planned or EpisodeStatusValues.Executed;
+        public bool CanViewRecords => StatusId is EpisodeStatusValues.Executed or EpisodeStatusValues.Published or EpisodeStatusValues.WebsitePublished;
 
         public List<GuestDisplayItem> GuestItems { get; init; } = new List<GuestDisplayItem>();
         public List<EpisodeCorrespondentDto> CorrespondentItems { get; init; } = new List<EpisodeCorrespondentDto>();

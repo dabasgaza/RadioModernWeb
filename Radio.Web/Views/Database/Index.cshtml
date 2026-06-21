@@ -1,4 +1,4 @@
-@model List<DatabaseBackupLog>
+@model DatabaseDashboardViewModel
 @{
     ViewData["Title"] = "إدارة قاعدة البيانات";
 }
@@ -16,29 +16,143 @@
                 <span class="material-symbols-rounded">storage</span>
                 إدارة قاعدة البيانات
             </h1>
-            <p>النسخ الاحتياطي الكامل، الصيانة الوقائية والتهيئة وتتبع سجل العمليات</p>
+            <p>النسخ الاحتياطي، الصيانة، الاستعادة، المزامنة السحابية ومراقبة الصحة</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="badge @(Model.HealthColor == "success" ? "badge-success" : "badge-danger") font-bold text-[10px] px-3 py-1.5">
+                <span class="material-symbols-rounded text-xs ml-1">@(Model.IsHealthy ? "check_circle" : "warning")</span>
+                @Model.HealthStatus
+            </span>
         </div>
     </div>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
+    <div class="stat-card-premium text-primary">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="text-lg font-black text-ink">@Model.DatabaseSizeFormatted</div>
+                <div class="text-[10px] font-bold text-ink-muted mt-1">حجم قاعدة البيانات</div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                <span class="material-symbols-rounded">database</span>
+            </div>
+        </div>
+    </div>
+    <div class="stat-card-premium text-success">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="text-lg font-black text-ink">@Model.TimeSinceLastBackupFormatted</div>
+                <div class="text-[10px] font-bold text-ink-muted mt-1">آخر نسخة احتياطية</div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-success/10 text-success flex items-center justify-center">
+                <span class="material-symbols-rounded">backup</span>
+            </div>
+        </div>
+    </div>
+    <div class="stat-card-premium text-accent">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="text-lg font-black text-ink">@Model.SuccessRateFormatted</div>
+                <div class="text-[10px] font-bold text-ink-muted mt-1">نسبة النجاح</div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
+                <span class="material-symbols-rounded">checklist</span>
+            </div>
+        </div>
+    </div>
+    <div class="stat-card-premium text-info">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="text-lg font-black text-ink">@Model.TotalBackups</div>
+                <div class="text-[10px] font-bold text-ink-muted mt-1">إجمالي النسخ</div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-info/10 text-info flex items-center justify-center">
+                <span class="material-symbols-rounded">history</span>
+            </div>
+        </div>
+    </div>
+    <div class="stat-card-premium text-warning">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="text-lg font-black text-ink">@Model.BackupsThisMonth</div>
+                <div class="text-[10px] font-bold text-ink-muted mt-1">نسخ هذا الشهر</div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-warning/10 text-warning flex items-center justify-center">
+                <span class="material-symbols-rounded">calendar_month</span>
+            </div>
+        </div>
+    </div>
+    <div class="stat-card-premium text-danger">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="text-lg font-black text-ink">@Model.BackupFolderSizeFormatted</div>
+                <div class="text-[10px] font-bold text-ink-muted mt-1">حجم مجلد النسخ</div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-danger/10 text-danger flex items-center justify-center">
+                <span class="material-symbols-rounded">folder</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Health Status Bar -->
+<div class="flex flex-wrap gap-2 mb-6 p-3 @(Model.IsHealthy ? "bg-success/5 border border-success/20" : "bg-danger/5 border border-danger/20") rounded-2xl">
+    <div class="flex items-center gap-1.5 text-[11px] font-bold @(Model.IsHealthy ? "text-success" : "text-danger")">
+        <span class="material-symbols-rounded text-sm">@(Model.IsHealthy ? "check_circle" : "error")</span>
+        @(Model.IsHealthy ? "قاعدة البيانات بحالة جيدة" : "قاعدة البيانات تحتاج مراجعة")
+    </div>
+    <span class="text-ink-soft text-[11px]">|</span>
+    <span class="text-[11px] text-ink-muted flex items-center gap-1">
+        <span class="material-symbols-rounded text-xs">link</span>
+        @Model.ActiveConnections اتصال نشط
+    </span>
+    <span class="text-ink-soft text-[11px]">|</span>
+    <span class="text-[11px] text-ink-muted flex items-center gap-1">
+        <span class="material-symbols-rounded text-xs">autorenew</span>
+        @(Model.IsAutoBackupEnabled ? "النسخ التلقائي: مفعل" : "النسخ التلقائي: معطل")
+    </span>
+    <span class="text-ink-soft text-[11px]">|</span>
+    <span class="text-[11px] text-ink-muted flex items-center gap-1">
+        <span class="material-symbols-rounded text-xs">cloud</span>
+        @(Model.IsCloudSyncEnabled ? "المزامنة السحابية: مفعلة" : "المزامنة السحابية: معطلة")
+    </span>
+    @if (Model.FailureCount > 0)
+    {
+        <span class="text-ink-soft text-[11px]">|</span>
+        <span class="text-[11px] text-danger font-bold flex items-center gap-1">
+            <span class="material-symbols-rounded text-xs">bug_report</span>
+            @Model.FailureCount فشل
+        </span>
+    }
+</div>
+
+<!-- Action Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-6">
     <div class="card-premium">
         <div class="card-header">
             <div class="flex items-center gap-2">
                 <span class="material-symbols-rounded text-primary">backup</span>
-                <h3 class="font-bold text-ink text-base">نسخ احتياطي فوري</h3>
+                <h3 class="font-bold text-ink text-sm">نسخ احتياطي فوري</h3>
             </div>
         </div>
         <div class="card-body">
-            <p class="text-ink-muted text-xs leading-relaxed mb-4">يُقترح إنشاء نسخة احتياطية بشكل دوري قبل القيام بأي عمليات صيانة أو تهيئة للبيانات لضمان حفظ حالة النظام.</p>
+            <p class="text-ink-muted text-xs leading-relaxed mb-4">إنشاء نسخة احتياطية كاملة لقاعدة البيانات مع ضغط تلقائي.</p>
             @if (User.HasPermission(AppPermissions.DatabaseManage))
             {
                 <form method="post" action="/Database/Backup" data-confirm="هل أنت متأكد من رغبتك في إنشاء نسخة احتياطية كاملة الآن؟">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="btn-primary flex items-center gap-1.5 w-full md:w-auto">
-                        <span class="material-symbols-rounded">backup</span>
-                        إنشاء نسخة احتياطية الآن
-                    </button>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-ink-muted mb-1">مسار الحفظ (اختياري)</label>
+                            <input type="text" name="backupFolder" class="form-input text-xs w-full" placeholder="اترك فارغاً للمسار الافتراضي..." value="" />
+                        </div>
+                        <button type="submit" class="btn-primary flex items-center gap-1.5 w-full">
+                            <span class="material-symbols-rounded">backup</span>
+                            إنشاء نسخة احتياطية
+                        </button>
+                    </div>
                 </form>
             }
         </div>
@@ -47,15 +161,68 @@
     <div class="card-premium">
         <div class="card-header">
             <div class="flex items-center gap-2">
-                <span class="material-symbols-rounded text-warning">cleaning_services</span>
-                <h3 class="font-bold text-ink text-base">تهيئة وصيانة الجداول</h3>
+                <span class="material-symbols-rounded text-danger">restore_page</span>
+                <h3 class="font-bold text-ink text-sm">استعادة نسخة</h3>
             </div>
         </div>
         <div class="card-body">
-            <p class="text-ink-muted text-xs leading-relaxed mb-4">إعادة تهيئة وتعمير قاعدة البيانات بالقيم والبيانات الأولية للتنفيذ الافتراضي للنظام.</p>
+            <p class="text-ink-muted text-xs leading-relaxed mb-4">استعادة قاعدة البيانات من ملف .bak مع قطع الاتصالات النشطة تلقائياً.</p>
             @if (User.HasPermission(AppPermissions.DatabaseManage))
             {
-                <form method="post" action="/Database/Initialize" data-confirm="إنتباه: هذه الخطوة قد تقوم بإعادة تهيئة الجداول الحالية والبيانات، هل تريد المتابعة فعلاً؟">
+                <form method="post" action="/Database/Restore" enctype="multipart/form-data" data-confirm="تحذير: استعادة قاعدة البيانات ستؤدي لفقدان أي تغييرات منذ آخر نسخة احتياطية. هل تريد المتابعة؟" id="restoreForm">
+                    @Html.AntiForgeryToken()
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-ink-muted mb-1">اختر ملف .bak</label>
+                            <input type="file" name="backupFile" accept=".bak" class="form-input text-xs w-full file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-primary/10 file:text-primary file:font-bold file:text-xs hover:file:bg-primary/20" required />
+                        </div>
+                        <button type="submit" class="btn-danger flex items-center gap-1.5 w-full">
+                            <span class="material-symbols-rounded">restore_page</span>
+                            استعادة من الملف المحدد
+                        </button>
+                    </div>
+                </form>
+            }
+        </div>
+    </div>
+
+    @if (Model.TotalBackups > 0)
+    {
+        <div class="card-premium">
+            <div class="card-header">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-rounded text-info">cloud_upload</span>
+                    <h3 class="font-bold text-ink text-sm">مزامنة أحدث نسخة سحابياً</h3>
+                </div>
+            </div>
+            <div class="card-body">
+                <p class="text-ink-muted text-xs leading-relaxed mb-4">رفع أحدث نسخة احتياطية إلى التخزين السحابي المحاكي.</p>
+                @if (User.HasPermission(AppPermissions.DatabaseManage))
+                {
+                    <form method="post" action="/Database/CloudSync" data-confirm="هل تريد مزامنة أحدث نسخة احتياطية إلى السحابة؟">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn-info flex items-center gap-1.5 w-full md:w-auto">
+                            <span class="material-symbols-rounded">cloud_upload</span>
+                            مزامنة للسحابة
+                        </button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
+
+    <div class="card-premium">
+        <div class="card-header">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-warning">cleaning_services</span>
+                <h3 class="font-bold text-ink text-sm">تهيئة الجداول</h3>
+            </div>
+        </div>
+        <div class="card-body">
+            <p class="text-ink-muted text-xs leading-relaxed mb-4">إعادة تهيئة الجداول وتطبيق الهجرات بدون فقدان البيانات.</p>
+            @if (User.HasPermission(AppPermissions.DatabaseManage))
+            {
+                <form method="post" action="/Database/Initialize" data-confirm="إنتباه: هذه الخطوة قد تقوم بإعادة تهيئة الجداول الحالية، هل تريد المتابعة فعلاً؟">
                     @Html.AntiForgeryToken()
                     <button type="submit" class="btn-secondary flex items-center gap-1.5 w-full md:w-auto text-amber-700 border-amber-300">
                         <span class="material-symbols-rounded text-warning">build</span>
@@ -65,55 +232,266 @@
             }
         </div>
     </div>
+
+    <div class="card-premium">
+        <div class="card-header">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-danger">delete_forever</span>
+                <h3 class="font-bold text-ink text-sm">إعادة تعيين قاعدة البيانات</h3>
+            </div>
+        </div>
+        <div class="card-body">
+            <p class="text-ink-muted text-xs leading-relaxed mb-4">إسقاط قاعدة البيانات وإنشائها من الصفر مع البيانات الأولية والصلاحيات.</p>
+            @if (User.HasPermission(AppPermissions.DatabaseManage))
+            {
+                <form method="post" action="/Database/Reset" data-confirm="data-reset" id="resetForm">
+                    @Html.AntiForgeryToken()
+                    <button type="button" onclick="confirmReset(event)" class="btn-danger flex items-center gap-1.5 w-full md:w-auto">
+                        <span class="material-symbols-rounded">delete_forever</span>
+                        إعادة تعيين كامل
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+
+    <div class="card-premium">
+        <div class="card-header">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-accent">auto_delete</span>
+                <h3 class="font-bold text-ink text-sm">سياسة الاحتفاظ</h3>
+            </div>
+        </div>
+        <div class="card-body">
+            <p class="text-ink-muted text-xs leading-relaxed mb-4">حذف النسخ الاحتياطية الأقدم من عدد الأيام المحدد.</p>
+            @if (User.HasPermission(AppPermissions.DatabaseManage))
+            {
+                <form method="post" action="/Database/RunRetention" data-confirm="هل تريد تطبيق سياسة الاحتفاظ وحذف النسخ القديمة؟">
+                    @Html.AntiForgeryToken()
+                    <div class="flex gap-2">
+                        <input type="number" name="retentionDays" class="form-input w-24 text-xs" value="@Model.RetentionDays" min="1" max="365" />
+                        <button type="submit" class="btn-accent flex items-center gap-1.5">
+                            <span class="material-symbols-rounded">auto_delete</span>
+                            تنظيف
+                        </button>
+                    </div>
+                </form>
+            }
+        </div>
+    </div>
 </div>
 
-<div class="table-premium">
-    <div class="p-5 border-b border-border flex items-center justify-between">
+<!-- Backup Log Table -->
+<div class="table-premium mb-6">
+    <div class="p-5 border-b border-border flex items-center justify-between flex-wrap gap-3">
         <h3 class="font-bold text-ink flex items-center gap-2 text-base">
             <span class="material-symbols-rounded text-primary">history</span>
-            سجل النسخ الاحتياطي التاريخي
+            سجل النسخ الاحتياطي
         </h3>
     </div>
-    @if (!Model.Any())
-    {
-        <div class="empty-state p-12 text-center">
-            <span class="material-symbols-rounded empty-icon">history</span>
-            <h3 class="font-bold text-ink text-lg mb-2">لا نسخ احتياطية</h3>
-            <p class="text-ink-muted text-sm">لم يتم تسجيل أي عمليات نسخ احتياطي تاريخية بعد.</p>
+
+    <div class="filter-premium border-0 rounded-none shadow-none">
+        <div class="flex gap-3 flex-wrap items-center">
+            <div class="relative flex-1 min-w-[200px]">
+                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-ink-soft text-sm">search</span>
+                <input type="text" id="backupSearch" placeholder="بحث في مسار الملف..." class="form-input pr-8 text-xs" />
+            </div>
+            <select id="filterType" class="form-input w-32 text-xs">
+                <option value="">جميع الأنواع</option>
+                <option value="Local">محلي</option>
+                <option value="Cloud">سحابي</option>
+                <option value="Both">كلاهما</option>
+            </select>
+            <select id="filterStatus" class="form-input w-28 text-xs">
+                <option value="">جميع الحالات</option>
+                <option value="Success">ناجحة</option>
+                <option value="Failed">فاشلة</option>
+            </select>
+            <button type="button" onclick="resetFilters()" class="btn-secondary text-xs px-3 py-2" title="إعادة ضبط">
+                <span class="material-symbols-rounded text-sm">refresh</span>
+            </button>
         </div>
-    }
-    else
-    {
-        <div class="overflow-x-auto">
-            <table>
+    </div>
+
+    <div class="overflow-x-auto" id="backupTableContainer">
+        @if (!Model.BackupLogs.Any())
+        {
+            <div class="empty-state p-12 text-center">
+                <span class="material-symbols-rounded empty-icon">history</span>
+                <h3 class="font-bold text-ink text-lg mb-2">لا نسخ احتياطية</h3>
+                <p class="text-ink-muted text-sm">لم يتم تسجيل أي عمليات نسخ احتياطي تاريخية بعد.</p>
+            </div>
+        }
+        else
+        {
+            <table id="backupTable">
                 <thead>
                     <tr>
-                        <th class="px-5 py-3 text-right font-semibold">التاريخ والوقت</th>
-                        <th class="px-5 py-3 text-right font-semibold">النوع</th>
-                        <th class="px-5 py-3 text-right font-semibold">الحجم</th>
-                        <th class="px-5 py-3 text-right font-semibold">الحالة</th>
-                        <th class="px-5 py-3 text-right font-semibold">مسار الملف</th>
+                        <th class="px-4 py-3 text-right font-semibold text-xs">التاريخ</th>
+                        <th class="px-4 py-3 text-right font-semibold text-xs">النوع</th>
+                        <th class="px-4 py-3 text-right font-semibold text-xs">الحجم</th>
+                        <th class="px-4 py-3 text-right font-semibold text-xs">الحالة</th>
+                        <th class="px-4 py-3 text-right font-semibold text-xs">الرابط السحابي</th>
+                        <th class="px-4 py-3 text-right font-semibold text-xs">الملف</th>
+                        <th class="px-4 py-3 text-center font-semibold text-xs">إجراءات</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach (var b in Model)
+                <tbody id="backupTableBody">
+                    @foreach (var b in Model.BackupLogs)
                     {
-                        <tr>
-                            <td class="px-5 py-3 text-ink font-semibold">@b.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
-                            <td class="px-5 py-3 text-ink-muted">@b.BackupType</td>
-                            <td class="px-5 py-3 text-primary font-bold">@FormatSize(b.FileSize)</td>
-                            <td class="px-5 py-3">
+                        <tr class="backup-row" data-type="@b.BackupType" data-status="@b.Status" data-search="@b.BackupPath.ToLower()">
+                            <td class="px-4 py-3 text-ink font-semibold whitespace-nowrap text-xs">@b.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td class="px-4 py-3">
+                                <span class="badge @(b.BackupType == "Local" ? "badge-info" : b.BackupType == "Cloud" ? "badge-accent" : "badge-success") font-bold text-[10px]">
+                                    @(b.BackupType == "Local" ? "محلي" : b.BackupType == "Cloud" ? "سحابي" : "كلاهما")
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 text-primary font-bold text-xs">@FormatSize(b.FileSize)</td>
+                            <td class="px-4 py-3">
                                 <span class="badge @(b.Status == "Success" ? "badge-success" : "badge-danger") font-bold text-[10px]">
                                     @(b.Status == "Success" ? "ناجحة" : "فاشلة")
                                 </span>
                             </td>
-                            <td class="px-5 py-3 text-[11px] text-ink-soft max-w-xs truncate" title="@b.BackupPath">@b.BackupPath</td>
+                            <td class="px-4 py-3 text-[11px] max-w-[150px] truncate">
+                                @if (!string.IsNullOrEmpty(b.CloudUrl))
+                                {
+                                    <a href="@b.CloudUrl" target="_blank" class="text-primary hover:underline flex items-center gap-1" title="@b.CloudUrl">
+                                        <span class="material-symbols-rounded text-xs">cloud</span>
+                                        رابط سحابي
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-ink-soft">—</span>
+                                }
+                            </td>
+                            <td class="px-4 py-3 text-[10px] text-ink-soft max-w-[200px] truncate dir-ltr" title="@b.BackupPath">@System.IO.Path.GetFileName(b.BackupPath)</td>
+                            <td class="px-4 py-3">
+                                <div class="flex flex-wrap items-center justify-center gap-1.5">
+                                    @if (b.Status == "Success" && System.IO.File.Exists(b.BackupPath))
+                                    {
+                                        <a href="/Database/DownloadBackup/@b.DatabaseBackupLogId" class="inline-flex items-center justify-center gap-1 w-9 h-9 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-[11px] font-bold" title="تحميل">
+                                            <span class="material-symbols-rounded text-sm">download</span>
+                                        </a>
+                                        <form method="post" action="/Database/RestoreFromLog" class="inline" data-confirm="تحذير: استعادة قاعدة البيانات من هذه النسخة ستؤدي لفقدان أي تغييرات لاحقة. هل تريد المتابعة؟">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@b.DatabaseBackupLogId" />
+                                            <button type="submit" class="inline-flex items-center justify-center gap-1 w-9 h-9 rounded-full bg-warning/10 text-warning hover:bg-warning/20 transition-colors text-[11px] font-bold cursor-pointer border-0" title="استعادة من هذه النسخة">
+                                                <span class="material-symbols-rounded text-sm">restore_page</span>
+                                            </button>
+                                        </form>
+                                    }
+                                    @if (b.Status == "Success" && string.IsNullOrEmpty(b.CloudUrl))
+                                    {
+                                        <form method="post" action="/Database/CloudSync" class="inline" data-confirm="مزامنة هذا الملف إلى السحابة؟">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="logId" value="@b.DatabaseBackupLogId" />
+                                            <button type="submit" class="inline-flex items-center justify-center gap-1 w-9 h-9 rounded-full bg-success/10 text-success hover:bg-success/20 transition-colors text-[11px] font-bold cursor-pointer border-0" title="مزامنة سحابية">
+                                                <span class="material-symbols-rounded text-sm">cloud_upload</span>
+                                            </button>
+                                        </form>
+                                    }
+                                    @if (User.HasPermission(AppPermissions.DatabaseManage))
+                                    {
+                                        <form method="post" action="/Database/DeleteBackupLog" class="inline" data-confirm="هل تريد حذف هذا السجل؟">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@b.DatabaseBackupLogId" />
+                                            <button type="submit" class="inline-flex items-center justify-center gap-1 w-9 h-9 rounded-full bg-danger/10 text-danger hover:bg-danger/20 transition-colors text-[11px] font-bold cursor-pointer border-0" title="حذف">
+                                                <span class="material-symbols-rounded text-sm">delete</span>
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </td>
                         </tr>
                     }
                 </tbody>
             </table>
+
+            <!-- Pagination -->
+            <div id="paginationControls" class="p-4 border-t border-border flex items-center justify-between gap-3 text-xs">
+                <span class="text-ink-muted" id="paginationInfo">عرض 1-@Math.Min(10, Model.BackupLogs.Count) من @Model.BackupLogs.Count</span>
+                <div class="flex items-center gap-1">
+                    <button type="button" class="btn-secondary px-2 py-1 text-xs" onclick="changePage(-1)" id="prevPage" disabled>
+                        <span class="material-symbols-rounded text-sm">chevron_right</span>
+                    </button>
+                    <span class="px-2 font-bold text-ink" id="currentPageDisplay">1</span>
+                    <button type="button" class="btn-secondary px-2 py-1 text-xs" onclick="changePage(1)" id="nextPage">
+                        <span class="material-symbols-rounded text-sm">chevron_left</span>
+                    </button>
+                </div>
+                <select id="pageSizeSelect" onchange="changePageSize(this.value)" class="form-input w-16 text-xs">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="0">الكل</option>
+                </select>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Timeline Section -->
+<div class="card-premium">
+    <div class="card-header">
+        <div class="flex items-center gap-2">
+            <span class="material-symbols-rounded text-accent">timeline</span>
+            <h3 class="font-bold text-ink text-sm">آخر الأنشطة</h3>
         </div>
-    }
+    </div>
+    <div class="card-body p-5">
+        @{
+            var timeline = Model.BackupLogs.Take(10).ToList();
+        }
+        @if (!timeline.Any())
+        {
+            <div class="empty-state p-6 text-center">
+                <span class="material-symbols-rounded empty-icon">timeline</span>
+                <p class="text-ink-muted text-sm">لا توجد أنشطة مسجلة بعد.</p>
+            </div>
+        }
+        else
+        {
+            <div class="space-y-0">
+                @foreach (var t in timeline)
+                {
+                    <div class="flex gap-3 py-2.5 border-r-2 @(t.Status == "Success" ? "border-success/30" : "border-danger/30") pr-4 mr-2 relative">
+                        <div class="absolute -right-[9px] top-3 w-4 h-4 rounded-full @(t.Status == "Success" ? "bg-success" : "bg-danger") flex items-center justify-center">
+                            <span class="material-symbols-rounded text-white text-[10px]">@(t.Status == "Success" ? "check" : "close")</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-ink text-xs">
+                                    @(t.BackupType switch
+                                    {
+                                        "Local" => "نسخ احتياطي محلي",
+                                        "Cloud" => "مزامنة سحابية",
+                                        "Both" => "نسخ + مزامنة سحابية",
+                                        _ => t.BackupType
+                                    })
+                                </span>
+                                <span class="badge @(t.Status == "Success" ? "badge-success" : "badge-danger") text-[9px] px-1.5 py-0.5">
+                                    @(t.Status == "Success" ? "ناجح" : "فاشل")
+                                </span>
+                            </div>
+                            <div class="text-[10px] text-ink-muted mt-0.5 flex items-center gap-2">
+                                <span>@t.CreatedAt.ToString("yyyy-MM-dd HH:mm")</span>
+                                @if (t.FileSize > 0)
+                                {
+                                    <span>|</span>
+                                    <span>@FormatSize(t.FileSize)</span>
+                                }
+                                @if (!string.IsNullOrEmpty(t.ErrorMessage))
+                                {
+                                    <span class="text-danger" title="@t.ErrorMessage">| خطأ</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
 </div>
 
 @functions {
@@ -124,4 +502,141 @@
         < 1024 * 1024 * 1024 => $"{bytes / (1024.0 * 1024):F1} MB",
         _ => $"{bytes / (1024.0 * 1024 * 1024):F2} GB"
     };
+}
+
+@section Scripts {
+    <script>
+        // Confirm for Reset (requires typing confirmation word)
+        window.confirmReset = function(e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'إعادة تعيين قاعدة البيانات',
+                html: '<div style="text-align:right">' +
+                    '<p class="mb-3 text-sm">تحذير: سيتم إسقاط قاعدة البيانات بالكامل وإنشائها من الصفر. هذه العملية لا يمكن التراجع عنها.</p>' +
+                    '<p class="mb-2 text-xs font-bold">اكتب "تأكيد الحذف" للمتابعة:</p>' +
+                    '<input id="resetConfirmInput" class="form-input text-xs w-full" placeholder="تأكيد الحذف" />' +
+                    '</div>',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#94A3B8',
+                confirmButtonText: 'نعم، إعادة التعيين',
+                cancelButtonText: 'إلغاء',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'btn-danger',
+                    cancelButton: 'btn-secondary'
+                },
+                preConfirm: function () {
+                    const input = document.getElementById('resetConfirmInput');
+                    if (input.value !== 'تأكيد الحذف') {
+                        Swal.showValidationMessage('يرجى كتابة "تأكيد الحذف" بالضبط');
+                        return false;
+                    }
+                    return true;
+                },
+                didOpen: function () {
+                    document.getElementById('resetConfirmInput').focus();
+                }
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    document.getElementById('resetForm').submit();
+                }
+            });
+        };
+
+        // Pagination & Filtering
+        let currentPage = 1;
+        let pageSize = 10;
+        let filteredRows = [];
+
+        function getRows() {
+            const search = (document.getElementById('backupSearch').value || '').toLowerCase();
+            const type = document.getElementById('filterType').value;
+            const status = document.getElementById('filterStatus').value;
+            const rows = document.querySelectorAll('.backup-row');
+            filteredRows = [];
+            rows.forEach(function (r) {
+                const matchSearch = !search || (r.getAttribute('data-search') || '').includes(search);
+                const matchType = !type || r.getAttribute('data-type') === type;
+                const matchStatus = !status || r.getAttribute('data-status') === status;
+                if (matchSearch && matchType && matchStatus) {
+                    filteredRows.push(r);
+                } else {
+                    r.style.display = 'none';
+                }
+            });
+            return filteredRows;
+        }
+
+        function renderTable() {
+            const rows = getRows();
+            const total = rows.length;
+            const totalPages = pageSize === 0 ? 1 : Math.ceil(total / pageSize) || 1;
+
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            const start = pageSize === 0 ? 0 : (currentPage - 1) * pageSize;
+            const end = pageSize === 0 ? total : Math.min(start + pageSize, total);
+
+            rows.forEach(function (r, i) {
+                r.style.display = (i >= start && i < end) ? '' : 'none';
+            });
+
+            const info = document.getElementById('paginationInfo');
+            if (info) {
+                if (total === 0) {
+                    info.textContent = 'لا توجد نتائج';
+                } else {
+                    info.textContent = 'عرض ' + (start + 1) + '-' + end + ' من ' + total;
+                }
+            }
+
+            const display = document.getElementById('currentPageDisplay');
+            if (display) display.textContent = currentPage;
+
+            const prev = document.getElementById('prevPage');
+            const next = document.getElementById('nextPage');
+            if (prev) prev.disabled = currentPage <= 1;
+            if (next) next.disabled = currentPage >= totalPages;
+        }
+
+        window.changePage = function (delta) {
+            currentPage += delta;
+            renderTable();
+        };
+
+        window.changePageSize = function (size) {
+            pageSize = parseInt(size) || 10;
+            currentPage = 1;
+            renderTable();
+        };
+
+        window.resetFilters = function () {
+            document.getElementById('backupSearch').value = '';
+            document.getElementById('filterType').value = '';
+            document.getElementById('filterStatus').value = '';
+            currentPage = 1;
+            renderTable();
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('backupSearch');
+            const typeSelect = document.getElementById('filterType');
+            const statusSelect = document.getElementById('filterStatus');
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function () { currentPage = 1; renderTable(); });
+            }
+            if (typeSelect) {
+                typeSelect.addEventListener('change', function () { currentPage = 1; renderTable(); });
+            }
+            if (statusSelect) {
+                statusSelect.addEventListener('change', function () { currentPage = 1; renderTable(); });
+            }
+
+            renderTable();
+        });
+    </script>
 }

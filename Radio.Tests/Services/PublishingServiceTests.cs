@@ -9,6 +9,7 @@ using Radio.Tests.Helpers;
 using Radio.Tests.TestData.Builders;
 using Radio.Tests.TestData.Fixtures;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace Radio.Tests.Services;
 
@@ -31,7 +32,7 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
     [Fact]
     public async Task GetAllPlatformsAsync_ReturnsPlatforms()
     {
-        var result = await _service.GetAllPlatformsAsync();
+        var result = await _service.GetAllPlatformsAsync(CancellationToken.None);
         result.Should().NotBeEmpty();
         result.Should().Contain(p => p.Name == "Facebook");
     }
@@ -59,7 +60,7 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         var eg = await ctx.EpisodeGuests.FirstAsync();
         var log = TestDataFactory.CreateSocialLog(episodeGuestId: eg.EpisodeGuestId, episodeId: 10);
 
-        var result = await _service.LogSocialPublishingAsync(10, [log], _admin);
+        var result = await _service.LogSocialPublishingAsync(10, [log], _admin, CancellationToken.None);
 
         result.ShouldBeSuccess();
     }
@@ -70,7 +71,7 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         var user = UserSessionBuilder.CreateLimited();
         var log = TestDataFactory.CreateSocialLog(episodeGuestId: 1, episodeId: 1);
 
-        var result = await _service.LogSocialPublishingAsync(1, [log], user);
+        var result = await _service.LogSocialPublishingAsync(1, [log], user, CancellationToken.None);
 
         result.ShouldBeFailure("صلاحية");
     }
@@ -86,7 +87,7 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.LogWebsitePublishingAsync(20, "Title", MediaType.Audio, "Notes", _admin);
+        var result = await _service.LogWebsitePublishingAsync(20, "Title", MediaType.Audio, "Notes", _admin, CancellationToken.None);
 
         result.ShouldBeSuccess();
     }
@@ -96,7 +97,7 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
     {
         var user = UserSessionBuilder.CreateLimited();
 
-        var result = await _service.LogWebsitePublishingAsync(1, "Title", MediaType.Audio, "Notes", user);
+        var result = await _service.LogWebsitePublishingAsync(1, "Title", MediaType.Audio, "Notes", user, CancellationToken.None);
 
         result.ShouldBeFailure("صلاحية");
     }
@@ -104,7 +105,7 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
     [Fact]
     public async Task LogWebsitePublishingAsync_EpisodeNotFound_ReturnsFail()
     {
-        var result = await _service.LogWebsitePublishingAsync(9999, "Title", MediaType.Audio, "Notes", _admin);
+        var result = await _service.LogWebsitePublishingAsync(9999, "Title", MediaType.Audio, "Notes", _admin, CancellationToken.None);
 
         result.ShouldBeFailure("لم يتم العثور");
     }
@@ -138,7 +139,7 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.GetSocialPublishingLogAsync(50);
+        var result = await _service.GetSocialPublishingLogAsync(50, CancellationToken.None);
 
         result.Should().NotBeNull();
         result!.ClipTitle.Should().Be("My Clip");
@@ -174,7 +175,7 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.GetSocialPublishingLogByIdAsync(70);
+        var result = await _service.GetSocialPublishingLogByIdAsync(70, CancellationToken.None);
 
         result.Should().NotBeNull();
         result!.ClipTitle.Should().Be("Video Clip");
@@ -184,7 +185,7 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
     [Fact]
     public async Task GetSocialPublishingLogByIdAsync_NotFound_ReturnsNull()
     {
-        var result = await _service.GetSocialPublishingLogByIdAsync(9999);
+        var result = await _service.GetSocialPublishingLogByIdAsync(9999, CancellationToken.None);
         result.Should().BeNull();
     }
 
@@ -223,7 +224,7 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
             MediaType: MediaType.Video,
             Platforms: [new PlatformPublishDto(1, "Facebook", "https://fb.com")]);
 
-        var result = await _service.UpdateSocialPublishingLogAsync(dto, _admin);
+        var result = await _service.UpdateSocialPublishingLogAsync(dto, _admin, CancellationToken.None);
 
         result.ShouldBeSuccess();
     }
@@ -257,7 +258,7 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.DeleteSocialPublishingLogAsync(95, _admin);
+        var result = await _service.DeleteSocialPublishingLogAsync(95, _admin, CancellationToken.None);
 
         result.ShouldBeSuccess();
     }
@@ -274,7 +275,7 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.DeleteWebsitePublishingLogAsync(100, _admin);
+        var result = await _service.DeleteWebsitePublishingLogAsync(100, _admin, CancellationToken.None);
 
         result.ShouldBeSuccess();
     }
@@ -302,7 +303,7 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.GetEpisodeSocialLogsAsync(42);
+        var result = await _service.GetEpisodeSocialLogsAsync(42, CancellationToken.None);
 
         result.Should().HaveCount(1);
         result[0].ClipTitle.Should().Be("Ep42 Clip");
@@ -337,7 +338,7 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.GetAllPublishingRecordsAsync();
+        var result = await _service.GetAllPublishingRecordsAsync(cancellationToken: CancellationToken.None);
 
         result.Should().NotBeEmpty();
     }

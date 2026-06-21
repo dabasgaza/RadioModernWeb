@@ -2,35 +2,24 @@ using DataAccess.Common;
 using DataAccess.DTOs;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 namespace DataAccess.Services;
 
 public interface IExecutionService
 {
     // ✨ استقبال DTO بدلاً من الكيان
-    Task<Result> LogExecutionAsync(ExecutionLogDto dto, UserSession session);
+    Task<Result> LogExecutionAsync(ExecutionLogDto dto, UserSession session, CancellationToken cancellationToken = default);
 
-    // ═══════════════════════════════════════════
-    //  دوال استرجاع وتعديل سجل التنفيذ
-    // ═══════════════════════════════════════════
+    Task<ExecutionLogDto?> GetExecutionLogAsync(int episodeId, CancellationToken cancellationToken = default);
 
-    /// <summary>
-    /// استرجاع سجل التنفيذ لحلقة معيّنة
-    /// يُرجع null إذا لم يوجد سجل تنفيذ نشط
-    /// </summary>
-    Task<ExecutionLogDto?> GetExecutionLogAsync(int episodeId);
-
-    /// <summary>
-    /// تعديل سجل تنفيذ موجود (المدة، الملاحظات، المشاكل)
-    /// لا يُغيّر حالة الحلقة — فقط يحدّث البيانات
-    /// </summary>
-    Task<Result> UpdateExecutionLogAsync(ExecutionLogDto dto, UserSession session);
+    Task<Result> UpdateExecutionLogAsync(ExecutionLogDto dto, UserSession session, CancellationToken cancellationToken = default);
 }
 
 // ✨ استخدام Primary Constructor
 public class ExecutionService(IDbContextFactory<BroadcastWorkflowDBContext> contextFactory) : IExecutionService
 {
-    public async Task<Result> LogExecutionAsync(ExecutionLogDto dto, UserSession session)
+    public async Task<Result> LogExecutionAsync(ExecutionLogDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodeExecute);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -57,15 +46,15 @@ public class ExecutionService(IDbContextFactory<BroadcastWorkflowDBContext> cont
             context.ExecutionLogs.Add(log);
 
             // ✨ استخدام الثوابت بدلاً من الأرقام السحرية
-            if (episode.StatusId == EpisodeStatus.Published)
+            if (episode.StatusId == EpisodeStatusValues.Published)
                 return Result.Fail("لا يمكن تعديل حالة حلقة تم نشرها بالفعل.");
 
-            episode.StatusId = EpisodeStatus.Executed;
+            episode.StatusId = EpisodeStatusValues.Executed;
             episode.ActualExecutionTime = DateTime.UtcNow;
 
             // ❌ تم إزالة UpdatedAt و UpdatedByUserId (الـ Interceptor سيتولى الأمر تلقائياً)
 
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }
         catch
@@ -83,7 +72,7 @@ public class ExecutionService(IDbContextFactory<BroadcastWorkflowDBContext> cont
     /// استرجاع سجل التنفيذ لحلقة معيّنة
     /// يُرجع null إذا لم يوجد سجل تنفيذ نشط
     /// </summary>
-    public async Task<ExecutionLogDto?> GetExecutionLogAsync(int episodeId)
+    public async Task<ExecutionLogDto?> GetExecutionLogAsync(int episodeId, CancellationToken cancellationToken = default)
     {
         // لا نحتاج صلاحية خاصة — مجرد قراءة
         using var context = await contextFactory.CreateDbContextAsync();
@@ -92,7 +81,7 @@ public class ExecutionService(IDbContextFactory<BroadcastWorkflowDBContext> cont
             .AsNoTracking()
             .Where(l => l.EpisodeId == episodeId && l.IsActive)
             .OrderByDescending(l => l.CreatedAt)  // أحدث سجل أولاً
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (log is null) return null;
 
@@ -113,7 +102,7 @@ public class ExecutionService(IDbContextFactory<BroadcastWorkflowDBContext> cont
     /// يحدّث: المدة، الملاحظات، المشاكل التقنية
     /// لا يُغيّر حالة الحلقة — فقط يحدّث البيانات
     /// </summary>
-    public async Task<Result> UpdateExecutionLogAsync(ExecutionLogDto dto, UserSession session)
+    public async Task<Result> UpdateExecutionLogAsync(ExecutionLogDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodeExecute);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -121,7 +110,7 @@ public class ExecutionService(IDbContextFactory<BroadcastWorkflowDBContext> cont
         using var context = await contextFactory.CreateDbContextAsync();
 
         var log = await context.ExecutionLogs
-            .FirstOrDefaultAsync(l => l.ExecutionLogId == dto.ExecutionLogId && l.IsActive);
+            .FirstOrDefaultAsync(l => l.ExecutionLogId == dto.ExecutionLogId && l.IsActive, cancellationToken);
 
         if (log is null)
             return Result.Fail("سجل التنفيذ غير موجود أو تم حذفه.");
@@ -132,7 +121,7 @@ public class ExecutionService(IDbContextFactory<BroadcastWorkflowDBContext> cont
         log.IssuesEncountered = dto.IssuesEncountered;
         log.UpdatedByUserId = session.UserId;
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
 }

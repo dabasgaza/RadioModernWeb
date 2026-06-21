@@ -1,10 +1,12 @@
 ﻿using DataAccess.Common;
+using DataAccess.DTOs;
 using DataAccess.Security;
 using Domain.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace DataAccess.Services
 {
@@ -49,7 +51,7 @@ namespace DataAccess.Services
             return builder.InitialCatalog;
         }
 
-        public async Task<Result<string>> BackupDatabaseAsync(string? customBackupFolder = null)
+        public async Task<Result<string>> BackupDatabaseAsync(string? customBackupFolder = null, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -74,7 +76,7 @@ namespace DataAccess.Services
                 // SQL command to backup
                 using (var connection = new SqlConnection(connectionString))
                 {
-                    await connection.OpenAsync();
+                    await connection.OpenAsync(cancellationToken);
                     // We check if compression is supported (SQL Server Standard/Developer/Enterprise support it)
                     // If not, we fall back to regular backup.
                     string backupQuery = $@"
@@ -91,7 +93,7 @@ namespace DataAccess.Services
                             command.Parameters.AddWithValue("@BackupPath", fullPath);
                             command.Parameters.AddWithValue("@BackupName", $"Radio Full Database Backup - {DateTime.Now}");
                             command.CommandTimeout = 300; // 5 minutes
-                            await command.ExecuteNonQueryAsync();
+                            await command.ExecuteNonQueryAsync(cancellationToken);
                         }
                     }
                     catch
@@ -102,7 +104,7 @@ namespace DataAccess.Services
                             command.Parameters.AddWithValue("@BackupPath", fullPath);
                             command.Parameters.AddWithValue("@BackupName", $"Radio Full Database Backup - {DateTime.Now}");
                             command.CommandTimeout = 300;
-                            await command.ExecuteNonQueryAsync();
+                            await command.ExecuteNonQueryAsync(cancellationToken);
                         }
                     }
                 }
@@ -114,19 +116,19 @@ namespace DataAccess.Services
                     fileSize = new FileInfo(fullPath).Length;
                 }
 
-                await LogBackupAsync(fullPath, "Local", fileSize, "Success");
+                await LogBackupAsync(fullPath, "Local", fileSize, "Success", cancellationToken: cancellationToken);
 
                 return Result<string>.Success(fullPath);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An unexpected error occurred during processing");
-                await LogBackupAsync(customBackupFolder ?? "N/A", "Local", 0, "Failed", ex.Message);
+                await LogBackupAsync(customBackupFolder ?? "N/A", "Local", 0, "Failed", ex.Message, cancellationToken);
                 return Result<string>.Fail($"حدث خطأ أثناء عمل النسخة الاحتياطية: {ex.Message}");
             }
         }
 
-        public async Task<Result> RestoreDatabaseAsync(string backupFilePath)
+        public async Task<Result> RestoreDatabaseAsync(string backupFilePath, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -146,7 +148,7 @@ namespace DataAccess.Services
 
                 using (var connection = new SqlConnection(masterBuilder.ConnectionString))
                 {
-                    await connection.OpenAsync();
+                    await connection.OpenAsync(cancellationToken);
 
                     // 1. Terminate active connections to the database to prevent locking errors
                     string setSingleUserQuery = $@"
@@ -156,7 +158,7 @@ namespace DataAccess.Services
 
                     using (var cmd = new SqlCommand(setSingleUserQuery, connection))
                     {
-                        await cmd.ExecuteNonQueryAsync();
+                        await cmd.ExecuteNonQueryAsync(cancellationToken);
                     }
 
                     // 2. Perform the Restore
@@ -169,7 +171,7 @@ namespace DataAccess.Services
                     {
                         cmd.Parameters.AddWithValue("@BackupPath", backupFilePath);
                         cmd.CommandTimeout = 600; // 10 minutes
-                        await cmd.ExecuteNonQueryAsync();
+                        await cmd.ExecuteNonQueryAsync(cancellationToken);
                     }
 
                     // 3. Set the database back to Multi-User mode
@@ -179,7 +181,7 @@ namespace DataAccess.Services
 
                     using (var cmd = new SqlCommand(setMultiUserQuery, connection))
                     {
-                        await cmd.ExecuteNonQueryAsync();
+                        await cmd.ExecuteNonQueryAsync(cancellationToken);
                     }
                 }
 
@@ -196,10 +198,10 @@ namespace DataAccess.Services
                     var masterBuilder = new SqlConnectionStringBuilder(connectionString) { InitialCatalog = "master" };
                     using (var connection = new SqlConnection(masterBuilder.ConnectionString))
                     {
-                        await connection.OpenAsync();
+                        await connection.OpenAsync(cancellationToken);
                         using (var cmd = new SqlCommand($"ALTER DATABASE [{dbName}] SET MULTI_USER;", connection))
                         {
-                            await cmd.ExecuteNonQueryAsync();
+                            await cmd.ExecuteNonQueryAsync(cancellationToken);
                         }
                     }
                 }
@@ -209,12 +211,12 @@ namespace DataAccess.Services
             }
         }
 
-        public async Task<Result> InitializeDatabaseAsync()
+        public async Task<Result> InitializeDatabaseAsync(CancellationToken cancellationToken = default)
         {
             try
             {
                 using var context = await _dbContextFactory.CreateDbContextAsync();
-                await context.Database.MigrateAsync();
+                await context.Database.MigrateAsync(cancellationToken);
                 return Result.Success();
             }
             catch (Exception ex)
@@ -224,7 +226,7 @@ namespace DataAccess.Services
             }
         }
 
-        public async Task<Result> ResetDatabaseAsync()
+        public async Task<Result> ResetDatabaseAsync(CancellationToken cancellationToken = default)
         {
             try
             {
@@ -235,7 +237,7 @@ namespace DataAccess.Services
                 // 1. إسقاط قاعدة البيانات بأمان بعد قطع كل الاتصالات النشطة
                 using (var connection = new SqlConnection(masterBuilder.ConnectionString))
                 {
-                    await connection.OpenAsync();
+                    await connection.OpenAsync(cancellationToken);
                     string dropDbQuery = $@"
                         IF EXISTS (SELECT name FROM sys.databases WHERE name = N'{dbName}')
                         BEGIN
@@ -244,13 +246,13 @@ namespace DataAccess.Services
                         END";
                     using (var cmd = new SqlCommand(dropDbQuery, connection))
                     {
-                        await cmd.ExecuteNonQueryAsync();
+                        await cmd.ExecuteNonQueryAsync(cancellationToken);
                     }
                 }
 
                 // 2. إنشاء قاعدة البيانات وتطبيق جميع الهجرات من الصفر
                 using var context = await _dbContextFactory.CreateDbContextAsync();
-                await context.Database.MigrateAsync();
+                await context.Database.MigrateAsync(cancellationToken);
 
                 // 3. ملء قاعدة البيانات بالبيانات الأولية والصلاحيات
                 await Seeding.DbSeeder.SeedAsync(_dbContextFactory);
@@ -264,7 +266,7 @@ namespace DataAccess.Services
             }
         }
 
-        public async Task<Result<List<DatabaseBackupLog>>> GetBackupHistoryAsync()
+        public async Task<Result<List<DatabaseBackupLog>>> GetBackupHistoryAsync(CancellationToken cancellationToken = default)
         {
             try
             {
@@ -272,7 +274,7 @@ namespace DataAccess.Services
                 var list = await context.DatabaseBackupLogs
                     .AsNoTracking()
                     .OrderByDescending(x => x.CreatedAt)
-                    .ToListAsync();
+                    .ToListAsync(cancellationToken);
                 return Result<List<DatabaseBackupLog>>.Success(list);
             }
             catch (Exception ex) when (ex is Microsoft.Data.SqlClient.SqlException || ex is InvalidOperationException)
@@ -286,7 +288,7 @@ namespace DataAccess.Services
             }
         }
 
-        public async Task<Result> CloudSyncBackupAsync(string localBackupPath)
+        public async Task<Result> CloudSyncBackupAsync(string localBackupPath, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -310,14 +312,14 @@ namespace DataAccess.Services
                 // Update the log in database
                 using var context = await _dbContextFactory.CreateDbContextAsync();
                 var log = await context.DatabaseBackupLogs
-                    .FirstOrDefaultAsync(x => x.BackupPath == localBackupPath);
+                    .FirstOrDefaultAsync(x => x.BackupPath == localBackupPath, cancellationToken);
 
                 if (log != null)
                 {
                     log.CloudUrl = $"https://simulated-cloud.radio.local/backups/{fileName}";
                     log.BackupType = "Both";
                     log.UpdatedAt = DateTime.UtcNow;
-                    await context.SaveChangesAsync();
+                    await context.SaveChangesAsync(cancellationToken);
                 }
                 else
                 {
@@ -330,7 +332,7 @@ namespace DataAccess.Services
                         CloudUrl = $"https://simulated-cloud.radio.local/backups/{fileName}"
                     };
                     context.DatabaseBackupLogs.Add(newLog);
-                    await context.SaveChangesAsync();
+                    await context.SaveChangesAsync(cancellationToken);
                 }
 
                 return Result.Success();
@@ -342,7 +344,7 @@ namespace DataAccess.Services
             }
         }
 
-        public async Task<Result> RunRetentionPolicyAsync(int retentionDays)
+        public async Task<Result> RunRetentionPolicyAsync(int retentionDays, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -352,7 +354,7 @@ namespace DataAccess.Services
                 // Get logs older than cutoff
                 var oldLogs = await context.DatabaseBackupLogs
                     .Where(x => x.CreatedAt < cutoffDate && x.Status == "Success")
-                    .ToListAsync();
+                    .ToListAsync(cancellationToken);
 
                 int deletedCount = 0;
                 foreach (var log in oldLogs)
@@ -380,7 +382,7 @@ namespace DataAccess.Services
 
                 if (deletedCount > 0)
                 {
-                    await context.SaveChangesAsync();
+                    await context.SaveChangesAsync(cancellationToken);
                 }
 
                 return Result.Success();
@@ -392,7 +394,110 @@ namespace DataAccess.Services
             }
         }
 
-        private async Task LogBackupAsync(string path, string type, long size, string status, string? error = null)
+        public async Task<DatabaseDashboardDto?> GetDatabaseDashboardAsync(CancellationToken cancellationToken = default)
+        {
+            long dataSize = 0, logSize = 0;
+            int activeConnections = 0;
+            string dbName = "";
+            try
+            {
+                var connectionString = GetConnectionString();
+                dbName = GetDatabaseName(connectionString);
+
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync(cancellationToken);
+
+                    using (var cmd = new SqlCommand(@"
+                        SELECT 
+                            SUM(CASE WHEN type_desc = 'ROWS' THEN size ELSE 0 END) * 8 * 1024,
+                            SUM(CASE WHEN type_desc = 'LOG' THEN size ELSE 0 END) * 8 * 1024
+                        FROM sys.database_files", connection))
+                    {
+                        cmd.CommandTimeout = 10;
+                        using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+                        if (await reader.ReadAsync(cancellationToken))
+                        {
+                            dataSize = reader.GetInt64(0);
+                            logSize = reader.GetInt64(1);
+                        }
+                    }
+
+                    using (var cmd = new SqlCommand(@"
+                        SELECT COUNT(*) FROM sys.dm_exec_sessions
+                        WHERE database_id = DB_ID(@DbName) AND status = 'running'", connection))
+                    {
+                        cmd.Parameters.AddWithValue("@DbName", dbName);
+                        cmd.CommandTimeout = 10;
+                        activeConnections = (int)(await cmd.ExecuteScalarAsync(cancellationToken) ?? 0);
+                    }
+                }
+            }
+            catch { /* non-critical for dashboard */ }
+
+            // Backup stats from DB
+            int totalBackups = 0, backupsThisMonth = 0, failureCount = 0;
+            double successRate = 100;
+            DateTime? lastBackupAt = null;
+            long lastBackupSize = 0;
+
+            try
+            {
+                using var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+                var now = DateTime.UtcNow;
+                var monthStart = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+
+                totalBackups = await context.DatabaseBackupLogs.CountAsync(cancellationToken);
+                var successCount = await context.DatabaseBackupLogs.CountAsync(x => x.Status == "Success", cancellationToken);
+                backupsThisMonth = await context.DatabaseBackupLogs
+                    .CountAsync(x => x.CreatedAt >= monthStart, cancellationToken);
+                failureCount = await context.DatabaseBackupLogs.CountAsync(x => x.Status == "Failed", cancellationToken);
+                successRate = totalBackups > 0 ? (double)successCount / totalBackups * 100 : 100;
+
+                var last = await context.DatabaseBackupLogs
+                    .Where(x => x.Status == "Success")
+                    .OrderByDescending(x => x.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (last != null)
+                {
+                    lastBackupAt = last.CreatedAt;
+                    lastBackupSize = last.FileSize;
+                }
+            }
+            catch { /* backup log table may not exist yet */ }
+
+            // Backup folder size
+            long folderSize = 0;
+            try
+            {
+                var backupFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Backups");
+                if (Directory.Exists(backupFolder))
+                {
+                    folderSize = Directory.EnumerateFiles(backupFolder, "*", SearchOption.AllDirectories)
+                        .Sum(f => new FileInfo(f).Length);
+                }
+            }
+            catch { /* folder may not exist */ }
+
+            // Config
+            bool autoBackup = false, cloudSync = false;
+            int retention = 30;
+            try
+            {
+                autoBackup = _configuration.GetValue<bool>("DatabaseBackup:AutoBackup");
+                cloudSync = _configuration.GetValue<bool>("DatabaseBackup:CloudSync");
+                retention = _configuration.GetValue("DatabaseBackup:RetentionDays", 30);
+            }
+            catch { /* config keys may not exist */ }
+
+            return new DatabaseDashboardDto(
+                dataSize, logSize, lastBackupAt, lastBackupSize,
+                totalBackups, successRate, backupsThisMonth,
+                activeConnections, autoBackup, cloudSync,
+                retention, folderSize, failureCount, dbName);
+        }
+
+        private async Task LogBackupAsync(string path, string type, long size, string status, string? error = null, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -406,7 +511,7 @@ namespace DataAccess.Services
                     ErrorMessage = error
                 };
                 context.DatabaseBackupLogs.Add(log);
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync(cancellationToken);
             }
             catch { /* Avoid crashing on logging fail */ }
         }

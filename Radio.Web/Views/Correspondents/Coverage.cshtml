@@ -3,25 +3,33 @@
     ViewData["Title"] = "تغطيات المراسل";
 }
 
-<div class="flex items-center justify-between mb-6">
-    <div>
-        <nav class="text-sm text-ink-muted mb-2">
-            <a href="/Correspondents" class="hover:text-primary">المراسلون</a>
-            <span class="mx-1">/</span>
-            <span class="text-ink">التغطيات</span>
-        </nav>
-        <h1 class="text-2xl font-bold text-ink flex items-center gap-2">
-            <span class="material-symbols-rounded text-primary">list_alt</span>
-            تغطيات المراسل
-        </h1>
+<div class="page-header">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <span class="material-symbols-rounded">home</span>
+                <a href="/">الرئيسية</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <a href="/Correspondents">المراسلون</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <span>التغطيات</span>
+            </nav>
+            <h1>
+                <span class="material-symbols-rounded text-primary">list_alt</span>
+                تغطيات المراسل
+            </h1>
+            <p>جميع التغطيات الميدانية المسجلة لهذا المراسل</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="/Correspondents" class="btn-secondary">
+                <span class="material-symbols-rounded">arrow_forward</span>
+                الرجوع للمراسلين
+            </a>
+        </div>
     </div>
-    <a href="/Correspondents" class="btn-secondary">
-        <span class="material-symbols-rounded">arrow_back</span>
-        رجوع
-    </a>
 </div>
 
-<div class="bg-surface rounded-xl border border-border">
+<div class="table-premium">
     @if (!Model.Any())
     {
         <div class="empty-state p-12">
@@ -34,17 +42,17 @@
     {
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
-                <thead class="bg-surface-3 text-ink-muted">
+                <thead>
                     <tr>
                         <th class="px-5 py-3 text-right font-semibold">الموضوع</th>
                         <th class="px-5 py-3 text-right font-semibold">الموقع</th>
                         <th class="px-5 py-3 text-right font-semibold">الضيف</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-border">
+                <tbody>
                     @foreach (var c in Model)
                     {
-                        <tr class="hover:bg-surface-3">
+                        <tr>
                             <td class="px-5 py-3 font-semibold text-ink">@c.Topic</td>
                             <td class="px-5 py-3 text-ink-muted">@c.Location</td>
                             <td class="px-5 py-3 text-ink-muted">@c.GuestName</td>

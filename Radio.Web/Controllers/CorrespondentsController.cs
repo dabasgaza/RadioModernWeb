@@ -5,6 +5,7 @@ using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Radio.Web.Services;
+using System.Threading;
 using Radio.Web.ViewModels;
 
 namespace Radio.Web.Controllers;
@@ -23,7 +24,7 @@ public class CorrespondentsController : Controller
 
     public async Task<IActionResult> Index(string? search)
     {
-        var list = await _correspondents.GetAllActiveAsync();
+        var list = await _correspondents.GetAllActiveAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         if (!string.IsNullOrWhiteSpace(search))
         {
             var s = search.Trim();
@@ -44,7 +45,7 @@ public class CorrespondentsController : Controller
         var v = ValidationPipeline.ValidateCorrespondent(model);
         if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); return View("Edit", model); }
         var session = _currentUser.ToUserSession()!;
-        var r = await _correspondents.CreateAsync(model, session);
+        var r = await _correspondents.CreateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم إضافة المراسل"; return RedirectToAction(nameof(Index)); }
         ModelState.AddModelError("", r.ErrorMessage!);
         return View("Edit", model);
@@ -53,7 +54,7 @@ public class CorrespondentsController : Controller
     [Authorize(Policy = AppPermissions.CoordinationManage)]
     public async Task<IActionResult> Edit(int id)
     {
-        var list = await _correspondents.GetAllActiveAsync();
+        var list = await _correspondents.GetAllActiveAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         var c = list.FirstOrDefault(x => x.CorrespondentId == id);
         if (c == null) return NotFound();
         return View(c);
@@ -68,7 +69,7 @@ public class CorrespondentsController : Controller
         if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); return View(model); }
         model = model with { CorrespondentId = id };
         var session = _currentUser.ToUserSession()!;
-        var r = await _correspondents.UpdateAsync(model, session);
+        var r = await _correspondents.UpdateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم تحديث المراسل"; return RedirectToAction(nameof(Index)); }
         ModelState.AddModelError("", r.ErrorMessage!);
         return View(model);
@@ -80,7 +81,7 @@ public class CorrespondentsController : Controller
     public async Task<IActionResult> Delete(int id)
     {
         var session = _currentUser.ToUserSession()!;
-        var r = await _correspondents.SoftDeleteAsync(id, session);
+        var r = await _correspondents.SoftDeleteAsync(id, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) TempData["Success"] = "تم حذف المراسل";
         else TempData["Error"] = r.ErrorMessage;
         return RedirectToAction(nameof(Index));
@@ -89,7 +90,7 @@ public class CorrespondentsController : Controller
     // Coverage listing for a correspondent
     public async Task<IActionResult> Coverage(int id)
     {
-        var coverages = await _correspondents.GetCoverageAsync(id);
+        var coverages = await _correspondents.GetCoverageAsync(id, cancellationToken: HttpContext?.RequestAborted ?? default);
         return View(coverages);
     }
 }

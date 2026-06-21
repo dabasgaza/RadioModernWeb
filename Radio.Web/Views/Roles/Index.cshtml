@@ -1,56 +1,87 @@
 @model List<RoleDto>
 @{ ViewData["Title"] = "الأدوار"; }
 
-<div class="flex items-center justify-between mb-6">
-    <div>
-        <h1 class="text-2xl font-bold text-ink mb-1 flex items-center gap-2">
-            <span class="material-symbols-rounded text-primary">group_work</span>
-            الأدوار
-        </h1>
-        <p class="text-ink-muted text-sm">إدارة أدوار المستخدمين</p>
+<div class="page-header">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <span class="material-symbols-rounded">home</span>
+                <a href="/">الرئيسية</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <span>الأدوار</span>
+            </nav>
+            <h1>
+                <span class="material-symbols-rounded text-primary">group_work</span>
+                الأدوار
+            </h1>
+            <p>إدارة أدوار المستخدمين وتحديد الصلاحيات لكل دور</p>
+        </div>
+        <div class="flex items-center gap-2">
+            @if (User.HasPermission(AppPermissions.UserManage))
+            {
+                <a href="/Roles/Create" class="btn-primary">
+                    <span class="material-symbols-rounded">add</span>
+                    دور جديد
+                </a>
+            }
+        </div>
     </div>
-    @if (User.HasPermission(AppPermissions.UserManage))
-    {
-        <a href="/Roles/Create" class="btn-primary"><span class="material-symbols-rounded">add</span> دور جديد</a>
-    }
 </div>
 
-<div class="bg-surface rounded-xl border border-border">
-    <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-            <thead class="bg-surface-3 text-ink-muted">
-                <tr>
-                    <th class="px-5 py-3 text-right font-semibold">الدور</th>
-                    <th class="px-5 py-3 text-right font-semibold">الوصف</th>
-                    <th class="px-5 py-3 text-right font-semibold">الصلاحيات</th>
-                    <th class="px-5 py-3 text-right font-semibold">إجراءات</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-border">
-                @foreach (var r in Model)
-                {
-                    <tr class="hover:bg-surface-3">
-                        <td class="px-5 py-3 font-semibold text-ink">@r.RoleName</td>
-                        <td class="px-5 py-3 text-ink-muted">@(r.RoleDescription ?? "—")</td>
-                        <td class="px-5 py-3">
-                            <a href="/Permissions?roleId=@r.RoleId" class="text-primary text-sm hover:underline">
-                                <span class="material-symbols-rounded text-sm align-middle">security</span>
-                                إدارة الصلاحيات
-                            </a>
-                        </td>
-                        <td class="px-5 py-3">
-                            @if (User.HasPermission(AppPermissions.UserManage) && !string.Equals(r.RoleName, "Admin", StringComparison.OrdinalIgnoreCase))
-                            {
-                                <a href="/Roles/Edit/@r.RoleId" class="icon-btn icon-btn-primary"><span class="material-symbols-rounded">edit</span></a>
-                                <form method="post" action="/Roles/Delete/@r.RoleId" class="inline" data-confirm="هل أنت متأكد من حذف الدور «@r.RoleName»؟">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="icon-btn icon-btn-danger"><span class="material-symbols-rounded">delete</span></button>
-                                </form>
-                            }
-                        </td>
+<div class="table-premium">
+    @if (!Model.Any())
+    {
+        <div class="empty-state p-12">
+            <span class="material-symbols-rounded empty-icon">group_work</span>
+            <h3 class="font-bold text-ink text-lg mb-2">لا أدوار</h3>
+            <p class="text-ink-muted text-sm mb-4">لم يتم إضافة أي أدوار في النظام بعد.</p>
+            @if (User.HasPermission(AppPermissions.UserManage))
+            {
+                <a href="/Roles/Create" class="btn-primary">
+                    <span class="material-symbols-rounded">add</span>
+                    دور جديد
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr>
+                        <th class="px-5 py-3 text-right font-semibold">الدور</th>
+                        <th class="px-5 py-3 text-right font-semibold">الوصف</th>
+                        <th class="px-5 py-3 text-right font-semibold">الصلاحيات</th>
+                        <th class="px-5 py-3 text-right font-semibold">إجراءات</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model)
+                    {
+                        <tr>
+                            <td class="px-5 py-3 font-semibold text-ink">@r.RoleName</td>
+                            <td class="px-5 py-3 text-ink-muted">@(r.RoleDescription ?? "—")</td>
+                            <td class="px-5 py-3">
+                                <a href="/Permissions?roleId=@r.RoleId" class="text-primary text-sm hover:underline inline-flex items-center gap-1">
+                                    <span class="material-symbols-rounded text-sm">security</span>
+                                    إدارة الصلاحيات
+                                </a>
+                            </td>
+                            <td class="px-5 py-3">
+                                @if (User.HasPermission(AppPermissions.UserManage) && !string.Equals(r.RoleName, "Admin", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <a href="/Roles/Edit/@r.RoleId" class="icon-btn icon-btn-primary"><span class="material-symbols-rounded">edit</span></a>
+                                    <form method="post" action="/Roles/Delete/@r.RoleId" class="inline" data-confirm="هل أنت متأكد من حذف الدور «@r.RoleName»؟">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="icon-btn icon-btn-danger"><span class="material-symbols-rounded">delete</span></button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
 </div>

@@ -31,6 +31,9 @@ public class EpisodeGuestConfiguration : IEntityTypeConfiguration<EpisodeGuest>
         builder.Property(e => e.CreatedAt)
                .HasDefaultValueSql("GETUTCDATE()");
 
+        builder.Property(e => e.UpdatedAt)
+               .HasDefaultValueSql("GETUTCDATE()");
+
         builder.Property(e => e.IsActive)
                .HasDefaultValue(true);
 

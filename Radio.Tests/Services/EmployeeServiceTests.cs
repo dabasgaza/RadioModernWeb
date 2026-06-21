@@ -6,6 +6,7 @@ using Radio.Tests.Helpers;
 using Radio.Tests.TestData.Builders;
 using Radio.Tests.TestData.Fixtures;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace Radio.Tests.Services;
 
@@ -29,7 +30,7 @@ public class EmployeeServiceTests : IClassFixture<DatabaseFixture>
         ctx.Employees.Add(new Employee { FullName = "Emp1", IsActive = true, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.GetAllActiveAsync();
+        var result = await _service.GetAllActiveAsync(CancellationToken.None);
 
         result.Should().Contain(e => e.FullName == "Emp1");
     }
@@ -39,7 +40,7 @@ public class EmployeeServiceTests : IClassFixture<DatabaseFixture>
     {
         var dto = new EmployeeDto(0, "New Emp", StaffRoleId: 1, null, null);
 
-        var result = await _service.CreateAsync(dto, _admin);
+        var result = await _service.CreateAsync(dto, _admin, CancellationToken.None);
 
         result.ShouldBeSuccess();
     }
@@ -47,7 +48,7 @@ public class EmployeeServiceTests : IClassFixture<DatabaseFixture>
     [Fact]
     public async Task GetAllRolesAsync_ReturnsRoles()
     {
-        var result = await _service.GetAllRolesAsync();
+        var result = await _service.GetAllRolesAsync(CancellationToken.None);
         result.Should().Contain(r => r.RoleName == "مذيع");
     }
 
@@ -56,7 +57,7 @@ public class EmployeeServiceTests : IClassFixture<DatabaseFixture>
     {
         var dto = new StaffRoleDto(0, "مصور");
 
-        var result = await _service.CreateRoleAsync(dto, _admin);
+        var result = await _service.CreateRoleAsync(dto, _admin, CancellationToken.None);
 
         result.ShouldBeSuccess();
     }

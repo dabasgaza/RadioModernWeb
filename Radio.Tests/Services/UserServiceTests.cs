@@ -6,6 +6,7 @@ using Radio.Tests.Helpers;
 using Radio.Tests.TestData.Builders;
 using Radio.Tests.TestData.Fixtures;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace Radio.Tests.Services;
 
@@ -26,7 +27,7 @@ public class UserServiceTests : IClassFixture<DatabaseFixture>
     [Fact]
     public async Task GetAllUsersAsync_ReturnsUsers()
     {
-        var result = await _service.GetAllUsersAsync();
+        var result = await _service.GetAllUsersAsync(CancellationToken.None);
         result.Should().Contain(u => u.Username == "admin");
     }
 
@@ -39,7 +40,7 @@ public class UserServiceTests : IClassFixture<DatabaseFixture>
             FullName = "New User",
             RoleName = "Operator"
         };
-        var result = await _service.CreateUserAsync(dto, "Password123!", _admin);
+        var result = await _service.CreateUserAsync(dto, "Password123!", _admin, CancellationToken.None);
         result.ShouldBeSuccess();
     }
 
@@ -52,7 +53,7 @@ public class UserServiceTests : IClassFixture<DatabaseFixture>
             FullName = "Admin Copy",
             RoleName = "Operator"
         };
-        var result = await _service.CreateUserAsync(dto, "Password123!", _admin);
+        var result = await _service.CreateUserAsync(dto, "Password123!", _admin, CancellationToken.None);
         result.ShouldBeFailure("موجود");
     }
 
@@ -68,14 +69,14 @@ public class UserServiceTests : IClassFixture<DatabaseFixture>
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.ToggleUserStatusAsync(100, false, _admin);
+        var result = await _service.ToggleUserStatusAsync(100, false, _admin, CancellationToken.None);
         result.ShouldBeSuccess();
     }
 
     [Fact]
     public async Task GetRolesAsync_ReturnsRoles()
     {
-        var result = await _service.GetRolesAsync();
+        var result = await _service.GetRolesAsync(CancellationToken.None);
         result.Should().NotBeEmpty();
     }
 
@@ -83,7 +84,7 @@ public class UserServiceTests : IClassFixture<DatabaseFixture>
     public async Task CreateRoleAsync_Valid_ReturnsSuccess()
     {
         var dto = new RoleDto { RoleName = "Editor", RoleDescription = "تحرير المحتوى" };
-        var result = await _service.CreateRoleAsync(dto, _admin);
+        var result = await _service.CreateRoleAsync(dto, _admin, CancellationToken.None);
         result.ShouldBeSuccess();
     }
 
@@ -91,21 +92,21 @@ public class UserServiceTests : IClassFixture<DatabaseFixture>
     public async Task UpdateRoleAsync_Valid_ReturnsSuccess()
     {
         var dto = new RoleDto { RoleId = 1, RoleName = "SuperAdmin", RoleDescription = "مسؤول كامل الصلاحيات" };
-        var result = await _service.UpdateRoleAsync(dto, _admin);
+        var result = await _service.UpdateRoleAsync(dto, _admin, CancellationToken.None);
         result.ShouldBeSuccess();
     }
 
     [Fact]
     public async Task GetPermissionsMatrixAsync_ReturnsPermissions()
     {
-        var result = await _service.GetPermissionsMatrixAsync(1);
+        var result = await _service.GetPermissionsMatrixAsync(1, CancellationToken.None);
         result.Should().NotBeNull();
     }
 
     [Fact]
     public async Task UpdateRolePermissionsAsync_Valid_ReturnsSuccess()
     {
-        var result = await _service.UpdateRolePermissionsAsync(1, [], _admin);
+        var result = await _service.UpdateRolePermissionsAsync(1, [], _admin, CancellationToken.None);
         result.ShouldBeSuccess();
     }
 }

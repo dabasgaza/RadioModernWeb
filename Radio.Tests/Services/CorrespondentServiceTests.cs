@@ -6,6 +6,7 @@ using Radio.Tests.Helpers;
 using Radio.Tests.TestData.Builders;
 using Radio.Tests.TestData.Fixtures;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace Radio.Tests.Services;
 
@@ -30,7 +31,7 @@ public class CorrespondentServiceTests : IClassFixture<DatabaseFixture>
         ctx.Correspondents.Add(new Correspondent { FullName = "Inactive Corr", IsActive = false, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.GetAllActiveAsync();
+        var result = await _service.GetAllActiveAsync(CancellationToken.None);
 
         result.Should().Contain(e => e.FullName == "Active Corr");
     }
@@ -39,7 +40,7 @@ public class CorrespondentServiceTests : IClassFixture<DatabaseFixture>
     public async Task CreateAsync_Valid_ReturnsSuccess()
     {
         var dto = new CorrespondentDto(0, "New Corr", "123456789", null);
-        var result = await _service.CreateAsync(dto, _admin);
+        var result = await _service.CreateAsync(dto, _admin, CancellationToken.None);
         result.ShouldBeSuccess();
     }
 
@@ -51,7 +52,7 @@ public class CorrespondentServiceTests : IClassFixture<DatabaseFixture>
         await ctx.SaveChangesAsync();
 
         var dto = new CorrespondentDto(10, "Updated", "987654321", null);
-        var result = await _service.UpdateAsync(dto, _admin);
+        var result = await _service.UpdateAsync(dto, _admin, CancellationToken.None);
         result.ShouldBeSuccess();
     }
 }

@@ -3,21 +3,22 @@ using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading;
 
 namespace DataAccess.Services;
 
 public interface ICachedLookupService
 {
-    Task<List<StaffRoleDto>> GetStaffRolesAsync();
-    Task<List<ProgramDto>> GetProgramsAsync();
-    Task<List<GuestDto>> GetGuestsAsync();
-    Task<List<CorrespondentDto>> GetCorrespondentsAsync();
-    Task<List<EmployeeDto>> GetEmployeesAsync();
-    Task<List<SocialMediaPlatformDto>> GetSocialPlatformsAsync();
-    Task<Dictionary<byte, string>> GetEpisodeStatusesAsync();
-    Task Invalidate(string key);
-    Task InvalidateAll();
-    Task InvalidateByEntity(string entityName);
+    Task<List<StaffRoleDto>> GetStaffRolesAsync(CancellationToken cancellationToken = default);
+    Task<List<ProgramDto>> GetProgramsAsync(CancellationToken cancellationToken = default);
+    Task<List<GuestDto>> GetGuestsAsync(CancellationToken cancellationToken = default);
+    Task<List<CorrespondentDto>> GetCorrespondentsAsync(CancellationToken cancellationToken = default);
+    Task<List<EmployeeDto>> GetEmployeesAsync(CancellationToken cancellationToken = default);
+    Task<List<SocialMediaPlatformDto>> GetSocialPlatformsAsync(CancellationToken cancellationToken = default);
+    Task<Dictionary<byte, string>> GetEpisodeStatusesAsync(CancellationToken cancellationToken = default);
+    Task Invalidate(string key, CancellationToken cancellationToken = default);
+    Task InvalidateAll(CancellationToken cancellationToken = default);
+    Task InvalidateByEntity(string entityName, CancellationToken cancellationToken = default);
 }
 
 public class CachedLookupService : ICachedLookupService
@@ -33,7 +34,7 @@ public class CachedLookupService : ICachedLookupService
         _scopeFactory = scopeFactory;
     }
 
-    public async Task<List<StaffRoleDto>> GetStaffRolesAsync()
+    public async Task<List<StaffRoleDto>> GetStaffRolesAsync(CancellationToken cancellationToken = default)
     {
         return await _cache.GetOrCreateAsync("lookup:staffroles", async _ =>
         {
@@ -43,11 +44,11 @@ public class CachedLookupService : ICachedLookupService
             return await context.StaffRoles
                 .AsNoTracking()
                 .Select(r => new StaffRoleDto(r.StaffRoleId, r.RoleName))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }, new HybridCacheEntryOptions { Expiration = CacheDuration }) ?? [];
     }
 
-    public async Task<List<ProgramDto>> GetProgramsAsync()
+    public async Task<List<ProgramDto>> GetProgramsAsync(CancellationToken cancellationToken = default)
     {
         return await _cache.GetOrCreateAsync("lookup:programs", async _ =>
         {
@@ -57,11 +58,11 @@ public class CachedLookupService : ICachedLookupService
             return await context.Programs
                 .AsNoTracking()
                 .Select(p => new ProgramDto(p.ProgramId, p.ProgramName, p.Category, p.ProgramDescription))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }, new HybridCacheEntryOptions { Expiration = CacheDuration }) ?? [];
     }
 
-    public async Task<List<GuestDto>> GetGuestsAsync()
+    public async Task<List<GuestDto>> GetGuestsAsync(CancellationToken cancellationToken = default)
     {
         return await _cache.GetOrCreateAsync("lookup:guests", async _ =>
         {
@@ -71,11 +72,11 @@ public class CachedLookupService : ICachedLookupService
             return await context.Guests
                 .AsNoTracking()
                 .Select(g => new GuestDto(g.GuestId, g.FullName, g.Organization, g.PhoneNumber, g.EmailAddress, string.Empty, string.Empty))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }, new HybridCacheEntryOptions { Expiration = CacheDuration }) ?? [];
     }
 
-    public async Task<List<CorrespondentDto>> GetCorrespondentsAsync()
+    public async Task<List<CorrespondentDto>> GetCorrespondentsAsync(CancellationToken cancellationToken = default)
     {
         return await _cache.GetOrCreateAsync("lookup:correspondents", async _ =>
         {
@@ -85,11 +86,11 @@ public class CachedLookupService : ICachedLookupService
             return await context.Correspondents
                 .AsNoTracking()
                 .Select(c => new CorrespondentDto(c.CorrespondentId, c.FullName, c.PhoneNumber, c.AssignedLocations))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }, new HybridCacheEntryOptions { Expiration = CacheDuration }) ?? [];
     }
 
-    public async Task<List<EmployeeDto>> GetEmployeesAsync()
+    public async Task<List<EmployeeDto>> GetEmployeesAsync(CancellationToken cancellationToken = default)
     {
         return await _cache.GetOrCreateAsync("lookup:employees", async _ =>
         {
@@ -100,11 +101,11 @@ public class CachedLookupService : ICachedLookupService
                 .AsNoTracking()
                 .Where(e => e.IsActive)
                 .Select(e => new EmployeeDto(e.EmployeeId, e.FullName, e.StaffRoleId, e.StaffRole!.RoleName, e.Notes))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }, new HybridCacheEntryOptions { Expiration = CacheDuration }) ?? [];
     }
 
-    public async Task<List<SocialMediaPlatformDto>> GetSocialPlatformsAsync()
+    public async Task<List<SocialMediaPlatformDto>> GetSocialPlatformsAsync(CancellationToken cancellationToken = default)
     {
         return await _cache.GetOrCreateAsync("platforms", async _ =>
         {
@@ -114,11 +115,11 @@ public class CachedLookupService : ICachedLookupService
             return await context.SocialMediaPlatforms
                 .AsNoTracking()
                 .Select(p => new SocialMediaPlatformDto(p.SocialMediaPlatformId, p.Name, p.Icon, p.BaseUrl ?? string.Empty))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }, new HybridCacheEntryOptions { Expiration = CacheDuration }) ?? [];
     }
 
-    public async Task<Dictionary<byte, string>> GetEpisodeStatusesAsync()
+    public async Task<Dictionary<byte, string>> GetEpisodeStatusesAsync(CancellationToken cancellationToken = default)
     {
         return await _cache.GetOrCreateAsync("lookup:episodestatuses", async _ =>
         {
@@ -127,16 +128,16 @@ public class CachedLookupService : ICachedLookupService
             await using var context = await ctx.CreateDbContextAsync();
             return await context.EpisodeStatuses
                 .AsNoTracking()
-                .ToDictionaryAsync(s => s.StatusId, s => s.DisplayName);
+                .ToDictionaryAsync(s => s.StatusId, s => s.DisplayName, cancellationToken);
         }, new HybridCacheEntryOptions { Expiration = CacheDuration }) ?? [];
     }
 
-    public async Task Invalidate(string key)
+    public async Task Invalidate(string key, CancellationToken cancellationToken = default)
     {
         await _cache.RemoveAsync(key);
     }
 
-    public async Task InvalidateAll()
+    public async Task InvalidateAll(CancellationToken cancellationToken = default)
     {
         foreach (var key in s_allKeys)
             await _cache.RemoveAsync(key);
@@ -159,7 +160,7 @@ public class CachedLookupService : ICachedLookupService
         ["Episode"] = new[] { "lookup:episodestatuses" },
     };
 
-    public async Task InvalidateByEntity(string entityName)
+    public async Task InvalidateByEntity(string entityName, CancellationToken cancellationToken = default)
     {
         if (EntityCacheMap.TryGetValue(entityName, out var keys))
         {

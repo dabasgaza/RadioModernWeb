@@ -2,38 +2,50 @@
     ViewData["Title"] = "الملف الشخصي";
 }
 
-<div class="mb-6">
-    <h1 class="text-2xl font-bold text-ink mb-1 flex items-center gap-2">
-        <span class="material-symbols-rounded text-primary">person</span>
-        الملف الشخصي
-    </h1>
-    <p class="text-ink-muted text-sm">إدارة بياناتك الشخصية</p>
-</div>
-
-<div class="bg-surface rounded-xl border border-border p-6 max-w-2xl">
-    <div class="flex items-center gap-4 mb-6">
-        <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center text-3xl font-bold">
-            @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
-        </div>
+<div class="page-header">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
         <div>
-            <h2 class="text-xl font-bold text-ink">@User.FindFirst("FullName")?.Value</h2>
-            <p class="text-ink-muted text-sm">@User.Identity?.Name</p>
-            <span class="badge badge-info mt-1">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
+            <nav class="breadcrumb">
+                <span class="material-symbols-rounded">home</span>
+                <a href="/">الرئيسية</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <span>الملف الشخصي</span>
+            </nav>
+            <h1>
+                <span class="material-symbols-rounded text-primary">person</span>
+                الملف الشخصي
+            </h1>
+            <p>إدارة بيانات حسابك الشخصي ومعلومات الاتصال</p>
         </div>
     </div>
+</div>
 
-    <div class="space-y-3 border-t border-border pt-4">
-        <div class="flex items-center justify-between py-2">
-            <span class="text-ink-muted">البريد الإلكتروني</span>
-            <span class="font-semibold text-ink">@User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value</span>
+<div class="card-premium max-w-2xl">
+    <div class="card-body">
+        <div class="flex items-center gap-4 mb-6">
+            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center text-3xl font-bold shrink-0">
+                @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
+            </div>
+            <div>
+                <h2 class="text-xl font-bold text-ink">@User.FindFirst("FullName")?.Value</h2>
+                <p class="text-ink-muted text-sm">@User.Identity?.Name</p>
+                <span class="badge badge-info mt-1">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
+            </div>
         </div>
-        <div class="flex items-center justify-between py-2 border-t border-border">
-            <span class="text-ink-muted">رقم الهاتف</span>
-            <span class="font-semibold text-ink">@User.FindFirst("Phone")?.Value</span>
-        </div>
-        <div class="flex items-center justify-between py-2 border-t border-border">
-            <span class="text-ink-muted">معرّف المستخدم</span>
-            <span class="font-semibold text-ink">@User.FindFirst("DomainUserId")?.Value</span>
+
+        <div class="space-y-3 border-t border-border pt-4">
+            <div class="flex items-center justify-between py-2">
+                <span class="text-ink-muted">البريد الإلكتروني</span>
+                <span class="font-semibold text-ink">@User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value</span>
+            </div>
+            <div class="flex items-center justify-between py-2 border-t border-border">
+                <span class="text-ink-muted">رقم الهاتف</span>
+                <span class="font-semibold text-ink">@User.FindFirst("Phone")?.Value</span>
+            </div>
+            <div class="flex items-center justify-between py-2 border-t border-border">
+                <span class="text-ink-muted">معرّف المستخدم</span>
+                <span class="font-semibold text-ink">@User.FindFirst("DomainUserId")?.Value</span>
+            </div>
         </div>
     </div>
 </div>

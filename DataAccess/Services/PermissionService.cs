@@ -2,6 +2,7 @@ using DataAccess.Common;
 using DataAccess.DTOs;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 namespace DataAccess.Services;
 
@@ -11,13 +12,13 @@ namespace DataAccess.Services;
 /// </summary>
 public interface IPermissionService
 {
-    Task<Result<List<PermissionDto>>> GetAllPermissionsAsync();
-    Task<Result<PermissionDto>> GetPermissionByIdAsync(int id);
+    Task<Result<List<PermissionDto>>> GetAllPermissionsAsync(CancellationToken cancellationToken = default);
+    Task<Result<PermissionDto>> GetPermissionByIdAsync(int id, CancellationToken cancellationToken = default);
 }
 
 public class PermissionService(IDbContextFactory<BroadcastWorkflowDBContext> contextFactory) : IPermissionService
 {
-    public async Task<Result<List<PermissionDto>>> GetAllPermissionsAsync()
+    public async Task<Result<List<PermissionDto>>> GetAllPermissionsAsync(CancellationToken cancellationToken = default)
     {
         await using var context = await contextFactory.CreateDbContextAsync();
 
@@ -26,12 +27,12 @@ public class PermissionService(IDbContextFactory<BroadcastWorkflowDBContext> con
             .OrderBy(p => p.Module)
             .ThenBy(p => p.DisplayName)
             .Select(p => new PermissionDto(p.PermissionId, p.SystemName, p.DisplayName, p.Module))
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         return Result<List<PermissionDto>>.Success(permissions);
     }
 
-    public async Task<Result<PermissionDto>> GetPermissionByIdAsync(int id)
+    public async Task<Result<PermissionDto>> GetPermissionByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         await using var context = await contextFactory.CreateDbContextAsync();
 
@@ -39,7 +40,7 @@ public class PermissionService(IDbContextFactory<BroadcastWorkflowDBContext> con
             .AsNoTracking()
             .Where(x => x.PermissionId == id)
             .Select(x => new PermissionDto(x.PermissionId, x.SystemName, x.DisplayName, x.Module))
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (p is null)
             return Result<PermissionDto>.Fail("الصلاحية غير موجودة.");

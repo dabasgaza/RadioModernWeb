@@ -12,6 +12,7 @@ using Radio.Web.Controllers;
 using Radio.Web.Services;
 using Radio.Web.ViewModels;
 using Moq;
+using System.Threading;
 
 namespace Radio.Tests.Controllers;
 
@@ -48,7 +49,7 @@ public class PublishingControllerTests
     [Fact]
     public async Task Index_ReturnsViewWithRecords()
     {
-        _query.Setup(q => q.GetAllPublishingRecordsAsync())
+        _query.Setup(q => q.GetAllPublishingRecordsAsync(null, CancellationToken.None))
             .ReturnsAsync([
                 Record(1, "SocialMedia", 1, "Ep1", "P1", "summary", DateTime.UtcNow, "Admin"),
                 Record(2, "Website", 2, "Ep2", "P1", "summary2", DateTime.UtcNow, "Admin")
@@ -63,7 +64,7 @@ public class PublishingControllerTests
     [Fact]
     public async Task Index_SearchFilter_ReturnsFiltered()
     {
-        _query.Setup(q => q.GetAllPublishingRecordsAsync())
+        _query.Setup(q => q.GetAllPublishingRecordsAsync(null, CancellationToken.None))
             .ReturnsAsync([
                 Record(1, "SocialMedia", 1, "Special Ep", "P1", "summary", DateTime.UtcNow, "Admin"),
                 Record(2, "Website", 2, "Other Ep", "P1", "summary2", DateTime.UtcNow, "Admin")
@@ -80,11 +81,11 @@ public class PublishingControllerTests
     [Fact]
     public async Task LogSocial_Get_ExistingEpisode_ReturnsView()
     {
-        _episodes.Setup(e => e.GetActiveEpisodeByIdAsync(1))
+        _episodes.Setup(e => e.GetActiveEpisodeByIdAsync(1, CancellationToken.None))
             .ReturnsAsync(new ActiveEpisodeDto { EpisodeId = 1, EpisodeName = "Ep1" });
-        _episodes.Setup(e => e.GetEpisodeGuestsAsync(1))
+        _episodes.Setup(e => e.GetEpisodeGuestsAsync(1, CancellationToken.None))
             .ReturnsAsync([]);
-        _query.Setup(q => q.GetAllPlatformsAsync())
+        _query.Setup(q => q.GetAllPlatformsAsync(CancellationToken.None))
             .ReturnsAsync([]);
 
         var result = await _controller.LogSocial(1);
@@ -96,7 +97,7 @@ public class PublishingControllerTests
     [Fact]
     public async Task LogSocial_Get_NonexistentEpisode_ReturnsViewWithNull()
     {
-        _episodes.Setup(e => e.GetActiveEpisodeByIdAsync(999))
+        _episodes.Setup(e => e.GetActiveEpisodeByIdAsync(999, CancellationToken.None))
             .ReturnsAsync((ActiveEpisodeDto?)null);
 
         var result = await _controller.LogSocial(999);
@@ -110,7 +111,7 @@ public class PublishingControllerTests
     public async Task LogSocial_Post_Valid_RedirectsToIndex()
     {
         _command.Setup(c => c.LogSocialPublishingAsync(It.IsAny<int>(),
-                It.IsAny<List<SocialMediaPublishingLogDto>>(), _admin))
+                It.IsAny<List<SocialMediaPublishingLogDto>>(), _admin, CancellationToken.None))
             .ReturnsAsync(Result.Success());
 
         var form = TestDataFactory.CreateSocialForm(
@@ -126,7 +127,7 @@ public class PublishingControllerTests
     public async Task LogSocial_Post_Failure_RedirectsBack()
     {
         _command.Setup(c => c.LogSocialPublishingAsync(It.IsAny<int>(),
-                It.IsAny<List<SocialMediaPublishingLogDto>>(), _admin))
+                It.IsAny<List<SocialMediaPublishingLogDto>>(), _admin, CancellationToken.None))
             .ReturnsAsync(Result.Fail("خطأ في النشر"));
 
         var form = TestDataFactory.CreateSocialForm(
@@ -142,17 +143,17 @@ public class PublishingControllerTests
     public async Task Edit_Get_ExistingLog_ReturnsView()
     {
         var dto = TestDataFactory.CreateSocialLog(episodeGuestId: 1, episodeId: 1, title: "Existing");
-        _query.Setup(q => q.GetSocialPublishingLogByIdAsync(1))
+        _query.Setup(q => q.GetSocialPublishingLogByIdAsync(1, CancellationToken.None))
             .ReturnsAsync(dto);
-        _query.Setup(q => q.GetAllPlatformsAsync())
+        _query.Setup(q => q.GetAllPlatformsAsync(CancellationToken.None))
             .ReturnsAsync([]);
-        _query.Setup(q => q.GetEpisodeSocialLogsAsync(1))
+        _query.Setup(q => q.GetEpisodeSocialLogsAsync(1, CancellationToken.None))
             .ReturnsAsync([]);
-        _query.Setup(q => q.GetAllPublishingRecordsAsync(1))
+        _query.Setup(q => q.GetAllPublishingRecordsAsync(1, CancellationToken.None))
             .ReturnsAsync([]);
-        _episodes.Setup(e => e.GetActiveEpisodeByIdAsync(1))
+        _episodes.Setup(e => e.GetActiveEpisodeByIdAsync(1, CancellationToken.None))
             .ReturnsAsync(new ActiveEpisodeDto { EpisodeId = 1 });
-        _episodes.Setup(e => e.GetEpisodeGuestsAsync(1))
+        _episodes.Setup(e => e.GetEpisodeGuestsAsync(1, CancellationToken.None))
             .ReturnsAsync([]);
 
         var result = await _controller.Edit(1);
@@ -164,7 +165,7 @@ public class PublishingControllerTests
     [Fact]
     public async Task Edit_Get_NonexistentLog_ReturnsNotFound()
     {
-        _query.Setup(q => q.GetSocialPublishingLogByIdAsync(999))
+        _query.Setup(q => q.GetSocialPublishingLogByIdAsync(999, CancellationToken.None))
             .ReturnsAsync((SocialMediaPublishingLogDto?)null);
 
         var result = await _controller.Edit(999);
@@ -175,7 +176,7 @@ public class PublishingControllerTests
     [Fact]
     public async Task Edit_Post_Valid_Redirects()
     {
-        _command.Setup(c => c.UpdateSocialPublishingLogAsync(It.IsAny<SocialMediaPublishingLogDto>(), _admin))
+        _command.Setup(c => c.UpdateSocialPublishingLogAsync(It.IsAny<SocialMediaPublishingLogDto>(), _admin, CancellationToken.None))
             .ReturnsAsync(Result.Success());
 
         var form = TestDataFactory.CreateSocialForm(
@@ -200,7 +201,7 @@ public class PublishingControllerTests
     [Fact]
     public async Task Delete_Valid_Redirects()
     {
-        _command.Setup(c => c.DeleteSocialPublishingLogAsync(1, _admin))
+        _command.Setup(c => c.DeleteSocialPublishingLogAsync(1, _admin, CancellationToken.None))
             .ReturnsAsync(Result.Success());
 
         var result = await _controller.Delete(1);
@@ -212,7 +213,7 @@ public class PublishingControllerTests
     [Fact]
     public async Task Delete_Failure_RedirectsWithError()
     {
-        _command.Setup(c => c.DeleteSocialPublishingLogAsync(1, _admin))
+        _command.Setup(c => c.DeleteSocialPublishingLogAsync(1, _admin, CancellationToken.None))
             .ReturnsAsync(Result.Fail("لا يمكن الحذف"));
 
         var result = await _controller.Delete(1);

@@ -40,6 +40,9 @@ namespace Domain.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsSuperAdmin")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -424,7 +427,9 @@ namespace Domain.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
@@ -450,20 +455,26 @@ namespace Domain.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeId"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -475,7 +486,9 @@ namespace Domain.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
@@ -622,7 +635,9 @@ namespace Domain.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
@@ -676,7 +691,9 @@ namespace Domain.Migrations
                         .HasColumnType("rowversion");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
@@ -743,7 +760,9 @@ namespace Domain.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
@@ -869,7 +888,9 @@ namespace Domain.Migrations
                         .HasColumnType("rowversion");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
@@ -1231,10 +1252,11 @@ namespace Domain.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<string>("RoleDescription")
                         .HasMaxLength(500)
@@ -1247,6 +1269,7 @@ namespace Domain.Migrations
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
+                        .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
@@ -1255,11 +1278,18 @@ namespace Domain.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
+
                     b.HasKey("RoleId");
+
+                    b.HasIndex("CreatedByUserId");
 
                     b.HasIndex("RoleName")
                         .IsUnique()
                         .HasDatabaseName("UQ_Roles_RoleName");
+
+                    b.HasIndex("UpdatedByUserId");
 
                     b.ToTable("Roles");
 
@@ -1442,21 +1472,31 @@ namespace Domain.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SocialMediaPlatformId"));
 
+                    b.Property<string>("BaseUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<string>("Icon")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -1465,7 +1505,9 @@ namespace Domain.Migrations
                         .HasColumnType("rowversion");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
@@ -1491,10 +1533,13 @@ namespace Domain.Migrations
                         .HasColumnType("time");
 
                     b.Property<string>("ClipTitle")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
@@ -1503,16 +1548,21 @@ namespace Domain.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<byte>("MediaType")
                         .HasColumnType("tinyint");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<DateTime>("PublishedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int>("PublishedByUserId")
                         .HasColumnType("int");
@@ -1524,7 +1574,9 @@ namespace Domain.Migrations
                         .HasColumnType("rowversion");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
@@ -1533,11 +1585,14 @@ namespace Domain.Migrations
 
                     b.HasIndex("CreatedByUserId");
 
-                    b.HasIndex("EpisodeGuestId");
+                    b.HasIndex("EpisodeGuestId")
+                        .HasDatabaseName("IX_SocialMediaPublishingLog_EpisodeGuestId");
 
-                    b.HasIndex("PublishedAt");
+                    b.HasIndex("PublishedAt")
+                        .HasDatabaseName("IX_SocialMediaPublishingLog_PublishedAt");
 
-                    b.HasIndex("PublishedByUserId");
+                    b.HasIndex("PublishedByUserId")
+                        .HasDatabaseName("IX_SocialMediaPublishingLog_PublishedByUserId");
 
                     b.HasIndex("UpdatedByUserId");
 
@@ -1553,13 +1608,17 @@ namespace Domain.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SocialMediaPublishingLogPlatformId"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -1574,21 +1633,26 @@ namespace Domain.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<string>("Url")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.HasKey("SocialMediaPublishingLogPlatformId");
 
                     b.HasIndex("CreatedByUserId");
 
-                    b.HasIndex("SocialMediaPlatformId");
+                    b.HasIndex("SocialMediaPlatformId")
+                        .HasDatabaseName("IX_LogPlatform_PlatformId");
 
-                    b.HasIndex("SocialMediaPublishingLogId");
+                    b.HasIndex("SocialMediaPublishingLogId")
+                        .HasDatabaseName("IX_LogPlatform_LogId");
 
                     b.HasIndex("UpdatedByUserId");
 
@@ -1604,17 +1668,22 @@ namespace Domain.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StaffRoleId"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("RoleName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -1623,7 +1692,9 @@ namespace Domain.Migrations
                         .HasColumnType("rowversion");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
@@ -1721,6 +1792,7 @@ namespace Domain.Migrations
                         {
                             UserId = 1,
                             CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc),
+                            EmailAddress = "admin@broadcast.pro",
                             FullName = "مدير النظام",
                             IsActive = true,
                             PasswordHash = "$2a$11$24Mf/Vktd2tHGnC3f/iyTOmKMaQtcy4T0qOT07h22jC0Teor66hZa",
@@ -1739,7 +1811,9 @@ namespace Domain.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WebsitePublishingLogId"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
@@ -1748,16 +1822,21 @@ namespace Domain.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<byte>("MediaType")
                         .HasColumnType("tinyint");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<DateTime>("PublishedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int>("PublishedByUserId")
                         .HasColumnType("int");
@@ -1769,10 +1848,13 @@ namespace Domain.Migrations
                         .HasColumnType("rowversion");
 
                     b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
@@ -1781,11 +1863,14 @@ namespace Domain.Migrations
 
                     b.HasIndex("CreatedByUserId");
 
-                    b.HasIndex("EpisodeId");
+                    b.HasIndex("EpisodeId")
+                        .HasDatabaseName("IX_WebsitePublishingLog_EpisodeId");
 
-                    b.HasIndex("PublishedAt");
+                    b.HasIndex("PublishedAt")
+                        .HasDatabaseName("IX_WebsitePublishingLog_PublishedAt");
 
-                    b.HasIndex("PublishedByUserId");
+                    b.HasIndex("PublishedByUserId")
+                        .HasDatabaseName("IX_WebsitePublishingLog_PublishedByUserId");
 
                     b.HasIndex("UpdatedByUserId");
 
@@ -1966,7 +2051,8 @@ namespace Domain.Migrations
 
                     b.HasOne("Domain.Models.StaffRole", "StaffRole")
                         .WithMany("Employees")
-                        .HasForeignKey("StaffRoleId");
+                        .HasForeignKey("StaffRoleId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Models.User", "UpdatedByUser")
                         .WithMany()
@@ -2171,6 +2257,23 @@ namespace Domain.Migrations
                     b.Navigation("UpdatedByUser");
                 });
 
+            modelBuilder.Entity("Domain.Models.Role", b =>
+                {
+                    b.HasOne("Domain.Models.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Domain.Models.User", "UpdatedByUser")
+                        .WithMany()
+                        .HasForeignKey("UpdatedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("UpdatedByUser");
+                });
+
             modelBuilder.Entity("Domain.Models.RolePermission", b =>
                 {
                     b.HasOne("Domain.Models.Permission", "Permission")
@@ -2223,7 +2326,7 @@ namespace Domain.Migrations
                     b.HasOne("Domain.Models.User", "PublishedByUser")
                         .WithMany("SocialMediaPublishingLogs")
                         .HasForeignKey("PublishedByUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Domain.Models.User", "UpdatedByUser")
@@ -2325,13 +2428,13 @@ namespace Domain.Migrations
                     b.HasOne("Domain.Models.Episode", "Episode")
                         .WithMany("WebsitePublishingLogs")
                         .HasForeignKey("EpisodeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Domain.Models.User", "PublishedByUser")
                         .WithMany("WebsitePublishingLogs")
                         .HasForeignKey("PublishedByUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Domain.Models.User", "UpdatedByUser")

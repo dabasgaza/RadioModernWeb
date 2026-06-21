@@ -6,6 +6,7 @@ using Radio.Tests.Helpers;
 using Radio.Tests.TestData.Builders;
 using Radio.Tests.TestData.Fixtures;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace Radio.Tests.Services;
 
@@ -38,7 +39,7 @@ public class ProgramServiceTests : IClassFixture<DatabaseFixture>
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.GetAllActiveAsync();
+        var result = await _service.GetAllActiveAsync(CancellationToken.None);
 
         result.Should().Contain(e => e.ProgramName == "Active Program");
     }
@@ -48,7 +49,7 @@ public class ProgramServiceTests : IClassFixture<DatabaseFixture>
     {
         var dto = new ProgramDto(0, "New Program", null, null);
 
-        var result = await _service.CreateProgramAsync(dto, _admin);
+        var result = await _service.CreateProgramAsync(dto, _admin, CancellationToken.None);
 
         result.ShouldBeSuccess();
     }
@@ -59,7 +60,7 @@ public class ProgramServiceTests : IClassFixture<DatabaseFixture>
         var user = UserSessionBuilder.CreateLimited();
         var dto = new ProgramDto(0, "New Program", null, null);
 
-        var result = await _service.CreateProgramAsync(dto, user);
+        var result = await _service.CreateProgramAsync(dto, user, CancellationToken.None);
 
         result.ShouldBeFailure("صلاحية");
     }
@@ -76,7 +77,7 @@ public class ProgramServiceTests : IClassFixture<DatabaseFixture>
         await ctx.SaveChangesAsync();
 
         var result = await _service.UpdateProgramAsync(
-            new ProgramDto(10, "Updated", null, null), _admin);
+            new ProgramDto(10, "Updated", null, null), _admin, CancellationToken.None);
 
         result.ShouldBeSuccess();
     }
@@ -85,7 +86,7 @@ public class ProgramServiceTests : IClassFixture<DatabaseFixture>
     public async Task UpdateProgramAsync_NotFound_ReturnsFail()
     {
         var result = await _service.UpdateProgramAsync(
-            new ProgramDto(9999, "Ghost", null, null), _admin);
+            new ProgramDto(9999, "Ghost", null, null), _admin, CancellationToken.None);
         result.ShouldBeFailure("غير موجود");
     }
 
@@ -100,7 +101,7 @@ public class ProgramServiceTests : IClassFixture<DatabaseFixture>
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.SoftDeleteAsync(20, _admin);
+        var result = await _service.SoftDeleteAsync(20, _admin, CancellationToken.None);
 
         result.ShouldBeSuccess();
     }

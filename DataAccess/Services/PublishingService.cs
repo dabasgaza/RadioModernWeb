@@ -5,30 +5,31 @@ using Microsoft.ApplicationInsights;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace DataAccess.Services;
 
 public interface IPublishingQueryService
 {
-    Task<List<SocialMediaPlatformDto>> GetAllPlatformsAsync();
-    Task<SocialMediaPublishingLogDto?> GetSocialPublishingLogAsync(int episodeGuestId);
-    Task<SocialMediaPublishingLogDto?> GetSocialPublishingLogByIdAsync(int logId);
-    Task<List<SocialMediaPublishingLogDto>> GetEpisodeSocialLogsAsync(int episodeId);
-    Task<WebsitePublishingLogDto?> GetWebsitePublishingLogAsync(int episodeId);
-    Task<WebsitePublishingLogDto?> GetWebsitePublishingLogByIdAsync(int logId);
-    Task<List<PublishingRecordDto>> GetAllPublishingRecordsAsync(int? episodeId = null);
+    Task<List<SocialMediaPlatformDto>> GetAllPlatformsAsync(CancellationToken cancellationToken = default);
+    Task<SocialMediaPublishingLogDto?> GetSocialPublishingLogAsync(int episodeGuestId, CancellationToken cancellationToken = default);
+    Task<SocialMediaPublishingLogDto?> GetSocialPublishingLogByIdAsync(int logId, CancellationToken cancellationToken = default);
+    Task<List<SocialMediaPublishingLogDto>> GetEpisodeSocialLogsAsync(int episodeId, CancellationToken cancellationToken = default);
+    Task<WebsitePublishingLogDto?> GetWebsitePublishingLogAsync(int episodeId, CancellationToken cancellationToken = default);
+    Task<WebsitePublishingLogDto?> GetWebsitePublishingLogByIdAsync(int logId, CancellationToken cancellationToken = default);
+    Task<List<PublishingRecordDto>> GetAllPublishingRecordsAsync(int? episodeId = null, CancellationToken cancellationToken = default);
 }
 
 public interface IPublishingCommandService
 {
-    Task<Result> LogWebsitePublishingAsync(int episodeId, string title, MediaType mediaType, string notes, UserSession session);
-    Task<Result> LogSocialPublishingAsync(int episodeId, List<SocialMediaPublishingLogDto> guestLogs, UserSession session);
-    Task<Result<int>> SavePublishingLogAsync(SocialMediaPublishingLogDto dto, UserSession session);
-    Task<Result<int>> PublishToWebsiteAsync(WebsitePublishingLogDto dto, UserSession session);
-    Task<Result> UpdateSocialPublishingLogAsync(SocialMediaPublishingLogDto dto, UserSession session);
-    Task<Result> UpdateWebsitePublishingLogAsync(WebsitePublishingLogDto dto, UserSession session);
-    Task<Result> DeleteSocialPublishingLogAsync(int logId, UserSession session);
-    Task<Result> DeleteWebsitePublishingLogAsync(int logId, UserSession session);
+    Task<Result> LogWebsitePublishingAsync(int episodeId, string title, MediaType mediaType, string notes, UserSession session, CancellationToken cancellationToken = default);
+    Task<Result> LogSocialPublishingAsync(int episodeId, List<SocialMediaPublishingLogDto> guestLogs, UserSession session, CancellationToken cancellationToken = default);
+    Task<Result<int>> SavePublishingLogAsync(SocialMediaPublishingLogDto dto, UserSession session, CancellationToken cancellationToken = default);
+    Task<Result<int>> PublishToWebsiteAsync(WebsitePublishingLogDto dto, UserSession session, CancellationToken cancellationToken = default);
+    Task<Result> UpdateSocialPublishingLogAsync(SocialMediaPublishingLogDto dto, UserSession session, CancellationToken cancellationToken = default);
+    Task<Result> UpdateWebsitePublishingLogAsync(WebsitePublishingLogDto dto, UserSession session, CancellationToken cancellationToken = default);
+    Task<Result> DeleteSocialPublishingLogAsync(int logId, UserSession session, CancellationToken cancellationToken = default);
+    Task<Result> DeleteWebsitePublishingLogAsync(int logId, UserSession session, CancellationToken cancellationToken = default);
 }
 
 public interface IPublishingService : IPublishingQueryService, IPublishingCommandService { }
@@ -52,7 +53,7 @@ public class PublishingService : IPublishingService
         _telemetryClient = telemetryClient;
         _logger = logger;
     }
-    public async Task<Result> LogWebsitePublishingAsync(int episodeId, string title, MediaType mediaType, string notes, UserSession session)
+    public async Task<Result> LogWebsitePublishingAsync(int episodeId, string title, MediaType mediaType, string notes, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodePublish);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -62,40 +63,33 @@ public class PublishingService : IPublishingService
         if (!await context.EnsureDomainUserExistsAsync(session))
             return Result.Fail("المستخدم غير موجود في النظام. الرجاء تسجيل الخروج وإعادة تسجيل الدخول.");
 
-        try
+        var log = new WebsitePublishingLog
         {
-            var log = new WebsitePublishingLog
-            {
-                EpisodeId = episodeId,
-                PublishedByUserId = session.UserId,
-                Title = title,
-                MediaType = mediaType,
-                Notes = notes,
-                PublishedAt = DateTime.UtcNow
-            };
+            EpisodeId = episodeId,
+            PublishedByUserId = session.UserId,
+            Title = title,
+            MediaType = mediaType,
+            Notes = notes,
+            PublishedAt = DateTime.UtcNow
+        };
 
-            context.WebsitePublishingLogs.Add(log);
+        context.WebsitePublishingLogs.Add(log);
 
-            var episode = await context.Episodes.FindAsync(episodeId);
+        var episode = await context.Episodes.FindAsync(episodeId);
 
-            if (episode == null)
-                return Result.Fail("عذراً، لم يتم العثور على الحلقة المطلوبة.");
+        if (episode == null)
+            return Result.Fail("عذراً، لم يتم العثور على الحلقة المطلوبة.");
 
-            if (episode.StatusId is not EpisodeStatus.Executed and not EpisodeStatus.Published)
-                return Result.Fail("لا يمكن نشر حلقة لم يتم توثيق تنفيذها (الإنتاج) أولاً.");
+        if (episode.StatusId is not EpisodeStatusValues.Executed and not EpisodeStatusValues.Published)
+            return Result.Fail("لا يمكن نشر حلقة لم يتم توثيق تنفيذها (الإنتاج) أولاً.");
 
-            episode.StatusId = EpisodeStatus.WebsitePublished;
+        episode.StatusId = EpisodeStatusValues.WebsitePublished;
 
-            await context.SaveChangesAsync();
-            return Result.Success();
-        }
-        catch
-        {
-            throw;
-        }
+        await context.SaveChangesAsync(cancellationToken);
+        return Result.Success();
     }
 
-    public async Task<Result> LogSocialPublishingAsync(int episodeId, List<SocialMediaPublishingLogDto> guestLogs, UserSession session)
+    public async Task<Result> LogSocialPublishingAsync(int episodeId, List<SocialMediaPublishingLogDto> guestLogs, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodePublish);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -105,72 +99,65 @@ public class PublishingService : IPublishingService
         if (!await context.EnsureDomainUserExistsAsync(session))
             return Result.Fail("المستخدم غير موجود في النظام. الرجاء تسجيل الخروج وإعادة تسجيل الدخول.");
 
-        try
+        // 1. التحقق من وجود الحلقة
+        var episode = await context.Episodes.FindAsync(episodeId);
+        if (episode == null)
+            return Result.Fail("عذراً، لم يتم العثور على الحلقة المطلوبة.");
+
+        if (episode.StatusId is not EpisodeStatusValues.Executed and not EpisodeStatusValues.WebsitePublished)
+            return Result.Fail("لا يمكن نشر حلقة لم يتم توثيق تنفيذها (الإنتاج) أولاً.");
+
+        var now = DateTime.UtcNow;
+
+        // 2. الحصول على جميع كائنات ضيوف الحلقة المرتبطة بسجلات النشر دفعة واحدة لتفادي استعلام N+1
+        var guestIds = guestLogs.Select(g => g.EpisodeGuestId).ToList();
+        var episodeGuests = await context.EpisodeGuests
+            .Where(eg => guestIds.Contains(eg.EpisodeGuestId))
+            .ToListAsync(cancellationToken);
+
+        // 3. إنشاء سجلات النشر لكل ضيف وإضافة منصات النشر المرافقة
+        foreach (var g in guestLogs)
         {
-            // 1. التحقق من وجود الحلقة
-            var episode = await context.Episodes.FindAsync(episodeId);
-            if (episode == null)
-                return Result.Fail("عذراً، لم يتم العثور على الحلقة المطلوبة.");
-
-            if (episode.StatusId is not EpisodeStatus.Executed and not EpisodeStatus.WebsitePublished)
-                return Result.Fail("لا يمكن نشر حلقة لم يتم توثيق تنفيذها (الإنتاج) أولاً.");
-
-            var now = DateTime.UtcNow;
-
-            // 2. الحصول على جميع كائنات ضيوف الحلقة المرتبطة بسجلات النشر دفعة واحدة لتفادي استعلام N+1
-            var guestIds = guestLogs.Select(g => g.EpisodeGuestId).ToList();
-            var episodeGuests = await context.EpisodeGuests
-                .Where(eg => guestIds.Contains(eg.EpisodeGuestId))
-                .ToListAsync();
-
-            // 3. إنشاء سجلات النشر لكل ضيف وإضافة منصات النشر المرافقة
-            foreach (var g in guestLogs)
+            var log = new SocialMediaPublishingLog
             {
-                var log = new SocialMediaPublishingLog
-                {
-                    EpisodeGuestId = g.EpisodeGuestId,
-                    PublishedByUserId = session.UserId,
-                    MediaType = g.MediaType,
-                    ClipTitle = g.ClipTitle,
-                    ClipDuration = g.Duration,
-                    PublishedAt = now
-                };
+                EpisodeGuestId = g.EpisodeGuestId,
+                PublishedByUserId = session.UserId,
+                MediaType = g.MediaType,
+                ClipTitle = g.ClipTitle,
+                ClipDuration = g.Duration,
+                PublishedAt = now
+            };
 
-                foreach (var p in g.Platforms)
+            foreach (var p in g.Platforms)
+            {
+                log.Platforms.Add(new SocialMediaPublishingLogPlatform
                 {
-                    log.Platforms.Add(new SocialMediaPublishingLogPlatform
-                    {
-                        SocialMediaPlatformId = p.PlatformId,
-                        Url = p.Url
-                    });
-                }
-
-                context.SocialMediaPublishingLogs.Add(log);
-
-                // 4. تحديث ClipStatus للضيف من الذاكرة
-                var episodeGuest = episodeGuests.FirstOrDefault(eg => eg.EpisodeGuestId == g.EpisodeGuestId);
-                if (episodeGuest != null)
-                {
-                    episodeGuest.ClipStatus = GuestClipStatus.Published;
-                }
+                    SocialMediaPlatformId = p.PlatformId,
+                    Url = p.Url
+                });
             }
 
-            // 5. تحديث حالة الحلقة
-            episode.StatusId = EpisodeStatus.Published;
+            context.SocialMediaPublishingLogs.Add(log);
 
-            await context.SaveChangesAsync();
-            return Result.Success();
+            // 4. تحديث ClipStatus للضيف من الذاكرة
+            var episodeGuest = episodeGuests.FirstOrDefault(eg => eg.EpisodeGuestId == g.EpisodeGuestId);
+            if (episodeGuest != null)
+            {
+                episodeGuest.ClipStatus = GuestClipStatus.Published;
+            }
         }
-        catch
-        {
-            throw;
-        }
+
+        // 5. تحديث حالة الحلقة
+        episode.StatusId = EpisodeStatusValues.Published;
+
+        await context.SaveChangesAsync(cancellationToken);
+        return Result.Success();
     }
 
     /// <summary>
     /// الحصول على جميع منصات السوشيال ميديا المتاحة
     /// </summary>
-    public async Task<List<SocialMediaPlatformDto>> GetAllPlatformsAsync()
+    public async Task<List<SocialMediaPlatformDto>> GetAllPlatformsAsync(CancellationToken cancellationToken = default)
     {
         var operation = _telemetryClient.StartOperation<Microsoft.ApplicationInsights.DataContracts.RequestTelemetry>("GetAllPlatforms");
         try
@@ -182,7 +169,7 @@ public class PublishingService : IPublishingService
                     .AsNoTracking()
                     .Where(p => p.IsActive)
                     .Select(p => new SocialMediaPlatformDto(p.SocialMediaPlatformId, p.Name, p.Icon))
-                    .ToListAsync();
+                    .ToListAsync(cancellationToken);
             }, new HybridCacheEntryOptions { Expiration = TimeSpan.FromHours(1) }) ?? [];
             _telemetryClient.TrackMetric("PlatformsCount", result.Count);
             operation.Telemetry.Success = true;
@@ -204,7 +191,7 @@ public class PublishingService : IPublishingService
     /// <summary>
     /// حفظ سجل نشر اجتماعي لضيف مع المنصات والروابط
     /// </summary>
-    public async Task<Result<int>> SavePublishingLogAsync(SocialMediaPublishingLogDto dto, UserSession session)
+    public async Task<Result<int>> SavePublishingLogAsync(SocialMediaPublishingLogDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodePublish);
         if (!permCheck.IsSuccess) return Result<int>.Fail(permCheck.ErrorMessage!);
@@ -237,7 +224,7 @@ public class PublishingService : IPublishingService
             }
 
             context.SocialMediaPublishingLogs.Add(log);
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
             return Result<int>.Success(log.SocialMediaPublishingLogId);
         }
         catch (Exception ex)
@@ -250,7 +237,7 @@ public class PublishingService : IPublishingService
     /// <summary>
     /// نشر حلقة على الموقع الإلكتروني
     /// </summary>
-    public async Task<Result<int>> PublishToWebsiteAsync(WebsitePublishingLogDto dto, UserSession session)
+    public async Task<Result<int>> PublishToWebsiteAsync(WebsitePublishingLogDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodeWebPublish);
         if (!permCheck.IsSuccess) return Result<int>.Fail(permCheck.ErrorMessage!);
@@ -267,7 +254,7 @@ public class PublishingService : IPublishingService
             if (episode == null) return Result<int>.Fail("الحلقة غير موجودة");
 
             // التحقق من أن حالة الحلقة تسمح بنشر الموقع
-            if (episode.StatusId < EpisodeStatus.Executed)
+            if (episode.StatusId < EpisodeStatusValues.Executed)
                 return Result<int>.Fail("يجب تنفيذ الحلقة أولاً قبل نشرها على الموقع.");
 
             var log = new WebsitePublishingLog
@@ -286,9 +273,9 @@ public class PublishingService : IPublishingService
             context.WebsitePublishingLogs.Add(log);
 
             // تحديث حالة الحلقة إلى WebsitePublished
-            episode.StatusId = EpisodeStatus.WebsitePublished;
+            episode.StatusId = EpisodeStatusValues.WebsitePublished;
 
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
             return Result<int>.Success(log.WebsitePublishingLogId);
         }
         catch (Exception ex)
@@ -306,7 +293,7 @@ public class PublishingService : IPublishingService
     /// استرجاع سجل النشر الرقمي لضيف معيّن
     /// يُرجع null إذا لم يوجد سجل نشط لهذا الضيف
     /// </summary>
-    public async Task<SocialMediaPublishingLogDto?> GetSocialPublishingLogAsync(int episodeGuestId)
+    public async Task<SocialMediaPublishingLogDto?> GetSocialPublishingLogAsync(int episodeGuestId, CancellationToken cancellationToken = default)
     {
         using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -331,7 +318,7 @@ public class PublishingService : IPublishingService
                         p.Url))
                     .ToList()
             })
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (log is null) return null;
 
@@ -345,7 +332,7 @@ public class PublishingService : IPublishingService
             log.Platforms);
     }
 
-    public async Task<SocialMediaPublishingLogDto?> GetSocialPublishingLogByIdAsync(int logId)
+    public async Task<SocialMediaPublishingLogDto?> GetSocialPublishingLogByIdAsync(int logId, CancellationToken cancellationToken = default)
     {
         using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -368,7 +355,7 @@ public class PublishingService : IPublishingService
                         p.Url))
                     .ToList()
             })
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (log is null) return null;
 
@@ -386,7 +373,7 @@ public class PublishingService : IPublishingService
     /// استرجاع جميع سجلات النشر الرقمي لحلقة معيّنة
     /// كل ضيف في الحلقة قد يكون له سجل واحد
     /// </summary>
-    public async Task<List<SocialMediaPublishingLogDto>> GetEpisodeSocialLogsAsync(int episodeId)
+    public async Task<List<SocialMediaPublishingLogDto>> GetEpisodeSocialLogsAsync(int episodeId, CancellationToken cancellationToken = default)
     {
         using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -409,7 +396,7 @@ public class PublishingService : IPublishingService
                         p.SocialMediaPlatform.Name,
                         p.Url))
                     .ToList()))
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
     /// <summary>
@@ -417,7 +404,7 @@ public class PublishingService : IPublishingService
     /// يحدّث: عنوان المقطع، المدة، نوع الوسائط
     /// ويستبدل جميع روابط المنصات (يحذف القديمة ويضيف الجديدة)
     /// </summary>
-    public async Task<Result> UpdateSocialPublishingLogAsync(SocialMediaPublishingLogDto dto, UserSession session)
+    public async Task<Result> UpdateSocialPublishingLogAsync(SocialMediaPublishingLogDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodePublish);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -429,7 +416,7 @@ public class PublishingService : IPublishingService
             // 1. البحث عن السجل الموجود
             var log = await context.SocialMediaPublishingLogs
                 .Include(l => l.Platforms)
-                .FirstOrDefaultAsync(l => l.SocialMediaPublishingLogId == dto.LogId && l.IsActive);
+                .FirstOrDefaultAsync(l => l.SocialMediaPublishingLogId == dto.LogId && l.IsActive, cancellationToken);
 
             if (log is null)
                 return Result.Fail("سجل النشر غير موجود أو تم حذفه.");
@@ -458,7 +445,7 @@ public class PublishingService : IPublishingService
                 context.SocialMediaPublishingLogPlatforms.Add(newLink);
             }
 
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }
         catch
@@ -471,7 +458,7 @@ public class PublishingService : IPublishingService
     /// استرجاع سجل نشر الموقع الإلكتروني لحلقة معيّنة
     /// يُرجع null إذا لم يوجد سجل نشط
     /// </summary>
-    public async Task<WebsitePublishingLogDto?> GetWebsitePublishingLogAsync(int episodeId)
+    public async Task<WebsitePublishingLogDto?> GetWebsitePublishingLogAsync(int episodeId, CancellationToken cancellationToken = default)
     {
         using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -479,7 +466,7 @@ public class PublishingService : IPublishingService
             .AsNoTracking()
             .Where(l => l.EpisodeId == episodeId && l.IsActive)
             .OrderByDescending(l => l.PublishedAt)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (log is null) return null;
 
@@ -492,13 +479,13 @@ public class PublishingService : IPublishingService
             log.PublishedAt);
     }
 
-    public async Task<WebsitePublishingLogDto?> GetWebsitePublishingLogByIdAsync(int logId)
+    public async Task<WebsitePublishingLogDto?> GetWebsitePublishingLogByIdAsync(int logId, CancellationToken cancellationToken = default)
     {
         using var context = await _contextFactory.CreateDbContextAsync();
 
         var log = await context.WebsitePublishingLogs
             .AsNoTracking()
-            .FirstOrDefaultAsync(l => l.WebsitePublishingLogId == logId && l.IsActive);
+            .FirstOrDefaultAsync(l => l.WebsitePublishingLogId == logId && l.IsActive, cancellationToken);
 
         if (log is null) return null;
 
@@ -515,7 +502,7 @@ public class PublishingService : IPublishingService
     /// تعديل سجل نشر الموقع الإلكتروني
     /// يحدّث: العنوان، نوع الوسائط، الملاحظات
     /// </summary>
-    public async Task<Result> UpdateWebsitePublishingLogAsync(WebsitePublishingLogDto dto, UserSession session)
+    public async Task<Result> UpdateWebsitePublishingLogAsync(WebsitePublishingLogDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodeWebPublish);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -523,7 +510,7 @@ public class PublishingService : IPublishingService
         using var context = await _contextFactory.CreateDbContextAsync();
 
         var log = await context.WebsitePublishingLogs
-            .FirstOrDefaultAsync(l => l.WebsitePublishingLogId == dto.Id && l.IsActive);
+            .FirstOrDefaultAsync(l => l.WebsitePublishingLogId == dto.Id && l.IsActive, cancellationToken);
 
         if (log is null)
             return Result.Fail("سجل نشر الموقع غير موجود أو تم حذفه.");
@@ -534,11 +521,11 @@ public class PublishingService : IPublishingService
         log.Notes = dto.Notes;
         log.UpdatedByUserId = session.UserId;
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
 
-    public async Task<Result> DeleteSocialPublishingLogAsync(int logId, UserSession session)
+    public async Task<Result> DeleteSocialPublishingLogAsync(int logId, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodePublish);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -547,7 +534,7 @@ public class PublishingService : IPublishingService
 
         var log = await context.SocialMediaPublishingLogs
             .Include(l => l.Platforms)
-            .FirstOrDefaultAsync(l => l.SocialMediaPublishingLogId == logId && l.IsActive);
+            .FirstOrDefaultAsync(l => l.SocialMediaPublishingLogId == logId && l.IsActive, cancellationToken);
 
         if (log is null)
             return Result.Fail("سجل النشر غير موجود أو تم حذفه مسبقاً.");
@@ -558,11 +545,11 @@ public class PublishingService : IPublishingService
         foreach (var p in log.Platforms)
             p.IsActive = false;
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
 
-    public async Task<Result> DeleteWebsitePublishingLogAsync(int logId, UserSession session)
+    public async Task<Result> DeleteWebsitePublishingLogAsync(int logId, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodeWebPublish);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -570,7 +557,7 @@ public class PublishingService : IPublishingService
         using var context = await _contextFactory.CreateDbContextAsync();
 
         var log = await context.WebsitePublishingLogs
-            .FirstOrDefaultAsync(l => l.WebsitePublishingLogId == logId && l.IsActive);
+            .FirstOrDefaultAsync(l => l.WebsitePublishingLogId == logId && l.IsActive, cancellationToken);
 
         if (log is null)
             return Result.Fail("سجل نشر الموقع غير موجود أو تم حذفه مسبقاً.");
@@ -578,7 +565,7 @@ public class PublishingService : IPublishingService
         log.IsActive = false;
         log.UpdatedByUserId = session.UserId;
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
 
@@ -586,7 +573,7 @@ public class PublishingService : IPublishingService
     /// استرجاع قائمة موحّدة من جميع سجلات النشر (الأنواع الثلاثة)
     /// تُستخدم في شاشة العرض الشامل مع دعم الفلترة حسب الحلقة
     /// </summary>
-    public async Task<List<PublishingRecordDto>> GetAllPublishingRecordsAsync(int? episodeId = null)
+    public async Task<List<PublishingRecordDto>> GetAllPublishingRecordsAsync(int? episodeId = null, CancellationToken cancellationToken = default)
     {
         using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -617,7 +604,7 @@ public class PublishingService : IPublishingService
                 RecordIcon = "PlayCircleOutline",
                 RecordColor = "#4CAF50"
             })
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         records.AddRange(execLogs);
 
@@ -645,7 +632,7 @@ public class PublishingService : IPublishingService
                     .Select(p => p.SocialMediaPlatform != null ? p.SocialMediaPlatform.Name : "منصة غير معروف")
                     .ToList()
             })
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         // 2. سجلات النشر الرقمي (سوشال ميديا) - تجميعها حسب الحلقة لتعرض في سطر واحد لكل حلقة
         var socialLogs = rawSocialLogs
@@ -701,7 +688,7 @@ public class PublishingService : IPublishingService
                 RecordIcon = "Web",
                 RecordColor = "#5C6BC0"
             })
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         records.AddRange(webLogs);
 

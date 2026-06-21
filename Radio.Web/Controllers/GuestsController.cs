@@ -5,6 +5,7 @@ using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Radio.Web.Services;
+using System.Threading;
 using Radio.Web.ViewModels;
 
 namespace Radio.Web.Controllers;
@@ -23,7 +24,7 @@ public class GuestsController : Controller
 
     public async Task<IActionResult> Index(string? search)
     {
-        var list = await _guests.GetAllActiveAsync();
+        var list = await _guests.GetAllActiveAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         if (!string.IsNullOrWhiteSpace(search))
         {
             var s = search.Trim();
@@ -46,7 +47,7 @@ public class GuestsController : Controller
         if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); return View("Edit", model); }
 
         var session = _currentUser.ToUserSession()!;
-        var r = await _guests.CreateGuestAsync(model, session);
+        var r = await _guests.CreateGuestAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم إضافة الضيف"; return RedirectToAction(nameof(Index)); }
         ModelState.AddModelError("", r.ErrorMessage!);
         return View("Edit", model);
@@ -55,7 +56,7 @@ public class GuestsController : Controller
     [Authorize(Policy = AppPermissions.GuestManage)]
     public async Task<IActionResult> Edit(int id)
     {
-        var list = await _guests.GetAllActiveAsync();
+        var list = await _guests.GetAllActiveAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         var g = list.FirstOrDefault(x => x.GuestId == id);
         if (g == null) return NotFound();
         return View(g);
@@ -71,7 +72,7 @@ public class GuestsController : Controller
 
         model = model with { GuestId = id };
         var session = _currentUser.ToUserSession()!;
-        var r = await _guests.UpdateGuestAsync(model, session);
+        var r = await _guests.UpdateGuestAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم تحديث الضيف"; return RedirectToAction(nameof(Index)); }
         ModelState.AddModelError("", r.ErrorMessage!);
         return View(model);
@@ -83,7 +84,7 @@ public class GuestsController : Controller
     public async Task<IActionResult> Delete(int id)
     {
         var session = _currentUser.ToUserSession()!;
-        var r = await _guests.SoftDeleteGuestAsync(id, session);
+        var r = await _guests.SoftDeleteGuestAsync(id, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) TempData["Success"] = "تم حذف الضيف";
         else TempData["Error"] = r.ErrorMessage;
         return RedirectToAction(nameof(Index));

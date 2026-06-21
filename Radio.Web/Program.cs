@@ -8,8 +8,6 @@ using Domain.Identity;
 using Domain.Models;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
-using System.IO.Compression;
-using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -17,12 +15,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Radio.Web;
 using Radio.Web.Hubs;
 using Radio.Web.Middleware;
 using Radio.Web.Security;
 using Radio.Web.Services;
 using Serilog;
+using System.Threading.RateLimiting;
 
 // ───────────────────────────────────────────────────────────────────────
 // Startup
@@ -67,7 +65,7 @@ builder.Services.AddDbContextFactory<BroadcastWorkflowDBContext>(
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 {
     options.User.RequireUniqueEmail = true;
-    options.Password.RequiredLength = 12;
+    options.Password.RequiredLength = 6;
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
@@ -123,14 +121,12 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddSingleton<DbQueryPerformanceInterceptor>(sp =>
 {
     var config = sp.GetRequiredService<IConfiguration>();
+    var logger = sp.GetRequiredService<ILogger<DbQueryPerformanceInterceptor>>();
     var threshold = config.GetValue<int>("Performance:SlowQueryThresholdMs", 500);
-    return new DbQueryPerformanceInterceptor(threshold);
+    return new DbQueryPerformanceInterceptor(logger, threshold);
 });
 builder.Services.AddSingleton<CurrentSessionProvider>();
 builder.Services.AddSingleton<AuditInterceptor>();
-
-// Session Capture Middleware
-builder.Services.AddScoped<SessionCaptureMiddleware>();
 builder.Services.AddScoped<IMessageService, MvcMessageService>();
 builder.Services.AddHostedService<MessageServiceInitializer>();
 
@@ -219,11 +215,8 @@ builder.Services.AddRateLimiter(options =>
 builder.Services.AddResponseCompression(options =>
 {
     options.EnableForHttps = true;
-    options.Providers.Add<BrotliCompressionProvider>();
     options.Providers.Add<GzipCompressionProvider>();
 });
-
-builder.Services.Configure<BrotliCompressionProviderOptions>(o => o.Level = CompressionLevel.Fastest);
 
 // --- MVC + Runtime Compilation ---
 builder.Services.AddControllersWithViews(options =>
@@ -256,6 +249,10 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     using var devScope = app.Services.CreateScope();
     var devServiceProvider = devScope.ServiceProvider;
     var devCtxFactory = devServiceProvider.GetRequiredService<IDbContextFactory<BroadcastWorkflowDBContext>>();
+
+    // Migration-first approach: MigrateAsync creates/updates schema, DbSeeder seeds data.
+    await using var devMigrateCtx = await devCtxFactory.CreateDbContextAsync();
+    await devMigrateCtx.Database.MigrateAsync();
     await DbSeeder.SeedAsync(devCtxFactory);
 
     // Seed Identity roles first (must precede user role assignment)
@@ -302,10 +299,13 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
                 }
                 continue;
             }
+            var userEmail = string.IsNullOrWhiteSpace(du.EmailAddress)
+                ? $"{du.Username}@broadcast.pro"
+                : du.EmailAddress;
             var appUser = new ApplicationUser
             {
                 UserName = du.Username,
-                Email = du.EmailAddress,
+                Email = userEmail,
                 FullName = du.FullName,
                 DisplayPhoneNumber = du.PhoneNumber,
                 DomainUserId = du.UserId,
@@ -339,10 +339,11 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
+app.UseResponseCompression();
+
 app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
 app.UseExceptionHandler("/Home/Error/500");
 
-app.UseResponseCompression();
 app.UseRateLimiter();
 
 app.UseStaticFiles();

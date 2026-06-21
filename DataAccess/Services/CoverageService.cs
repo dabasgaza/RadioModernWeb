@@ -2,21 +2,23 @@
 using DataAccess.DTOs;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 namespace DataAccess.Services
 {
     public interface ICoverageService
     {
-        Task<List<CoverageDto>> GetAllAsync();
-        Task<Result> CreateAsync(CoverageDto dto, UserSession session);
-        Task<Result> UpdateAsync(CoverageDto dto, UserSession session);
-        Task<Result> DeleteAsync(int id, UserSession session);
+        Task<List<CoverageDto>> GetAllAsync(CancellationToken cancellationToken = default);
+        Task<CoverageDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+        Task<Result> CreateAsync(CoverageDto dto, UserSession session, CancellationToken cancellationToken = default);
+        Task<Result> UpdateAsync(CoverageDto dto, UserSession session, CancellationToken cancellationToken = default);
+        Task<Result> DeleteAsync(int id, UserSession session, CancellationToken cancellationToken = default);
     }
 
     // ✨ استخدام Primary Constructor
     public class CoverageService(IDbContextFactory<BroadcastWorkflowDBContext> contextFactory) : ICoverageService
     {
-        public async Task<List<CoverageDto>> GetAllAsync()
+        public async Task<List<CoverageDto>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             using var context = await contextFactory.CreateDbContextAsync();
 
@@ -35,10 +37,31 @@ namespace DataAccess.Services
                     ScheduledTime = c.ScheduledTime,
                     ActualTime = c.ActualTime
                 })
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<Result> CreateAsync(CoverageDto dto, UserSession session)
+        public async Task<CoverageDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            using var context = await contextFactory.CreateDbContextAsync();
+            return await context.CorrespondentCoverages
+                .AsNoTracking()
+                .Where(c => c.CoverageId == id)
+                .Select(c => new CoverageDto
+                {
+                    CoverageId = c.CoverageId,
+                    CorrespondentId = c.CorrespondentId,
+                    CorrespondentName = c.Correspondent.FullName,
+                    GuestId = c.GuestId,
+                    GuestName = c.Guest != null ? c.Guest.FullName : "بدون ضيف",
+                    Location = c.Location,
+                    Topic = c.Topic,
+                    ScheduledTime = c.ScheduledTime,
+                    ActualTime = c.ActualTime
+                })
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+
+        public async Task<Result> CreateAsync(CoverageDto dto, UserSession session, CancellationToken cancellationToken = default)
         {
             var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);
             if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -56,12 +79,12 @@ namespace DataAccess.Services
             };
 
             context.CorrespondentCoverages.Add(coverage);
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }
 
-        public async Task<Result> UpdateAsync(CoverageDto dto, UserSession session)
+        public async Task<Result> UpdateAsync(CoverageDto dto, UserSession session, CancellationToken cancellationToken = default)
         {
             var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);
             if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -81,7 +104,7 @@ namespace DataAccess.Services
 
             try
             {
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync(cancellationToken);
                 return Result.Success();
             }
             catch (DbUpdateConcurrencyException)
@@ -90,7 +113,7 @@ namespace DataAccess.Services
             }
         }
 
-        public async Task<Result> DeleteAsync(int id, UserSession session)
+        public async Task<Result> DeleteAsync(int id, UserSession session, CancellationToken cancellationToken = default)
         {
             var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);
             if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -102,7 +125,7 @@ namespace DataAccess.Services
 
             coverage.IsActive = false;
 
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }
     }

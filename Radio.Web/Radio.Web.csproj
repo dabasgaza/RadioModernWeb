@@ -42,4 +42,11 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
+  <!-- NPM build pipeline -->
+  <Target Name="NpmInstall" BeforeTargets="NpmBuild" Condition="!Exists('node_modules/.package-lock.json')">
+    <Exec Command="npm install" />
+  </Target>
+  <Target Name="NpmBuild" BeforeTargets="BeforeBuild">
+    <Exec Command="npm run build:css" />
+  </Target>
 </Project>

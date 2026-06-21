@@ -2,6 +2,7 @@ using DataAccess.Common;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 
 namespace DataAccess.Services
 {
@@ -19,7 +20,7 @@ namespace DataAccess.Services
             _httpClient = new HttpClient();
             _seqUrl = _configuration["Seq:ServerUrl"] ?? "http://localhost:5341";
             _apiKey = _configuration["Seq:ApiKey"] ?? "";
-            _slowQueryThreshold = _configuration.GetValue<double>("Seq:SlowQueryThresholdMs", 100);
+            _slowQueryThreshold = _configuration.GetValue<double>("Performance:SlowQueryThresholdMs", 100);
         }
 
         // Models to deserialize Seq API response
@@ -44,7 +45,7 @@ namespace DataAccess.Services
             public string? Exception { get; set; }
         }
 
-        public async Task<Result<List<DiagnosticLogDto>>> GetLogsAsync(string? level = null, string? searchTerm = null, int count = 200)
+        public async Task<Result<List<DiagnosticLogDto>>> GetLogsAsync(string? level = null, string? searchTerm = null, int count = 200, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -91,7 +92,7 @@ namespace DataAccess.Services
             return Result<List<DiagnosticLogDto>>.Success(localLogs);
         }
 
-        public async Task<Result<DiagnosticsSummaryDto>> GetSummaryAsync()
+        public async Task<Result<DiagnosticsSummaryDto>> GetSummaryAsync(CancellationToken cancellationToken = default)
         {
             try
             {
@@ -140,7 +141,7 @@ namespace DataAccess.Services
             return Result<DiagnosticsSummaryDto>.Success(localSummary);
         }
 
-        public async Task<Result<List<DiagnosticLogDto>>> GetSqlPerformanceLogsAsync(int count = 100)
+        public async Task<Result<List<DiagnosticLogDto>>> GetSqlPerformanceLogsAsync(int count = 100, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -475,7 +476,7 @@ namespace DataAccess.Services
             return filtered.OrderByDescending(x => x.Timestamp).Take(count).ToList();
         }
 
-        public async Task<Result> ClearLogsAsync()
+        public async Task<Result> ClearLogsAsync(CancellationToken cancellationToken = default)
         {
             try
             {

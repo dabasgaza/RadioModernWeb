@@ -6,6 +6,7 @@ using Radio.Tests.Helpers;
 using Radio.Tests.TestData.Builders;
 using Radio.Tests.TestData.Fixtures;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace Radio.Tests.Services;
 
@@ -30,7 +31,7 @@ public class GuestServiceTests : IClassFixture<DatabaseFixture>
         ctx.Guests.Add(new Guest { FullName = "Inactive", PhoneNumber = "555", IsActive = false, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.GetAllActiveAsync();
+        var result = await _service.GetAllActiveAsync(CancellationToken.None);
 
         result.Should().Contain(e => e.FullName == "Active");
     }
@@ -40,7 +41,7 @@ public class GuestServiceTests : IClassFixture<DatabaseFixture>
     {
         var dto = new GuestDto(0, "New Guest", null, "5555555", null, null, null);
 
-        var result = await _service.CreateGuestAsync(dto, _admin);
+        var result = await _service.CreateGuestAsync(dto, _admin, CancellationToken.None);
 
         result.ShouldBeSuccess();
     }
@@ -51,7 +52,7 @@ public class GuestServiceTests : IClassFixture<DatabaseFixture>
         var user = UserSessionBuilder.CreateLimited();
         var dto = new GuestDto(0, "New Guest", null, "5555555", null, null, null);
 
-        var result = await _service.CreateGuestAsync(dto, user);
+        var result = await _service.CreateGuestAsync(dto, user, CancellationToken.None);
 
         result.ShouldBeFailure("صلاحية");
     }
@@ -64,7 +65,7 @@ public class GuestServiceTests : IClassFixture<DatabaseFixture>
         await ctx.SaveChangesAsync();
 
         var dto = new GuestDto(10, "Updated", null, "5555555", null, null, null);
-        var result = await _service.UpdateGuestAsync(dto, _admin);
+        var result = await _service.UpdateGuestAsync(dto, _admin, CancellationToken.None);
 
         result.ShouldBeSuccess();
     }
@@ -76,7 +77,7 @@ public class GuestServiceTests : IClassFixture<DatabaseFixture>
         ctx.Guests.Add(new Guest { GuestId = 20, FullName = "ToDelete", PhoneNumber = "555", IsActive = true, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.SoftDeleteGuestAsync(20, _admin);
+        var result = await _service.SoftDeleteGuestAsync(20, _admin, CancellationToken.None);
 
         result.ShouldBeSuccess();
     }

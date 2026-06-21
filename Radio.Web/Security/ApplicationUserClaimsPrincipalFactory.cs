@@ -3,6 +3,7 @@ using Domain.Identity;
 using Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Radio.Web.Security;
@@ -19,15 +20,18 @@ namespace Radio.Web.Security;
 public class ApplicationUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<ApplicationUser, ApplicationRole>
 {
     private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
+    private readonly ILogger<ApplicationUserClaimsPrincipalFactory> _logger;
 
     public ApplicationUserClaimsPrincipalFactory(
         ApplicationUserManager userManager,
         ApplicationRoleManager roleManager,
         IOptions<IdentityOptions> optionsAccessor,
-        IDbContextFactory<BroadcastWorkflowDBContext> contextFactory)
+        IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
+        ILogger<ApplicationUserClaimsPrincipalFactory> logger)
         : base(userManager, roleManager, optionsAccessor)
     {
         _contextFactory = contextFactory;
+        _logger = logger;
     }
 
     protected override async Task<ClaimsIdentity> GenerateClaimsAsync(ApplicationUser user)
@@ -51,9 +55,9 @@ public class ApplicationUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<
                     await UserManager.UpdateAsync(user);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // تجاهل الأخطاء أثناء الإصلاح التلقائي
+                _logger.LogWarning(ex, "فشل الإصلاح التلقائي لـ DomainUserId للمستخدم {UserName}", user.UserName);
             }
         }
 
@@ -86,9 +90,9 @@ public class ApplicationUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<
                     identity.AddClaim(new Claim("Permission", permission));
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // تجاهل الأخطاء (قد تحدث أثناء التهيئة الأولية)
+                _logger.LogWarning(ex, "فشل تحميل الصلاحيات للدور {DomainRoleId} للمستخدم {UserName}", user.DomainRoleId, user.UserName);
             }
         }
 

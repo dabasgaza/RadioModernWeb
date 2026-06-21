@@ -4,20 +4,21 @@ using DataAccess.Validation;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace DataAccess.Services;
 
 public interface IEmployeeService
 {
-    Task<List<EmployeeDto>> GetAllActiveAsync();
-    Task<Result<int>> CreateAsync(EmployeeDto dto, UserSession session);
-    Task<Result> UpdateAsync(EmployeeDto dto, UserSession session);
-    Task<Result> SoftDeleteAsync(int employeeId, UserSession session);
+    Task<List<EmployeeDto>> GetAllActiveAsync(CancellationToken cancellationToken = default);
+    Task<Result<int>> CreateAsync(EmployeeDto dto, UserSession session, CancellationToken cancellationToken = default);
+    Task<Result> UpdateAsync(EmployeeDto dto, UserSession session, CancellationToken cancellationToken = default);
+    Task<Result> SoftDeleteAsync(int employeeId, UserSession session, CancellationToken cancellationToken = default);
 
-    Task<List<StaffRoleDto>> GetAllRolesAsync();
-    Task<Result<int>> CreateRoleAsync(StaffRoleDto dto, UserSession session);
-    Task<Result> UpdateRoleAsync(StaffRoleDto dto, UserSession session);
-    Task<Result> SoftDeleteRoleAsync(int roleId, UserSession session);
+    Task<List<StaffRoleDto>> GetAllRolesAsync(CancellationToken cancellationToken = default);
+    Task<Result<int>> CreateRoleAsync(StaffRoleDto dto, UserSession session, CancellationToken cancellationToken = default);
+    Task<Result> UpdateRoleAsync(StaffRoleDto dto, UserSession session, CancellationToken cancellationToken = default);
+    Task<Result> SoftDeleteRoleAsync(int roleId, UserSession session, CancellationToken cancellationToken = default);
 }
 
 // ✨ استخدام Primary Constructor
@@ -57,7 +58,7 @@ public class EmployeeService : IEmployeeService
                 .Where(r => r.IsActive)
                 .Select(r => new StaffRoleDto(r.StaffRoleId, r.RoleName)));
 
-    public async Task<List<EmployeeDto>> GetAllActiveAsync()
+    public async Task<List<EmployeeDto>> GetAllActiveAsync(CancellationToken cancellationToken = default)
     {
         using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -67,7 +68,7 @@ public class EmployeeService : IEmployeeService
         return result;
     }
 
-    public async Task<Result<int>> CreateAsync(EmployeeDto dto, UserSession session)
+    public async Task<Result<int>> CreateAsync(EmployeeDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
         if (!permCheck.IsSuccess) return Result<int>.Fail(permCheck.ErrorMessage!);
@@ -90,8 +91,8 @@ public class EmployeeService : IEmployeeService
             };
 
             context.Employees.Add(employee);
-            await context.SaveChangesAsync();
-            _cachedLookup.InvalidateByEntity("Employee");
+            await context.SaveChangesAsync(cancellationToken);
+            await _cachedLookup.InvalidateByEntity("Employee");
             return Result<int>.Success(employee.EmployeeId);
         }
         catch (Exception ex)
@@ -101,7 +102,7 @@ public class EmployeeService : IEmployeeService
         }
     }
 
-    public async Task<Result> UpdateAsync(EmployeeDto dto, UserSession session)
+    public async Task<Result> UpdateAsync(EmployeeDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -122,8 +123,8 @@ public class EmployeeService : IEmployeeService
             employee.Notes = dto.Notes;
             employee.UpdatedAt = DateTime.UtcNow;
 
-            await context.SaveChangesAsync();
-            _cachedLookup.InvalidateByEntity("Employee");
+            await context.SaveChangesAsync(cancellationToken);
+            await _cachedLookup.InvalidateByEntity("Employee");
             return Result.Success();
         }
         catch (Exception ex)
@@ -133,7 +134,7 @@ public class EmployeeService : IEmployeeService
         }
     }
 
-    public async Task<Result> SoftDeleteAsync(int employeeId, UserSession session)
+    public async Task<Result> SoftDeleteAsync(int employeeId, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -149,8 +150,8 @@ public class EmployeeService : IEmployeeService
             employee.IsActive = false;
             employee.UpdatedAt = DateTime.UtcNow;
 
-            await context.SaveChangesAsync();
-            _cachedLookup.InvalidateByEntity("Employee");
+            await context.SaveChangesAsync(cancellationToken);
+            await _cachedLookup.InvalidateByEntity("Employee");
             return Result.Success();
         }
         catch (Exception ex)
@@ -160,7 +161,7 @@ public class EmployeeService : IEmployeeService
         }
     }
 
-    public async Task<List<StaffRoleDto>> GetAllRolesAsync()
+    public async Task<List<StaffRoleDto>> GetAllRolesAsync(CancellationToken cancellationToken = default)
     {
         using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -170,7 +171,7 @@ public class EmployeeService : IEmployeeService
         return result;
     }
 
-    public async Task<Result<int>> CreateRoleAsync(StaffRoleDto dto, UserSession session)
+    public async Task<Result<int>> CreateRoleAsync(StaffRoleDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
         if (!permCheck.IsSuccess) return Result<int>.Fail(permCheck.ErrorMessage!);
@@ -191,8 +192,8 @@ public class EmployeeService : IEmployeeService
             };
 
             context.StaffRoles.Add(role);
-            await context.SaveChangesAsync();
-            _cachedLookup.InvalidateByEntity("StaffRole");
+            await context.SaveChangesAsync(cancellationToken);
+            await _cachedLookup.InvalidateByEntity("StaffRole");
             return Result<int>.Success(role.StaffRoleId);
         }
         catch (Exception ex)
@@ -202,7 +203,7 @@ public class EmployeeService : IEmployeeService
         }
     }
 
-    public async Task<Result> UpdateRoleAsync(StaffRoleDto dto, UserSession session)
+    public async Task<Result> UpdateRoleAsync(StaffRoleDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -221,8 +222,8 @@ public class EmployeeService : IEmployeeService
             role.RoleName = dto.RoleName;
             role.UpdatedAt = DateTime.UtcNow;
 
-            await context.SaveChangesAsync();
-            _cachedLookup.InvalidateByEntity("StaffRole");
+            await context.SaveChangesAsync(cancellationToken);
+            await _cachedLookup.InvalidateByEntity("StaffRole");
             return Result.Success();
         }
         catch (Exception ex)
@@ -232,7 +233,7 @@ public class EmployeeService : IEmployeeService
         }
     }
 
-    public async Task<Result> SoftDeleteRoleAsync(int roleId, UserSession session)
+    public async Task<Result> SoftDeleteRoleAsync(int roleId, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -248,8 +249,8 @@ public class EmployeeService : IEmployeeService
             role.IsActive = false;
             role.UpdatedAt = DateTime.UtcNow;
 
-            await context.SaveChangesAsync();
-            _cachedLookup.InvalidateByEntity("StaffRole");
+            await context.SaveChangesAsync(cancellationToken);
+            await _cachedLookup.InvalidateByEntity("StaffRole");
             return Result.Success();
         }
         catch (Exception ex)

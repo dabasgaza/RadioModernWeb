@@ -5,6 +5,7 @@ using Domain.Models;
 using Radio.Tests.Helpers;
 using Radio.Tests.TestData.Builders;
 using Radio.Tests.TestData.Fixtures;
+using System.Threading;
 
 namespace Radio.Tests.Services;
 
@@ -38,7 +39,7 @@ public class ExecutionServiceTests : IClassFixture<DatabaseFixture>
             DurationMinutes = 45
         };
 
-        var result = await _service.LogExecutionAsync(dto, _admin);
+        var result = await _service.LogExecutionAsync(dto, _admin, CancellationToken.None);
         result.ShouldBeSuccess();
     }
 
@@ -53,7 +54,7 @@ public class ExecutionServiceTests : IClassFixture<DatabaseFixture>
             ExecutionNotes = "Done", IssuesEncountered = "None"
         };
 
-        var result = await _service.LogExecutionAsync(dto, user);
+        var result = await _service.LogExecutionAsync(dto, user, CancellationToken.None);
         result.ShouldBeFailure("صلاحية");
     }
 
@@ -66,7 +67,7 @@ public class ExecutionServiceTests : IClassFixture<DatabaseFixture>
             ExecutionNotes = "Done", IssuesEncountered = "None"
         };
 
-        var result = await _service.LogExecutionAsync(dto, _admin);
+        var result = await _service.LogExecutionAsync(dto, _admin, CancellationToken.None);
         result.ShouldBeFailure("غير موجودة");
     }
 }

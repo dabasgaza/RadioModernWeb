@@ -14,9 +14,6 @@ public static class DbSeeder
     {
         await using var context = await dbFactory.CreateDbContextAsync();
 
-        // ponytail: ensure database exists before seeding
-        await context.Database.EnsureCreatedAsync();
-
         await SeedEpisodeStatusesAsync(context);
         await SeedPermissionsAsync(context);
         await SeedRolePermissionsAsync(context);
@@ -31,7 +28,7 @@ public static class DbSeeder
 
     private static async Task SeedEpisodeStatusesAsync(BroadcastWorkflowDBContext context)
     {
-         var existing = await context.Set<EpisodeStatus>().Select(s => s.StatusId).ToListAsync();
+        var existing = await context.Set<EpisodeStatus>().Select(s => s.StatusId).ToListAsync();
 
         var statuses = new List<EpisodeStatus>
         {
@@ -228,19 +225,15 @@ public static class DbSeeder
 
     private static async Task SeedSocialMediaPlatformsAsync(BroadcastWorkflowDBContext context)
     {
-        // ponytail: ensure BaseUrl column exists for databases created before the field was added
-        try { await context.Database.ExecuteSqlRawAsync("ALTER TABLE SocialMediaPlatforms ADD [BaseUrl] nvarchar(max) NULL;"); }
-        catch { /* column already exists — safe to ignore */ }
-
         if (await context.Set<SocialMediaPlatform>().AnyAsync())
             return;
 
         context.Set<SocialMediaPlatform>().AddRange(
-            new SocialMediaPlatform { Name = "Facebook",   Icon = "Facebook",  BaseUrl = "https://www.facebook.com/" },
-            new SocialMediaPlatform { Name = "Twitter",    Icon = "Twitter",   BaseUrl = "https://x.com/" },
-            new SocialMediaPlatform { Name = "TikTok",     Icon = "MusicNote", BaseUrl = "https://www.tiktok.com/" },
-            new SocialMediaPlatform { Name = "YouTube",    Icon = "Youtube",   BaseUrl = "https://www.youtube.com/watch?v=" },
-            new SocialMediaPlatform { Name = "Instagram",  Icon = "Instagram", BaseUrl = "https://www.instagram.com/" });
+            new SocialMediaPlatform { Name = "Facebook", Icon = "Facebook", BaseUrl = "https://www.facebook.com/" },
+            new SocialMediaPlatform { Name = "Twitter", Icon = "Twitter", BaseUrl = "https://x.com/" },
+            new SocialMediaPlatform { Name = "TikTok", Icon = "MusicNote", BaseUrl = "https://www.tiktok.com/" },
+            new SocialMediaPlatform { Name = "YouTube", Icon = "Youtube", BaseUrl = "https://www.youtube.com/watch?v=" },
+            new SocialMediaPlatform { Name = "Instagram", Icon = "Instagram", BaseUrl = "https://www.instagram.com/" });
     }
 
     // ═══════════════════════════════════════════

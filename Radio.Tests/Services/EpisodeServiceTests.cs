@@ -5,6 +5,7 @@ using Radio.Tests.Helpers;
 using Radio.Tests.TestData.Builders;
 using Radio.Tests.TestData.Fixtures;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace Radio.Tests.Services;
 
@@ -42,7 +43,7 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.GetActiveEpisodesAsync();
+        var result = await _service.GetActiveEpisodesAsync(CancellationToken.None);
 
         result.Should().HaveCount(1);
         result[0].EpisodeName.Should().Be("Active");
@@ -61,7 +62,7 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.GetActiveEpisodeByIdAsync(id);
+        var result = await _service.GetActiveEpisodeByIdAsync(id, CancellationToken.None);
 
         result.Should().NotBeNull();
         result!.EpisodeName.Should().Be("Test");
@@ -71,7 +72,7 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
     [Fact]
     public async Task GetActiveEpisodeByIdAsync_NotFound_ReturnsNull()
     {
-        var result = await _service.GetActiveEpisodeByIdAsync(9999);
+        var result = await _service.GetActiveEpisodeByIdAsync(9999, CancellationToken.None);
         result.Should().BeNull();
     }
 
@@ -87,7 +88,7 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.GetActiveEpisodeByIdAsync(id);
+        var result = await _service.GetActiveEpisodeByIdAsync(id, CancellationToken.None);
         result.Should().BeNull();
     }
 
@@ -108,7 +109,7 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.GetEpisodeGuestsAsync(epId);
+        var result = await _service.GetEpisodeGuestsAsync(epId, CancellationToken.None);
 
         result.Should().HaveCount(1);
         result[0].FullName.Should().Be("Test Guest");
@@ -120,7 +121,7 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
     {
         var dto = EpisodeBuilder.CreateDto(programId: 1);
 
-        var result = await _service.CreateEpisodeAsync(dto, _admin);
+        var result = await _service.CreateEpisodeAsync(dto, _admin, CancellationToken.None);
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeGreaterThan(0);
@@ -132,7 +133,7 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         var user = UserSessionBuilder.CreateLimited();
         var dto = EpisodeBuilder.CreateDto(programId: 1);
 
-        var result = await _service.CreateEpisodeAsync(dto, user);
+        var result = await _service.CreateEpisodeAsync(dto, user, CancellationToken.None);
 
         result.ShouldBeFailure("صلاحية");
     }
@@ -151,7 +152,7 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
 
         var dto = EpisodeBuilder.CreateDto(programId: 1, name: "Updated");
 
-        var result = await _service.UpdateEpisodeAsync(dto with { EpisodeId = id }, _admin);
+        var result = await _service.UpdateEpisodeAsync(dto with { EpisodeId = id }, _admin, CancellationToken.None);
 
         result.ShouldBeSuccess();
     }
@@ -160,7 +161,7 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
     public async Task UpdateEpisodeAsync_NotFound_ReturnsFail()
     {
         var dto = EpisodeBuilder.CreateDto(programId: 1);
-        var result = await _service.UpdateEpisodeAsync(dto with { EpisodeId = 9999 }, _admin);
+        var result = await _service.UpdateEpisodeAsync(dto with { EpisodeId = 9999 }, _admin, CancellationToken.None);
         result.ShouldBeFailure("غير موجودة");
     }
 
@@ -176,7 +177,7 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.DeleteEpisodeAsync(id, _admin);
+        var result = await _service.DeleteEpisodeAsync(id, _admin, CancellationToken.None);
 
         result.ShouldBeSuccess();
     }
@@ -186,16 +187,16 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
     {
         var user = UserSessionBuilder.CreateLimited();
 
-        var result = await _service.DeleteEpisodeAsync(1, user);
+        var result = await _service.DeleteEpisodeAsync(1, user, CancellationToken.None);
 
         result.ShouldBeFailure("صلاحية");
     }
 
     [Theory]
-    [InlineData(0, DataAccess.Services.EpisodeStatus.Executed, true)]
-    [InlineData(1, DataAccess.Services.EpisodeStatus.Cancelled, true)]
-    [InlineData(2, DataAccess.Services.EpisodeStatus.Published, false)]
-    [InlineData(3, DataAccess.Services.EpisodeStatus.Published, true)]
+    [InlineData(0, DataAccess.Services.EpisodeStatusValues.Executed, true)]
+    [InlineData(1, DataAccess.Services.EpisodeStatusValues.Cancelled, true)]
+    [InlineData(2, DataAccess.Services.EpisodeStatusValues.Published, false)]
+    [InlineData(3, DataAccess.Services.EpisodeStatusValues.Published, true)]
     public async Task UpdateStatusAsync_Transition_ReturnsExpected(int testCase, byte to, bool shouldSucceed)
     {
         var id = NextId();
@@ -208,7 +209,7 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.UpdateStatusAsync(id, to, _admin);
+        var result = await _service.UpdateStatusAsync(id, to, _admin, CancellationToken.None);
 
         result.IsSuccess.Should().Be(shouldSucceed);
     }
@@ -225,7 +226,7 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.CancelEpisodeAsync(id, "مشكلة فنية", _admin);
+        var result = await _service.CancelEpisodeAsync(id, "مشكلة فنية", _admin, CancellationToken.None);
 
         result.ShouldBeSuccess();
     }
@@ -235,7 +236,7 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
     {
         var user = UserSessionBuilder.CreateLimited();
 
-        var result = await _service.CancelEpisodeAsync(1, "reason", user);
+        var result = await _service.CancelEpisodeAsync(1, "reason", user, CancellationToken.None);
         result.ShouldBeFailure("صلاحية");
     }
 
@@ -251,7 +252,7 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         });
         await ctx.SaveChangesAsync();
 
-        var result = await _service.RevertEpisodeStatusAsync(id, "تصحيح", _admin);
+        var result = await _service.RevertEpisodeStatusAsync(id, "تصحيح", _admin, CancellationToken.None);
 
         result.ShouldBeSuccess();
     }
@@ -271,7 +272,7 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         }
         await ctx.SaveChangesAsync();
 
-        var (success, fail) = await _service.CancelEpisodesBatchAsync([.. ids], "إلغاء جماعي", _admin);
+        var (success, fail) = await _service.CancelEpisodesBatchAsync([.. ids], "إلغاء جماعي", _admin, CancellationToken.None);
 
         success.Should().Be(3);
         fail.Should().Be(0);
@@ -292,7 +293,7 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         }
         await ctx.SaveChangesAsync();
 
-        var (success, fail) = await _service.DeleteEpisodesBatchAsync([.. ids], _admin);
+        var (success, fail) = await _service.DeleteEpisodesBatchAsync([.. ids], _admin, CancellationToken.None);
 
         success.Should().Be(2);
         fail.Should().Be(0);

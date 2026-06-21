@@ -8,13 +8,21 @@
     var programs = ViewBag.Programs as List<ProgramDto> ?? new();
 }
 
-<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-    <div>
-        <h1 class="text-3xl font-extrabold text-ink tracking-tight mb-2 flex items-center gap-3">
-            <span class="material-symbols-rounded text-primary p-2 bg-primary/10 rounded-xl">share</span>
-            سجل النشر الموحد
-        </h1>
-        <p class="text-ink-muted text-sm">شاشة ذكية وعصرية لمتابعة وإدارة كافة عمليات الإنتاج والنشر الرقمي والموقع الرسمي</p>
+<div class="page-header">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <span class="material-symbols-rounded">home</span>
+                <a href="/">الرئيسية</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <span>سجل النشر الموحد</span>
+            </nav>
+            <h1>
+                <span class="material-symbols-rounded text-primary p-1 bg-primary/10 rounded-lg">share</span>
+                سجل النشر الموحد
+            </h1>
+            <p>شاشة ذكية وعصرية لمتابعة وإدارة كافة عمليات الإنتاج والنشر الرقمي والموقع الرسمي</p>
+        </div>
     </div>
 </div>
 
@@ -71,17 +79,17 @@
 </div>
 
 <!-- Modern Filter Panel -->
-<div class="bg-surface rounded-2xl border border-border p-6 mb-6 shadow-sm">
+<div class="filter-premium">
     <form method="get" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div>
-            <label class="form-label block text-xs font-bold text-ink-muted mb-2 uppercase tracking-wide">البحث العام</label>
+            <label class="form-label">البحث العام</label>
             <div class="relative">
                 <span class="material-symbols-rounded absolute right-3 top-2.5 text-ink-soft">search</span>
                 <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث باسم الحلقة أو ملخص التفاصيل..." class="form-input pr-10 w-full" />
             </div>
         </div>
         <div>
-            <label class="form-label block text-xs font-bold text-ink-muted mb-2 uppercase tracking-wide">حسب منصة النشر</label>
+            <label class="form-label">حسب منصة النشر</label>
             <select name="type" class="form-input w-full" onchange="this.form.submit()">
                 <option value="">كل منصات وأنواع النشر</option>
                 <option value="Execution" selected="@(ViewBag.TypeFilter == "Execution")">سجلات الإنتاج (التنفيذ)</option>
@@ -90,7 +98,7 @@
             </select>
         </div>
         <div>
-            <label class="form-label block text-xs font-bold text-ink-muted mb-2 uppercase tracking-wide">فلترة حسب البرنامج</label>
+            <label class="form-label">فلترة حسب البرنامج</label>
             <select name="programId" class="form-input w-full" onchange="this.form.submit()">
                 <option value="">كل البرامج الإذاعية</option>
                 @foreach (var prog in programs)
@@ -112,7 +120,7 @@
 </div>
 
 <!-- Records Display -->
-<div class="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
+<div class="table-premium">
     @if (!Model.Any())
     {
         <div class="empty-state py-16 px-6 text-center">

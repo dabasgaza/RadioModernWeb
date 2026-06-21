@@ -2,6 +2,7 @@
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace DataAccess.Services
 {
@@ -25,7 +26,8 @@ namespace DataAccess.Services
             DateTime? fromDate = null,
             DateTime? toDate = null,
             int page = 1,
-            int pageSize = 100)
+            int pageSize = 100,
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -51,7 +53,7 @@ namespace DataAccess.Services
                     logsQuery = logsQuery.Where(x => x.ChangedAt <= endOfDay);
                 }
 
-                var totalCount = await logsQuery.CountAsync();
+                var totalCount = await logsQuery.CountAsync(cancellationToken);
 
                 var items = await (from log in logsQuery.OrderByDescending(x => x.ChangedAt).Skip((page - 1) * pageSize).Take(pageSize)
                                    join u in context.Users.AsNoTracking()
@@ -71,7 +73,7 @@ namespace DataAccess.Services
                                        UserFullName = u != null ? u.FullName : "غير معروف",
                                        ChangedAt = log.ChangedAt
                                    })
-                                  .ToListAsync();
+                                   .ToListAsync(cancellationToken);
 
                 return Result<PagedAuditLogResult>.Success(new PagedAuditLogResult
                 {
@@ -86,7 +88,7 @@ namespace DataAccess.Services
             }
         }
 
-        public async Task<Result<List<User>>> GetAuditUsersAsync()
+        public async Task<Result<List<User>>> GetAuditUsersAsync(CancellationToken cancellationToken = default)
         {
             try
             {
@@ -97,7 +99,7 @@ namespace DataAccess.Services
                     .Where(u => u.IsActive)
                     .OrderBy(u => u.FullName)
                     .Select(u => new User { UserId = u.UserId, FullName = u.FullName, Username = u.Username })
-                    .ToListAsync();
+                    .ToListAsync(cancellationToken);
                 return Result<List<User>>.Success(users);
             }
             catch (Exception ex)

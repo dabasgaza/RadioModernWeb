@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using System.Data.Common;
 
 namespace DataAccess.Data
@@ -7,9 +7,11 @@ namespace DataAccess.Data
     public class DbQueryPerformanceInterceptor : DbCommandInterceptor
     {
         private readonly int _slowQueryThresholdMs;
+        private readonly ILogger<DbQueryPerformanceInterceptor> _logger;
 
-        public DbQueryPerformanceInterceptor(int slowQueryThresholdMs = 100)
+        public DbQueryPerformanceInterceptor(ILogger<DbQueryPerformanceInterceptor> logger, int slowQueryThresholdMs = 100)
         {
+            _logger = logger;
             _slowQueryThresholdMs = slowQueryThresholdMs;
         }
 
@@ -51,13 +53,13 @@ namespace DataAccess.Data
 
         public override void CommandFailed(DbCommand command, CommandErrorEventData eventData)
         {
-            Log.Error(eventData.Exception, "SQL Command Failed: {Sql}", command.CommandText);
+            _logger.LogError(eventData.Exception, "SQL Command Failed: {Sql}", command.CommandText);
             base.CommandFailed(command, eventData);
         }
 
         public override Task CommandFailedAsync(DbCommand command, CommandErrorEventData eventData, CancellationToken cancellationToken = default)
         {
-            Log.Error(eventData.Exception, "SQL Command Failed: {Sql}", command.CommandText);
+            _logger.LogError(eventData.Exception, "SQL Command Failed: {Sql}", command.CommandText);
             return base.CommandFailedAsync(command, eventData, cancellationToken);
         }
 
@@ -68,11 +70,11 @@ namespace DataAccess.Data
 
             if (durationMs >= _slowQueryThresholdMs)
             {
-                Log.Warning("Slow SQL Query Detected: {Sql} took {DurationMs}ms", sql, durationMs);
+                _logger.LogWarning("Slow SQL Query Detected: {Sql} took {DurationMs}ms", sql, durationMs);
             }
             else
             {
-                Log.Information("SQL Query Executed: {Sql} took {DurationMs}ms", sql, durationMs);
+                _logger.LogInformation("SQL Query Executed: {Sql} took {DurationMs}ms", sql, durationMs);
             }
         }
     }

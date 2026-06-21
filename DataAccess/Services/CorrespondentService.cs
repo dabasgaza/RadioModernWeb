@@ -4,17 +4,18 @@ using DataAccess.Validation;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace DataAccess.Services
 {
     public interface ICorrespondentService
     {
         // ✨ إرجاع DTOs بدلاً من الكيانات
-        Task<List<CorrespondentDto>> GetAllActiveAsync();
-        Task<Result> CreateAsync(CorrespondentDto dto, UserSession session);
-        Task<Result> UpdateAsync(CorrespondentDto dto, UserSession session);
-        Task<Result> SoftDeleteAsync(int id, UserSession session);
-        Task<List<CorrespondentCoverageDto>> GetCoverageAsync(int correspondentId);
+        Task<List<CorrespondentDto>> GetAllActiveAsync(CancellationToken cancellationToken = default);
+        Task<Result> CreateAsync(CorrespondentDto dto, UserSession session, CancellationToken cancellationToken = default);
+        Task<Result> UpdateAsync(CorrespondentDto dto, UserSession session, CancellationToken cancellationToken = default);
+        Task<Result> SoftDeleteAsync(int id, UserSession session, CancellationToken cancellationToken = default);
+        Task<List<CorrespondentCoverageDto>> GetCoverageAsync(int correspondentId, CancellationToken cancellationToken = default);
     }
 
     // ✨ استخدام Primary Constructor
@@ -48,7 +49,7 @@ namespace DataAccess.Services
                         c.AssignedLocations
                     )));
 
-        public async Task<List<CorrespondentDto>> GetAllActiveAsync()
+        public async Task<List<CorrespondentDto>> GetAllActiveAsync(CancellationToken cancellationToken = default)
         {
             using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -58,7 +59,7 @@ namespace DataAccess.Services
             return result;
         }
 
-        public async Task<Result> CreateAsync(CorrespondentDto dto, UserSession session)
+        public async Task<Result> CreateAsync(CorrespondentDto dto, UserSession session, CancellationToken cancellationToken = default)
         {
             var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);
             if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -77,8 +78,8 @@ namespace DataAccess.Services
                     AssignedLocations = dto.AssignedLocations
                 });
 
-                await context.SaveChangesAsync();
-                _cachedLookup.InvalidateByEntity("Correspondent");
+                await context.SaveChangesAsync(cancellationToken);
+                await _cachedLookup.InvalidateByEntity("Correspondent");
                 return Result.Success();
             }
             catch (Exception ex)
@@ -88,7 +89,7 @@ namespace DataAccess.Services
             }
         }
 
-        public async Task<Result> UpdateAsync(CorrespondentDto dto, UserSession session)
+        public async Task<Result> UpdateAsync(CorrespondentDto dto, UserSession session, CancellationToken cancellationToken = default)
         {
             var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);
             if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -107,8 +108,8 @@ namespace DataAccess.Services
                 cor.PhoneNumber = dto.PhoneNumber;
                 cor.AssignedLocations = dto.AssignedLocations;
 
-                await context.SaveChangesAsync();
-                _cachedLookup.InvalidateByEntity("Correspondent");
+                await context.SaveChangesAsync(cancellationToken);
+                await _cachedLookup.InvalidateByEntity("Correspondent");
                 return Result.Success();
             }
             catch (Exception ex)
@@ -118,7 +119,7 @@ namespace DataAccess.Services
             }
         }
 
-        public async Task<Result> SoftDeleteAsync(int id, UserSession session)
+        public async Task<Result> SoftDeleteAsync(int id, UserSession session, CancellationToken cancellationToken = default)
         {
             var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);
             if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -132,8 +133,8 @@ namespace DataAccess.Services
 
                 cor.IsActive = false;
 
-                await context.SaveChangesAsync();
-                _cachedLookup.InvalidateByEntity("Correspondent");
+                await context.SaveChangesAsync(cancellationToken);
+                await _cachedLookup.InvalidateByEntity("Correspondent");
                 return Result.Success();
             }
             catch (Exception ex)
@@ -143,7 +144,7 @@ namespace DataAccess.Services
             }
         }
 
-        public async Task<List<CorrespondentCoverageDto>> GetCoverageAsync(int correspondentId)
+        public async Task<List<CorrespondentCoverageDto>> GetCoverageAsync(int correspondentId, CancellationToken cancellationToken = default)
         {
             using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -158,7 +159,7 @@ namespace DataAccess.Services
                     Location = c.Location,
                     GuestName = c.Guest != null ? c.Guest.FullName : "لا يوجد ضيف"
                 })
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
     }
 }

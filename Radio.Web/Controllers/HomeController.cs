@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Threading;
 using DataAccess.Common;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -28,11 +29,11 @@ public class HomeController : Controller
     {
         try
         {
-            var todayEpisodes = await _reports.GetTodayEpisodesAsync();
-            var statusStats = await _reports.GetEpisodeStatusStatsAsync();
-            var topPrograms = await _reports.GetMostActiveProgramsAsync();
-            var topGuests = await _reports.GetTopGuestsAsync(10);
-            var cancelledEpisodes = await _reports.GetCancelledEpisodesAsync();
+            var todayEpisodes = await _reports.GetTodayEpisodesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
+            var statusStats = await _reports.GetEpisodeStatusStatsAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
+            var topPrograms = await _reports.GetMostActiveProgramsAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
+            var topGuests = await _reports.GetTopGuestsAsync(10, cancellationToken: HttpContext?.RequestAborted ?? default);
+            var cancelledEpisodes = await _reports.GetCancelledEpisodesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
 
             var vm = new DashboardViewModel
             {

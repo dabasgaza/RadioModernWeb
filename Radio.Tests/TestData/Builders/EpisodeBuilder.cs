@@ -11,7 +11,7 @@ public class EpisodeBuilder
     private string? _description;
     private byte _statusId;
     private DateTime? _scheduledTime = DateTime.UtcNow.AddDays(1);
-    private string? _specialNotes;
+    private string? _specialNotes = null;
     private readonly List<EpisodeGuest> _guests = [];
     private readonly List<EpisodeEmployee> _employees = [];
     private readonly List<EpisodeCorrespondent> _correspondents = [];

@@ -1,52 +1,74 @@
 @model List<SocialMediaPlatformDto>
 @{ ViewData["Title"] = "منصات النشر"; }
 
-<div class="flex items-center justify-between mb-6">
-    <div>
-        <h1 class="text-2xl font-bold text-ink mb-1 flex items-center gap-2">
-            <span class="material-symbols-rounded text-primary">share</span>
-            منصات النشر
-        </h1>
-        <p class="text-ink-muted text-sm">إدارة منصات السوشيال ميديا</p>
+<div class="page-header">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <span class="material-symbols-rounded">home</span>
+                <a href="/">الرئيسية</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <span>منصات النشر</span>
+            </nav>
+            <h1>
+                <span class="material-symbols-rounded text-primary">share</span>
+                منصات النشر
+            </h1>
+            <p>إدارة منصات السوشيال ميديا المستخدمة في عمليات النشر الرقمي</p>
+        </div>
+        <div class="flex items-center gap-2">
+            @if (User.HasPermission(AppPermissions.StaffManage))
+            {
+                <a href="/SocialPlatforms/Create" class="btn-primary">
+                    <span class="material-symbols-rounded">add</span>
+                    منصة جديدة
+                </a>
+            }
+        </div>
     </div>
-    @if (User.HasPermission(AppPermissions.StaffManage))
-    {
-        <a href="/SocialPlatforms/Create" class="btn-primary"><span class="material-symbols-rounded">add</span> منصة جديدة</a>
-    }
 </div>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-    @if (!Model.Any())
-    {
-        <div class="col-span-full empty-state p-12 bg-surface rounded-xl border border-border">
+@if (!Model.Any())
+{
+    <div class="table-premium p-12 text-center">
+        <div class="empty-state">
             <span class="material-symbols-rounded empty-icon">share</span>
             <h3 class="font-bold text-ink text-lg mb-2">لا منصات</h3>
-            <a href="/SocialPlatforms/Create" class="btn-primary"><span class="material-symbols-rounded">add</span> منصة جديدة</a>
+            <p class="text-ink-muted text-sm mb-4">لم تتم إضافة أي منصات نشر بعد.</p>
+            @if (User.HasPermission(AppPermissions.StaffManage))
+            {
+                <a href="/SocialPlatforms/Create" class="btn-primary">
+                    <span class="material-symbols-rounded">add</span>
+                    إضافة منصة جديدة
+                </a>
+            }
         </div>
-    }
-    else
-    {
+    </div>
+}
+else
+{
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         @foreach (var p in Model)
         {
-            <div class="bg-surface rounded-xl border border-border p-5 flex items-center gap-3">
-                <div class="w-12 h-12 rounded-full bg-blue-50 text-primary flex items-center justify-center">
+            <div class="card-premium flex items-center gap-3 p-4">
+                <div class="w-12 h-12 rounded-full bg-blue-50 text-primary flex items-center justify-center shrink-0">
                     <span class="material-symbols-rounded">@GetPlatformIcon(p.Name)</span>
                 </div>
-                <div class="flex-1">
-                    <div class="font-bold text-ink">@p.Name</div>
+                <div class="flex-1 min-w-0">
+                    <div class="font-bold text-ink truncate">@p.Name</div>
                 </div>
                 @if (User.HasPermission(AppPermissions.StaffManage))
                 {
                     <a href="/SocialPlatforms/Edit/@p.SocialMediaPlatformId" class="icon-btn icon-btn-primary"><span class="material-symbols-rounded">edit</span></a>
-                    <form method="post" action="/SocialPlatforms/Delete/@p.SocialMediaPlatformId" data-confirm="هل أنت متأكد من حذف منصة «@p.Name»؟">
+                    <form method="post" action="/SocialPlatforms/Delete/@p.SocialMediaPlatformId" class="inline" data-confirm="هل أنت متأكد من حذف منصة «@p.Name»؟">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="icon-btn icon-btn-danger"><span class="material-symbols-rounded">delete</span></button>
                     </form>
                 }
             </div>
         }
-    }
-</div>
+    </div>
+}
 
 @functions {
     string GetPlatformIcon(string name) => name.ToLowerInvariant() switch

@@ -1,19 +1,20 @@
 using DataAccess.Common;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 namespace DataAccess.Services;
 
 public interface IAuthService
 {
-    Task<Result<UserSession>> LoginAsync(string username, string password);
+    Task<Result<UserSession>> LoginAsync(string username, string password, CancellationToken cancellationToken = default);
 }
 
 public class AuthService(IDbContextFactory<BroadcastWorkflowDBContext> contextFactory) : IAuthService
 {
     private const string DummyHash = "$2a$11$dummyHashToPreventTimingAttack1234567890";
 
-    public async Task<Result<UserSession>> LoginAsync(string username, string password)
+    public async Task<Result<UserSession>> LoginAsync(string username, string password, CancellationToken cancellationToken = default)
     {
         await using var context = await contextFactory.CreateDbContextAsync();
 
@@ -35,7 +36,7 @@ public class AuthService(IDbContextFactory<BroadcastWorkflowDBContext> contextFa
                         .ToList()
                     : new List<string>()
             })
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
 
         var hashToVerify = userProjection?.PasswordHash ?? DummyHash;
 
@@ -48,7 +49,7 @@ public class AuthService(IDbContextFactory<BroadcastWorkflowDBContext> contextFa
         await using var writeContext = await contextFactory.CreateDbContextAsync();
         await writeContext.Users
             .Where(u => u.UserId == userProjection.UserId)
-            .ExecuteUpdateAsync(s => s.SetProperty(u => u.LastLoginAt, DateTime.UtcNow));
+            .ExecuteUpdateAsync(s => s.SetProperty(u => u.LastLoginAt, DateTime.UtcNow), cancellationToken);
 
         return Result<UserSession>.Success(new UserSession
         {

@@ -1,5 +1,5 @@
+using System.IO;
 using DataAccess.Common;
-using DataAccess.Data;
 using DataAccess.DTOs;
 using DataAccess.Services;
 using Domain.Identity;
@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Radio.Web.Security;
 using Radio.Web.Services;
 using Radio.Web.ViewModels;
@@ -32,7 +31,7 @@ public class PublishingController : Controller
 
     public async Task<IActionResult> Index(string? search = null, string? type = null, int? programId = null, int? episodeId = null)
     {
-        var list = await _query.GetAllPublishingRecordsAsync(episodeId);
+        var list = await _query.GetAllPublishingRecordsAsync(episodeId, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (!string.IsNullOrWhiteSpace(type))
         {
             list = list.Where(r => r.RecordType == type).ToList();
@@ -51,16 +50,16 @@ public class PublishingController : Controller
         ViewBag.TypeFilter = type ?? "";
         ViewBag.ProgramFilter = programId;
         ViewBag.EpisodeFilter = episodeId;
-        ViewBag.Programs = _lookup != null ? await _lookup.GetProgramsAsync() : new List<ProgramDto>();
+        ViewBag.Programs = _lookup != null ? await _lookup.GetProgramsAsync(cancellationToken: HttpContext?.RequestAborted ?? default) : new List<ProgramDto>();
         return View(list.OrderByDescending(r => r.RecordDate).ToList());
     }
 
     [Authorize(Policy = AppPermissions.EpisodePublish)]
     public async Task<IActionResult> LogSocial(int id)
     {
-        var platforms = await _query.GetAllPlatformsAsync();
-        var episode = await _episodes.GetActiveEpisodeByIdAsync(id);
-        var guests = await _episodes.GetEpisodeGuestsAsync(id);
+        var platforms = await _query.GetAllPlatformsAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
+        var episode = await _episodes.GetActiveEpisodeByIdAsync(id, cancellationToken: HttpContext?.RequestAborted ?? default);
+        var guests = await _episodes.GetEpisodeGuestsAsync(id, cancellationToken: HttpContext?.RequestAborted ?? default);
         var vm = new SocialPublishingViewModel { Episode = episode, EpisodeGuests = guests, Platforms = platforms };
         return View(vm);
     }
@@ -78,7 +77,7 @@ public class PublishingController : Controller
             g.Platforms.Select(p => new PlatformPublishDto(p.PlatformId, "", p.Url)).ToList()
         )).ToList();
 
-        var r = await _command.LogSocialPublishingAsync(id, logs, session);
+        var r = await _command.LogSocialPublishingAsync(id, logs, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم تسجيل النشر الرقمي"; return RedirectToAction(nameof(Index)); }
         TempData["Error"] = r.ErrorMessage;
         return RedirectToAction(nameof(LogSocial), new { id });
@@ -87,14 +86,14 @@ public class PublishingController : Controller
     [Authorize(Policy = AppPermissions.EpisodePublish)]
     public async Task<IActionResult> Edit(int id)
     {
-        var log = await _query.GetSocialPublishingLogByIdAsync(id);
+        var log = await _query.GetSocialPublishingLogByIdAsync(id, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (log is null) return NotFound();
 
-        var platforms = await _query.GetAllPlatformsAsync();
-        var episode = await _episodes.GetActiveEpisodeByIdAsync(log.EpisodeId);
-        var episodeRecords = await _query.GetAllPublishingRecordsAsync(log.EpisodeId);
-        var episodeSocialLogs = await _query.GetEpisodeSocialLogsAsync(log.EpisodeId) ?? [];
-        var guests = await _episodes.GetEpisodeGuestsAsync(log.EpisodeId) ?? [];
+        var platforms = await _query.GetAllPlatformsAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
+        var episode = await _episodes.GetActiveEpisodeByIdAsync(log.EpisodeId, cancellationToken: HttpContext?.RequestAborted ?? default);
+        var episodeRecords = await _query.GetAllPublishingRecordsAsync(log.EpisodeId, cancellationToken: HttpContext?.RequestAborted ?? default);
+        var episodeSocialLogs = await _query.GetEpisodeSocialLogsAsync(log.EpisodeId, cancellationToken: HttpContext?.RequestAborted ?? default) ?? [];
+        var guests = await _episodes.GetEpisodeGuestsAsync(log.EpisodeId, cancellationToken: HttpContext?.RequestAborted ?? default) ?? [];
 
         var guestLookup = guests.ToDictionary(g => g.EpisodeGuestId, g => g.FullName);
 
@@ -144,7 +143,7 @@ public class PublishingController : Controller
                 guestLog.Platforms.Select(p => new PlatformPublishDto(p.PlatformId, "", p.Url)).ToList()
             );
 
-            var r = await _command.UpdateSocialPublishingLogAsync(dto, session);
+            var r = await _command.UpdateSocialPublishingLogAsync(dto, session, cancellationToken: HttpContext?.RequestAborted ?? default);
             if (!r.IsSuccess) errors.Add(r.ErrorMessage!);
         }
 
@@ -164,7 +163,7 @@ public class PublishingController : Controller
     public async Task<IActionResult> Delete(int id)
     {
         var session = _currentUser.ToUserSession()!;
-        var r = await _command.DeleteSocialPublishingLogAsync(id, session);
+        var r = await _command.DeleteSocialPublishingLogAsync(id, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) TempData["Success"] = "تم حذف سجل النشر الرقمي";
         else TempData["Error"] = r.ErrorMessage;
         return RedirectToAction(nameof(Index));
@@ -184,7 +183,7 @@ public class ExecutionLogsController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var records = await _publishing.GetAllPublishingRecordsAsync();
+        var records = await _publishing.GetAllPublishingRecordsAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         var executions = records.Where(r => r.RecordType == "Execution").ToList();
         return View(executions);
     }
@@ -205,7 +204,7 @@ public class WebsitePublishingController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var records = await _query.GetAllPublishingRecordsAsync();
+        var records = await _query.GetAllPublishingRecordsAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         var websites = records.Where(r => r.RecordType == "Website").ToList();
         return View(websites);
     }
@@ -213,7 +212,7 @@ public class WebsitePublishingController : Controller
     [Authorize(Policy = AppPermissions.EpisodeWebPublish)]
     public async Task<IActionResult> Publish(int id)
     {
-        var episode = await _episodes.GetActiveEpisodeByIdAsync(id);
+        var episode = await _episodes.GetActiveEpisodeByIdAsync(id, cancellationToken: HttpContext?.RequestAborted ?? default);
         return View(episode);
     }
 
@@ -223,7 +222,7 @@ public class WebsitePublishingController : Controller
     public async Task<IActionResult> Publish(int id, string title, MediaType mediaType, string notes)
     {
         var session = _currentUser.ToUserSession()!;
-        var r = await _command.LogWebsitePublishingAsync(id, title, mediaType, notes, session);
+        var r = await _command.LogWebsitePublishingAsync(id, title, mediaType, notes, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم تسجيل نشر الموقع"; return RedirectToAction(nameof(Index)); }
         TempData["Error"] = r.ErrorMessage;
         return RedirectToAction(nameof(Publish), new { id });
@@ -232,11 +231,11 @@ public class WebsitePublishingController : Controller
     [Authorize(Policy = AppPermissions.EpisodeWebPublish)]
     public async Task<IActionResult> Edit(int id)
     {
-        var log = await _query.GetWebsitePublishingLogByIdAsync(id);
+        var log = await _query.GetWebsitePublishingLogByIdAsync(id, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (log is null) return NotFound();
 
-        var episode = await _episodes.GetActiveEpisodeByIdAsync(log.EpisodeId);
-        var episodeRecords = await _query.GetAllPublishingRecordsAsync(log.EpisodeId);
+        var episode = await _episodes.GetActiveEpisodeByIdAsync(log.EpisodeId, cancellationToken: HttpContext?.RequestAborted ?? default);
+        var episodeRecords = await _query.GetAllPublishingRecordsAsync(log.EpisodeId, cancellationToken: HttpContext?.RequestAborted ?? default);
         var vm = new WebsitePublishEditViewModel
         {
             Log = log,
@@ -253,7 +252,7 @@ public class WebsitePublishingController : Controller
     {
         var session = _currentUser.ToUserSession()!;
         var dto = new WebsitePublishingLogDto(id, 0, mediaType, title, notes, default);
-        var r = await _command.UpdateWebsitePublishingLogAsync(dto, session);
+        var r = await _command.UpdateWebsitePublishingLogAsync(dto, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم تحديث سجل نشر الموقع"; return RedirectToAction(nameof(Index)); }
         TempData["Error"] = r.ErrorMessage;
         return RedirectToAction(nameof(Edit), new { id });
@@ -265,7 +264,7 @@ public class WebsitePublishingController : Controller
     public async Task<IActionResult> Delete(int id)
     {
         var session = _currentUser.ToUserSession()!;
-        var r = await _command.DeleteWebsitePublishingLogAsync(id, session);
+        var r = await _command.DeleteWebsitePublishingLogAsync(id, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) TempData["Success"] = "تم حذف سجل نشر الموقع";
         else TempData["Error"] = r.ErrorMessage;
         return RedirectToAction(nameof(Index));
@@ -285,11 +284,11 @@ public class ReportsController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var today = await _reports.GetTodayEpisodesAsync();
-        var stats = await _reports.GetEpisodeStatusStatsAsync();
-        var programs = await _reports.GetMostActiveProgramsAsync();
-        var guests = await _reports.GetTopGuestsAsync(20);
-        var cancelled = await _reports.GetCancelledEpisodesAsync();
+        var today = await _reports.GetTodayEpisodesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
+        var stats = await _reports.GetEpisodeStatusStatsAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
+        var programs = await _reports.GetMostActiveProgramsAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
+        var guests = await _reports.GetTopGuestsAsync(20, cancellationToken: HttpContext?.RequestAborted ?? default);
+        var cancelled = await _reports.GetCancelledEpisodesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
 
         var vm = new ReportsViewModel
         {
@@ -306,7 +305,7 @@ public class ReportsController : Controller
     {
         from ??= DateTime.UtcNow.AddDays(-30);
         to ??= DateTime.UtcNow;
-        var list = await _reports.GetEpisodesByDateRangeAsync(from.Value, to.Value);
+        var list = await _reports.GetEpisodesByDateRangeAsync(from.Value, to.Value, cancellationToken: HttpContext?.RequestAborted ?? default);
         ViewBag.From = from.Value.ToString("yyyy-MM-dd");
         ViewBag.To = to.Value.ToString("yyyy-MM-dd");
         return View(list);
@@ -314,7 +313,7 @@ public class ReportsController : Controller
 
     public async Task<IActionResult> Cancelled()
     {
-        var list = await _reports.GetCancelledEpisodesAsync();
+        var list = await _reports.GetCancelledEpisodesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         return View(list);
     }
 }
@@ -343,18 +342,90 @@ public class DatabaseController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var r = await _db.GetBackupHistoryAsync();
-        var list = r.IsSuccess ? r.Value ?? new() : new();
-        return View(list);
+        var ct = HttpContext?.RequestAborted ?? default;
+        var dashboard = await _db.GetDatabaseDashboardAsync(ct);
+        var logs = await _db.GetBackupHistoryAsync(ct);
+        var vm = new DatabaseDashboardViewModel
+        {
+            DatabaseSizeBytes = dashboard?.DatabaseSizeBytes ?? 0,
+            DatabaseLogSizeBytes = dashboard?.DatabaseLogSizeBytes ?? 0,
+            LastBackupAt = dashboard?.LastBackupAt,
+            LastBackupSizeBytes = dashboard?.LastBackupSizeBytes ?? 0,
+            TotalBackups = dashboard?.TotalBackups ?? 0,
+            SuccessRate = dashboard?.SuccessRate ?? 100,
+            BackupsThisMonth = dashboard?.BackupsThisMonth ?? 0,
+            ActiveConnections = dashboard?.ActiveConnections ?? 0,
+            IsAutoBackupEnabled = dashboard?.IsAutoBackupEnabled ?? false,
+            IsCloudSyncEnabled = dashboard?.IsCloudSyncEnabled ?? false,
+            RetentionDays = dashboard?.RetentionDays ?? 30,
+            BackupFolderSizeBytes = dashboard?.BackupFolderSizeBytes ?? 0,
+            FailureCount = dashboard?.FailureCount ?? 0,
+            DatabaseName = dashboard?.DatabaseName ?? "",
+            BackupLogs = logs.IsSuccess ? logs.Value ?? new() : new()
+        };
+        return View(vm);
     }
 
     [Authorize(Policy = AppPermissions.DatabaseManage)]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Backup()
+    public async Task<IActionResult> Backup(string? backupFolder)
     {
-        var r = await _db.BackupDatabaseAsync();
+        var ct = HttpContext?.RequestAborted ?? default;
+        var r = await _db.BackupDatabaseAsync(
+            string.IsNullOrWhiteSpace(backupFolder) ? null : backupFolder.Trim(),
+            ct);
         if (r.IsSuccess) TempData["Success"] = "تم إنشاء النسخة الاحتياطية";
+        else TempData["Error"] = r.ErrorMessage;
+        return RedirectToAction(nameof(Index));
+    }
+
+    [Authorize(Policy = AppPermissions.DatabaseManage)]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Restore(IFormFile? backupFile)
+    {
+        if (backupFile == null || backupFile.Length == 0)
+        {
+            TempData["Error"] = "يرجى اختيار ملف .bak للاستعادة";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var tempDir = Path.Combine(Path.GetTempPath(), "RadioRestore");
+        Directory.CreateDirectory(tempDir);
+        var tempPath = Path.Combine(tempDir, backupFile.FileName);
+
+        await using (var stream = new FileStream(tempPath, FileMode.Create))
+        {
+            await backupFile.CopyToAsync(stream);
+        }
+
+        var r = await _db.RestoreDatabaseAsync(tempPath, HttpContext?.RequestAborted ?? default);
+        if (r.IsSuccess) TempData["Success"] = "تمت استعادة قاعدة البيانات بنجاح";
+        else TempData["Error"] = r.ErrorMessage;
+        return RedirectToAction(nameof(Index));
+    }
+
+    [Authorize(Policy = AppPermissions.DatabaseManage)]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RestoreFromLog(int id)
+    {
+        var ct = HttpContext?.RequestAborted ?? default;
+        using var ctx = await _ctxFactory.CreateDbContextAsync(ct);
+        var log = await ctx.DatabaseBackupLogs.FindAsync(new object[] { id }, ct);
+        if (log == null || string.IsNullOrEmpty(log.BackupPath))
+        {
+            TempData["Error"] = "السجل غير موجود أو مسار الملف غير متوفر";
+            return RedirectToAction(nameof(Index));
+        }
+        if (!System.IO.File.Exists(log.BackupPath))
+        {
+            TempData["Error"] = "ملف النسخة غير موجود على الخادم";
+            return RedirectToAction(nameof(Index));
+        }
+        var r = await _db.RestoreDatabaseAsync(log.BackupPath, ct);
+        if (r.IsSuccess) TempData["Success"] = "تمت استعادة قاعدة البيانات من النسخة المحددة";
         else TempData["Error"] = r.ErrorMessage;
         return RedirectToAction(nameof(Index));
     }
@@ -364,10 +435,118 @@ public class DatabaseController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Initialize()
     {
-        var r = await _db.InitializeDatabaseAsync();
+        var r = await _db.InitializeDatabaseAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) TempData["Success"] = "تمت التهيئة";
         else TempData["Error"] = r.ErrorMessage;
         return RedirectToAction(nameof(Index));
+    }
+
+    [Authorize(Policy = AppPermissions.DatabaseManage)]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Reset()
+    {
+        var ct = HttpContext?.RequestAborted ?? default;
+        var r = await _db.ResetDatabaseAsync(ct);
+        if (r.IsSuccess) TempData["Success"] = "تمت إعادة تعيين قاعدة البيانات بنجاح";
+        else TempData["Error"] = r.ErrorMessage;
+        return RedirectToAction(nameof(Index));
+    }
+
+    [Authorize(Policy = AppPermissions.DatabaseManage)]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CloudSync(int? logId, string? direct)
+    {
+        var ct = HttpContext?.RequestAborted ?? default;
+        string? backupPath = null;
+
+        if (logId.HasValue)
+        {
+            using var ctx = await _ctxFactory.CreateDbContextAsync(ct);
+            var log = await ctx.DatabaseBackupLogs.FindAsync(new object[] { logId.Value }, ct);
+            if (log == null) { TempData["Error"] = "السجل غير موجود"; return RedirectToAction(nameof(Index)); }
+            backupPath = log.BackupPath;
+        }
+        else
+        {
+            using var ctx = await _ctxFactory.CreateDbContextAsync(ct);
+            var latest = await ctx.DatabaseBackupLogs
+                .Where(x => x.Status == "Success")
+                .OrderByDescending(x => x.CreatedAt)
+                .FirstOrDefaultAsync(ct);
+            if (latest == null) { TempData["Error"] = "لا توجد نسخ احتياطية ناجحة للمزامنة"; return RedirectToAction(nameof(Index)); }
+            backupPath = latest.BackupPath;
+        }
+
+        var result = await _db.CloudSyncBackupAsync(backupPath, ct);
+        if (result.IsSuccess) TempData["Success"] = "تمت المزامنة السحابية";
+        else TempData["Error"] = result.ErrorMessage;
+        return RedirectToAction(nameof(Index));
+    }
+
+    [Authorize(Policy = AppPermissions.DatabaseManage)]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RunRetention(int retentionDays)
+    {
+        var ct = HttpContext?.RequestAborted ?? default;
+        if (retentionDays < 1) retentionDays = 30;
+        var r = await _db.RunRetentionPolicyAsync(retentionDays, ct);
+        if (r.IsSuccess) TempData["Success"] = $"تم تطبيق سياسة الاحتفاظ: حذف النسخ الأقدم من {retentionDays} يوم";
+        else TempData["Error"] = r.ErrorMessage;
+        return RedirectToAction(nameof(Index));
+    }
+
+    [Authorize(Policy = AppPermissions.DatabaseManage)]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteBackupLog(int id)
+    {
+        var ct = HttpContext?.RequestAborted ?? default;
+        try
+        {
+            using var ctx = await _ctxFactory.CreateDbContextAsync(ct);
+            var log = await ctx.DatabaseBackupLogs.FindAsync(new object[] { id }, ct);
+            if (log != null)
+            {
+                log.IsActive = false;
+                log.UpdatedAt = DateTime.UtcNow;
+                await ctx.SaveChangesAsync(ct);
+                TempData["Success"] = "تم حذف السجل";
+            }
+            else TempData["Error"] = "السجل غير موجود";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Delete backup log failed");
+            TempData["Error"] = "حدث خطأ أثناء حذف السجل";
+        }
+        return RedirectToAction(nameof(Index));
+    }
+
+    [Authorize(Policy = AppPermissions.DatabaseManage)]
+    public async Task<IActionResult> DownloadBackup(int id)
+    {
+        var ct = HttpContext?.RequestAborted ?? default;
+        try
+        {
+            using var ctx = await _ctxFactory.CreateDbContextAsync(ct);
+            var log = await ctx.DatabaseBackupLogs.FindAsync(new object[] { id }, ct);
+            if (log == null || string.IsNullOrEmpty(log.BackupPath) || !System.IO.File.Exists(log.BackupPath))
+            {
+                TempData["Error"] = "ملف النسخة غير موجود";
+                return RedirectToAction(nameof(Index));
+            }
+            var bytes = await System.IO.File.ReadAllBytesAsync(log.BackupPath, ct);
+            return File(bytes, "application/octet-stream", Path.GetFileName(log.BackupPath));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Download backup failed");
+            TempData["Error"] = "حدث خطأ أثناء تحميل الملف";
+            return RedirectToAction(nameof(Index));
+        }
     }
 
     [Authorize(Policy = AppPermissions.DatabaseManage)]
@@ -413,7 +592,7 @@ public class DatabaseController : Controller
 
                 await _sync.CreateUserAsync(
                     du.Username, defaultPassword, du.FullName,
-                    du.EmailAddress, du.PhoneNumber, du.RoleId);
+                    du.EmailAddress, du.PhoneNumber, du.RoleId, cancellationToken: HttpContext?.RequestAborted ?? default);
                 synced++;
 
                 var roleName = await context.Roles
@@ -447,11 +626,11 @@ public class DiagnosticsController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var summary = await _diag.GetSummaryAsync();
-        var logs = await _diag.GetLogsAsync(count: 100);
+        var summary = await _diag.GetSummaryAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
+        var logs = await _diag.GetLogsAsync(count: 100, cancellationToken: HttpContext?.RequestAborted ?? default);
         var vm = new DiagnosticsViewModel
         {
-            Summary = summary.IsSuccess ? summary.Value : new DiagnosticsSummaryDto(),
+            Summary = summary.IsSuccess && summary.Value is not null ? summary.Value : new DiagnosticsSummaryDto(),
             Logs = logs.IsSuccess ? logs.Value ?? new() : new()
         };
         return View(vm);

@@ -8,7 +8,7 @@
         void ShowInfo(string message, string title = "معلومة");
 
         // 👈 رسالة التأكيد ترجع Task<bool> لأنها توقف التنفيذ لانتظار رد المستخدم
-        Task<bool> ShowConfirmationAsync(string message, string title = "تأكيد");
+        Task<bool> ShowConfirmationAsync(string message, string title = "تأكيد", CancellationToken cancellationToken = default);
     }
 
     /// <summary>
@@ -34,7 +34,7 @@
         public void ShowError(string message, string title = "خطأ") { }
         public void ShowWarning(string message, string title = "تحذير") { }
         public void ShowInfo(string message, string title = "معلومة") { }
-        public Task<bool> ShowConfirmationAsync(string message, string title = "تأكيد") => Task.FromResult(false);
+        public Task<bool> ShowConfirmationAsync(string message, string title = "تأكيد", CancellationToken cancellationToken = default) => Task.FromResult(false);
     }
 
 }

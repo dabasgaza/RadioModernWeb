@@ -20,6 +20,8 @@ public class EpisodeDetailsViewModel
 public class EpisodeEditViewModel
 {
     public EpisodeDto Episode { get; set; } = default!;
+    public string? StatusText { get; set; }
+    public byte StatusId { get; set; }
     public List<ProgramDto> Programs { get; set; } = new();
     public List<GuestDto> Guests { get; set; } = new();
     public List<CorrespondentDto> Correspondents { get; set; } = new();

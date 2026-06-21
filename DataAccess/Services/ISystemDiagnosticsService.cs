@@ -1,4 +1,5 @@
 using DataAccess.Common;
+using System.Threading;
 
 namespace DataAccess.Services
 {
@@ -26,9 +27,9 @@ namespace DataAccess.Services
 
     public interface ISystemDiagnosticsService
     {
-        Task<Result<List<DiagnosticLogDto>>> GetLogsAsync(string? level = null, string? searchTerm = null, int count = 200);
-        Task<Result<DiagnosticsSummaryDto>> GetSummaryAsync();
-        Task<Result<List<DiagnosticLogDto>>> GetSqlPerformanceLogsAsync(int count = 100);
-        Task<Result> ClearLogsAsync();
+        Task<Result<List<DiagnosticLogDto>>> GetLogsAsync(string? level = null, string? searchTerm = null, int count = 200, CancellationToken cancellationToken = default);
+        Task<Result<DiagnosticsSummaryDto>> GetSummaryAsync(CancellationToken cancellationToken = default);
+        Task<Result<List<DiagnosticLogDto>>> GetSqlPerformanceLogsAsync(int count = 100, CancellationToken cancellationToken = default);
+        Task<Result> ClearLogsAsync(CancellationToken cancellationToken = default);
     }
 }

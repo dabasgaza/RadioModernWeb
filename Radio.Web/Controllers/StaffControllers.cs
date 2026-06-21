@@ -5,6 +5,7 @@ using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Radio.Web.Services;
+using System.Threading;
 using Radio.Web.ViewModels;
 
 namespace Radio.Web.Controllers;
@@ -23,7 +24,7 @@ public class EmployeesController : Controller
 
     public async Task<IActionResult> Index(string? search)
     {
-        var list = await _employees.GetAllActiveAsync();
+        var list = await _employees.GetAllActiveAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         if (!string.IsNullOrWhiteSpace(search))
         {
             var s = search.Trim();
@@ -36,7 +37,7 @@ public class EmployeesController : Controller
     [Authorize(Policy = AppPermissions.StaffManage)]
     public async Task<IActionResult> Create()
     {
-        ViewBag.StaffRoles = await _employees.GetAllRolesAsync();
+        ViewBag.StaffRoles = await _employees.GetAllRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         return View("Edit", new EmployeeDto(0, string.Empty, null, null, null));
     }
 
@@ -46,22 +47,22 @@ public class EmployeesController : Controller
     public async Task<IActionResult> Create(EmployeeDto model)
     {
         var v = ValidationPipeline.ValidateEmployee(model);
-        if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); ViewBag.StaffRoles = await _employees.GetAllRolesAsync(); return View("Edit", model); }
+        if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); ViewBag.StaffRoles = await _employees.GetAllRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default); return View("Edit", model); }
         var session = _currentUser.ToUserSession()!;
-        var r = await _employees.CreateAsync(model, session);
+        var r = await _employees.CreateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم إضافة الموظف"; return RedirectToAction(nameof(Index)); }
         ModelState.AddModelError("", r.ErrorMessage!);
-        ViewBag.StaffRoles = await _employees.GetAllRolesAsync();
+        ViewBag.StaffRoles = await _employees.GetAllRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         return View("Edit", model);
     }
 
     [Authorize(Policy = AppPermissions.StaffManage)]
     public async Task<IActionResult> Edit(int id)
     {
-        var list = await _employees.GetAllActiveAsync();
+        var list = await _employees.GetAllActiveAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         var e = list.FirstOrDefault(x => x.EmployeeId == id);
         if (e == null) return NotFound();
-        ViewBag.StaffRoles = await _employees.GetAllRolesAsync();
+        ViewBag.StaffRoles = await _employees.GetAllRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         return View(e);
     }
 
@@ -71,13 +72,13 @@ public class EmployeesController : Controller
     public async Task<IActionResult> Edit(int id, EmployeeDto model)
     {
         var v = ValidationPipeline.ValidateEmployee(model);
-        if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); ViewBag.StaffRoles = await _employees.GetAllRolesAsync(); return View(model); }
+        if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); ViewBag.StaffRoles = await _employees.GetAllRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default); return View(model); }
         model = model with { EmployeeId = id };
         var session = _currentUser.ToUserSession()!;
-        var r = await _employees.UpdateAsync(model, session);
+        var r = await _employees.UpdateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم تحديث الموظف"; return RedirectToAction(nameof(Index)); }
         ModelState.AddModelError("", r.ErrorMessage!);
-        ViewBag.StaffRoles = await _employees.GetAllRolesAsync();
+        ViewBag.StaffRoles = await _employees.GetAllRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         return View(model);
     }
 
@@ -87,7 +88,7 @@ public class EmployeesController : Controller
     public async Task<IActionResult> Delete(int id)
     {
         var session = _currentUser.ToUserSession()!;
-        var r = await _employees.SoftDeleteAsync(id, session);
+        var r = await _employees.SoftDeleteAsync(id, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) TempData["Success"] = "تم حذف الموظف";
         else TempData["Error"] = r.ErrorMessage;
         return RedirectToAction(nameof(Index));
@@ -107,7 +108,7 @@ public class StaffRolesController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var list = await _employees.GetAllRolesAsync();
+        var list = await _employees.GetAllRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         return View(list);
     }
 
@@ -122,7 +123,7 @@ public class StaffRolesController : Controller
         var v = ValidationPipeline.ValidateStaffRole(model);
         if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); return View("Edit", model); }
         var session = _currentUser.ToUserSession()!;
-        var r = await _employees.CreateRoleAsync(model, session);
+        var r = await _employees.CreateRoleAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم إضافة الدور"; return RedirectToAction(nameof(Index)); }
         ModelState.AddModelError("", r.ErrorMessage!);
         return View("Edit", model);
@@ -131,7 +132,7 @@ public class StaffRolesController : Controller
     [Authorize(Policy = AppPermissions.StaffManage)]
     public async Task<IActionResult> Edit(int id)
     {
-        var list = await _employees.GetAllRolesAsync();
+        var list = await _employees.GetAllRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         var r = list.FirstOrDefault(x => x.StaffRoleId == id);
         if (r == null) return NotFound();
         return View(r);
@@ -146,7 +147,7 @@ public class StaffRolesController : Controller
         if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); return View(model); }
         model = model with { StaffRoleId = id };
         var session = _currentUser.ToUserSession()!;
-        var r = await _employees.UpdateRoleAsync(model, session);
+        var r = await _employees.UpdateRoleAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم تحديث الدور"; return RedirectToAction(nameof(Index)); }
         ModelState.AddModelError("", r.ErrorMessage!);
         return View(model);
@@ -158,7 +159,7 @@ public class StaffRolesController : Controller
     public async Task<IActionResult> Delete(int id)
     {
         var session = _currentUser.ToUserSession()!;
-        var r = await _employees.SoftDeleteRoleAsync(id, session);
+        var r = await _employees.SoftDeleteRoleAsync(id, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) TempData["Success"] = "تم حذف الدور";
         else TempData["Error"] = r.ErrorMessage;
         return RedirectToAction(nameof(Index));
@@ -178,7 +179,7 @@ public class SocialPlatformsController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var list = await _platforms.GetAllActiveAsync();
+        var list = await _platforms.GetAllActiveAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         return View(list);
     }
 
@@ -193,7 +194,7 @@ public class SocialPlatformsController : Controller
         var v = ValidationPipeline.ValidatePlatform(model);
         if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); return View("Edit", model); }
         var session = _currentUser.ToUserSession()!;
-        var r = await _platforms.CreateAsync(model, session);
+        var r = await _platforms.CreateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم إضافة المنصة"; return RedirectToAction(nameof(Index)); }
         ModelState.AddModelError("", r.ErrorMessage!);
         return View("Edit", model);
@@ -202,7 +203,7 @@ public class SocialPlatformsController : Controller
     [Authorize(Policy = AppPermissions.StaffManage)]
     public async Task<IActionResult> Edit(int id)
     {
-        var list = await _platforms.GetAllActiveAsync();
+        var list = await _platforms.GetAllActiveAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         var p = list.FirstOrDefault(x => x.SocialMediaPlatformId == id);
         if (p == null) return NotFound();
         return View(p);
@@ -217,7 +218,7 @@ public class SocialPlatformsController : Controller
         if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); return View(model); }
         model = model with { SocialMediaPlatformId = id };
         var session = _currentUser.ToUserSession()!;
-        var r = await _platforms.UpdateAsync(model, session);
+        var r = await _platforms.UpdateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم تحديث المنصة"; return RedirectToAction(nameof(Index)); }
         ModelState.AddModelError("", r.ErrorMessage!);
         return View(model);
@@ -229,7 +230,7 @@ public class SocialPlatformsController : Controller
     public async Task<IActionResult> Delete(int id)
     {
         var session = _currentUser.ToUserSession()!;
-        var r = await _platforms.DeleteAsync(id, session);
+        var r = await _platforms.DeleteAsync(id, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) TempData["Success"] = "تم حذف المنصة";
         else TempData["Error"] = r.ErrorMessage;
         return RedirectToAction(nameof(Index));

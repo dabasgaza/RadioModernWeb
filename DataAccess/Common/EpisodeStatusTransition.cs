@@ -6,11 +6,11 @@ public static class EpisodeStatusTransition
 {
     private static readonly Dictionary<byte, HashSet<byte>> s_validTransitions = new()
     {
-        [EpisodeStatus.Planned] = [EpisodeStatus.Executed, EpisodeStatus.Cancelled],
-        [EpisodeStatus.Executed] = [EpisodeStatus.Published, EpisodeStatus.Cancelled],
-        [EpisodeStatus.Published] = [EpisodeStatus.WebsitePublished, EpisodeStatus.Cancelled],
-        [EpisodeStatus.WebsitePublished] = [EpisodeStatus.Cancelled],
-        [EpisodeStatus.Cancelled] = []
+        [EpisodeStatusValues.Planned] = [EpisodeStatusValues.Executed, EpisodeStatusValues.Cancelled],
+        [EpisodeStatusValues.Executed] = [EpisodeStatusValues.Published, EpisodeStatusValues.Cancelled],
+        [EpisodeStatusValues.Published] = [EpisodeStatusValues.WebsitePublished, EpisodeStatusValues.Cancelled],
+        [EpisodeStatusValues.WebsitePublished] = [EpisodeStatusValues.Cancelled],
+        [EpisodeStatusValues.Cancelled] = []
     };
 
     public static bool IsValid(byte fromStatus, byte toStatus)

@@ -1,23 +1,24 @@
 using DataAccess.DTOs;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 namespace DataAccess.Services;
 
 public interface IReportsService
 {
-    Task<List<TodayEpisodeDto>> GetTodayEpisodesAsync();
-    Task<Dictionary<string, int>> GetEpisodeStatusStatsAsync();
-    Task<List<ActiveProgramDto>> GetMostActiveProgramsAsync();
-    Task<List<DateRangeEpisodeDto>> GetEpisodesByDateRangeAsync(DateTime from, DateTime to);
-    Task<List<TopGuestDto>> GetTopGuestsAsync(int topCount = 10);
-    Task<List<CancelledEpisodeDto>> GetCancelledEpisodesAsync();
+    Task<List<TodayEpisodeDto>> GetTodayEpisodesAsync(CancellationToken cancellationToken = default);
+    Task<Dictionary<string, int>> GetEpisodeStatusStatsAsync(CancellationToken cancellationToken = default);
+    Task<List<ActiveProgramDto>> GetMostActiveProgramsAsync(CancellationToken cancellationToken = default);
+    Task<List<DateRangeEpisodeDto>> GetEpisodesByDateRangeAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default);
+    Task<List<TopGuestDto>> GetTopGuestsAsync(int topCount = 10, CancellationToken cancellationToken = default);
+    Task<List<CancelledEpisodeDto>> GetCancelledEpisodesAsync(CancellationToken cancellationToken = default);
 }
 
 // ✨ استخدام Primary Constructor
 public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contextFactory) : IReportsService
 {
-    public async Task<Dictionary<string, int>> GetEpisodeStatusStatsAsync()
+    public async Task<Dictionary<string, int>> GetEpisodeStatusStatsAsync(CancellationToken cancellationToken = default)
     {
         using var context = await contextFactory.CreateDbContextAsync();
 
@@ -25,12 +26,12 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
             .Where(e => e.IsActive)
             .GroupBy(e => e.EpisodeStatus.StatusName)
             .Select(g => new { StatusName = g.Key, Count = g.Count() })
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         return stats.ToDictionary(x => x.StatusName, x => x.Count);
     }
 
-    public async Task<List<TodayEpisodeDto>> GetTodayEpisodesAsync()
+    public async Task<List<TodayEpisodeDto>> GetTodayEpisodesAsync(CancellationToken cancellationToken = default)
     {
         using var context = await contextFactory.CreateDbContextAsync();
 
@@ -55,7 +56,7 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
                     .Select(g => new GuestDisplayItem(g.Guest.GuestId, g.Guest.FullName, g.Topic, g.HostingTime))
                     .ToList()
             })
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         // ✅ تحويل النتيجة إلى DTOs في الذاكرة مع تنسيق أسماء الضيوف
         return raw.Select(e => new TodayEpisodeDto(
@@ -68,7 +69,7 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
         )).ToList();
     }
 
-    public async Task<List<ActiveProgramDto>> GetMostActiveProgramsAsync()
+    public async Task<List<ActiveProgramDto>> GetMostActiveProgramsAsync(CancellationToken cancellationToken = default)
     {
         using var context = await contextFactory.CreateDbContextAsync();
 
@@ -80,14 +81,14 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
                 Category = p.Category,
                 TotalEpisodes = p.Episodes.Count(),
                 // ✨ استخدام الثوابت بدلاً من الأرقام السحرية
-                PublishedEpisodes = p.Episodes.Count(e => e.IsActive && e.StatusId == EpisodeStatus.Published)
+                PublishedEpisodes = p.Episodes.Count(e => e.IsActive && e.StatusId == EpisodeStatusValues.Published)
             })
             .OrderByDescending(x => x.TotalEpisodes)
             .Take(5)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<List<DateRangeEpisodeDto>> GetEpisodesByDateRangeAsync(DateTime from, DateTime to)
+    public async Task<List<DateRangeEpisodeDto>> GetEpisodesByDateRangeAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default)
     {
         using var context = await contextFactory.CreateDbContextAsync();
 
@@ -111,7 +112,7 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
                     .Select(g => new GuestDisplayItem(g.Guest.GuestId, g.Guest.FullName, g.Topic, g.HostingTime))
                     .ToList()
             })
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         // ✅ تحويل النتيجة إلى DTOs في الذاكرة مع تنسيق أسماء الضيوف
         return raw.Select(e => new DateRangeEpisodeDto(
@@ -124,7 +125,7 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
         )).ToList();
     }
 
-    public async Task<List<TopGuestDto>> GetTopGuestsAsync(int topCount = 10)
+    public async Task<List<TopGuestDto>> GetTopGuestsAsync(int topCount = 10, CancellationToken cancellationToken = default)
     {
         using var context = await contextFactory.CreateDbContextAsync();
 
@@ -143,7 +144,7 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
             })
             .OrderByDescending(x => x.AppearanceCount)
             .Take(topCount)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         // ── جلب تفاصيل آخر ظهور فقط للضيوف المطلوبين ──
         var lastGuestIds = grouped.Select(x => x.LastEpisodeGuestId).ToList();
@@ -158,7 +159,7 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
                 eg.Topic,
                 EpisodeScheduledTime = eg.Episode != null ? eg.Episode.ScheduledExecutionTime : (DateTime?)null
             })
-            .ToDictionaryAsync(eg => eg.EpisodeGuestId);
+            .ToDictionaryAsync(eg => eg.EpisodeGuestId, cancellationToken);
 
         return grouped.Select((x, i) =>
         {
@@ -175,7 +176,7 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
         }).ToList();
     }
 
-    public async Task<List<CancelledEpisodeDto>> GetCancelledEpisodesAsync()
+    public async Task<List<CancelledEpisodeDto>> GetCancelledEpisodesAsync(CancellationToken cancellationToken = default)
     {
         using var context = await contextFactory.CreateDbContextAsync();
 
@@ -183,7 +184,7 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
         var episodes = await context.Episodes
             .AsNoTracking()
             .IgnoreQueryFilters()
-            .Where(e => e.StatusId == EpisodeStatus.Cancelled)
+            .Where(e => e.StatusId == EpisodeStatusValues.Cancelled)
             .OrderByDescending(e => e.UpdatedAt)
             .Select(e => new
             {
@@ -193,7 +194,7 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
                 e.ScheduledExecutionTime,
                 e.UpdatedAt
             })
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         if (episodes.Count == 0)
             return new List<CancelledEpisodeDto>();
@@ -208,7 +209,7 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
                      && a.RecordId != null
                      && episodeIds.Contains(a.RecordId.Value))
             .OrderByDescending(a => a.ChangedAt)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         // جلب أسماء المستخدمين الذين ألغوا
         var userIds = auditLogs.Where(a => a.UserId.HasValue).Select(a => a.UserId!.Value).Distinct().ToList();
@@ -216,7 +217,7 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
             .AsNoTracking()
             .Where(u => userIds.Contains(u.UserId))
             .Select(u => new { u.UserId, u.FullName })
-            .ToDictionaryAsync(u => u.UserId, u => u.FullName);
+            .ToDictionaryAsync(u => u.UserId, u => u.FullName, cancellationToken);
 
         // بناء قاموس آخر سجل إلغاء لكل حلقة
         var logDict = auditLogs

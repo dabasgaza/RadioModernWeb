@@ -5,58 +5,72 @@
     var thisMonth = Model.Count(r => r.RecordDate.Year == DateTime.UtcNow.Year && r.RecordDate.Month == DateTime.UtcNow.Month);
 }
 
-<div class="flex items-center justify-between mb-6">
-    <div>
-        <h1 class="text-2xl font-bold text-ink mb-1 flex items-center gap-2">
-            <span class="material-symbols-rounded text-primary">public</span>
-            نشر الموقع
-        </h1>
-        <p class="text-ink-muted text-sm">إدارة عمليات نشر الحلقات على الموقع الرسمي للإذاعة</p>
-    </div>
-    <div class="flex items-center gap-2">
-        @if (User.HasPermission(AppPermissions.EpisodeWebPublish))
-        {
-            <a href="/Episodes" class="btn-primary">
-                <span class="material-symbols-rounded">add</span>
-                نشر حلقة
-            </a>
-        }
+<div class="page-header">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <span class="material-symbols-rounded">home</span>
+                <a href="/">الرئيسية</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <span>نشر الموقع</span>
+            </nav>
+            <h1>
+                <span class="material-symbols-rounded text-primary">public</span>
+                نشر الموقع
+            </h1>
+            <p>إدارة عمليات نشر الحلقات على الموقع الرسمي للإذاعة</p>
+        </div>
+        <div class="flex items-center gap-2">
+            @if (User.HasPermission(AppPermissions.EpisodeWebPublish))
+            {
+                <a href="/Episodes" class="btn-primary">
+                    <span class="material-symbols-rounded">add</span>
+                    نشر حلقة
+                </a>
+            }
+        </div>
     </div>
 </div>
 
 <!-- Stats -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-    <div class="stat-card">
-        <div class="stat-icon bg-cyan-50 text-accent">
-            <span class="material-symbols-rounded">language</span>
-        </div>
-        <div>
-            <div class="text-2xl font-bold text-ink">@Model.Count</div>
-            <div class="text-xs text-ink-muted">إجمالي النشر</div>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon bg-green-50 text-success">
-            <span class="material-symbols-rounded">today</span>
-        </div>
-        <div>
-            <div class="text-2xl font-bold text-ink">@todayCount</div>
-            <div class="text-xs text-ink-muted">نشر اليوم</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <div class="stat-card-premium text-accent">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="text-2xl font-black text-ink">@Model.Count</div>
+                <div class="text-xs font-bold text-ink-muted mt-1">إجمالي النشر</div>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
+                <span class="material-symbols-rounded">language</span>
+            </div>
         </div>
     </div>
-    <div class="stat-card">
-        <div class="stat-icon bg-blue-50 text-primary">
-            <span class="material-symbols-rounded">date_range</span>
+    <div class="stat-card-premium text-success">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="text-2xl font-black text-ink">@todayCount</div>
+                <div class="text-xs font-bold text-ink-muted mt-1">نشر اليوم</div>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-success/10 text-success flex items-center justify-center">
+                <span class="material-symbols-rounded">today</span>
+            </div>
         </div>
-        <div>
-            <div class="text-2xl font-bold text-ink">@thisMonth</div>
-            <div class="text-xs text-ink-muted">نشر هذا الشهر</div>
+    </div>
+    <div class="stat-card-premium text-primary">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="text-2xl font-black text-ink">@thisMonth</div>
+                <div class="text-xs font-bold text-ink-muted mt-1">نشر هذا الشهر</div>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                <span class="material-symbols-rounded">date_range</span>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Records Table -->
-<div class="bg-surface rounded-xl border border-border">
+<div class="table-premium">
     @if (!Model.Any())
     {
         <div class="empty-state p-12">
@@ -76,7 +90,7 @@
     {
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
-                <thead class="bg-surface-3 text-ink-muted">
+                <thead>
                     <tr>
                         <th class="px-5 py-3 text-right font-semibold">الحلقة</th>
                         <th class="px-5 py-3 text-right font-semibold">البرنامج</th>
@@ -90,10 +104,10 @@
                         }
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-border">
+                <tbody>
                     @foreach (var r in Model)
                     {
-                        <tr class="hover:bg-surface-3 transition">
+                        <tr>
                             <td class="px-5 py-3">
                                 <a href="/Episodes/Details/@r.EpisodeId" class="text-primary font-semibold hover:underline" target="_blank">
                                     @(r.EpisodeName ?? "—")

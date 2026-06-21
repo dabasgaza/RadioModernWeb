@@ -23,22 +23,22 @@ public interface IIdentitySynchronizer
     Task<(ApplicationUser IdentityUser, User DomainUser)> CreateUserAsync(
         string username, string password, string fullName,
         string emailAddress, string phoneNumber, int domainRoleId,
-        bool isActive = true);
+        bool isActive = true, CancellationToken cancellationToken = default);
 
     /// <summary>يحدّث بيانات المستخدم في Identity + Domain.</summary>
     Task UpdateUserAsync(
         ApplicationUser identityUser, string fullName,
         string emailAddress, string phoneNumber, int domainRoleId,
-        bool isActive);
+        bool isActive, CancellationToken cancellationToken = default);
 
     /// <summary>يحدّث كلمة المرور في Identity + Domain.</summary>
-    Task UpdatePasswordAsync(ApplicationUser identityUser, string newPassword);
+    Task UpdatePasswordAsync(ApplicationUser identityUser, string newPassword, CancellationToken cancellationToken = default);
 
     /// <summary>يبني ApplicationUser جديد من Domain User موجود.</summary>
-    Task<ApplicationUser?> BuildFromDomainUserAsync(int domainUserId);
+    Task<ApplicationUser?> BuildFromDomainUserAsync(int domainUserId, CancellationToken cancellationToken = default);
 
     /// <summary>يبني ApplicationRole جديد من Domain Role موجود.</summary>
-    Task<ApplicationRole?> BuildFromDomainRoleAsync(int domainRoleId);
+    Task<ApplicationRole?> BuildFromDomainRoleAsync(int domainRoleId, CancellationToken cancellationToken = default);
 }
 
 public class IdentitySynchronizer : IIdentitySynchronizer
@@ -66,16 +66,16 @@ public class IdentitySynchronizer : IIdentitySynchronizer
     public async Task<(ApplicationUser IdentityUser, User DomainUser)> CreateUserAsync(
         string username, string password, string fullName,
         string emailAddress, string phoneNumber, int domainRoleId,
-        bool isActive = true)
+        bool isActive = true, CancellationToken cancellationToken = default)
     {
         // 1) إنشاء Domain User أولاً (للحصول على UserId)
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
         var now = DateTime.UtcNow;
 
         var domainUser = new User
         {
             Username = username,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(password, workFactor: 11),
+            PasswordHash = string.Empty,
             FullName = fullName,
             EmailAddress = emailAddress ?? string.Empty,
             PhoneNumber = phoneNumber ?? string.Empty,
@@ -86,7 +86,7 @@ public class IdentitySynchronizer : IIdentitySynchronizer
             RowVersion = Array.Empty<byte>()
         };
         context.Users.Add(domainUser);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
 
         // 2) إنشاء ApplicationUser مرتبط
         var identityUser = new ApplicationUser
@@ -106,17 +106,21 @@ public class IdentitySynchronizer : IIdentitySynchronizer
         {
             // تراجع: احذف Domain User
             context.Users.Remove(domainUser);
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
 
             var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
             throw new InvalidOperationException($"فشل إنشاء Identity User: {errors}");
         }
 
+        // نسخ الـ hash من Identity إلى Domain User (مصدر واحد للحقيقة)
+        domainUser.PasswordHash = identityUser.PasswordHash ?? string.Empty;
+        await context.SaveChangesAsync(cancellationToken);
+
         // 3) ربط الدور في Identity (نعكس DomainRoleId كـ Identity Role Name)
         var roleName = await context.Roles
             .Where(r => r.RoleId == domainRoleId)
             .Select(r => r.RoleName)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (!string.IsNullOrEmpty(roleName))
         {
@@ -142,11 +146,11 @@ public class IdentitySynchronizer : IIdentitySynchronizer
     public async Task UpdateUserAsync(
         ApplicationUser identityUser, string fullName,
         string emailAddress, string phoneNumber, int domainRoleId,
-        bool isActive)
+        bool isActive, CancellationToken cancellationToken = default)
     {
         // 1) تحديث Domain User
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var domainUser = await context.Users.FindAsync(identityUser.DomainUserId);
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        var domainUser = await context.Users.FindAsync(identityUser.DomainUserId, cancellationToken);
         if (domainUser != null)
         {
             domainUser.FullName = fullName;
@@ -155,7 +159,7 @@ public class IdentitySynchronizer : IIdentitySynchronizer
             domainUser.RoleId = domainRoleId;
             domainUser.IsActive = isActive;
             domainUser.UpdatedAt = DateTime.UtcNow;
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
         }
 
         // 2) تحديث ApplicationUser
@@ -174,7 +178,7 @@ public class IdentitySynchronizer : IIdentitySynchronizer
         var roleName = await context.Roles
             .Where(r => r.RoleId == domainRoleId)
             .Select(r => r.RoleName)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (!string.IsNullOrEmpty(roleName))
         {
@@ -194,7 +198,7 @@ public class IdentitySynchronizer : IIdentitySynchronizer
         }
     }
 
-    public async Task UpdatePasswordAsync(ApplicationUser identityUser, string newPassword)
+    public async Task UpdatePasswordAsync(ApplicationUser identityUser, string newPassword, CancellationToken cancellationToken = default)
     {
         // 1) تحديث Identity
         var token = await _userManager.GeneratePasswordResetTokenAsync(identityUser);
@@ -205,29 +209,29 @@ public class IdentitySynchronizer : IIdentitySynchronizer
             throw new InvalidOperationException($"فشل تحديث كلمة المرور: {errors}");
         }
 
-        // 2) تحديث Domain User (نفس الـ BCrypt hash)
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var domainUser = await context.Users.FindAsync(identityUser.DomainUserId);
+        // 2) تحديث Domain User بنفس الـ hash من Identity
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        var domainUser = await context.Users.FindAsync(identityUser.DomainUserId, cancellationToken);
         if (domainUser != null)
         {
-            domainUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword, workFactor: 11);
+            domainUser.PasswordHash = identityUser.PasswordHash ?? string.Empty;
             domainUser.UpdatedAt = DateTime.UtcNow;
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
         }
     }
 
-    public async Task<ApplicationUser?> BuildFromDomainUserAsync(int domainUserId)
+    public async Task<ApplicationUser?> BuildFromDomainUserAsync(int domainUserId, CancellationToken cancellationToken = default)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
         var domainUser = await context.Users
             .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.UserId == domainUserId && u.IsActive);
+            .FirstOrDefaultAsync(u => u.UserId == domainUserId && u.IsActive, cancellationToken);
 
         if (domainUser == null) return null;
 
         // ابحث عن ApplicationUser موجود، أو أنشئ جديداً (دون حفظه)
         var existing = await _userManager.Users
-            .FirstOrDefaultAsync(u => u.DomainUserId == domainUserId);
+            .FirstOrDefaultAsync(u => u.DomainUserId == domainUserId, cancellationToken);
 
         if (existing != null) return existing;
 
@@ -244,17 +248,17 @@ public class IdentitySynchronizer : IIdentitySynchronizer
         };
     }
 
-    public async Task<ApplicationRole?> BuildFromDomainRoleAsync(int domainRoleId)
+    public async Task<ApplicationRole?> BuildFromDomainRoleAsync(int domainRoleId, CancellationToken cancellationToken = default)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
         var domainRole = await context.Roles
             .AsNoTracking()
-            .FirstOrDefaultAsync(r => r.RoleId == domainRoleId);
+            .FirstOrDefaultAsync(r => r.RoleId == domainRoleId, cancellationToken);
 
         if (domainRole == null) return null;
 
         var existing = await _roleManager.Roles
-            .FirstOrDefaultAsync(r => r.DomainRoleId == domainRoleId);
+            .FirstOrDefaultAsync(r => r.DomainRoleId == domainRoleId, cancellationToken);
 
         if (existing != null) return existing;
 

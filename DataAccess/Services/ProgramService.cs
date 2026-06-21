@@ -4,16 +4,17 @@ using DataAccess.Validation;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace DataAccess.Services;
 
 public interface IProgramService
 {
     // ✨ إرجاع DTO بدلاً من Entity
-    Task<List<ProgramDto>> GetAllActiveAsync();
-    Task<Result> CreateProgramAsync(ProgramDto dto, UserSession session);
-    Task<Result> UpdateProgramAsync(ProgramDto dto, UserSession session);
-    Task<Result> SoftDeleteAsync(int programId, UserSession session);
+    Task<List<ProgramDto>> GetAllActiveAsync(CancellationToken cancellationToken = default);
+    Task<Result> CreateProgramAsync(ProgramDto dto, UserSession session, CancellationToken cancellationToken = default);
+    Task<Result> UpdateProgramAsync(ProgramDto dto, UserSession session, CancellationToken cancellationToken = default);
+    Task<Result> SoftDeleteAsync(int programId, UserSession session, CancellationToken cancellationToken = default);
 }
 
 // ✨ استخدام Primary Constructor
@@ -46,7 +47,7 @@ public class ProgramService : IProgramService
                     p.Category,
                     p.ProgramDescription)));
 
-    public async Task<List<ProgramDto>> GetAllActiveAsync()
+    public async Task<List<ProgramDto>> GetAllActiveAsync(CancellationToken cancellationToken = default)
     {
         using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -56,7 +57,7 @@ public class ProgramService : IProgramService
         return result;
     }
 
-    public async Task<Result> CreateProgramAsync(ProgramDto dto, UserSession session)
+    public async Task<Result> CreateProgramAsync(ProgramDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -75,8 +76,8 @@ public class ProgramService : IProgramService
                 ProgramDescription = dto.ProgramDescription
             });
 
-            await context.SaveChangesAsync();
-            _cachedLookup.InvalidateByEntity("Program");
+            await context.SaveChangesAsync(cancellationToken);
+            await _cachedLookup.InvalidateByEntity("Program");
             return Result.Success();
         }
         catch (Exception ex)
@@ -86,7 +87,7 @@ public class ProgramService : IProgramService
         }
     }
 
-    public async Task<Result> UpdateProgramAsync(ProgramDto dto, UserSession session)
+    public async Task<Result> UpdateProgramAsync(ProgramDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -106,8 +107,8 @@ public class ProgramService : IProgramService
             prog.Category = dto.Category;
             prog.ProgramDescription = dto.ProgramDescription;
 
-            await context.SaveChangesAsync();
-            _cachedLookup.InvalidateByEntity("Program");
+            await context.SaveChangesAsync(cancellationToken);
+            await _cachedLookup.InvalidateByEntity("Program");
             return Result.Success();
         }
         catch (Exception ex)
@@ -123,7 +124,7 @@ public class ProgramService : IProgramService
     /// </summary>
     /// <param name="programId">معرّف البرنامج المراد حذفه.</param>
     /// <param name="session">جلسة المستخدم الحالي للتدقيق.</param>
-    public async Task<Result> SoftDeleteAsync(int programId, UserSession session)
+    public async Task<Result> SoftDeleteAsync(int programId, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.ProgramManage);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -137,14 +138,14 @@ public class ProgramService : IProgramService
             if (program == null) return Result.Fail("البرنامج المحدد غير موجود أو تم حذفه مسبقاً.");
 
             // ── فحص وجود حلقات نشطة باستخدام AnyAsync بدلاً من Lazy Loading ──
-            var hasActiveEpisodes = await context.Episodes.AnyAsync(e => e.ProgramId == programId);
+            var hasActiveEpisodes = await context.Episodes.AnyAsync(e => e.ProgramId == programId, cancellationToken);
             if (hasActiveEpisodes)
                 return Result.Fail("لا يمكن حذف برنامج مرتبط بحلقات نشطة. يرجى حذف الحلقات أولاً.");
 
             program.IsActive = false;
 
-            await context.SaveChangesAsync();
-            _cachedLookup.InvalidateByEntity("Program");
+            await context.SaveChangesAsync(cancellationToken);
+            await _cachedLookup.InvalidateByEntity("Program");
             return Result.Success();
         }
         catch (Exception ex)

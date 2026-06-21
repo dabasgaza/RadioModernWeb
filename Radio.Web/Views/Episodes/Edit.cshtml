@@ -15,10 +15,29 @@
                 <span class="material-symbols-rounded">chevron_left</span>
                 <span>@(isEdit ? "تعديل حلقة" : "حلقة جديدة")</span>
             </nav>
-            <h1>
-                <span class="material-symbols-rounded">podcasts</span>
-                @(isEdit ? "تعديل حلقة" : "حلقة جديدة")
-            </h1>
+            <div class="flex items-center gap-3 flex-wrap">
+                <h1 class="text-2xl font-black text-ink flex items-center gap-2">
+                    <span class="material-symbols-rounded text-primary p-1 bg-primary/10 rounded-lg">podcasts</span>
+                    @(isEdit ? "تعديل حلقة" : "حلقة جديدة")
+                </h1>
+                @if (isEdit)
+                {
+                    var statusColors = new Dictionary<byte, string>
+                    {
+                        { 0, "bg-blue-50 text-blue-700 border-blue-200" },
+                        { 1, "bg-emerald-50 text-emerald-700 border-emerald-200" },
+                        { 2, "bg-indigo-50 text-indigo-700 border-indigo-200" },
+                        { 3, "bg-cyan-50 text-cyan-700 border-cyan-200" },
+                        { 4, "bg-red-50 text-red-700 border-red-200" },
+                    };
+                    var sc = statusColors.GetValueOrDefault(Model.StatusId, "bg-surface-3 text-ink-muted border-border");
+                    <span class="status-badge @sc border text-sm px-3 py-1">@(Model.StatusText ?? "—")</span>
+                    <span class="text-xs text-ink-soft font-semibold flex items-center gap-1">
+                        <span class="material-symbols-rounded text-xs">tag</span>
+                        #@Model.Episode.EpisodeId
+                    </span>
+                }
+            </div>
             <p>إدخال وتعديل البيانات والتفاصيل والضيوف المشاركين في الحلقة</p>
         </div>
         <div class="flex items-center gap-2">
@@ -39,341 +58,455 @@
         <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-6 font-semibold text-sm"></div>
     }
 
-    <!-- Basic Info Card -->
-    <div class="card-premium mb-6">
-        <div class="card-header">
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-rounded text-primary">info</span>
-                <h3 class="font-bold text-ink text-base">المعلومات الأساسية</h3>
-            </div>
-        </div>
-        <div class="card-body grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label class="form-label">البرنامج *</label>
-                <select name="ProgramId" class="form-input" required>
-                    <option value="">— اختر البرنامج —</option>
-                    @foreach (var p in Model.Programs)
-                    {
-                        <option value="@p.ProgramId" selected="@(Model.Episode.ProgramId == p.ProgramId)">@p.ProgramName</option>
-                    }
-                </select>
-            </div>
-            <div>
-                <label class="form-label">عنوان الحلقة *</label>
-                <input type="text" name="EpisodeName" value="@Model.Episode.EpisodeName" class="form-input" required placeholder="مثال: حلقة السبت" />
-            </div>
-            <div>
-                <label class="form-label">تاريخ التنفيذ</label>
-                <input type="date" name="ScheduledDate" value="@(Model.Episode.ScheduledDate?.ToString("yyyy-MM-dd"))" class="form-input" />
-            </div>
-            <div>
-                <label class="form-label">وقت البث</label>
-                <input type="time" name="BroadcastTime" value="@(Model.Episode.BroadcastTime?.ToString(@"hh\:mm"))" class="form-input" />
-            </div>
-            <div class="md:col-span-2">
-                <label class="form-label">وصف الحلقة</label>
-                <textarea name="EpisodeDescription" rows="4" class="form-input" placeholder="وصف مختصر لمحتوى الحلقة وموضوعاتها الرئيسية">@Model.Episode.EpisodeDescription</textarea>
-            </div>
-            <div class="md:col-span-2">
-                <label class="form-label">ملاحظات خاصة</label>
-                <textarea name="SpecialNotes" rows="3" class="form-input" placeholder="ملاحظات داخلية حول التحضير والإنتاج">@Model.Episode.SpecialNotes</textarea>
-            </div>
-        </div>
-    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-    <!-- Guests Card -->
-    <div class="card-premium mb-6">
-        <div class="card-header">
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-rounded text-primary">people_alt</span>
-                <h3 class="font-bold text-ink text-base">الضيوف</h3>
-            </div>
-            <button type="button" class="btn-success text-xs" onclick="addGuestRow()">
-                <span class="material-symbols-rounded">add</span>
-                إضافة ضيف
-            </button>
-        </div>
-        <div class="card-body">
-            <div id="guests-container" class="space-y-4">
-                @if (Model.Episode.Guests.Any())
-                {
-                    @for (int i = 0; i < Model.Episode.Guests.Count; i++)
-                    {
-                        var g = Model.Episode.Guests[i];
-                        <div class="guest-row grid grid-cols-1 md:grid-cols-12 gap-3 items-end bg-surface-2 p-4 rounded-xl border border-border relative group">
-                            <input type="hidden" name="Guests[@i].EpisodeGuestId" value="@g.EpisodeGuestId" />
-                            <div class="md:col-span-4">
-                                <label class="form-label">الضيف</label>
-                                <select name="Guests[@i].GuestId" class="form-input">
-                                    <option value="">— اختر —</option>
-                                    @foreach (var guest in Model.Guests)
-                                    {
-                                        <option value="@guest.GuestId" selected="@(g.GuestId == guest.GuestId)">@guest.FullName</option>
-                                    }
-                                </select>
-                            </div>
-                            <div class="md:col-span-4">
-                                <label class="form-label">الموضوع</label>
-                                <input type="text" name="Guests[@i].Topic" value="@g.Topic" class="form-input" placeholder="مثال: تحليل اقتصادي" />
-                            </div>
-                            <div class="md:col-span-3">
-                                <label class="form-label">وقت الاستضافة</label>
-                                <input type="time" name="Guests[@i].HostingTime" value="@(g.HostingTime?.ToString(@"hh\:mm"))" class="form-input" />
-                            </div>
-                            <div class="md:col-span-1 flex justify-center md:justify-end">
-                                <button type="button" class="icon-btn icon-btn-danger w-10 h-10 border border-border bg-surface hover:bg-red-50 rounded-xl" onclick="this.closest('.guest-row').remove(); reindexRows('#guests-container','guest-row','Guests');" title="حذف">
-                                    <span class="material-symbols-rounded">delete</span>
-                                </button>
-                            </div>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <div class="text-ink-muted text-xs text-center py-6 bg-surface-2 rounded-xl border border-dashed border-border flex flex-col items-center justify-center gap-1.5">
-                        <span class="material-symbols-rounded text-ink-soft text-xl">groups</span>
-                        لم تتم إضافة ضيوف بعد. انقر على زر الإضافة لتسجيل ضيف.
+        <!-- ─── Main Column ─── -->
+        <div class="lg:col-span-8 space-y-6">
+
+            <!-- ═══ Basic Info ═══ -->
+            <div class="card-premium">
+                <div class="card-header">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-rounded text-primary">info</span>
+                        <h3 class="font-bold text-ink text-base">المعلومات الأساسية</h3>
                     </div>
-                }
-            </div>
-        </div>
-    </div>
-
-    <!-- Correspondents Card -->
-    <div class="card-premium mb-6">
-        <div class="card-header">
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-rounded text-primary">map</span>
-                <h3 class="font-bold text-ink text-base">المراسلون</h3>
-            </div>
-            <button type="button" class="btn-success text-xs" onclick="addCorrespondentRow()">
-                <span class="material-symbols-rounded">add</span>
-                إضافة مراسل
-            </button>
-        </div>
-        <div class="card-body">
-            <div id="correspondents-container" class="space-y-4">
-                @if (Model.Episode.Correspondents.Any())
-                {
-                    @for (int i = 0; i < Model.Episode.Correspondents.Count; i++)
-                    {
-                        var c = Model.Episode.Correspondents[i];
-                        <div class="corr-row grid grid-cols-1 md:grid-cols-12 gap-3 items-end bg-surface-2 p-4 rounded-xl border border-border relative group">
-                            <input type="hidden" name="Correspondents[@i].Id" value="@c.Id" />
-                            <div class="md:col-span-4">
-                                <label class="form-label">المراسل</label>
-                                <select name="Correspondents[@i].CorrespondentId" class="form-input">
-                                    <option value="">— اختر —</option>
-                                    @foreach (var cor in Model.Correspondents)
-                                    {
-                                        <option value="@cor.CorrespondentId" selected="@(c.CorrespondentId == cor.CorrespondentId)">@cor.FullName</option>
-                                    }
-                                </select>
-                            </div>
-                            <div class="md:col-span-5">
-                                <label class="form-label">الموضوع</label>
-                                <input type="text" name="Correspondents[@i].Topic" value="@c.Topic" class="form-input" placeholder="مثال: تغطية ميدانية" />
-                            </div>
-                            <div class="md:col-span-2">
-                                <label class="form-label">الوقت</label>
-                                <input type="time" name="Correspondents[@i].HostingTime" value="@(c.HostingTime?.ToString(@"hh\:mm"))" class="form-input" />
-                            </div>
-                            <div class="md:col-span-1 flex justify-center md:justify-end">
-                                <button type="button" class="icon-btn icon-btn-danger w-10 h-10 border border-border bg-surface hover:bg-red-50 rounded-xl" onclick="this.closest('.corr-row').remove(); reindexRows('#correspondents-container','corr-row','Correspondents');" title="حذف">
-                                    <span class="material-symbols-rounded">delete</span>
-                                </button>
-                            </div>
+                </div>
+                <div class="card-body grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="form-label">البرنامج *</label>
+                        <div class="input-wrapper">
+                            <span class="material-symbols-rounded input-icon">radio</span>
+                            <select name="ProgramId" class="form-input" required>
+                                <option value="">— اختر البرنامج —</option>
+                                @foreach (var p in Model.Programs)
+                                {
+                                    <option value="@p.ProgramId" selected="@(Model.Episode.ProgramId == p.ProgramId)">@p.ProgramName</option>
+                                }
+                            </select>
                         </div>
-                    }
-                }
-                else
-                {
-                    <div class="text-ink-muted text-xs text-center py-6 bg-surface-2 rounded-xl border border-dashed border-border flex flex-col items-center justify-center gap-1.5">
-                        <span class="material-symbols-rounded text-ink-soft text-xl">map</span>
-                        لم تتم إضافة مراسلين بعد. انقر على زر الإضافة لتسجيل مراسل ميداني.
                     </div>
-                }
-            </div>
-        </div>
-    </div>
-
-    <!-- Employees Card -->
-    <div class="card-premium mb-6">
-        <div class="card-header">
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-rounded text-primary">badge</span>
-                <h3 class="font-bold text-ink text-base">طاقم العمل والإنتاج</h3>
-            </div>
-            <button type="button" class="btn-success text-xs" onclick="addEmployeeRow()">
-                <span class="material-symbols-rounded">add</span>
-                إضافة عضو للطاقم
-            </button>
-        </div>
-        <div class="card-body">
-            <div id="employees-container" class="space-y-4">
-                @if (Model.Episode.Employees.Any())
-                {
-                    @for (int i = 0; i < Model.Episode.Employees.Count; i++)
-                    {
-                        var e = Model.Episode.Employees[i];
-                        <div class="emp-row grid grid-cols-1 md:grid-cols-12 gap-3 items-end bg-surface-2 p-4 rounded-xl border border-border relative group">
-                            <input type="hidden" name="Employees[@i].Id" value="@e.Id" />
-                            <div class="md:col-span-11">
-                                <label class="form-label">الموظف (مع دوره)</label>
-                                <select name="Employees[@i].EmployeeId" class="form-input">
-                                    <option value="">— اختر —</option>
-                                    @foreach (var emp in Model.Employees)
-                                    {
-                                        <option value="@emp.EmployeeId" selected="@(e.EmployeeId == emp.EmployeeId)">@emp.FullName</option>
-                                    }
-                                </select>
-                            </div>
-                            <div class="md:col-span-1 flex justify-center md:justify-end">
-                                <button type="button" class="icon-btn icon-btn-danger w-10 h-10 border border-border bg-surface hover:bg-red-50 rounded-xl" onclick="this.closest('.emp-row').remove(); reindexRows('#employees-container','emp-row','Employees');" title="حذف">
-                                    <span class="material-symbols-rounded">delete</span>
-                                </button>
-                            </div>
+                    <div>
+                        <label class="form-label">عنوان الحلقة *</label>
+                        <div class="input-wrapper">
+                            <span class="material-symbols-rounded input-icon">edit</span>
+                            <input type="text" name="EpisodeName" value="@Model.Episode.EpisodeName" class="form-input" required placeholder="مثال: حلقة السبت" />
                         </div>
-                    }
-                }
-                else
-                {
-                    <div class="text-ink-muted text-xs text-center py-6 bg-surface-2 rounded-xl border border-dashed border-border flex flex-col items-center justify-center gap-1.5">
-                        <span class="material-symbols-rounded text-ink-soft text-xl">badge</span>
-                        لم يتم إضافة أي موظف للطاقم بعد. انقر على زر الإضافة لتسجيل عضو.
                     </div>
-                }
+                    <div class="md:col-span-2">
+                        <label class="form-label">وصف الحلقة</label>
+                        <textarea name="EpisodeDescription" rows="4" class="form-input" placeholder="وصف مختصر لمحتوى الحلقة وموضوعاتها الرئيسية…">@Model.Episode.EpisodeDescription</textarea>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="form-label">ملاحظات خاصة</label>
+                        <textarea name="SpecialNotes" rows="3" class="form-input" placeholder="ملاحظات داخلية حول التحضير والإنتاج…">@Model.Episode.SpecialNotes</textarea>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Actions -->
-    <div class="flex items-center justify-end gap-3 mt-6">
-        <a href="/Episodes" class="btn-secondary">
-            <span class="material-symbols-rounded">cancel</span>
-            إلغاء
-        </a>
-        <button type="submit" class="btn-primary">
-            <span class="material-symbols-rounded">save</span>
-            حفظ الحلقة
-        </button>
+            <!-- ═══ Guests ═══ -->
+            <div class="card-premium">
+                <div class="card-header flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-rounded text-primary">people_alt</span>
+                        <h3 class="font-bold text-ink text-base">الضيوف</h3>
+                    </div>
+                    <button type="button" class="btn-success text-xs" onclick="EP.addRow('guests-container','guest-row-tpl')">
+                        <span class="material-symbols-rounded text-sm">add</span>
+                        إضافة ضيف
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="guests-container" data-empty="true" class="space-y-3">
+                        @if (Model.Episode.Guests.Any())
+                        {
+                            @for (int i = 0; i < Model.Episode.Guests.Count; i++)
+                            {
+                                var g = Model.Episode.Guests[i];
+                                <div class="ep-row guest-row" draggable="true">
+                                    <input type="hidden" name="Guests[@i].EpisodeGuestId" value="@g.EpisodeGuestId" />
+                                    <div class="ep-row-handle" title="سحب لإعادة الترتيب"><span class="material-symbols-rounded">drag_indicator</span></div>
+                                    <div class="ep-row-body">
+                                        <div class="ep-row-fields">
+                                            <div class="ep-field flex-1">
+                                                <select name="Guests[@i].GuestId" class="form-input">
+                                                    <option value="">— اختر الضيف —</option>
+                                                    @foreach (var guest in Model.Guests)
+                                                    {
+                                                        <option value="@guest.GuestId" selected="@(g.GuestId == guest.GuestId)">@guest.FullName</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="ep-field flex-1">
+                                                <input type="text" name="Guests[@i].Topic" value="@g.Topic" class="form-input" placeholder="موضوع الاستضافة" />
+                                            </div>
+                                            <div class="ep-field w-28">
+                                                <input type="time" name="Guests[@i].HostingTime" value="@(g.HostingTime?.ToString(@"hh\:mm"))" class="form-input" />
+                                            </div>
+                                            <input type="hidden" name="Guests[@i].ClipNotes" value="@g.ClipNotes" />
+                                        </div>
+                                        <div class="ep-row-actions">
+                                            <button type="button" class="ep-row-del" title="حذف" onclick="EP.removeRow(this)">
+                                                <span class="material-symbols-rounded">close</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="ep-empty flex flex-col items-center justify-center py-8 text-center bg-surface-2 rounded-xl border border-dashed border-border/70">
+                                <span class="material-symbols-rounded text-ink-soft text-3xl mb-2">groups</span>
+                                <p class="text-sm font-bold text-ink-muted">لم تتم إضافة ضيوف بعد</p>
+                                <p class="text-xs text-ink-soft mt-1">انقر على زر الإضافة أعلاه لتسجيل ضيف في الحلقة</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ Correspondents ═══ -->
+            <div class="card-premium">
+                <div class="card-header flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-rounded text-primary">map</span>
+                        <h3 class="font-bold text-ink text-base">المراسلون</h3>
+                    </div>
+                    <button type="button" class="btn-success text-xs" onclick="EP.addRow('correspondents-container','corr-row-tpl')">
+                        <span class="material-symbols-rounded text-sm">add</span>
+                        إضافة مراسل
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="correspondents-container" data-empty="true" class="space-y-3">
+                        @if (Model.Episode.Correspondents.Any())
+                        {
+                            @for (int i = 0; i < Model.Episode.Correspondents.Count; i++)
+                            {
+                                var c = Model.Episode.Correspondents[i];
+                                <div class="ep-row corr-row" draggable="true">
+                                    <input type="hidden" name="Correspondents[@i].Id" value="@c.Id" />
+                                    <div class="ep-row-handle" title="سحب لإعادة الترتيب"><span class="material-symbols-rounded">drag_indicator</span></div>
+                                    <div class="ep-row-body">
+                                        <div class="ep-row-fields">
+                                            <div class="ep-field flex-1">
+                                                <select name="Correspondents[@i].CorrespondentId" class="form-input">
+                                                    <option value="">— اختر —</option>
+                                                    @foreach (var cor in Model.Correspondents)
+                                                    {
+                                                        <option value="@cor.CorrespondentId" selected="@(c.CorrespondentId == cor.CorrespondentId)">@cor.FullName</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="ep-field flex-1">
+                                                <input type="text" name="Correspondents[@i].Topic" value="@c.Topic" class="form-input" placeholder="موضوع التغطية" />
+                                            </div>
+                                            <div class="ep-field w-28">
+                                                <input type="time" name="Correspondents[@i].HostingTime" value="@(c.HostingTime?.ToString(@"hh\:mm"))" class="form-input" />
+                                            </div>
+                                        </div>
+                                        <div class="ep-row-actions">
+                                            <button type="button" class="ep-row-del" title="حذف" onclick="EP.removeRow(this)">
+                                                <span class="material-symbols-rounded">close</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="ep-empty flex flex-col items-center justify-center py-8 text-center bg-surface-2 rounded-xl border border-dashed border-border/70">
+                                <span class="material-symbols-rounded text-ink-soft text-3xl mb-2">map</span>
+                                <p class="text-sm font-bold text-ink-muted">لم تتم إضافة مراسلين بعد</p>
+                                <p class="text-xs text-ink-soft mt-1">انقر على زر الإضافة لتسجيل مراسل ميداني للتغطية</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ Employees ═══ -->
+            <div class="card-premium">
+                <div class="card-header flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-rounded text-primary">badge</span>
+                        <h3 class="font-bold text-ink text-base">طاقم العمل والإنتاج</h3>
+                    </div>
+                    <button type="button" class="btn-success text-xs" onclick="EP.addRow('employees-container','emp-row-tpl')">
+                        <span class="material-symbols-rounded text-sm">add</span>
+                        إضافة عضو للطاقم
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="employees-container" data-empty="true" class="space-y-3">
+                        @if (Model.Episode.Employees.Any())
+                        {
+                            @for (int i = 0; i < Model.Episode.Employees.Count; i++)
+                            {
+                                var e = Model.Episode.Employees[i];
+                                <div class="ep-row emp-row" draggable="true">
+                                    <input type="hidden" name="Employees[@i].Id" value="@e.Id" />
+                                    <div class="ep-row-handle" title="سحب لإعادة الترتيب"><span class="material-symbols-rounded">drag_indicator</span></div>
+                                    <div class="ep-row-body">
+                                        <div class="ep-row-fields">
+                                            <div class="ep-field flex-1">
+                                                <select name="Employees[@i].EmployeeId" class="form-input">
+                                                    <option value="">— اختر عضو الطاقم —</option>
+                                                    @foreach (var emp in Model.Employees)
+                                                    {
+                                                        <option value="@emp.EmployeeId" selected="@(e.EmployeeId == emp.EmployeeId)">
+                                                            @emp.FullName@(emp.StaffRoleName != null ? $" — {emp.StaffRoleName}" : "")
+                                                        </option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="ep-row-actions">
+                                            <button type="button" class="ep-row-del" title="حذف" onclick="EP.removeRow(this)">
+                                                <span class="material-symbols-rounded">close</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="ep-empty flex flex-col items-center justify-center py-8 text-center bg-surface-2 rounded-xl border border-dashed border-border/70">
+                                <span class="material-symbols-rounded text-ink-soft text-3xl mb-2">badge</span>
+                                <p class="text-sm font-bold text-ink-muted">لم يتم إضافة أي موظف للطاقم بعد</p>
+                                <p class="text-xs text-ink-soft mt-1">انقر على زر الإضافة لتسجيل أعضاء فريق الإنتاج</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ─── Sidebar ─── -->
+        <div class="lg:col-span-4 space-y-6 lg:sticky lg:top-6">
+
+            @if (isEdit)
+            {
+                <!-- ═══ Status Timeline ═══ -->
+                <div class="card-premium">
+                    <div class="card-header">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-rounded text-primary">timeline</span>
+                            <h3 class="font-bold text-ink text-base">مسار الحلقة</h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="status-timeline">
+                            @{
+                                var stages = new[] {
+                                    new { Id = 0, Name = "مجدولة",       Icon = "calendar_today" },
+                                    new { Id = 1, Name = "منفّذة",        Icon = "play_circle" },
+                                    new { Id = 2, Name = "منشورة رقمياً", Icon = "share" },
+                                    new { Id = 3, Name = "منشورة على الموقع", Icon = "public" }
+                                };
+                                var sid = Model.StatusId;
+                                var isCancelled = sid == 4;
+                            }
+                            @for (int i = 0; i < stages.Length; i++)
+                            {
+                                var s = stages[i];
+                                var cls = sid > s.Id ? "done" : (sid == s.Id ? "active" : "");
+                                <div class="status-timeline-item @cls">
+                                    <div class="status-timeline-dot"></div>
+                                    <div class="status-timeline-text">@s.Name</div>
+                                    @if (sid == s.Id && !isCancelled)
+                                    {
+                                        <div class="status-timeline-date text-primary font-bold">الحالية</div>
+                                    }
+                                </div>
+                            }
+                            @if (isCancelled)
+                            {
+                                <div class="status-timeline-item cancelled">
+                                    <div class="status-timeline-dot"></div>
+                                    <div class="status-timeline-text">ملغاة</div>
+                                    <div class="status-timeline-date text-danger font-bold">نهائية</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- ═══ Scheduling ═══ -->
+            <div class="card-premium">
+                <div class="card-header">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-rounded text-primary">schedule</span>
+                        <h3 class="font-bold text-ink text-base">الجدولة</h3>
+                    </div>
+                </div>
+                <div class="card-body space-y-4">
+                    <div>
+                        <label class="form-label">تاريخ التنفيذ</label>
+                        <div class="input-wrapper">
+                            <span class="material-symbols-rounded input-icon">calendar_month</span>
+                            <input type="date" name="ScheduledDate" value="@(Model.Episode.ScheduledDate?.ToString("yyyy-MM-dd"))" class="form-input" />
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label">وقت البث</label>
+                        <div class="input-wrapper">
+                            <span class="material-symbols-rounded input-icon">access_time</span>
+                            <input type="time" name="BroadcastTime" value="@(Model.Episode.BroadcastTime?.ToString(@"hh\:mm"))" class="form-input" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (isEdit)
+            {
+                <!-- ═══ Metadata ═══ -->
+                <div class="card-premium">
+                    <div class="card-header">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-rounded text-primary">info</span>
+                            <h3 class="font-bold text-ink text-base">معلومات الحلقة</h3>
+                        </div>
+                    </div>
+                    <div class="card-body space-y-3 text-sm">
+                        <div class="meta-pill w-full">
+                            <span class="material-symbols-rounded">tag</span>
+                            <span class="flex-1">رقم الحلقة</span>
+                            <span class="font-bold text-ink" dir="ltr">#@Model.Episode.EpisodeId</span>
+                        </div>
+                        <div class="meta-pill w-full">
+                            <span class="material-symbols-rounded">calendar_today</span>
+                            <span class="flex-1">تاريخ الإنشاء</span>
+                            <span class="font-bold text-ink">—</span>
+                        </div>
+                        <div class="meta-pill w-full">
+                            <span class="material-symbols-rounded">update</span>
+                            <span class="flex-1">آخر تعديل</span>
+                            <span class="font-bold text-ink">—</span>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- ═══ Save Actions ═══ -->
+            <div class="card-premium">
+                <div class="card-header">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-rounded text-primary">save</span>
+                        <h3 class="font-bold text-ink text-base">حفظ التغييرات</h3>
+                    </div>
+                </div>
+                <div class="card-body flex flex-col gap-3">
+                    <button type="submit" class="btn-primary w-full justify-center py-3">
+                        <span class="material-symbols-rounded">save</span>
+                        @(isEdit ? "حفظ التغييرات" : "إنشاء الحلقة")
+                    </button>
+                    <a href="/Episodes" class="btn-secondary w-full justify-center py-3">
+                        <span class="material-symbols-rounded">close</span>
+                        إلغاء والعودة
+                    </a>
+                </div>
+            </div>
+
+        </div>
     </div>
 </form>
 
+<!-- ═══════════════════════════════════════════════════════
+     Templates for dynamic rows
+     ═══════════════════════════════════════════════════════ -->
+<template id="guest-row-tpl">
+    <div class="ep-row guest-row" draggable="true">
+        <input type="hidden" name="Guests[{i}].EpisodeGuestId" value="0" />
+        <div class="ep-row-handle"><span class="material-symbols-rounded">drag_indicator</span></div>
+        <div class="ep-row-body">
+            <div class="ep-row-fields">
+                <div class="ep-field flex-1">
+                    <select name="Guests[{i}].GuestId" class="form-input">
+                        <option value="">— اختر الضيف —</option>
+                        @foreach (var g in Model.Guests)
+                        {
+                            <option value="@g.GuestId">@g.FullName</option>
+                        }
+                    </select>
+                </div>
+                <div class="ep-field flex-1">
+                    <input type="text" name="Guests[{i}].Topic" class="form-input" placeholder="موضوع الاستضافة" />
+                </div>
+                <div class="ep-field w-28">
+                    <input type="time" name="Guests[{i}].HostingTime" class="form-input" />
+                </div>
+                <input type="hidden" name="Guests[{i}].ClipNotes" value="" />
+            </div>
+            <div class="ep-row-actions">
+                <button type="button" class="ep-row-del" onclick="EP.removeRow(this)">
+                    <span class="material-symbols-rounded">close</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="corr-row-tpl">
+    <div class="ep-row corr-row" draggable="true">
+        <input type="hidden" name="Correspondents[{i}].Id" value="0" />
+        <div class="ep-row-handle"><span class="material-symbols-rounded">drag_indicator</span></div>
+        <div class="ep-row-body">
+            <div class="ep-row-fields">
+                <div class="ep-field flex-1">
+                    <select name="Correspondents[{i}].CorrespondentId" class="form-input">
+                        <option value="">— اختر —</option>
+                        @foreach (var c in Model.Correspondents)
+                        {
+                            <option value="@c.CorrespondentId">@c.FullName</option>
+                        }
+                    </select>
+                </div>
+                <div class="ep-field flex-1">
+                    <input type="text" name="Correspondents[{i}].Topic" class="form-input" placeholder="موضوع التغطية" />
+                </div>
+                <div class="ep-field w-28">
+                    <input type="time" name="Correspondents[{i}].HostingTime" class="form-input" />
+                </div>
+            </div>
+            <div class="ep-row-actions">
+                <button type="button" class="ep-row-del" onclick="EP.removeRow(this)">
+                    <span class="material-symbols-rounded">close</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="emp-row-tpl">
+    <div class="ep-row emp-row" draggable="true">
+        <input type="hidden" name="Employees[{i}].Id" value="0" />
+        <div class="ep-row-handle"><span class="material-symbols-rounded">drag_indicator</span></div>
+        <div class="ep-row-body">
+            <div class="ep-row-fields">
+                <div class="ep-field flex-1">
+                    <select name="Employees[{i}].EmployeeId" class="form-input">
+                        <option value="">— اختر عضو الطاقم —</option>
+                        @foreach (var emp in Model.Employees)
+                        {
+                            <option value="@emp.EmployeeId">@emp.FullName@(emp.StaffRoleName != null ? $" — {emp.StaffRoleName}" : "")</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="ep-row-actions">
+                <button type="button" class="ep-row-del" onclick="EP.removeRow(this)">
+                    <span class="material-symbols-rounded">close</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+
 @section Scripts {
-    <script>
-        // Dynamic rows for nested collections
-        function reindexRows(containerSelector, rowClass, prefix) {
-            const rows = document.querySelectorAll(containerSelector + ' .' + rowClass);
-            rows.forEach((row, idx) => {
-                row.querySelectorAll('input, select, textarea').forEach(input => {
-                    const name = input.name.replace(/\[\d+\]/, '[' + idx + ']');
-                    input.name = name;
-                });
-            });
-        }
-
-        function addGuestRow() {
-            const container = document.getElementById('guests-container');
-            // Remove empty state if present
-            if (container.querySelector('.text-ink-muted')) {
-                container.innerHTML = '';
-            }
-            const idx = container.querySelectorAll('.guest-row').length;
-            const html = `
-                <div class="guest-row grid grid-cols-1 md:grid-cols-12 gap-3 items-end bg-surface-2 p-4 rounded-xl border border-border relative group">
-                    <input type="hidden" name="Guests[${idx}].EpisodeGuestId" value="0" />
-                    <div class="md:col-span-4">
-                        <label class="form-label">الضيف</label>
-                        <select name="Guests[${idx}].GuestId" class="form-input">
-                            <option value="">— اختر —</option>
-                            @foreach (var g in Model.Guests)
-                            {
-                                <option value="@g.GuestId">@g.FullName</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="md:col-span-4">
-                        <label class="form-label">الموضوع</label>
-                        <input type="text" name="Guests[${idx}].Topic" class="form-input" placeholder="مثال: تحليل اقتصادي" />
-                    </div>
-                    <div class="md:col-span-3">
-                        <label class="form-label">وقت الاستضافة</label>
-                        <input type="time" name="Guests[${idx}].HostingTime" class="form-input" />
-                    </div>
-                    <div class="md:col-span-1 flex justify-center md:justify-end">
-                        <button type="button" class="icon-btn icon-btn-danger w-10 h-10 border border-border bg-surface hover:bg-red-50 rounded-xl" onclick="this.closest('.guest-row').remove(); reindexRows('#guests-container','guest-row','Guests');" title="حذف">
-                            <span class="material-symbols-rounded">delete</span>
-                        </button>
-                    </div>
-                </div>`;
-            container.insertAdjacentHTML('beforeend', html);
-        }
-
-        function addCorrespondentRow() {
-            const container = document.getElementById('correspondents-container');
-            // Remove empty state if present
-            if (container.querySelector('.text-ink-muted')) {
-                container.innerHTML = '';
-            }
-            const idx = container.querySelectorAll('.corr-row').length;
-            const html = `
-                <div class="corr-row grid grid-cols-1 md:grid-cols-12 gap-3 items-end bg-surface-2 p-4 rounded-xl border border-border relative group">
-                    <input type="hidden" name="Correspondents[${idx}].Id" value="0" />
-                    <div class="md:col-span-4">
-                        <label class="form-label">المراسل</label>
-                        <select name="Correspondents[${idx}].CorrespondentId" class="form-input">
-                            <option value="">— اختر —</option>
-                            @foreach (var c in Model.Correspondents)
-                            {
-                                <option value="@c.CorrespondentId">@c.FullName</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="md:col-span-5">
-                        <label class="form-label">الموضوع</label>
-                        <input type="text" name="Correspondents[${idx}].Topic" class="form-input" placeholder="مثال: تغطية ميدانية" />
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="form-label">الوقت</label>
-                        <input type="time" name="Correspondents[${idx}].HostingTime" class="form-input" />
-                    </div>
-                    <div class="md:col-span-1 flex justify-center md:justify-end">
-                        <button type="button" class="icon-btn icon-btn-danger w-10 h-10 border border-border bg-surface hover:bg-red-50 rounded-xl" onclick="this.closest('.corr-row').remove(); reindexRows('#correspondents-container','corr-row','Correspondents');" title="حذف">
-                            <span class="material-symbols-rounded">delete</span>
-                        </button>
-                    </div>
-                </div>`;
-            container.insertAdjacentHTML('beforeend', html);
-        }
-
-        function addEmployeeRow() {
-            const container = document.getElementById('employees-container');
-            // Remove empty state if present
-            if (container.querySelector('.text-ink-muted')) {
-                container.innerHTML = '';
-            }
-            const idx = container.querySelectorAll('.emp-row').length;
-            const html = `
-                <div class="emp-row grid grid-cols-1 md:grid-cols-12 gap-3 items-end bg-surface-2 p-4 rounded-xl border border-border relative group">
-                    <input type="hidden" name="Employees[${idx}].Id" value="0" />
-                    <div class="md:col-span-11">
-                        <label class="form-label">الموظف (مع دوره)</label>
-                        <select name="Employees[${idx}].EmployeeId" class="form-input">
-                            <option value="">— اختر —</option>
-                            @foreach (var emp in Model.Employees)
-                            {
-                                <option value="@emp.EmployeeId">@emp.FullName</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="md:col-span-1 flex justify-center md:justify-end">
-                        <button type="button" class="icon-btn icon-btn-danger w-10 h-10 border border-border bg-surface hover:bg-red-50 rounded-xl" onclick="this.closest('.emp-row').remove(); reindexRows('#employees-container','emp-row','Employees');" title="حذف">
-                            <span class="material-symbols-rounded">delete</span>
-                        </button>
-                    </div>
-                </div>`;
-            container.insertAdjacentHTML('beforeend', html);
-        }
-    </script>
+    <script src="~/js/episode-edit.js" asp-append-version="true"></script>
 }

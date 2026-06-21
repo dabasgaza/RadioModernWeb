@@ -67,7 +67,7 @@ public class MvcMessageService : IMessageService
         Push("info", message);
     }
 
-    public Task<bool> ShowConfirmationAsync(string message, string title = "تأكيد")
+    public Task<bool> ShowConfirmationAsync(string message, string title = "تأكيد", CancellationToken cancellationToken = default)
     {
         // In MVC, confirmations are handled client-side via SweetAlert2
         return Task.FromResult(true);

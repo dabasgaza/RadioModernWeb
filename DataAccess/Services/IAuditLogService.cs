@@ -1,5 +1,6 @@
 using DataAccess.Common;
 using Domain.Models;
+using System.Threading;
 
 namespace DataAccess.Services
 {
@@ -33,8 +34,9 @@ namespace DataAccess.Services
             DateTime? fromDate = null,
             DateTime? toDate = null,
             int page = 1,
-            int pageSize = 100);
+            int pageSize = 100,
+            CancellationToken cancellationToken = default);
 
-        Task<Result<List<User>>> GetAuditUsersAsync();
+        Task<Result<List<User>>> GetAuditUsersAsync(CancellationToken cancellationToken = default);
     }
 }

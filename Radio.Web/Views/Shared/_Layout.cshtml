@@ -6,36 +6,8 @@
     <title>@ViewData["Title"] — نظام سير عمل البث الإذاعي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0" rel="stylesheet" />
-    <!-- Tailwind CSS via CDN (production: build via npm) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: { DEFAULT: '#2563EB', dark: '#1D4ED8', light: '#3B82F6' },
-                        secondary: { DEFAULT: '#7C3AED', dark: '#6D28D9' },
-                        accent: '#0EA5E9',
-                        success: '#10B981',
-                        warning: '#F59E0B',
-                        danger: '#EF4444',
-                        surface: '#FFFFFF',
-                        'surface-2': '#F8FAFC',
-                        'surface-3': '#F1F5F9',
-                        border: '#E2E8F0',
-                        ink: { DEFAULT: '#0F172A', muted: '#475569', soft: '#94A3B8' }
-                    },
-                    fontFamily: {
-                        sans: ['Cairo', 'Tajawal', 'Segoe UI', 'sans-serif']
-                    },
-                    borderRadius: {
-                        xl: '14px'
-                    }
-                }
-            }
-        }
-    </script>
-    <link href="~/css/site.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/app.css" rel="stylesheet" />
     <link href="~/css/login.css" rel="stylesheet" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
@@ -67,25 +39,16 @@
     <!-- Modal container -->
     <div id="modal-root"></div>
 
-    <!-- jQuery (for Tabulator + some helpers) -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-    <!-- SignalR client -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
-
-    <!-- Toastr -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
-    <!-- Tabulator -->
-    <link href="https://unpkg.com/tabulator-tables@6.3.1/dist/css/tabulator_simple.min.css" rel="stylesheet" />
-    <script src="https://unpkg.com/tabulator-tables@6.3.1/dist/js/tabulator.min.js"></script>
-
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-
-    <!-- SweetAlert2 (for confirmations) -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Vendored libraries (npm → wwwroot/lib) -->
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/signalr/signalr.min.js"></script>
+    <link href="~/lib/toastr/toastr.min.css" rel="stylesheet" />
+    <script src="~/lib/toastr/toastr.min.js"></script>
+    <link href="~/lib/tabulator/tabulator_simple.min.css" rel="stylesheet" />
+    <script src="~/lib/tabulator/tabulator.min.js"></script>
+    <script src="~/lib/chartjs/chart.umd.js"></script>
+    <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
 
     <script src="~/js/app.js" asp-append-version="true"></script>
     <script src="~/js/notifications.js" asp-append-version="true"></script>

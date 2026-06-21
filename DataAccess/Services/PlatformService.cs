@@ -4,6 +4,7 @@ using DataAccess.Validation;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace DataAccess.Services;
 
@@ -22,7 +23,7 @@ public class PlatformService : IPlatformService
         _cachedLookup = cachedLookup;
         _logger = logger;
     }
-    public async Task<List<SocialMediaPlatformDto>> GetAllActiveAsync()
+    public async Task<List<SocialMediaPlatformDto>> GetAllActiveAsync(CancellationToken cancellationToken = default)
     {
         using var context = await _contextFactory.CreateDbContextAsync();
         return await context.SocialMediaPlatforms
@@ -30,10 +31,10 @@ public class PlatformService : IPlatformService
             .Where(p => p.IsActive)
             .OrderBy(p => p.Name)
             .Select(p => new SocialMediaPlatformDto(p.SocialMediaPlatformId, p.Name, p.Icon, p.BaseUrl))
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<Result<int>> CreateAsync(SocialMediaPlatformDto dto, UserSession session)
+    public async Task<Result<int>> CreateAsync(SocialMediaPlatformDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
         if (!permCheck.IsSuccess) return Result<int>.Fail(permCheck.ErrorMessage!);
@@ -53,8 +54,8 @@ public class PlatformService : IPlatformService
             };
 
             context.SocialMediaPlatforms.Add(platform);
-            await context.SaveChangesAsync();
-            _cachedLookup.InvalidateByEntity("SocialMediaPlatform");
+            await context.SaveChangesAsync(cancellationToken);
+            await _cachedLookup.InvalidateByEntity("SocialMediaPlatform");
 
             return Result<int>.Success(platform.SocialMediaPlatformId);
         }
@@ -65,7 +66,7 @@ public class PlatformService : IPlatformService
         }
     }
 
-    public async Task<Result> UpdateAsync(SocialMediaPlatformDto dto, UserSession session)
+    public async Task<Result> UpdateAsync(SocialMediaPlatformDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -85,8 +86,8 @@ public class PlatformService : IPlatformService
             platform.Icon = dto.Icon;
             platform.BaseUrl = dto.BaseUrl;
 
-            await context.SaveChangesAsync();
-            _cachedLookup.InvalidateByEntity("SocialMediaPlatform");
+            await context.SaveChangesAsync(cancellationToken);
+            await _cachedLookup.InvalidateByEntity("SocialMediaPlatform");
             return Result.Success();
         }
         catch (Exception ex)
@@ -96,7 +97,7 @@ public class PlatformService : IPlatformService
         }
     }
 
-    public async Task<Result> DeleteAsync(int platformId, UserSession session)
+    public async Task<Result> DeleteAsync(int platformId, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -110,8 +111,8 @@ public class PlatformService : IPlatformService
                 return Result.Fail("المنصة غير موجودة.");
 
             platform.IsActive = false;
-            await context.SaveChangesAsync();
-            _cachedLookup.InvalidateByEntity("SocialMediaPlatform");
+            await context.SaveChangesAsync(cancellationToken);
+            await _cachedLookup.InvalidateByEntity("SocialMediaPlatform");
             return Result.Success();
         }
         catch (Exception ex)

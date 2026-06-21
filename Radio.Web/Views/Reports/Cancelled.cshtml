@@ -1,20 +1,33 @@
 @model List<CancelledEpisodeDto>
-@{
-    ViewData["Title"] = "الحلقات الملغاة";
-}
+@{ ViewData["Title"] = "الحلقات الملغاة"; }
 
-<div class="flex items-center justify-between mb-6">
-    <div>
-        <h1 class="text-2xl font-bold text-ink mb-1 flex items-center gap-2">
-            <span class="material-symbols-rounded text-danger">cancel</span>
-            الحلقات الملغاة
-        </h1>
-        <p class="text-ink-muted text-sm">قائمة بكل الحلقات الملغاة وأسبابها</p>
+<div class="page-header">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <span class="material-symbols-rounded">home</span>
+                <a href="/">الرئيسية</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <a href="/Reports">التقارير</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <span>الحلقات الملغاة</span>
+            </nav>
+            <h1>
+                <span class="material-symbols-rounded text-danger">cancel</span>
+                الحلقات الملغاة
+            </h1>
+            <p>قائمة بكل الحلقات الملغاة وأسباب الإلغاء وتفاصيلها</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="/Reports" class="btn-secondary">
+                <span class="material-symbols-rounded">arrow_forward</span>
+                الرجوع للتقارير
+            </a>
+        </div>
     </div>
-    <a href="/Reports" class="btn-secondary"><span class="material-symbols-rounded">arrow_back</span> رجوع</a>
 </div>
 
-<div class="bg-surface rounded-xl border border-border">
+<div class="table-premium">
     @if (!Model.Any())
     {
         <div class="empty-state p-12">
@@ -27,7 +40,7 @@
     {
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
-                <thead class="bg-surface-3 text-ink-muted">
+                <thead>
                     <tr>
                         <th class="px-5 py-3 text-right font-semibold">الحلقة</th>
                         <th class="px-5 py-3 text-right font-semibold">البرنامج</th>
@@ -37,16 +50,16 @@
                         <th class="px-5 py-3 text-right font-semibold">تاريخ الإلغاء</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-border">
+                <tbody>
                     @foreach (var c in Model)
                     {
-                        <tr class="hover:bg-surface-3">
+                        <tr>
                             <td class="px-5 py-3 font-semibold text-ink">@c.EpisodeName</td>
                             <td class="px-5 py-3 text-ink-muted">@c.ProgramName</td>
                             <td class="px-5 py-3 text-ink-muted">@(c.ScheduledExecutionTime?.ToString("yyyy-MM-dd") ?? "—")</td>
                             <td class="px-5 py-3 text-ink-muted">@c.CancellationReason</td>
                             <td class="px-5 py-3 text-ink-muted">@(c.CancelledBy ?? "—")</td>
-                            <td class="px-5 py-3 text-ink-muted">@c.CancelledAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td class="px-5 py-3 text-ink-muted whitespace-nowrap" dir="ltr">@c.CancelledAt.ToString("yyyy-MM-dd HH:mm")</td>
                         </tr>
                     }
                 </tbody>

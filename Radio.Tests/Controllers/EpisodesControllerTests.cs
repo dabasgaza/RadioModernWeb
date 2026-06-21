@@ -11,6 +11,7 @@ using Radio.Web.Controllers;
 using Radio.Web.Services;
 using Radio.Web.ViewModels;
 using Moq;
+using System.Threading;
 
 namespace Radio.Tests.Controllers;
 
@@ -41,8 +42,8 @@ public class EpisodesControllerTests
     [Fact]
     public async Task Index_ReturnsViewWithEpisodeListViewModel()
     {
-        _query.Setup(q => q.GetActiveEpisodesAsync()).ReturnsAsync([]);
-        _lookup.Setup(l => l.GetProgramsAsync()).ReturnsAsync([]);
+        _query.Setup(q => q.GetActiveEpisodesAsync(CancellationToken.None)).ReturnsAsync([]);
+        _lookup.Setup(l => l.GetProgramsAsync(CancellationToken.None)).ReturnsAsync([]);
 
         var result = await _controller.Index(null, null, null);
 
@@ -58,8 +59,8 @@ public class EpisodesControllerTests
             EpisodeId = 1, EpisodeName = "Ep1", ProgramId = 1, ProgramName = "P1",
             StatusId = 0
         };
-        _query.Setup(q => q.GetActiveEpisodeByIdAsync(1)).ReturnsAsync(ep);
-        _publishing.Setup(p => p.GetAllPublishingRecordsAsync(1)).ReturnsAsync([]);
+        _query.Setup(q => q.GetActiveEpisodeByIdAsync(1, CancellationToken.None)).ReturnsAsync(ep);
+        _publishing.Setup(p => p.GetAllPublishingRecordsAsync(1, CancellationToken.None)).ReturnsAsync([]);
 
         var result = await _controller.Details(1);
 
@@ -70,7 +71,7 @@ public class EpisodesControllerTests
     [Fact]
     public async Task Details_NotFound_ReturnsNotFound()
     {
-        _query.Setup(q => q.GetActiveEpisodeByIdAsync(999)).ReturnsAsync((ActiveEpisodeDto?)null);
+        _query.Setup(q => q.GetActiveEpisodeByIdAsync(999, CancellationToken.None)).ReturnsAsync((ActiveEpisodeDto?)null);
 
         var result = await _controller.Details(999);
 
@@ -86,8 +87,8 @@ public class EpisodesControllerTests
             ScheduledDate = DateTime.UtcNow.AddDays(1)
         };
         var dto = form.ToDto();
-        _lookup.Setup(l => l.GetProgramsAsync()).ReturnsAsync([]);
-        _command.Setup(c => c.CreateEpisodeAsync(It.IsAny<EpisodeDto>(), _admin))
+        _lookup.Setup(l => l.GetProgramsAsync(CancellationToken.None)).ReturnsAsync([]);
+        _command.Setup(c => c.CreateEpisodeAsync(It.IsAny<EpisodeDto>(), _admin, CancellationToken.None))
             .ReturnsAsync(Result<int>.Success(1));
 
         var result = await _controller.Create(form);
@@ -101,7 +102,7 @@ public class EpisodesControllerTests
     {
         _controller.ModelState.AddModelError("EpisodeName", "مطلوب");
         var form = new EpisodeEditFormModel();
-        _lookup.Setup(l => l.GetProgramsAsync()).ReturnsAsync([]);
+        _lookup.Setup(l => l.GetProgramsAsync(CancellationToken.None)).ReturnsAsync([]);
 
         var result = await _controller.Create(form);
 
@@ -111,9 +112,9 @@ public class EpisodesControllerTests
     [Fact]
     public async Task Edit_Get_ExistingEpisode_ReturnsView()
     {
-        _query.Setup(q => q.GetActiveEpisodeByIdAsync(1))
+        _query.Setup(q => q.GetActiveEpisodeByIdAsync(1, CancellationToken.None))
             .ReturnsAsync(new ActiveEpisodeDto { EpisodeId = 1, ProgramId = 1, EpisodeName = "EditMe" });
-        _lookup.Setup(l => l.GetProgramsAsync()).ReturnsAsync([]);
+        _lookup.Setup(l => l.GetProgramsAsync(CancellationToken.None)).ReturnsAsync([]);
 
         var result = await _controller.Edit(1);
 
@@ -128,8 +129,8 @@ public class EpisodesControllerTests
             EpisodeId = 1, ProgramId = 1, EpisodeName = "Updated",
             ScheduledDate = DateTime.UtcNow.AddDays(1)
         };
-        _lookup.Setup(l => l.GetProgramsAsync()).ReturnsAsync([]);
-        _command.Setup(c => c.UpdateEpisodeAsync(It.IsAny<EpisodeDto>(), _admin))
+        _lookup.Setup(l => l.GetProgramsAsync(CancellationToken.None)).ReturnsAsync([]);
+        _command.Setup(c => c.UpdateEpisodeAsync(It.IsAny<EpisodeDto>(), _admin, CancellationToken.None))
             .ReturnsAsync(Result.Success());
 
         var result = await _controller.Edit(1, form);
@@ -141,7 +142,7 @@ public class EpisodesControllerTests
     [Fact]
     public async Task Delete_Existing_Redirects()
     {
-        _command.Setup(c => c.DeleteEpisodeAsync(1, _admin))
+        _command.Setup(c => c.DeleteEpisodeAsync(1, _admin, CancellationToken.None))
             .ReturnsAsync(Result.Success());
 
         var result = await _controller.Delete(1);
@@ -152,7 +153,7 @@ public class EpisodesControllerTests
     [Fact]
     public async Task Execute_Valid_Redirects()
     {
-        _execution.Setup(e => e.LogExecutionAsync(It.IsAny<ExecutionLogDto>(), _admin))
+        _execution.Setup(e => e.LogExecutionAsync(It.IsAny<ExecutionLogDto>(), _admin, CancellationToken.None))
             .ReturnsAsync(Result.Success());
 
         var result = await _controller.Execute(1, "Done", "None", 45);
@@ -163,7 +164,7 @@ public class EpisodesControllerTests
     [Fact]
     public async Task Cancel_Valid_Redirects()
     {
-        _command.Setup(c => c.CancelEpisodeAsync(1, "reason", _admin))
+        _command.Setup(c => c.CancelEpisodeAsync(1, "reason", _admin, CancellationToken.None))
             .ReturnsAsync(Result.Success());
 
         var result = await _controller.Cancel(1, "reason");

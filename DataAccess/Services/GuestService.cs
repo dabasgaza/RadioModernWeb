@@ -4,15 +4,16 @@ using DataAccess.Validation;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace DataAccess.Services;
 
 public interface IGuestService
 {
-    Task<List<GuestDto>> GetAllActiveAsync(); // ✨ إرجاع DTO بدلاً من Entity
-    Task<Result> CreateGuestAsync(GuestDto dto, UserSession session);
-    Task<Result> UpdateGuestAsync(GuestDto dto, UserSession session);
-    Task<Result> SoftDeleteGuestAsync(int guestId, UserSession session);
+    Task<List<GuestDto>> GetAllActiveAsync(CancellationToken cancellationToken = default);
+    Task<Result> CreateGuestAsync(GuestDto dto, UserSession session, CancellationToken cancellationToken = default);
+    Task<Result> UpdateGuestAsync(GuestDto dto, UserSession session, CancellationToken cancellationToken = default);
+    Task<Result> SoftDeleteGuestAsync(int guestId, UserSession session, CancellationToken cancellationToken = default);
 }
 
 // ✨ استخدام Primary Constructor وإزالة IAuditService
@@ -50,7 +51,7 @@ public class GuestService : IGuestService
                     string.Empty,
                     string.Empty)));
 
-    public async Task<List<GuestDto>> GetAllActiveAsync()
+    public async Task<List<GuestDto>> GetAllActiveAsync(CancellationToken cancellationToken = default)
     {
         using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -61,7 +62,7 @@ public class GuestService : IGuestService
         return result;
     }
 
-    public async Task<Result> CreateGuestAsync(GuestDto dto, UserSession session)
+    public async Task<Result> CreateGuestAsync(GuestDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.GuestManage);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -83,10 +84,10 @@ public class GuestService : IGuestService
             };
 
             context.Guests.Add(guest);
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
 
             // ✨ إبطال كاش الضيوف بعد الإضافة
-            _cachedLookup.InvalidateByEntity("Guest");
+            await _cachedLookup.InvalidateByEntity("Guest");
 
             return Result.Success();
         }
@@ -97,7 +98,7 @@ public class GuestService : IGuestService
         }
     }
 
-    public async Task<Result> UpdateGuestAsync(GuestDto dto, UserSession session)
+    public async Task<Result> UpdateGuestAsync(GuestDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.GuestManage);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -116,10 +117,10 @@ public class GuestService : IGuestService
 
             try
             {
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync(cancellationToken);
 
                 // ✨ إبطال كاش الضيوف بعد التعديل
-                _cachedLookup.InvalidateByEntity("Guest");
+                await _cachedLookup.InvalidateByEntity("Guest");
 
                 return Result.Success();
             }
@@ -151,7 +152,7 @@ public class GuestService : IGuestService
         }
     }
 
-    public async Task<Result> SoftDeleteGuestAsync(int guestId, UserSession session)
+    public async Task<Result> SoftDeleteGuestAsync(int guestId, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.GuestManage);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -163,8 +164,8 @@ public class GuestService : IGuestService
             var hasExecutedEpisodes = await context.EpisodeGuests
                 .AnyAsync(eg => eg.GuestId == guestId &&
                                 eg.IsActive &&
-                                (eg.Episode.StatusId == EpisodeStatus.Executed ||
-                                 eg.Episode.StatusId == EpisodeStatus.Published));
+                                (eg.Episode.StatusId == EpisodeStatusValues.Executed ||
+                                 eg.Episode.StatusId == EpisodeStatusValues.Published), cancellationToken);
 
             if (hasExecutedEpisodes)
                 return Result.Fail("لا يمكن حذف ضيف مرتبط بحلقات تم تنفيذها أو نشرها بالفعل.");
@@ -174,10 +175,10 @@ public class GuestService : IGuestService
 
             guest.IsActive = false;
 
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
 
             // ✨ إبطال كاش الضيوف بعد الحذف
-            _cachedLookup.InvalidateByEntity("Guest");
+            await _cachedLookup.InvalidateByEntity("Guest");
 
             return Result.Success();
         }

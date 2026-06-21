@@ -6,6 +6,7 @@ using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Radio.Web.Services;
+using System.Threading;
 using Radio.Web.ViewModels;
 
 namespace Radio.Web.Controllers;
@@ -44,8 +45,8 @@ public class EpisodesController : Controller
     {
         try
         {
-            var episodes = await _query.GetActiveEpisodesAsync();
-            var programs = await _lookup.GetProgramsAsync();
+            var episodes = await _query.GetActiveEpisodesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
+            var programs = await _lookup.GetProgramsAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
 
             var filtered = episodes.AsEnumerable();
             if (!string.IsNullOrWhiteSpace(search))
@@ -79,10 +80,10 @@ public class EpisodesController : Controller
     // GET: /Episodes/Details/5
     public async Task<IActionResult> Details(int id)
     {
-        var episode = await _query.GetActiveEpisodeByIdAsync(id);
+        var episode = await _query.GetActiveEpisodeByIdAsync(id, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (episode == null) return NotFound();
 
-        var publishingRecords = await _publishing.GetAllPublishingRecordsAsync(id);
+        var publishingRecords = await _publishing.GetAllPublishingRecordsAsync(id, cancellationToken: HttpContext?.RequestAborted ?? default);
         var vm = new EpisodeDetailsViewModel
         {
             Episode = episode,
@@ -96,6 +97,8 @@ public class EpisodesController : Controller
     public async Task<IActionResult> Create()
     {
         var vm = await BuildEditViewModelAsync(new EpisodeDto(0, 0, new(), new(), new(), string.Empty, null, null, null, null));
+        vm.StatusText = "مجدولة";
+        vm.StatusId = 0;
         return View("Edit", vm);
     }
 
@@ -115,7 +118,7 @@ public class EpisodesController : Controller
         }
 
         var session = _currentUser.ToUserSession()!;
-        var result = await _command.CreateEpisodeAsync(dto, session);
+        var result = await _command.CreateEpisodeAsync(dto, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (result.IsSuccess)
         {
             TempData["Success"] = "تم إنشاء الحلقة بنجاح";
@@ -130,7 +133,7 @@ public class EpisodesController : Controller
     [Authorize(Policy = AppPermissions.EpisodeEdit)]
     public async Task<IActionResult> Edit(int id)
     {
-        var episode = await _query.GetActiveEpisodeByIdAsync(id);
+        var episode = await _query.GetActiveEpisodeByIdAsync(id, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (episode == null) return NotFound();
 
         var dto = new EpisodeDto(
@@ -146,6 +149,8 @@ public class EpisodesController : Controller
             episode.SpecialNotes);
 
         var vm = await BuildEditViewModelAsync(dto);
+        vm.StatusText = episode.StatusText;
+        vm.StatusId = episode.StatusId;
         return View(vm);
     }
 
@@ -165,7 +170,7 @@ public class EpisodesController : Controller
         }
 
         var session = _currentUser.ToUserSession()!;
-        var result = await _command.UpdateEpisodeAsync(dto, session);
+        var result = await _command.UpdateEpisodeAsync(dto, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (result.IsSuccess)
         {
             TempData["Success"] = "تم تحديث الحلقة بنجاح";
@@ -183,7 +188,7 @@ public class EpisodesController : Controller
     public async Task<IActionResult> Delete(int id)
     {
         var session = _currentUser.ToUserSession()!;
-        var result = await _command.DeleteEpisodeAsync(id, session);
+        var result = await _command.DeleteEpisodeAsync(id, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (result.IsSuccess) TempData["Success"] = "تم حذف الحلقة";
         else TempData["Error"] = result.ErrorMessage;
         return RedirectToAction(nameof(Index));
@@ -204,7 +209,7 @@ public class EpisodesController : Controller
             IssuesEncountered = issuesEncountered ?? string.Empty,
             DurationMinutes = durationMinutes
         };
-        var result = await _execution.LogExecutionAsync(dto, session);
+        var result = await _execution.LogExecutionAsync(dto, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (result.IsSuccess) TempData["Success"] = "تم تسجيل التنفيذ بنجاح";
         else TempData["Error"] = result.ErrorMessage;
         return RedirectToAction(nameof(Details), new { id });
@@ -222,7 +227,7 @@ public class EpisodesController : Controller
             return RedirectToAction(nameof(Details), new { id });
         }
         var session = _currentUser.ToUserSession()!;
-        var result = await _command.CancelEpisodeAsync(id, reason, session);
+        var result = await _command.CancelEpisodeAsync(id, reason, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (result.IsSuccess) TempData["Success"] = "تم إلغاء الحلقة";
         else TempData["Error"] = result.ErrorMessage;
         return RedirectToAction(nameof(Details), new { id });
@@ -240,7 +245,7 @@ public class EpisodesController : Controller
             return RedirectToAction(nameof(Details), new { id });
         }
         var session = _currentUser.ToUserSession()!;
-        var result = await _command.RevertEpisodeStatusAsync(id, reason, session);
+        var result = await _command.RevertEpisodeStatusAsync(id, reason, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (result.IsSuccess) TempData["Success"] = "تم التراجع عن الحالة";
         else TempData["Error"] = result.ErrorMessage;
         return RedirectToAction(nameof(Details), new { id });
@@ -254,7 +259,7 @@ public class EpisodesController : Controller
     {
         if (ids == null || ids.Length == 0) return RedirectToAction(nameof(Index));
         var session = _currentUser.ToUserSession()!;
-        var (success, fail) = await _command.DeleteEpisodesBatchAsync(ids.ToList(), session);
+        var (success, fail) = await _command.DeleteEpisodesBatchAsync(ids.ToList(), session, cancellationToken: HttpContext?.RequestAborted ?? default);
         TempData["Info"] = $"تم حذف {success} بنجاح، فشل {fail}";
         return RedirectToAction(nameof(Index));
     }
@@ -272,18 +277,18 @@ public class EpisodesController : Controller
             return RedirectToAction(nameof(Index));
         }
         var session = _currentUser.ToUserSession()!;
-        var (success, fail) = await _command.CancelEpisodesBatchAsync(ids.ToList(), reason, session);
+        var (success, fail) = await _command.CancelEpisodesBatchAsync(ids.ToList(), reason, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         TempData["Info"] = $"تم إلغاء {success} بنجاح، فشل {fail}";
         return RedirectToAction(nameof(Index));
     }
 
     private async Task<EpisodeEditViewModel> BuildEditViewModelAsync(EpisodeDto dto)
     {
-        var programs = await _lookup.GetProgramsAsync();
-        var guests = await _lookup.GetGuestsAsync();
-        var correspondents = await _lookup.GetCorrespondentsAsync();
-        var staffRoles = await _lookup.GetStaffRolesAsync();
-        var employees = await _lookup.GetEmployeesAsync();
+        var programs = await _lookup.GetProgramsAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
+        var guests = await _lookup.GetGuestsAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
+        var correspondents = await _lookup.GetCorrespondentsAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
+        var staffRoles = await _lookup.GetStaffRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
+        var employees = await _lookup.GetEmployeesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
 
         return new EpisodeEditViewModel
         {

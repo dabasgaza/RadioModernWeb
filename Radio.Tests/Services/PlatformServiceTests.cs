@@ -6,6 +6,7 @@ using Radio.Tests.Helpers;
 using Radio.Tests.TestData.Builders;
 using Radio.Tests.TestData.Fixtures;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace Radio.Tests.Services;
 
@@ -25,7 +26,7 @@ public class PlatformServiceTests : IClassFixture<DatabaseFixture>
     [Fact]
     public async Task GetAllActiveAsync_ReturnsAll()
     {
-        var result = await _service.GetAllActiveAsync();
+        var result = await _service.GetAllActiveAsync(CancellationToken.None);
         result.Should().HaveCount(3);
     }
 
@@ -33,7 +34,7 @@ public class PlatformServiceTests : IClassFixture<DatabaseFixture>
     public async Task CreateAsync_Valid_ReturnsSuccess()
     {
         var dto = new SocialMediaPlatformDto(0, "YouTube", "youtube");
-        var result = await _service.CreateAsync(dto, _admin);
+        var result = await _service.CreateAsync(dto, _admin, CancellationToken.None);
         result.ShouldBeSuccess();
     }
 
@@ -41,14 +42,14 @@ public class PlatformServiceTests : IClassFixture<DatabaseFixture>
     public async Task UpdateAsync_Valid_ReturnsSuccess()
     {
         var dto = new SocialMediaPlatformDto(1, "Facebook Updated", "facebook");
-        var result = await _service.UpdateAsync(dto, _admin);
+        var result = await _service.UpdateAsync(dto, _admin, CancellationToken.None);
         result.ShouldBeSuccess();
     }
 
     [Fact]
     public async Task DeleteAsync_Valid_SoftDeletes()
     {
-        var result = await _service.DeleteAsync(1, _admin);
+        var result = await _service.DeleteAsync(1, _admin, CancellationToken.None);
         result.ShouldBeSuccess();
     }
 }

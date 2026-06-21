@@ -1,15 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Domain.Models;
 
 #nullable disable
 
 namespace Domain.Migrations
 {
-    /// <inheritdoc />
-    /// <summary>
-    /// Migration لإضافة جداول ASP.NET Core Identity إلى قاعدة البيانات.
-    /// يُنشئ: AspNetUsers, AspNetRoles, AspNetUserRoles, AspNetUserClaims,
-    ///         AspNetUserLogins, AspNetUserTokens, AspNetRoleClaims
-    /// </summary>
+    [DbContext(typeof(BroadcastWorkflowDBContext))]
+    [Migration("20260617090000_AddIdentityTables")]
     public partial class AddIdentityTables : Migration
     {
         /// <inheritdoc />

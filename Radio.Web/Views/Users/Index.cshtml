@@ -1,42 +1,70 @@
 @model List<UserDto>
 @{ ViewData["Title"] = "المستخدمون"; }
 
-<div class="flex items-center justify-between mb-6">
-    <div>
-        <h1 class="text-2xl font-bold text-ink mb-1 flex items-center gap-2">
-            <span class="material-symbols-rounded text-primary">admin_panel_settings</span>
-            المستخدمون
-        </h1>
-        <p class="text-ink-muted text-sm">إدارة حسابات المستخدمين وأدوارهم</p>
+<div class="page-header">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <span class="material-symbols-rounded">home</span>
+                <a href="/">الرئيسية</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <span>المستخدمون</span>
+            </nav>
+            <h1>
+                <span class="material-symbols-rounded text-primary">admin_panel_settings</span>
+                المستخدمون
+            </h1>
+            <p>إدارة حسابات المستخدمين وأدوارهم وصلاحياتهم في النظام</p>
+        </div>
+        <div class="flex items-center gap-2">
+            @if (User.HasPermission(AppPermissions.UserManage))
+            {
+                <a href="/Users/Create" class="btn-primary">
+                    <span class="material-symbols-rounded">add</span>
+                    مستخدم جديد
+                </a>
+            }
+        </div>
     </div>
-    @if (User.HasPermission(AppPermissions.UserManage))
-    {
-        <a href="/Users/Create" class="btn-primary"><span class="material-symbols-rounded">add</span> مستخدم جديد</a>
-    }
 </div>
 
-<div class="bg-surface rounded-xl border border-border p-4 mb-4">
-    <form method="get" class="flex gap-2">
-        <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث…" class="form-input flex-1" />
-        <button type="submit" class="btn-primary"><span class="material-symbols-rounded">search</span></button>
-        <a href="/Users" class="btn-secondary"><span class="material-symbols-rounded">refresh</span></a>
+<div class="filter-premium">
+    <form method="get" class="flex gap-3">
+        <div class="relative flex-1">
+            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-ink-soft">search</span>
+            <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث باسم المستخدم أو البريد…" class="form-input pr-10" />
+        </div>
+        <button type="submit" class="btn-primary">
+            <span class="material-symbols-rounded">search</span>
+            بحث
+        </button>
+        <a href="/Users" class="btn-secondary" title="إعادة ضبط">
+            <span class="material-symbols-rounded">refresh</span>
+        </a>
     </form>
 </div>
 
-<div class="bg-surface rounded-xl border border-border">
+<div class="table-premium">
     @if (!Model.Any())
     {
         <div class="empty-state p-12">
             <span class="material-symbols-rounded empty-icon">admin_panel_settings</span>
             <h3 class="font-bold text-ink text-lg mb-2">لا مستخدمين</h3>
-            <a href="/Users/Create" class="btn-primary"><span class="material-symbols-rounded">add</span> مستخدم جديد</a>
+            <p class="text-ink-muted text-sm mb-4">لم يتم العثور على أي مستخدمين تطابق البحث.</p>
+            @if (User.HasPermission(AppPermissions.UserManage))
+            {
+                <a href="/Users/Create" class="btn-primary">
+                    <span class="material-symbols-rounded">add</span>
+                    إضافة مستخدم جديد
+                </a>
+            }
         </div>
     }
     else
     {
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
-                <thead class="bg-surface-3 text-ink-muted">
+                <thead>
                     <tr>
                         <th class="px-5 py-3 text-right font-semibold">الاسم</th>
                         <th class="px-5 py-3 text-right font-semibold">اسم الدخول</th>
@@ -46,16 +74,16 @@
                         <th class="px-5 py-3 text-right font-semibold">إجراءات</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-border">
+                <tbody>
                     @foreach (var u in Model)
                     {
-                        <tr class="hover:bg-surface-3">
+                        <tr>
                             <td class="px-5 py-3 font-semibold text-ink">@u.FullName</td>
                             <td class="px-5 py-3 text-ink-muted">@u.Username</td>
                             <td class="px-5 py-3 text-ink-muted">@u.EmailAddress</td>
                             <td class="px-5 py-3"><span class="badge badge-info">@u.RoleName</span></td>
                             <td class="px-5 py-3">
-                                <span class="badge @(u.IsActive ? "badge-success" : "badge-danger")">
+                                <span class="badge @(u.IsActive ? "badge-info" : "badge-default")" style="@(u.IsActive ? "background:#D1FAE5;color:#059669" : "background:#FEE2E2;color:#DC2626")">
                                     @(u.IsActive ? "نشط" : "معطّل")
                                 </span>
                             </td>

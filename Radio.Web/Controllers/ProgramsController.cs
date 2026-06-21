@@ -5,6 +5,7 @@ using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Radio.Web.Services;
+using System.Threading;
 using Radio.Web.ViewModels;
 
 namespace Radio.Web.Controllers;
@@ -33,7 +34,7 @@ public class ProgramsController : Controller
     {
         try
         {
-            var programs = await _programs.GetAllActiveAsync();
+            var programs = await _programs.GetAllActiveAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
             if (!string.IsNullOrWhiteSpace(search))
             {
                 var s = search.Trim();
@@ -43,7 +44,7 @@ public class ProgramsController : Controller
             }
             ViewBag.Search = search ?? "";
 
-            var episodes = await _episodes.GetActiveEpisodesAsync();
+            var episodes = await _episodes.GetActiveEpisodesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
             var model = programs.Select(p => new ProgramViewModel
             {
                 Program = p,
@@ -74,7 +75,7 @@ public class ProgramsController : Controller
         if (!ModelState.IsValid) return View("Edit", model);
 
         var session = _currentUser.ToUserSession()!;
-        var result = await _programs.CreateProgramAsync(model, session);
+        var result = await _programs.CreateProgramAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (result.IsSuccess)
         {
             TempData["Success"] = "تم إنشاء البرنامج بنجاح";
@@ -87,7 +88,7 @@ public class ProgramsController : Controller
     [Authorize(Policy = AppPermissions.ProgramManage)]
     public async Task<IActionResult> Edit(int id)
     {
-        var programs = await _programs.GetAllActiveAsync();
+        var programs = await _programs.GetAllActiveAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         var program = programs.FirstOrDefault(p => p.ProgramId == id);
         if (program == null) return NotFound();
         return View(program);
@@ -105,7 +106,7 @@ public class ProgramsController : Controller
 
         model = model with { ProgramId = id };
         var session = _currentUser.ToUserSession()!;
-        var result = await _programs.UpdateProgramAsync(model, session);
+        var result = await _programs.UpdateProgramAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (result.IsSuccess)
         {
             TempData["Success"] = "تم تحديث البرنامج";
@@ -121,7 +122,7 @@ public class ProgramsController : Controller
     public async Task<IActionResult> Delete(int id)
     {
         var session = _currentUser.ToUserSession()!;
-        var result = await _programs.SoftDeleteAsync(id, session);
+        var result = await _programs.SoftDeleteAsync(id, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (result.IsSuccess) TempData["Success"] = "تم حذف البرنامج";
         else TempData["Error"] = result.ErrorMessage;
         return RedirectToAction(nameof(Index));

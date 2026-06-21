@@ -3,22 +3,23 @@ using DataAccess.DTOs;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace DataAccess.Services
 {
     public interface IUserService
     {
-        Task<List<UserDto>> GetAllUsersAsync();
-        Task<Result> CreateUserAsync(UserDto dto, string plainPassword, UserSession session);
-        Task<Result> UpdateUserAsync(UserDto dto, string? newPassword, UserSession session);
-        Task<Result> ToggleUserStatusAsync(int userId, bool isActive, UserSession session);
-        Task<List<RoleDto>> GetRolesAsync();
-        Task<Result> CreateRoleAsync(RoleDto dto, UserSession session);
-        Task<Result> UpdateRoleAsync(RoleDto dto, UserSession session);
-        Task<Result> DeleteRoleAsync(int roleId, UserSession session);
-        Task<List<PermissionViewModel>> GetPermissionsMatrixAsync(int roleId);
-        Task<Result> UpdateRolePermissionsAsync(int roleId, List<int> selectedPermissionIds, UserSession session);
-        Task<Result> DeleteUserAsync(int userId, UserSession session);
+        Task<List<UserDto>> GetAllUsersAsync(CancellationToken cancellationToken = default);
+        Task<Result> CreateUserAsync(UserDto dto, string plainPassword, UserSession session, CancellationToken cancellationToken = default);
+        Task<Result> UpdateUserAsync(UserDto dto, string? newPassword, UserSession session, CancellationToken cancellationToken = default);
+        Task<Result> ToggleUserStatusAsync(int userId, bool isActive, UserSession session, CancellationToken cancellationToken = default);
+        Task<List<RoleDto>> GetRolesAsync(CancellationToken cancellationToken = default);
+        Task<Result> CreateRoleAsync(RoleDto dto, UserSession session, CancellationToken cancellationToken = default);
+        Task<Result> UpdateRoleAsync(RoleDto dto, UserSession session, CancellationToken cancellationToken = default);
+        Task<Result> DeleteRoleAsync(int roleId, UserSession session, CancellationToken cancellationToken = default);
+        Task<List<PermissionViewModel>> GetPermissionsMatrixAsync(int roleId, CancellationToken cancellationToken = default);
+        Task<Result> UpdateRolePermissionsAsync(int roleId, List<int> selectedPermissionIds, UserSession session, CancellationToken cancellationToken = default);
+        Task<Result> DeleteUserAsync(int userId, UserSession session, CancellationToken cancellationToken = default);
     }
 
     public class UserService : IUserService
@@ -38,7 +39,7 @@ namespace DataAccess.Services
         }
         #region إدارة المستخدمين
 
-        public async Task<List<UserDto>> GetAllUsersAsync()
+        public async Task<List<UserDto>> GetAllUsersAsync(CancellationToken cancellationToken = default)
         {
             await using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -56,10 +57,10 @@ namespace DataAccess.Services
                     RoleName = u.Role != null ? u.Role.RoleName : "N/A",
                     IsActive = u.IsActive
                 })
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<Result> CreateUserAsync(UserDto dto, string plainPassword, UserSession session)
+        public async Task<Result> CreateUserAsync(UserDto dto, string plainPassword, UserSession session, CancellationToken cancellationToken = default)
         {
             var permCheck = session.EnsurePermission(AppPermissions.UserManage);
             if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -68,7 +69,7 @@ namespace DataAccess.Services
             {
                 await using var context = await _contextFactory.CreateDbContextAsync();
 
-                if (await context.Users.AnyAsync(u => u.Username == dto.Username))
+                if (await context.Users.AnyAsync(u => u.Username == dto.Username, cancellationToken))
                     return Result.Fail("اسم المستخدم موجود بالفعل في النظام.");
 
                 var user = new User
@@ -83,7 +84,7 @@ namespace DataAccess.Services
                 };
 
                 context.Users.Add(user);
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync(cancellationToken);
                 return Result.Success();
             }
             catch (Exception ex)
@@ -93,7 +94,7 @@ namespace DataAccess.Services
             }
         }
 
-        public async Task<Result> UpdateUserAsync(UserDto dto, string? newPassword, UserSession session)
+        public async Task<Result> UpdateUserAsync(UserDto dto, string? newPassword, UserSession session, CancellationToken cancellationToken = default)
         {
             var permCheck = session.EnsurePermission(AppPermissions.UserManage);
             if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -115,7 +116,7 @@ namespace DataAccess.Services
 
                 try
                 {
-                    await context.SaveChangesAsync();
+                    await context.SaveChangesAsync(cancellationToken);
                     return Result.Success();
                 }
                 catch (DbUpdateConcurrencyException ex)
@@ -131,7 +132,7 @@ namespace DataAccess.Services
             }
         }
 
-        public async Task<Result> ToggleUserStatusAsync(int userId, bool isActive, UserSession session)
+        public async Task<Result> ToggleUserStatusAsync(int userId, bool isActive, UserSession session, CancellationToken cancellationToken = default)
         {
             var permCheck = session.EnsurePermission(AppPermissions.UserManage);
             if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -147,7 +148,7 @@ namespace DataAccess.Services
                 if (user == null) return Result.Fail("المستخدم غير موجود.");
 
                 user.IsActive = isActive;
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync(cancellationToken);
                 return Result.Success();
             }
             catch (Exception ex)
@@ -161,7 +162,7 @@ namespace DataAccess.Services
 
         #region إدارة الأدوار والصلاحيات
 
-        public async Task<List<RoleDto>> GetRolesAsync()
+        public async Task<List<RoleDto>> GetRolesAsync(CancellationToken cancellationToken = default)
         {
             await using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -174,10 +175,10 @@ namespace DataAccess.Services
                     RoleName = r.RoleName,
                     RoleDescription = r.RoleDescription
                 })
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<Result> CreateRoleAsync(RoleDto dto, UserSession session)
+        public async Task<Result> CreateRoleAsync(RoleDto dto, UserSession session, CancellationToken cancellationToken = default)
         {
             var permCheck = session.EnsurePermission(AppPermissions.UserManage);
             if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -186,7 +187,7 @@ namespace DataAccess.Services
             {
                 await using var context = await _contextFactory.CreateDbContextAsync();
 
-                if (await context.Roles.AnyAsync(r => r.RoleName == dto.RoleName))
+                if (await context.Roles.AnyAsync(r => r.RoleName == dto.RoleName, cancellationToken))
                     return Result.Fail("اسم الدور موجود مسبقاً");
 
                 var role = new Role
@@ -199,7 +200,7 @@ namespace DataAccess.Services
                 };
 
                 context.Roles.Add(role);
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync(cancellationToken);
                 return Result.Success();
             }
             catch (Exception ex)
@@ -209,7 +210,7 @@ namespace DataAccess.Services
             }
         }
 
-        public async Task<Result> UpdateRoleAsync(RoleDto dto, UserSession session)
+        public async Task<Result> UpdateRoleAsync(RoleDto dto, UserSession session, CancellationToken cancellationToken = default)
         {
             var permCheck = session.EnsurePermission(AppPermissions.UserManage);
             if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -220,14 +221,14 @@ namespace DataAccess.Services
                 var role = await context.Roles.FindAsync(dto.RoleId);
                 if (role == null) return Result.Fail("الدور غير موجود");
 
-                if (await context.Roles.AnyAsync(r => r.RoleName == dto.RoleName && r.RoleId != dto.RoleId))
+                if (await context.Roles.AnyAsync(r => r.RoleName == dto.RoleName && r.RoleId != dto.RoleId, cancellationToken))
                     return Result.Fail("اسم الدور موجود مسبقاً");
 
                 role.RoleName = dto.RoleName;
                 role.RoleDescription = dto.RoleDescription;
                 role.UpdatedAt = DateTime.Now;
 
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync(cancellationToken);
                 return Result.Success();
             }
             catch (Exception ex)
@@ -237,7 +238,7 @@ namespace DataAccess.Services
             }
         }
 
-        public async Task<Result> DeleteRoleAsync(int roleId, UserSession session)
+        public async Task<Result> DeleteRoleAsync(int roleId, UserSession session, CancellationToken cancellationToken = default)
         {
             var permCheck = session.EnsurePermission(AppPermissions.UserManage);
             if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -248,11 +249,11 @@ namespace DataAccess.Services
                 // ✨ استخدام IgnoreQueryFilters لإيجاد الدور حتى لو كان محذوفاً ناعمياً
                 var role = await context.Roles
                     .IgnoreQueryFilters()
-                    .FirstOrDefaultAsync(r => r.RoleId == roleId);
+                    .FirstOrDefaultAsync(r => r.RoleId == roleId, cancellationToken);
                 if (role == null) return Result.Fail("الدور غير موجود");
                 if (!role.IsActive) return Result.Success(); // محذوف ناعمياً بالفعل
 
-                if (await context.Users.AnyAsync(u => u.RoleId == roleId))
+                if (await context.Users.AnyAsync(u => u.RoleId == roleId, cancellationToken))
                     return Result.Fail("لا يمكن حذف الدور لأنه مرتبط بمستخدمين حاليين");
 
                 // ✨ حذف ناعم للدور بدلاً من الحذف الفعلي — للحفاظ على سجل التدقيق
@@ -262,9 +263,9 @@ namespace DataAccess.Services
                 // RolePermission لا يرث BaseEntity لذا نستخدم ExecuteDeleteAsync
                 await context.RolePermissions
                     .Where(rp => rp.RoleId == roleId)
-                    .ExecuteDeleteAsync();
+                    .ExecuteDeleteAsync(cancellationToken);
 
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync(cancellationToken);
                 return Result.Success();
             }
             catch (Exception ex)
@@ -274,7 +275,7 @@ namespace DataAccess.Services
             }
         }
 
-        public async Task<List<PermissionViewModel>> GetPermissionsMatrixAsync(int roleId)
+        public async Task<List<PermissionViewModel>> GetPermissionsMatrixAsync(int roleId, CancellationToken cancellationToken = default)
         {
             await using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -290,10 +291,10 @@ namespace DataAccess.Services
                     IsAssigned = context.RolePermissions
                         .Any(rp => rp.RoleId == roleId && rp.PermissionId == p.PermissionId)
                 })
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<Result> UpdateRolePermissionsAsync(int roleId, List<int> selectedPermissionIds, UserSession session)
+        public async Task<Result> UpdateRolePermissionsAsync(int roleId, List<int> selectedPermissionIds, UserSession session, CancellationToken cancellationToken = default)
         {
             var permCheck = session.EnsurePermission(AppPermissions.UserManage);
             if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
@@ -302,12 +303,12 @@ namespace DataAccess.Services
 
             var existing = await context.RolePermissions
                 .Where(rp => rp.RoleId == roleId)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             if (existing.Count > 0)
             {
                 context.RolePermissions.RemoveRange(existing);
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync(cancellationToken);
             }
 
             if (selectedPermissionIds.Count > 0)
@@ -319,7 +320,7 @@ namespace DataAccess.Services
                         PermissionId = id
                     }));
 
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync(cancellationToken);
             }
 
             // تحديث الصلاحيات فورياً للمستخدم الحالي في الجلسة النشطة
@@ -327,7 +328,7 @@ namespace DataAccess.Services
 
             return Result.Success();
         }
-        public Task<Result> DeleteUserAsync(int userId, UserSession session)
+        public Task<Result> DeleteUserAsync(int userId, UserSession session, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(Result.Fail("خاصية حذف المستخدمين غير متاحة حالياً."));
         }

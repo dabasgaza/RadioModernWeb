@@ -5,66 +5,88 @@
     var episode = Model.Episode;
 }
 
-<div class="mb-6">
-    <nav class="text-sm text-ink-muted mb-2">
-        <a href="/WebsitePublishing" class="hover:text-primary">نشر الموقع</a>
-        <span class="mx-1">/</span>
-        <span class="text-ink">تعديل</span>
-    </nav>
-    <h1 class="text-2xl font-bold text-ink flex items-center gap-2">
-        <span class="material-symbols-rounded text-primary">edit</span>
-        تعديل سجل نشر الموقع
-    </h1>
+<div class="page-header">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <span class="material-symbols-rounded">home</span>
+                <a href="/">الرئيسية</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <a href="/WebsitePublishing">نشر الموقع</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <span>تعديل سجل النشر</span>
+            </nav>
+            <h1>
+                <span class="material-symbols-rounded text-primary">edit</span>
+                تعديل سجل نشر الموقع
+            </h1>
+            <p>تحديث وتعديل تفاصيل نشر الحلقة على الموقع الرسمي للإذاعة</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="/WebsitePublishing" class="btn-secondary">
+                <span class="material-symbols-rounded">arrow_forward</span>
+                الرجوع للنشر
+            </a>
+        </div>
+    </div>
 </div>
 
 @if (log == null)
 {
     <div class="bg-red-50 border border-red-200 text-danger rounded-lg p-4">سجل النشر غير موجود.</div>
-    return;
 }
+else
+{
 
 <!-- Episode Info -->
-<div class="bg-surface rounded-xl border border-border p-5 mb-4">
-    <div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center">
-                <span class="material-symbols-rounded text-primary">podcasts</span>
+<div class="card-premium mb-4">
+    <div class="card-body">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-rounded text-primary">podcasts</span>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-ink">@(episode?.EpisodeName ?? "—")</h3>
+                    <p class="text-sm text-ink-muted">@(episode?.ProgramName ?? "")</p>
+                </div>
             </div>
-            <div>
-                <h3 class="text-lg font-bold text-ink">@(episode?.EpisodeName ?? "—")</h3>
-                <p class="text-sm text-ink-muted">@(episode?.ProgramName ?? "")</p>
-            </div>
+            <a href="/Episodes/Details/@log.EpisodeId" class="btn-secondary text-sm" target="_blank">
+                <span class="material-symbols-rounded">open_in_new</span>
+                عرض الحلقة
+            </a>
         </div>
-        <a href="/Episodes/Details/@log.EpisodeId" class="btn-secondary text-sm" target="_blank">
-            <span class="material-symbols-rounded">open_in_new</span>
-            عرض الحلقة
-        </a>
     </div>
 </div>
 
 <form method="post" action="/WebsitePublishing/Edit/@log.Id">
     @Html.AntiForgeryToken()
 
-    <div class="bg-surface rounded-xl border border-border mb-4">
-        <div class="p-5 border-b border-border">
-            <h3 class="font-bold text-ink flex items-center gap-2">
+    <div class="card-premium mb-4">
+        <div class="card-header">
+            <div class="flex items-center gap-2">
                 <span class="material-symbols-rounded text-primary">article</span>
-                تفاصيل النشر
-            </h3>
+                <h3 class="font-bold text-ink text-base">تفاصيل النشر</h3>
+            </div>
         </div>
-        <div class="p-5 space-y-4">
+        <div class="card-body space-y-4">
             <div>
                 <label class="form-label">عنوان النشر *</label>
-                <input type="text" name="title" class="form-input" placeholder="عنوان الحلقة على الموقع" required
-                       value="@log.Title" />
+                <div class="input-wrapper">
+                    <span class="material-symbols-rounded input-icon">title</span>
+                    <input type="text" name="title" class="form-input" placeholder="عنوان الحلقة على الموقع" required value="@log.Title" />
+                </div>
             </div>
             <div>
                 <label class="form-label">نوع الوسائط *</label>
-                <select name="mediaType" class="form-input" required>
-                    <option value="Audio" selected="@(log.MediaType == "Audio")">صوت</option>
-                    <option value="Video" selected="@(log.MediaType == "Video")">فيديو</option>
-                    <option value="Both" selected="@(log.MediaType == "Both")">صوت وفيديو</option>
-                </select>
+                <div class="input-wrapper">
+                    <span class="material-symbols-rounded input-icon">category</span>
+                    <select name="mediaType" class="form-input" required>
+                        <option value="Audio" selected="@(log.MediaType == "Audio")">صوت</option>
+                        <option value="Video" selected="@(log.MediaType == "Video")">فيديو</option>
+                        <option value="Both" selected="@(log.MediaType == "Both")">صوت وفيديو</option>
+                    </select>
+                </div>
             </div>
             <div>
                 <label class="form-label">ملاحظات النشر</label>
@@ -89,14 +111,14 @@
 </form>
 
 <!-- All Publishing Records for this Episode -->
-<div class="bg-surface rounded-xl border border-border mt-8 shadow-sm">
-    <div class="p-5 border-b border-border bg-surface-3 rounded-t-xl">
-        <h3 class="font-bold text-ink flex items-center gap-2">
+<div class="card-premium mt-8 shadow-sm">
+    <div class="card-header bg-surface-3">
+        <div class="flex items-center gap-2">
             <span class="material-symbols-rounded text-primary">history</span>
-            كافة سجلات النشر والإنتاج الخاصة بهذه الحلقة (@(Model.EpisodePublishingRecords?.Count ?? 0))
-        </h3>
+            <h3 class="font-bold text-ink text-base">كافة سجلات النشر والإنتاج الخاصة بهذه الحلقة (@(Model.EpisodePublishingRecords?.Count ?? 0))</h3>
+        </div>
     </div>
-    <div class="p-5">
+    <div class="card-body">
         @if (Model.EpisodePublishingRecords == null || !Model.EpisodePublishingRecords.Any())
         {
             <p class="text-sm text-ink-muted">لا توجد سجلات أخرى لهذه الحلقة.</p>
@@ -148,6 +170,7 @@
         }
     </div>
 </div>
+}
 
 @functions {
     string GetRecordTypeName(string t) => t switch
