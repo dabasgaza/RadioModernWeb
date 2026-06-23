@@ -83,7 +83,7 @@
                             <td class="px-5 py-3 text-ink-muted">@u.EmailAddress</td>
                             <td class="px-5 py-3"><span class="badge badge-info">@u.RoleName</span></td>
                             <td class="px-5 py-3">
-                                <span class="badge @(u.IsActive ? "badge-info" : "badge-default")" style="@(u.IsActive ? "background:#D1FAE5;color:#059669" : "background:#FEE2E2;color:#DC2626")">
+                                <span class="badge @(u.IsActive ? "badge-active" : "badge-inactive")">
                                     @(u.IsActive ? "نشط" : "معطّل")
                                 </span>
                             </td>

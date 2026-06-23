@@ -1,7 +1,7 @@
 using DataAccess.Common;
 using DataAccess.DTOs;
-using DataAccess.Validation;
 using Domain.Models;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Threading;
@@ -24,15 +24,18 @@ namespace DataAccess.Services
         private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
         private readonly ICachedLookupService _cachedLookup;
         private readonly ILogger<CorrespondentService> _logger;
+        private readonly IValidator<CorrespondentDto> _correspondentValidator;
 
         public CorrespondentService(
             IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
             ICachedLookupService cachedLookup,
-            ILogger<CorrespondentService> logger)
+            ILogger<CorrespondentService> logger,
+            IValidator<CorrespondentDto> correspondentValidator)
         {
             _contextFactory = contextFactory;
             _cachedLookup = cachedLookup;
             _logger = logger;
+            _correspondentValidator = correspondentValidator;
         }
         // ──────────────────────────────────────────────────────────────
         // Compiled Query — تقليل وقت ترجمة LINQ في المسارات الساخنة
@@ -64,8 +67,9 @@ namespace DataAccess.Services
             var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);
             if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
 
-            var validation = ValidationPipeline.ValidateCorrespondent(dto);
-            if (!validation.IsSuccess) return Result.Fail(validation.ErrorMessage!);
+            var validation = await _correspondentValidator.ValidateAsync(dto);
+            if (!validation.IsValid)
+                return Result.Fail(string.Join(Environment.NewLine, validation.Errors.Select(e => e.ErrorMessage)));
 
             try
             {
@@ -94,8 +98,9 @@ namespace DataAccess.Services
             var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);
             if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
 
-            var validation = ValidationPipeline.ValidateCorrespondent(dto);
-            if (!validation.IsSuccess) return Result.Fail(validation.ErrorMessage!);
+            var validation = await _correspondentValidator.ValidateAsync(dto);
+            if (!validation.IsValid)
+                return Result.Fail(string.Join(Environment.NewLine, validation.Errors.Select(e => e.ErrorMessage)));
 
             try
             {

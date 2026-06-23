@@ -1,7 +1,7 @@
 using DataAccess.Common;
 using DataAccess.DTOs;
-using DataAccess.Validation;
 using Domain.Models;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Threading;
@@ -28,15 +28,18 @@ public class GuestService : IGuestService
     private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
     private readonly ICachedLookupService _cachedLookup;
     private readonly ILogger<GuestService> _logger;
+    private readonly IValidator<GuestDto> _guestValidator;
 
     public GuestService(
         IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
         ICachedLookupService cachedLookup,
-        ILogger<GuestService> logger)
+        ILogger<GuestService> logger,
+        IValidator<GuestDto> guestValidator)
     {
         _contextFactory = contextFactory;
         _cachedLookup = cachedLookup;
         _logger = logger;
+        _guestValidator = guestValidator;
     }
     // ──────────────────────────────────────────────────────────────
     // Compiled Query — تقليل وقت ترجمة LINQ في المسارات الساخنة
@@ -73,9 +76,9 @@ public class GuestService : IGuestService
         var permCheck = session.EnsurePermission(AppPermissions.GuestManage);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
 
-        var validation = ValidationPipeline.ValidateGuest(dto);
-        if (!validation.IsSuccess)
-            return validation;
+        var validation = await _guestValidator.ValidateAsync(dto);
+        if (!validation.IsValid)
+            return Result.Fail(string.Join(Environment.NewLine, validation.Errors.Select(e => e.ErrorMessage)));
 
         try
         {

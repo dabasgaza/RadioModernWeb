@@ -18,6 +18,230 @@
 }
 
 /* ════════════════════════════════════════════════════════
+   Dark Mode — CSS Variable Overrides
+   ════════════════════════════════════════════════════════ */
+html.dark {
+    --surface: #1E293B;
+    --surface-2: #0B1121;
+    --surface-3: #334155;
+    --border: #334155;
+    --ink: #F1F5F9;
+    --ink-muted: #CBD5E1;
+    --ink-soft: #64748B;
+}
+
+/* ─── Tailwind utility class overrides for dark mode ─── */
+html.dark .bg-surface { background: #1E293B; }
+html.dark .bg-surface-2 { background: #0B1121; }
+html.dark .bg-surface-3 { background: #334155; }
+html.dark .text-ink { color: #F1F5F9; }
+html.dark .text-ink-muted { color: #CBD5E1; }
+html.dark .text-ink-soft { color: #64748B; }
+html.dark .border-border { border-color: #334155; }
+html.dark .divide-border > :not([hidden]) ~ :not([hidden]) { border-color: #334155; }
+html.dark .divide-border\/60 > :not([hidden]) ~ :not([hidden]) { border-color: rgba(51, 65, 85, 0.6); }
+html.dark .bg-white { background: #1E293B; }
+html.dark .bg-black\/50 { background: rgba(0, 0, 0, 0.7); }
+html.dark .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4); }
+html.dark .shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); }
+html.dark .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3); }
+html.dark .gradient-to-l { background: linear-gradient(135deg, #1D4ED8, #5B21B6); }
+
+/* ─── Dark mode component adjustments ─── */
+html.dark .nav-link:hover { background: var(--surface-3); }
+html.dark .nav-link.active { box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4); }
+html.dark .table-premium tbody tr:hover { background: var(--surface-3); }
+html.dark .icon-btn { background: var(--surface-3); border-color: var(--border); }
+html.dark .icon-btn:hover { background: var(--surface); }
+html.dark .form-input { background: var(--surface-2); border-color: var(--border); color: var(--ink); }
+html.dark .form-input:focus { background: var(--surface); border-color: var(--primary); }
+html.dark .form-label { color: var(--ink-muted); }
+html.dark .stat-card-premium:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); }
+html.dark .page-header p { color: var(--ink-soft); }
+html.dark ::selection { background: rgba(37, 99, 235, 0.3); }
+
+/* ─── Glass elements dark mode ─── */
+html.dark .glass-sidebar { background: rgba(11, 17, 33, 0.92); border-left: 1px solid rgba(51, 65, 85, 0.4); }
+html.dark .glass-topbar { background: rgba(11, 17, 33, 0.85); border-bottom: 1px solid rgba(51, 65, 85, 0.3); }
+html.dark .glass-card { background: rgba(30, 41, 59, 0.75); border-color: rgba(51, 65, 85, 0.8); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); }
+
+/* ─── Scrollbar dark mode ─── */
+html.dark ::-webkit-scrollbar-thumb { background: hsla(221, 20%, 40%, 0.5); }
+html.dark ::-webkit-scrollbar-thumb:hover { background: hsla(221, 80%, 60%, 0.5); }
+
+/* ─── Body background gradient dark mode ─── */
+html.dark body { background-image: radial-gradient(at 0% 0%, hsla(262, 80%, 60%, 0.06) 0px, transparent 50%), radial-gradient(at 100% 100%, hsla(221, 80%, 60%, 0.06) 0px, transparent 50%); }
+
+/* ─── Shimmer loading dark mode ─── */
+html.dark .shimmer { background: linear-gradient(90deg, rgba(30, 41, 59, 0.6) 25%, rgba(51, 65, 85, 0.9) 50%, rgba(30, 41, 59, 0.6) 75%); }
+
+/* ─── Status badges dark mode ─── */
+html.dark .status-badge.planned { background: rgba(37, 99, 235, 0.15); color: #60A5FA; }
+html.dark .status-badge.executed { background: rgba(16, 185, 129, 0.15); color: #34D399; }
+html.dark .status-badge.published { background: rgba(16, 185, 129, 0.15); color: #34D399; }
+html.dark .status-badge.website-published { background: rgba(14, 165, 233, 0.15); color: #38BDF8; }
+html.dark .status-badge.cancelled { background: rgba(239, 68, 68, 0.15); color: #F87171; }
+
+/* ─── Inline badges dark mode ─── */
+html.dark .badge-info { background: rgba(37, 99, 235, 0.15); color: #60A5FA; }
+html.dark .badge-active { background: rgba(16, 185, 129, 0.15); color: #34D399; }
+html.dark .badge-inactive { background: rgba(239, 68, 68, 0.15); color: #F87171; }
+
+/* ─── Icon buttons dark mode ─── */
+html.dark .icon-btn-primary { background: rgba(37, 99, 235, 0.15); }
+html.dark .icon-btn-primary:hover { background: var(--primary); }
+html.dark .icon-btn-danger { background: rgba(239, 68, 68, 0.15); }
+html.dark .icon-btn-danger:hover { background: var(--danger); }
+html.dark .icon-btn-success { background: rgba(16, 185, 129, 0.15); }
+html.dark .icon-btn-success:hover { background: var(--success); }
+html.dark .icon-btn-info { background: rgba(14, 165, 233, 0.15); }
+html.dark .icon-btn-info:hover { background: var(--accent); }
+
+/* ─── Form label dark mode ─── */
+html.dark .form-label { color: var(--ink-muted); }
+
+/* ─── Episode row delete dark mode ─── */
+html.dark .ep-row-del:hover { background: rgba(239, 68, 68, 0.15); }
+
+/* ════════════════════════════════════════════════════════
+   Dark Mode — Tailwind Color Utility Overrides
+   ════════════════════════════════════════════════════════ */
+/* Red family — error/delete/danger */
+html.dark .bg-red-50 { background: rgba(239, 68, 68, 0.1); }
+html.dark .bg-red-100 { background: rgba(239, 68, 68, 0.15); }
+html.dark .bg-red-600 { background: #DC2626; }
+html.dark .text-red-600,
+html.dark .text-red-700 { color: #FCA5A5; }
+html.dark .border-red-100 { border-color: rgba(239, 68, 68, 0.2); }
+html.dark .border-red-200,
+html.dark .border-red-500 { border-color: rgba(239, 68, 68, 0.3); }
+html.dark .shadow-red-200 { box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.1); }
+
+/* Green family — success */
+html.dark .bg-green-50 { background: rgba(16, 185, 129, 0.1); }
+html.dark .text-green-600 { color: #6EE7B7; }
+html.dark .border-green-200 { border-color: rgba(16, 185, 129, 0.3); }
+
+/* Blue family — info */
+html.dark .bg-blue-50 { background: rgba(37, 99, 235, 0.1); }
+html.dark .bg-blue-100 { background: rgba(37, 99, 235, 0.15); }
+html.dark .text-blue-600 { color: #93C5FD; }
+html.dark .text-blue-700 { color: #60A5FA; }
+html.dark .border-blue-200 { border-color: rgba(37, 99, 235, 0.3); }
+
+/* Amber/Yellow family — warning */
+html.dark .bg-amber-50 { background: rgba(245, 158, 11, 0.1); }
+html.dark .text-amber-600 { color: #FCD34D; }
+html.dark .border-amber-200 { border-color: rgba(245, 158, 11, 0.3); }
+
+/* Slate/Gray family */
+html.dark .bg-slate-50 { background: var(--surface-2); }
+html.dark .text-slate-500,
+html.dark .text-slate-600 { color: var(--ink-muted); }
+html.dark .border-slate-200 { border-color: var(--border); }
+
+/* Indigo family */
+html.dark .bg-indigo-50 { background: rgba(99, 102, 241, 0.1); }
+html.dark .text-indigo-600 { color: #A5B4FC; }
+
+/* Text white on colored backgrounds */
+html.dark .text-white { color: #F1F5F9; }
+
+/* Shadow utilities */
+html.dark .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4); }
+html.dark .shadow { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3); }
+
+/* ════════════════════════════════════════════════════════
+   Page Transition — Fade In
+   ════════════════════════════════════════════════════════ */
+@keyframes pageFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.page-transition {
+    animation: pageFadeIn 0.3s ease-out;
+}
+
+/* ════════════════════════════════════════════════════════
+   Loading Skeleton
+   ════════════════════════════════════════════════════════ */
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+.skeleton {
+    background: linear-gradient(90deg, var(--surface-3) 25%, var(--surface-2) 50%, var(--surface-3) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+    border-radius: 8px;
+}
+.skeleton-text { height: 1rem; width: 60%; margin-bottom: 0.5rem; }
+.skeleton-title { height: 1.5rem; width: 40%; margin-bottom: 1rem; }
+.skeleton-avatar { width: 2.5rem; height: 2.5rem; border-radius: 50%; }
+.skeleton-card { height: 8rem; width: 100%; }
+
+/* ════════════════════════════════════════════════════════
+   Back-to-Top Button
+   ════════════════════════════════════════════════════════ */
+#back-to-top {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 100;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    transition: all 0.2s;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+}
+#back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+#back-to-top:hover { background: var(--primary-dark); transform: translateY(-2px); }
+html.dark #back-to-top { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); }
+
+/* ════════════════════════════════════════════════════════
+   Button Loading State
+   ════════════════════════════════════════════════════════ */
+.btn-loading { position: relative; pointer-events: none; color: transparent !important; }
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: btnSpin 0.6s linear infinite;
+    top: 50%;
+    right: 50%;
+    margin-top: -0.5rem;
+    margin-right: -0.5rem;
+}
+@keyframes btnSpin { to { transform: rotate(360deg); } }
+
+/* ════════════════════════════════════════════════════════
+   Focus Visible — Accessibility
+   ════════════════════════════════════════════════════════ */
+:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* ════════════════════════════════════════════════════════
    Sidebar Navigation
    ════════════════════════════════════════════════════════ */
 .sidebar-nav {
@@ -198,6 +422,14 @@
 .badge-info {
     background: #EFF6FF;
     color: #2563EB;
+}
+.badge-active {
+    background: #D1FAE5;
+    color: #059669;
+}
+.badge-inactive {
+    background: #FEE2E2;
+    color: #DC2626;
 }
 
 /* ════════════════════════════════════════════════════════

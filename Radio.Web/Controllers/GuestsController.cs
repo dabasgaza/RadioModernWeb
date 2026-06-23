@@ -1,5 +1,4 @@
 using DataAccess.Common;
-using DataAccess.Validation;
 using DataAccess.DTOs;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -43,8 +42,7 @@ public class GuestsController : Controller
     [Authorize(Policy = AppPermissions.GuestManage)]
     public async Task<IActionResult> Create(GuestDto model)
     {
-        var v = ValidationPipeline.ValidateGuest(model);
-        if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); return View("Edit", model); }
+        if (!ModelState.IsValid) return View("Edit", model);
 
         var session = _currentUser.ToUserSession()!;
         var r = await _guests.CreateGuestAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -67,8 +65,7 @@ public class GuestsController : Controller
     [Authorize(Policy = AppPermissions.GuestManage)]
     public async Task<IActionResult> Edit(int id, GuestDto model)
     {
-        var v = ValidationPipeline.ValidateGuest(model);
-        if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); return View(model); }
+        if (!ModelState.IsValid) return View(model);
 
         model = model with { GuestId = id };
         var session = _currentUser.ToUserSession()!;

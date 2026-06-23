@@ -229,6 +229,8 @@
 
 @section Scripts {
     <script>
+        const isDark = document.documentElement.classList.contains('dark');
+
         // Chart.js: Status Distribution
         const statusCanvas = document.getElementById('statusChart');
         const ctxStatus = statusCanvas.getContext('2d');
@@ -245,7 +247,6 @@
         });
         const statusValues = Object.values(statusData);
 
-        // Gradient generator helper
         function createGrad(ctx, c1, c2) {
             const g = ctx.createLinearGradient(0, 0, 0, 250);
             g.addColorStop(0, c1);
@@ -253,12 +254,18 @@
             return g;
         }
 
-        const doughnutGradients = [
-            createGrad(ctxStatus, '#60A5FA', '#2563EB'), // blue
-            createGrad(ctxStatus, '#3B82F6', '#1D4ED8'), // dark blue
-            createGrad(ctxStatus, '#34D399', '#059669'), // emerald
-            createGrad(ctxStatus, '#38BDF8', '#0284C7'), // sky
-            createGrad(ctxStatus, '#F87171', '#DC2626')  // red
+        const doughnutGradients = isDark ? [
+            createGrad(ctxStatus, '#1E3A5F', '#1D4ED8'),
+            createGrad(ctxStatus, '#1A3A5C', '#1E40AF'),
+            createGrad(ctxStatus, '#1A3D2E', '#047857'),
+            createGrad(ctxStatus, '#1A3D4A', '#0369A1'),
+            createGrad(ctxStatus, '#3D1A1A', '#B91C1C')
+        ] : [
+            createGrad(ctxStatus, '#60A5FA', '#2563EB'),
+            createGrad(ctxStatus, '#3B82F6', '#1D4ED8'),
+            createGrad(ctxStatus, '#34D399', '#059669'),
+            createGrad(ctxStatus, '#38BDF8', '#0284C7'),
+            createGrad(ctxStatus, '#F87171', '#DC2626')
         ];
 
         new Chart(statusCanvas, {
@@ -269,7 +276,7 @@
                     data: statusValues,
                     backgroundColor: doughnutGradients,
                     borderWidth: 3,
-                    borderColor: '#FFFFFF',
+                    borderColor: isDark ? '#1E293B' : '#FFFFFF',
                     hoverOffset: 8
                 }]
             },
@@ -285,6 +292,7 @@
                             padding: 20,
                             usePointStyle: true,
                             pointStyle: 'circle',
+                            color: isDark ? '#CBD5E1' : '#475569',
                             font: { family: 'Cairo', weight: '600', size: 11 } 
                         } 
                     }
@@ -303,8 +311,13 @@
             Model.TopPrograms.Take(5).Select(p => new { name = p.ProgramName, total = p.TotalEpisodes }).ToList()));
 
         const barGradient = ctxPrograms.createLinearGradient(0, 0, 400, 0);
-        barGradient.addColorStop(0, '#7C3AED');   // Purple
-        barGradient.addColorStop(1, '#2563EB');   // Blue
+        if (isDark) {
+            barGradient.addColorStop(0, '#4C1D95');
+            barGradient.addColorStop(1, '#1D4ED8');
+        } else {
+            barGradient.addColorStop(0, '#7C3AED');
+            barGradient.addColorStop(1, '#2563EB');
+        }
 
         new Chart(programsCanvas, {
             type: 'bar',
@@ -314,7 +327,7 @@
                     label: 'عدد الحلقات',
                     data: programsData.map(p => p.total),
                     backgroundColor: barGradient,
-                    hoverBackgroundColor: '#1D4ED8',
+                    hoverBackgroundColor: isDark ? '#1D4ED8' : '#1D4ED8',
                     borderRadius: 12,
                     borderSkipped: false,
                     barThickness: 16
@@ -329,12 +342,12 @@
                 },
                 scales: {
                     x: { 
-                        grid: { color: 'rgba(226, 232, 240, 0.5)' }, 
-                        ticks: { font: { family: 'Cairo', weight: 'bold' } } 
+                        grid: { color: isDark ? 'rgba(51, 65, 85, 0.5)' : 'rgba(226, 232, 240, 0.5)' },
+                        ticks: { font: { family: 'Cairo', weight: 'bold' }, color: isDark ? '#CBD5E1' : '#475569' } 
                     },
                     y: { 
-                        grid: { display: false }, 
-                        ticks: { font: { family: 'Cairo', weight: 'bold' } } 
+                        grid: { display: false },
+                        ticks: { font: { family: 'Cairo', weight: 'bold' }, color: isDark ? '#CBD5E1' : '#475569' } 
                     }
                 }
             }

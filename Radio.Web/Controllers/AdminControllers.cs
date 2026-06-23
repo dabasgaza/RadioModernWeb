@@ -1,9 +1,9 @@
 using DataAccess.Common;
-using DataAccess.Validation;
 using DataAccess.DTOs;
 using DataAccess.Services;
 using Domain.Identity;
 using Domain.Models;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -21,10 +21,11 @@ public class UsersController : Controller
     private readonly IUserService _users;
     private readonly ICurrentUserService _currentUser;
     private readonly ILogger<UsersController> _logger;
+    private readonly IValidator<UserDto> _userValidator;
 
-    public UsersController(IUserService users, ICurrentUserService currentUser, ILogger<UsersController> logger)
+    public UsersController(IUserService users, ICurrentUserService currentUser, ILogger<UsersController> logger, IValidator<UserDto> userValidator)
     {
-        _users = users; _currentUser = currentUser; _logger = logger;
+        _users = users; _currentUser = currentUser; _logger = logger; _userValidator = userValidator;
     }
 
     public async Task<IActionResult> Index(string? search)
@@ -54,8 +55,13 @@ public class UsersController : Controller
     {
         ViewBag.Roles = await _users.GetRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         var dto = model.ToDto();
-        var v = ValidationPipeline.ValidateUser(dto, model.Password);
-        if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); return View("Edit", model); }
+        var validation = await _userValidator.ValidateAsync(dto);
+        var errors = validation.Errors.Select(e => e.ErrorMessage).ToList();
+        if (model.UserId == 0 && string.IsNullOrWhiteSpace(model.Password))
+            errors.Add("كلمة المرور مطلوبة للمستخدم الجديد.");
+        if (!string.IsNullOrWhiteSpace(model.Password) && model.Password.Length < 6)
+            errors.Add("كلمة المرور يجب أن تكون 6 أحرف على الأقل.");
+        if (errors.Count > 0) { foreach (var err in errors) ModelState.AddModelError("", err); return View("Edit", model); }
 
         var session = _currentUser.ToUserSession()!;
         var r = await _users.CreateUserAsync(dto, model.Password ?? string.Empty, session, cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -82,8 +88,11 @@ public class UsersController : Controller
         ViewBag.Roles = await _users.GetRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         model.UserId = id;
         var dto = model.ToDto();
-        var v = ValidationPipeline.ValidateUser(dto, model.Password);
-        if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); return View(model); }
+        var validation = await _userValidator.ValidateAsync(dto);
+        var errors = validation.Errors.Select(e => e.ErrorMessage).ToList();
+        if (!string.IsNullOrWhiteSpace(model.Password) && model.Password.Length < 6)
+            errors.Add("كلمة المرور يجب أن تكون 6 أحرف على الأقل.");
+        if (errors.Count > 0) { foreach (var err in errors) ModelState.AddModelError("", err); return View(model); }
 
         var session = _currentUser.ToUserSession()!;
         var r = await _users.UpdateUserAsync(dto, string.IsNullOrWhiteSpace(model.Password) ? null : model.Password, session, cancellationToken: HttpContext?.RequestAborted ?? default);

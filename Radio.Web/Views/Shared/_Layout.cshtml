@@ -10,6 +10,14 @@
     <link href="~/css/app.css" rel="stylesheet" />
     <link href="~/css/login.css" rel="stylesheet" />
     @await RenderSectionAsync("Styles", required: false)
+    <script>
+        (function() {
+            var theme = localStorage.getItem('theme');
+            if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
 </head>
 <body class="bg-surface-2 text-ink font-sans antialiased">
     <div class="flex min-h-screen">
@@ -25,7 +33,7 @@
             <partial name="_Toastr" />
 
             <!-- Main Content -->
-            <main class="flex-1 p-6">
+            <main class="flex-1 p-6 page-transition">
                 @RenderBody()
             </main>
 
@@ -49,6 +57,10 @@
     <script src="~/lib/chartjs/chart.umd.js"></script>
     <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
     <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
+
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="العودة إلى الأعلى">
+        <span class="material-symbols-rounded">arrow_upward</span>
+    </button>
 
     <script src="~/js/app.js" asp-append-version="true"></script>
     <script src="~/js/notifications.js" asp-append-version="true"></script>

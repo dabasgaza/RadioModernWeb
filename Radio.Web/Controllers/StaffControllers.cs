@@ -1,5 +1,4 @@
 using DataAccess.Common;
-using DataAccess.Validation;
 using DataAccess.DTOs;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -46,8 +45,7 @@ public class EmployeesController : Controller
     [Authorize(Policy = AppPermissions.StaffManage)]
     public async Task<IActionResult> Create(EmployeeDto model)
     {
-        var v = ValidationPipeline.ValidateEmployee(model);
-        if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); ViewBag.StaffRoles = await _employees.GetAllRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default); return View("Edit", model); }
+        if (!ModelState.IsValid) { ViewBag.StaffRoles = await _employees.GetAllRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default); return View("Edit", model); }
         var session = _currentUser.ToUserSession()!;
         var r = await _employees.CreateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم إضافة الموظف"; return RedirectToAction(nameof(Index)); }
@@ -71,8 +69,7 @@ public class EmployeesController : Controller
     [Authorize(Policy = AppPermissions.StaffManage)]
     public async Task<IActionResult> Edit(int id, EmployeeDto model)
     {
-        var v = ValidationPipeline.ValidateEmployee(model);
-        if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); ViewBag.StaffRoles = await _employees.GetAllRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default); return View(model); }
+        if (!ModelState.IsValid) { ViewBag.StaffRoles = await _employees.GetAllRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default); return View(model); }
         model = model with { EmployeeId = id };
         var session = _currentUser.ToUserSession()!;
         var r = await _employees.UpdateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -120,8 +117,7 @@ public class StaffRolesController : Controller
     [Authorize(Policy = AppPermissions.StaffManage)]
     public async Task<IActionResult> Create(StaffRoleDto model)
     {
-        var v = ValidationPipeline.ValidateStaffRole(model);
-        if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); return View("Edit", model); }
+        if (!ModelState.IsValid) return View("Edit", model);
         var session = _currentUser.ToUserSession()!;
         var r = await _employees.CreateRoleAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم إضافة الدور"; return RedirectToAction(nameof(Index)); }
@@ -143,8 +139,7 @@ public class StaffRolesController : Controller
     [Authorize(Policy = AppPermissions.StaffManage)]
     public async Task<IActionResult> Edit(int id, StaffRoleDto model)
     {
-        var v = ValidationPipeline.ValidateStaffRole(model);
-        if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); return View(model); }
+        if (!ModelState.IsValid) return View(model);
         model = model with { StaffRoleId = id };
         var session = _currentUser.ToUserSession()!;
         var r = await _employees.UpdateRoleAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -191,8 +186,7 @@ public class SocialPlatformsController : Controller
     [Authorize(Policy = AppPermissions.StaffManage)]
     public async Task<IActionResult> Create(SocialMediaPlatformDto model)
     {
-        var v = ValidationPipeline.ValidatePlatform(model);
-        if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); return View("Edit", model); }
+        if (!ModelState.IsValid) return View("Edit", model);
         var session = _currentUser.ToUserSession()!;
         var r = await _platforms.CreateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم إضافة المنصة"; return RedirectToAction(nameof(Index)); }
@@ -214,8 +208,7 @@ public class SocialPlatformsController : Controller
     [Authorize(Policy = AppPermissions.StaffManage)]
     public async Task<IActionResult> Edit(int id, SocialMediaPlatformDto model)
     {
-        var v = ValidationPipeline.ValidatePlatform(model);
-        if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); return View(model); }
+        if (!ModelState.IsValid) return View(model);
         model = model with { SocialMediaPlatformId = id };
         var session = _currentUser.ToUserSession()!;
         var r = await _platforms.UpdateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);

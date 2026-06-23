@@ -2,6 +2,7 @@ using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
 using Domain.Models;
+using FluentValidation;
 using Radio.Tests.Helpers;
 using Radio.Tests.TestData.Builders;
 using Radio.Tests.TestData.Fixtures;
@@ -20,7 +21,7 @@ public class PlatformServiceTests : IClassFixture<DatabaseFixture>
     {
         _db = db;
         var lookup = Mock.Of<ICachedLookupService>();
-        _service = new PlatformService(db.DbContextFactory, lookup, Mock.Of<ILogger<PlatformService>>());
+        _service = new PlatformService(db.DbContextFactory, lookup, Mock.Of<ILogger<PlatformService>>(), ValidValidator.Create<SocialMediaPlatformDto>());
     }
 
     [Fact]

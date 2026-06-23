@@ -2,6 +2,7 @@ using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
 using Domain.Models;
+using FluentValidation;
 using Radio.Tests.Helpers;
 using Radio.Tests.TestData.Builders;
 using Radio.Tests.TestData.Fixtures;
@@ -20,7 +21,7 @@ public class GuestServiceTests : IClassFixture<DatabaseFixture>
     {
         _db = db;
         var lookup = Mock.Of<ICachedLookupService>();
-        _service = new GuestService(db.DbContextFactory, lookup, Mock.Of<ILogger<GuestService>>());
+        _service = new GuestService(db.DbContextFactory, lookup, Mock.Of<ILogger<GuestService>>(), ValidValidator.Create<GuestDto>());
     }
 
     [Fact]

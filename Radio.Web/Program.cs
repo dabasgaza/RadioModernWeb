@@ -23,6 +23,9 @@ using Radio.Web.Security;
 using Radio.Web.Services;
 using Serilog;
 using System.Threading.RateLimiting;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using DataAccess.Validation.Validators;
 
 // ───────────────────────────────────────────────────────────────────────
 // Startup
@@ -230,6 +233,10 @@ builder.Services.AddResponseCompression(options =>
 
 builder.Services.Configure<GzipCompressionProviderOptions>(options =>
     options.Level = CompressionLevel.Fastest);
+
+// --- FluentValidation ---
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<GuestDtoValidator>();
 
 // --- MVC + Runtime Compilation ---
 builder.Services.AddControllersWithViews(options =>

@@ -1,7 +1,7 @@
 using DataAccess.Common;
 using DataAccess.DTOs;
-using DataAccess.Validation;
 using Domain.Models;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Threading;
@@ -13,15 +13,18 @@ public class PlatformService : IPlatformService
     private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
     private readonly ICachedLookupService _cachedLookup;
     private readonly ILogger<PlatformService> _logger;
+    private readonly IValidator<SocialMediaPlatformDto> _platformValidator;
 
     public PlatformService(
         IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
         ICachedLookupService cachedLookup,
-        ILogger<PlatformService> logger)
+        ILogger<PlatformService> logger,
+        IValidator<SocialMediaPlatformDto> platformValidator)
     {
         _contextFactory = contextFactory;
         _cachedLookup = cachedLookup;
         _logger = logger;
+        _platformValidator = platformValidator;
     }
     public async Task<List<SocialMediaPlatformDto>> GetAllActiveAsync(CancellationToken cancellationToken = default)
     {
@@ -39,8 +42,9 @@ public class PlatformService : IPlatformService
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
         if (!permCheck.IsSuccess) return Result<int>.Fail(permCheck.ErrorMessage!);
 
-        var validation = ValidationPipeline.ValidatePlatform(dto);
-        if (!validation.IsSuccess) return Result<int>.Fail(validation.ErrorMessage!);
+        var validation = await _platformValidator.ValidateAsync(dto);
+        if (!validation.IsValid)
+            return Result<int>.Fail(string.Join(Environment.NewLine, validation.Errors.Select(e => e.ErrorMessage)));
 
         try
         {
@@ -71,8 +75,9 @@ public class PlatformService : IPlatformService
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
 
-        var validation = ValidationPipeline.ValidatePlatform(dto);
-        if (!validation.IsSuccess) return Result.Fail(validation.ErrorMessage!);
+        var validation = await _platformValidator.ValidateAsync(dto);
+        if (!validation.IsValid)
+            return Result.Fail(string.Join(Environment.NewLine, validation.Errors.Select(e => e.ErrorMessage)));
 
         try
         {

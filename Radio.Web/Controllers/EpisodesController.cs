@@ -1,8 +1,8 @@
 using DataAccess.Common;
-using DataAccess.Validation;
 using DataAccess.DTOs;
 using DataAccess.Services;
 using Domain.Models;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Radio.Web.Services;
@@ -21,6 +21,7 @@ public class EpisodesController : Controller
     private readonly ICachedLookupService _lookup;
     private readonly ICurrentUserService _currentUser;
     private readonly ILogger<EpisodesController> _logger;
+    private readonly IValidator<EpisodeDto> _episodeValidator;
 
     public EpisodesController(
         IEpisodeQueryService query,
@@ -29,7 +30,8 @@ public class EpisodesController : Controller
         IPublishingQueryService publishing,
         ICachedLookupService lookup,
         ICurrentUserService currentUser,
-        ILogger<EpisodesController> logger)
+        ILogger<EpisodesController> logger,
+        IValidator<EpisodeDto> episodeValidator)
     {
         _query = query;
         _command = command;
@@ -38,6 +40,7 @@ public class EpisodesController : Controller
         _lookup = lookup;
         _currentUser = currentUser;
         _logger = logger;
+        _episodeValidator = episodeValidator;
     }
 
     // GET: /Episodes
@@ -109,10 +112,12 @@ public class EpisodesController : Controller
     public async Task<IActionResult> Create(EpisodeEditFormModel form)
     {
         var dto = form.ToDto();
-        var validation = ValidationPipeline.ValidateEpisode(dto);
-        if (!validation.IsSuccess)
+        var validation = await _episodeValidator.ValidateAsync(dto);
+        if (!validation.IsValid || !ModelState.IsValid)
         {
-            ModelState.AddModelError("", validation.ErrorMessage!);
+            if (!validation.IsValid)
+                foreach (var err in validation.Errors)
+                    ModelState.AddModelError("", err.ErrorMessage);
             var vm = await BuildEditViewModelAsync(dto);
             return View("Edit", vm);
         }
@@ -161,10 +166,12 @@ public class EpisodesController : Controller
     public async Task<IActionResult> Edit(int id, EpisodeEditFormModel form)
     {
         var dto = form.ToDto();
-        var validation = ValidationPipeline.ValidateEpisode(dto);
-        if (!validation.IsSuccess)
+        var validation = await _episodeValidator.ValidateAsync(dto);
+        if (!validation.IsValid || !ModelState.IsValid)
         {
-            ModelState.AddModelError("", validation.ErrorMessage!);
+            if (!validation.IsValid)
+                foreach (var err in validation.Errors)
+                    ModelState.AddModelError("", err.ErrorMessage);
             var vm = await BuildEditViewModelAsync(dto);
             return View(vm);
         }

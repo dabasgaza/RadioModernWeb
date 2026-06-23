@@ -1,5 +1,4 @@
 using DataAccess.Common;
-using DataAccess.Validation;
 using DataAccess.DTOs;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -53,8 +52,7 @@ public class CoverageController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CoverageDto model)
     {
-        var v = ValidationPipeline.ValidateCoverage(model);
-        if (!v.IsSuccess) { TempData["Error"] = v.ErrorMessage; return RedirectToAction(nameof(Create)); }
+        if (!ModelState.IsValid) { TempData["Error"] = ModelState.Values.FirstOrDefault()?.Errors.FirstOrDefault()?.ErrorMessage ?? "بيانات غير صالحة"; return RedirectToAction(nameof(Create)); }
         var session = _currentUser.ToUserSession()!;
         var r = await _coverage.CreateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) TempData["Success"] = "تم إضافة التغطية";
@@ -83,8 +81,7 @@ public class CoverageController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, CoverageDto model)
     {
-        var v = ValidationPipeline.ValidateCoverage(model);
-        if (!v.IsSuccess) { TempData["Error"] = v.ErrorMessage; return RedirectToAction(nameof(Edit), new { id }); }
+        if (!ModelState.IsValid) { TempData["Error"] = ModelState.Values.FirstOrDefault()?.Errors.FirstOrDefault()?.ErrorMessage ?? "بيانات غير صالحة"; return RedirectToAction(nameof(Edit), new { id }); }
         model = model with { CoverageId = id };
         var session = _currentUser.ToUserSession()!;
         var r = await _coverage.UpdateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);

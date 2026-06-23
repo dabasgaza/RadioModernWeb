@@ -50,4 +50,56 @@ public class CoverageServiceTests : IClassFixture<DatabaseFixture>
         var result = await _service.DeleteAsync(50, _admin, CancellationToken.None);
         result.ShouldBeSuccess();
     }
+
+    [Fact]
+    public async Task CreateAsync_Valid_ReturnsSuccess()
+    {
+        var dto = new CoverageDto { CorrespondentId = 1, Topic = "تغطية جديدة", Location = "مكان" };
+
+        var result = await _service.CreateAsync(dto, _admin, CancellationToken.None);
+
+        result.ShouldBeSuccess();
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_Existing_ReturnsCoverage()
+    {
+        await using var ctx = await _db.CreateContextAsync();
+        ctx.CorrespondentCoverages.Add(new CorrespondentCoverage
+        {
+            CoverageId = 60, CorrespondentId = 1, Location = "FindMe", Topic = "موضوع", IsActive = true,
+            CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow
+        });
+        await ctx.SaveChangesAsync();
+
+        var result = await _service.GetByIdAsync(60, CancellationToken.None);
+
+        result.Should().NotBeNull();
+        result!.Location.Should().Be("FindMe");
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_NonExisting_ReturnsNull()
+    {
+        var result = await _service.GetByIdAsync(999, CancellationToken.None);
+
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task UpdateAsync_Valid_ReturnsSuccess()
+    {
+        await using var ctx = await _db.CreateContextAsync();
+        ctx.CorrespondentCoverages.Add(new CorrespondentCoverage
+        {
+            CoverageId = 70, CorrespondentId = 1, Location = "Old", Topic = "قديم", IsActive = true,
+            CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow
+        });
+        await ctx.SaveChangesAsync();
+
+        var dto = new CoverageDto { CoverageId = 70, CorrespondentId = 1, Location = "New", Topic = "جديد" };
+
+        var result = await _service.UpdateAsync(dto, _admin, CancellationToken.None);
+        result.ShouldBeSuccess();
+    }
 }

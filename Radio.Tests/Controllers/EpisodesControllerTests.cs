@@ -1,6 +1,7 @@
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -32,7 +33,8 @@ public class EpisodesControllerTests
         _currentUser = UserSessionBuilder.CreateMock(_admin);
         _controller = new EpisodesController(
             _query.Object, _command.Object, _execution.Object,
-            _publishing.Object, _lookup.Object, _currentUser.Object, _logger.Object);
+            _publishing.Object, _lookup.Object, _currentUser.Object, _logger.Object,
+            ValidValidator.Create<EpisodeDto>());
 
         var httpContext = new DefaultHttpContext();
         _controller.ControllerContext = new ControllerContext { HttpContext = httpContext };

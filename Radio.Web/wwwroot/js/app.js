@@ -2,6 +2,19 @@
 // Radio Web MVC — Client-side helpers
 // ═══════════════════════════════════════════════════════════════════════════
 
+// ─── Dark Mode ───
+function toggleDarkMode() {
+    const html = document.documentElement;
+    const isDark = html.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    updateThemeIcon(isDark);
+}
+
+function updateThemeIcon(isDark) {
+    const icon = document.getElementById('theme-icon');
+    if (icon) icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+}
+
 window.RadioWeb = {
     copyToClipboard: async function (text) {
         try { await navigator.clipboard.writeText(text); return true; }
@@ -98,6 +111,28 @@ toastr.options = {
 document.addEventListener('DOMContentLoaded', function () {
     console.log('✓ Radio Web MVC initialized');
 
+    // ─── Theme icon init ───
+    const isDarkInit = document.documentElement.classList.contains('dark');
+    updateThemeIcon(isDarkInit);
+
+    // ─── Back-to-top visibility ───
+    const backToTop = document.getElementById('back-to-top');
+    if (backToTop) {
+        window.addEventListener('scroll', function () {
+            backToTop.classList.toggle('visible', window.scrollY > 400);
+        }, { passive: true });
+    }
+
+    // ─── Form loading state ───
+    document.addEventListener('submit', function (e) {
+        const form = e.target;
+        const btn = form.querySelector('[type="submit"]:not(:disabled)');
+        if (btn && !form.hasAttribute('data-confirm')) {
+            btn.classList.add('btn-loading');
+            btn.disabled = true;
+        }
+    });
+
     // ─── Global SweetAlert2 Confirmation for Forms ───
     document.addEventListener('submit', function (e) {
         const form = e.target;
@@ -109,8 +144,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 text: message,
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#EF4444',
-                cancelButtonColor: '#94A3B8',
                 confirmButtonText: 'نعم، المتابعة',
                 cancelButtonText: 'إلغاء',
                 customClass: {

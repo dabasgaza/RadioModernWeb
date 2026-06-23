@@ -1,7 +1,7 @@
 using DataAccess.Common;
 using DataAccess.DTOs;
-using DataAccess.Validation;
 using Domain.Models;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Threading;
@@ -28,15 +28,18 @@ public class ProgramService : IProgramService
     private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
     private readonly ICachedLookupService _cachedLookup;
     private readonly ILogger<ProgramService> _logger;
+    private readonly IValidator<ProgramDto> _programValidator;
 
     public ProgramService(
         IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
         ICachedLookupService cachedLookup,
-        ILogger<ProgramService> logger)
+        ILogger<ProgramService> logger,
+        IValidator<ProgramDto> programValidator)
     {
         _contextFactory = contextFactory;
         _cachedLookup = cachedLookup;
         _logger = logger;
+        _programValidator = programValidator;
     }
     // ──────────────────────────────────────────────────────────────
     // Compiled Query — تقليل وقت ترجمة LINQ في المسارات الساخنة
@@ -67,8 +70,9 @@ public class ProgramService : IProgramService
         var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
 
-        var validation = ValidationPipeline.ValidateProgram(dto);
-        if (!validation.IsSuccess) return Result.Fail(validation.ErrorMessage!);
+        var validation = await _programValidator.ValidateAsync(dto);
+        if (!validation.IsValid)
+            return Result.Fail(string.Join(Environment.NewLine, validation.Errors.Select(e => e.ErrorMessage)));
 
         try
         {
@@ -97,8 +101,9 @@ public class ProgramService : IProgramService
         var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
 
-        var validation = ValidationPipeline.ValidateProgram(dto);
-        if (!validation.IsSuccess) return Result.Fail(validation.ErrorMessage!);
+        var validation = await _programValidator.ValidateAsync(dto);
+        if (!validation.IsValid)
+            return Result.Fail(string.Join(Environment.NewLine, validation.Errors.Select(e => e.ErrorMessage)));
 
         try
         {

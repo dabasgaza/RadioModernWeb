@@ -8,6 +8,7 @@ namespace DataAccess.Validation
     /// أنبوب تحقق مركزي — يجمع أخطاء المدخلات ويعيد Result.Success/Fail
     /// بدلاً من رمي استثناءات، لتجنب الضغط على الموارد.
     /// </summary>
+    [Obsolete("استخدم FluentValidation (IValidator<T>) بدلاً من ValidationPipeline. راجع DataAccess/Validation/Validators/")]
     public static class ValidationPipeline
     {
         public static Result ValidateGuest(GuestDto dto)

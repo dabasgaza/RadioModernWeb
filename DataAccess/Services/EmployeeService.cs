@@ -1,7 +1,7 @@
 using DataAccess.Common;
 using DataAccess.DTOs;
-using DataAccess.Validation;
 using Domain.Models;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Threading;
@@ -27,15 +27,21 @@ public class EmployeeService : IEmployeeService
     private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
     private readonly ICachedLookupService _cachedLookup;
     private readonly ILogger<EmployeeService> _logger;
+    private readonly IValidator<EmployeeDto> _employeeValidator;
+    private readonly IValidator<StaffRoleDto> _staffRoleValidator;
 
     public EmployeeService(
         IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
         ICachedLookupService cachedLookup,
-        ILogger<EmployeeService> logger)
+        ILogger<EmployeeService> logger,
+        IValidator<EmployeeDto> employeeValidator,
+        IValidator<StaffRoleDto> staffRoleValidator)
     {
         _contextFactory = contextFactory;
         _cachedLookup = cachedLookup;
         _logger = logger;
+        _employeeValidator = employeeValidator;
+        _staffRoleValidator = staffRoleValidator;
     }
     // ──────────────────────────────────────────────────────────────
     // Compiled Queries — تقليل وقت ترجمة LINQ في المسارات الساخنة
@@ -73,8 +79,9 @@ public class EmployeeService : IEmployeeService
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
         if (!permCheck.IsSuccess) return Result<int>.Fail(permCheck.ErrorMessage!);
 
-        var validation = ValidationPipeline.ValidateEmployee(dto);
-        if (!validation.IsSuccess) return Result<int>.Fail(validation.ErrorMessage!);
+        var validation = await _employeeValidator.ValidateAsync(dto);
+        if (!validation.IsValid)
+            return Result<int>.Fail(string.Join(Environment.NewLine, validation.Errors.Select(e => e.ErrorMessage)));
 
         try
         {
@@ -107,8 +114,9 @@ public class EmployeeService : IEmployeeService
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
 
-        var validation = ValidationPipeline.ValidateEmployee(dto);
-        if (!validation.IsSuccess) return Result.Fail(validation.ErrorMessage!);
+        var validation = await _employeeValidator.ValidateAsync(dto);
+        if (!validation.IsValid)
+            return Result.Fail(string.Join(Environment.NewLine, validation.Errors.Select(e => e.ErrorMessage)));
 
         try
         {
@@ -176,8 +184,9 @@ public class EmployeeService : IEmployeeService
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
         if (!permCheck.IsSuccess) return Result<int>.Fail(permCheck.ErrorMessage!);
 
-        var validation = ValidationPipeline.ValidateStaffRole(dto);
-        if (!validation.IsSuccess) return Result<int>.Fail(validation.ErrorMessage!);
+        var validation = await _staffRoleValidator.ValidateAsync(dto);
+        if (!validation.IsValid)
+            return Result<int>.Fail(string.Join(Environment.NewLine, validation.Errors.Select(e => e.ErrorMessage)));
 
         try
         {
@@ -208,8 +217,9 @@ public class EmployeeService : IEmployeeService
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
         if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
 
-        var validation = ValidationPipeline.ValidateStaffRole(dto);
-        if (!validation.IsSuccess) return Result.Fail(validation.ErrorMessage!);
+        var validation = await _staffRoleValidator.ValidateAsync(dto);
+        if (!validation.IsValid)
+            return Result.Fail(string.Join(Environment.NewLine, validation.Errors.Select(e => e.ErrorMessage)));
 
         try
         {

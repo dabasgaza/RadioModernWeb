@@ -1,5 +1,4 @@
 using DataAccess.Common;
-using DataAccess.Validation;
 using DataAccess.DTOs;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -42,8 +41,7 @@ public class CorrespondentsController : Controller
     [Authorize(Policy = AppPermissions.CoordinationManage)]
     public async Task<IActionResult> Create(CorrespondentDto model)
     {
-        var v = ValidationPipeline.ValidateCorrespondent(model);
-        if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); return View("Edit", model); }
+        if (!ModelState.IsValid) return View("Edit", model);
         var session = _currentUser.ToUserSession()!;
         var r = await _correspondents.CreateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم إضافة المراسل"; return RedirectToAction(nameof(Index)); }
@@ -65,8 +63,7 @@ public class CorrespondentsController : Controller
     [Authorize(Policy = AppPermissions.CoordinationManage)]
     public async Task<IActionResult> Edit(int id, CorrespondentDto model)
     {
-        var v = ValidationPipeline.ValidateCorrespondent(model);
-        if (!v.IsSuccess) { ModelState.AddModelError("", v.ErrorMessage!); return View(model); }
+        if (!ModelState.IsValid) return View(model);
         model = model with { CorrespondentId = id };
         var session = _currentUser.ToUserSession()!;
         var r = await _correspondents.UpdateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
