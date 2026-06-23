@@ -1,3 +1,119 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --primary-hsl: 221 83% 53%; /* #2563EB - Elegant Blue */
+    --secondary-hsl: 262 83% 58%; /* #7C3AED - Premium Indigo */
+    --accent-hsl: 199 89% 48%; /* #0EA5E9 - Sky Blue */
+    --surface-hsl: 0 0% 100%;
+    --surface-2-hsl: 210 40% 98%; /* Slate 50 */
+    --surface-3-hsl: 213 27% 84% / 0.2; /* Glass-like Slate */
+  }
+
+  body {
+    background-attachment: fixed;
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(262, 80%, 60%, 0.03) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, hsla(221, 80%, 60%, 0.03) 0px, transparent 50%);
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsla(221, 20%, 70%, 0.4);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsla(221, 80%, 60%, 0.6);
+  }
+}
+
+@layer components {
+  /* Glassmorphism Styles */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04);
+  }
+
+  .glass-sidebar {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-left: 1px solid rgba(226, 232, 240, 0.8);
+  }
+
+  .glass-topbar {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+  }
+
+  /* Premium Navigation Links */
+  .nav-link {
+    @apply flex items-center gap-3 px-4 py-3 text-ink-muted rounded-xl transition-all duration-300 ease-out hover:bg-primary/5 hover:text-primary font-medium;
+  }
+
+  .nav-link.active {
+    @apply bg-gradient-to-l from-primary to-secondary text-white shadow-lg shadow-primary/15 hover:bg-none hover:text-white;
+  }
+
+  .nav-link .material-symbols-rounded {
+    @apply transition-transform duration-300 group-hover:scale-110;
+  }
+
+  /* Skeleton Shimmer Loading Effect */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(241, 245, 249, 0.6) 25%,
+      rgba(226, 232, 240, 0.9) 50%,
+      rgba(241, 245, 249, 0.6) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer-anim 1.6s infinite linear;
+  }
+
+  /* Custom Tabulator Theme adjustments */
+  .tabulator {
+    @apply border-0 bg-transparent text-ink !important;
+  }
+  .tabulator-header {
+    @apply bg-surface-2 border-b border-border/80 text-ink-muted font-bold text-xs uppercase !important;
+  }
+  .tabulator-row {
+    @apply border-b border-border/40 hover:bg-primary/5 transition-colors duration-200 !important;
+  }
+}
+
+@keyframes shimmer-anim {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Pulsing notifications indicator */
+.ping-notification {
+  animation: ping-custom 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping-custom {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}

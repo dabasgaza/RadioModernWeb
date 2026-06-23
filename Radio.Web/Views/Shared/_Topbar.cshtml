@@ -1,6 +1,6 @@
 @inject ICurrentUserService CurrentUser
 
-<header class="sticky top-0 z-30 bg-surface border-b border-border h-16 flex items-center px-4 gap-4 shadow-sm">
+<header class="sticky top-0 z-30 glass-topbar h-16 flex items-center px-4 gap-4 shadow-sm">
     <button class="lg:hidden text-ink-muted p-2 hover:bg-surface-3 rounded-lg" onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full')">
         <span class="material-symbols-rounded">menu</span>
     </button>
@@ -23,7 +23,8 @@
         <div class="relative">
             <button class="relative p-2 hover:bg-surface-3 rounded-lg text-ink-muted" onclick="toggleNotifications(event)">
                 <span class="material-symbols-rounded">notifications</span>
-                <span id="notification-badge" class="hidden absolute -top-1 -left-1 bg-danger text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">0</span>
+                <span id="notification-badge-ping" class="hidden absolute -top-0.5 -left-0.5 w-3.5 h-3.5 bg-danger/50 rounded-full ping-notification"></span>
+                <span id="notification-badge" class="hidden absolute -top-0.5 -left-0.5 bg-danger text-white text-[9px] rounded-full w-3.5 h-3.5 flex items-center justify-center font-bold">0</span>
             </button>
             <div id="notifications-dropdown" class="hidden absolute left-0 mt-2 w-80 bg-surface rounded-xl shadow-xl border border-border z-50 max-h-96 overflow-y-auto">
                 <div class="p-3 border-b border-border flex items-center justify-between">

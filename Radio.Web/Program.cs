@@ -13,8 +13,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
+using System.IO.Compression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Radio.Web.HealthChecks;
 using Radio.Web.Hubs;
 using Radio.Web.Middleware;
 using Radio.Web.Security;
@@ -135,11 +137,15 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IIdentitySynchronizer, IdentitySynchronizer>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGuestService, GuestService>();
+builder.Services.AddScoped<IGuestQueryService>(sp => sp.GetRequiredService<IGuestService>());
+builder.Services.AddScoped<IGuestCommandService>(sp => sp.GetRequiredService<IGuestService>());
 builder.Services.AddScoped<ICorrespondentService, CorrespondentService>();
 builder.Services.AddScoped<IEpisodeService, EpisodeService>();
 builder.Services.AddScoped<IEpisodeQueryService, EpisodeService>();
 builder.Services.AddScoped<IEpisodeCommandService, EpisodeService>();
 builder.Services.AddScoped<IProgramService, ProgramService>();
+builder.Services.AddScoped<IProgramQueryService>(sp => sp.GetRequiredService<IProgramService>());
+builder.Services.AddScoped<IProgramCommandService>(sp => sp.GetRequiredService<IProgramService>());
 builder.Services.AddScoped<IExecutionService, ExecutionService>();
 builder.Services.AddScoped<IPublishingService, PublishingService>();
 builder.Services.AddScoped<IPublishingQueryService, PublishingService>();
@@ -195,8 +201,12 @@ else
     }));
 }
 
+// --- Global Exception Handler ---
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
 // --- Health Checks ---
-builder.Services.AddHealthChecks();
+builder.Services.AddHealthChecks()
+    .AddCheck<DatabaseHealthCheck>("database", tags: ["db", "critical"]);
 
 // --- Rate Limiting ---
 builder.Services.AddRateLimiter(options =>
@@ -218,6 +228,9 @@ builder.Services.AddResponseCompression(options =>
     options.Providers.Add<GzipCompressionProvider>();
 });
 
+builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+    options.Level = CompressionLevel.Fastest);
+
 // --- MVC + Runtime Compilation ---
 builder.Services.AddControllersWithViews(options =>
 {
@@ -226,7 +239,16 @@ builder.Services.AddControllersWithViews(options =>
     options.ModelBindingMessageProvider.SetMissingBindRequiredValueAccessor(_ => "حقل مطلوب");
     options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((x, y) => $"القيمة '{x}' غير صالحة لـ {y}");
 })
-.AddRazorRuntimeCompilation();
+.AddRazorRuntimeCompilation()
+.AddSessionStateTempDataProvider();
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 builder.Services.AddRazorPages();
 builder.Services.AddHttpContextAccessor();
@@ -331,6 +353,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     }
 }
 
+app.UseMiddleware<LogContextMiddleware>();
 app.UseSerilogRequestLogging();
 
 if (!app.Environment.IsDevelopment())
@@ -339,10 +362,12 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-app.UseResponseCompression();
+app.UseSession();
 
 app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
-app.UseExceptionHandler("/Home/Error/500");
+app.UseExceptionHandler("/Home/Error/500"); // fallback for views (non-API routes)
+
+app.UseResponseCompression();
 
 app.UseRateLimiter();
 
@@ -365,7 +390,27 @@ app.MapControllerRoute(
 app.MapRazorPages();
 app.MapHub<NotificationHub>("/hubs/notifications");
 
-app.MapHealthChecks("/health");
+app.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    ResponseWriter = async (ctx, report) =>
+    {
+        ctx.Response.ContentType = "application/json";
+        var result = new
+        {
+            status = report.Status.ToString(),
+            duration = report.TotalDuration.TotalMilliseconds,
+            checks = report.Entries.Select(e => new
+            {
+                name = e.Key,
+                status = e.Value.Status.ToString(),
+                description = e.Value.Description,
+                tags = e.Value.Tags,
+                data = e.Value.Data.ToDictionary(d => d.Key, d => d.Value)
+            })
+        };
+        await System.Text.Json.JsonSerializer.SerializeAsync(ctx.Response.Body, result);
+    }
+});
 
 // ───────────────────────────────────────────────────────────────────────
 // Database Health Check

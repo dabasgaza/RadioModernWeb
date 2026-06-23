@@ -8,14 +8,19 @@ using System.Threading;
 
 namespace DataAccess.Services;
 
-public interface IProgramService
+public interface IProgramQueryService
 {
-    // ✨ إرجاع DTO بدلاً من Entity
     Task<List<ProgramDto>> GetAllActiveAsync(CancellationToken cancellationToken = default);
+}
+
+public interface IProgramCommandService
+{
     Task<Result> CreateProgramAsync(ProgramDto dto, UserSession session, CancellationToken cancellationToken = default);
     Task<Result> UpdateProgramAsync(ProgramDto dto, UserSession session, CancellationToken cancellationToken = default);
     Task<Result> SoftDeleteAsync(int programId, UserSession session, CancellationToken cancellationToken = default);
 }
+
+public interface IProgramService : IProgramQueryService, IProgramCommandService { }
 
 // ✨ استخدام Primary Constructor
 public class ProgramService : IProgramService

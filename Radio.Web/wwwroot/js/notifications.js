@@ -31,10 +31,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Update badge
         const badge = document.getElementById('notification-badge');
+        const badgePing = document.getElementById('notification-badge-ping');
         if (badge) {
             const count = parseInt(badge.textContent) || 0;
             badge.textContent = count + 1;
             badge.classList.remove('hidden');
+            if (badgePing) badgePing.classList.remove('hidden');
         }
     });
 
@@ -64,9 +66,13 @@ document.addEventListener('DOMContentLoaded', function () {
             list.innerHTML = '<div class="p-3 text-sm text-ink-soft text-center">لا توجد إشعارات</div>';
         }
         const badge = document.getElementById('notification-badge');
+        const badgePing = document.getElementById('notification-badge-ping');
         if (badge) {
             badge.classList.add('hidden');
             badge.textContent = '0';
+        }
+        if (badgePing) {
+            badgePing.classList.add('hidden');
         }
     };
 

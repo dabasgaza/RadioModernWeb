@@ -230,6 +230,8 @@
 @section Scripts {
     <script>
         // Chart.js: Status Distribution
+        const statusCanvas = document.getElementById('statusChart');
+        const ctxStatus = statusCanvas.getContext('2d');
         const statusData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.StatusStats));
         const statusLabels = Object.keys(statusData).map(k => {
             const map = {
@@ -242,50 +244,98 @@
             return map[k] || k;
         });
         const statusValues = Object.values(statusData);
- 
-        new Chart(document.getElementById('statusChart'), {
+
+        // Gradient generator helper
+        function createGrad(ctx, c1, c2) {
+            const g = ctx.createLinearGradient(0, 0, 0, 250);
+            g.addColorStop(0, c1);
+            g.addColorStop(1, c2);
+            return g;
+        }
+
+        const doughnutGradients = [
+            createGrad(ctxStatus, '#60A5FA', '#2563EB'), // blue
+            createGrad(ctxStatus, '#3B82F6', '#1D4ED8'), // dark blue
+            createGrad(ctxStatus, '#34D399', '#059669'), // emerald
+            createGrad(ctxStatus, '#38BDF8', '#0284C7'), // sky
+            createGrad(ctxStatus, '#F87171', '#DC2626')  // red
+        ];
+
+        new Chart(statusCanvas, {
             type: 'doughnut',
             data: {
                 labels: statusLabels,
                 datasets: [{
                     data: statusValues,
-                    backgroundColor: ['#3B82F6', '#2563EB', '#10B981', '#0EA5E9', '#EF4444'],
-                    borderWidth: 2,
-                    borderColor: '#FFFFFF'
+                    backgroundColor: doughnutGradients,
+                    borderWidth: 3,
+                    borderColor: '#FFFFFF',
+                    hoverOffset: 8
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                cutout: '70%',
                 plugins: {
-                    legend: { position: 'bottom', rtl: true, labels: { font: { family: 'Cairo', weight: 'bold', size: 11 } } }
+                    legend: { 
+                        position: 'bottom', 
+                        rtl: true, 
+                        labels: { 
+                            padding: 20,
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            font: { family: 'Cairo', weight: '600', size: 11 } 
+                        } 
+                    }
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
                 }
             }
         });
- 
+
         // Chart.js: Top Programs
+        const programsCanvas = document.getElementById('programsChart');
+        const ctxPrograms = programsCanvas.getContext('2d');
         const programsData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
             Model.TopPrograms.Take(5).Select(p => new { name = p.ProgramName, total = p.TotalEpisodes }).ToList()));
- 
-        new Chart(document.getElementById('programsChart'), {
+
+        const barGradient = ctxPrograms.createLinearGradient(0, 0, 400, 0);
+        barGradient.addColorStop(0, '#7C3AED');   // Purple
+        barGradient.addColorStop(1, '#2563EB');   // Blue
+
+        new Chart(programsCanvas, {
             type: 'bar',
             data: {
                 labels: programsData.map(p => p.name),
                 datasets: [{
                     label: 'عدد الحلقات',
                     data: programsData.map(p => p.total),
-                    backgroundColor: '#2563EB',
-                    borderRadius: 6
+                    backgroundColor: barGradient,
+                    hoverBackgroundColor: '#1D4ED8',
+                    borderRadius: 12,
+                    borderSkipped: false,
+                    barThickness: 16
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 indexAxis: 'y',
-                plugins: { legend: { display: false } },
+                plugins: { 
+                    legend: { display: false }
+                },
                 scales: {
-                    x: { grid: { color: '#F1F5F9' }, ticks: { font: { family: 'Cairo', weight: 'bold' } } },
-                    y: { grid: { display: false }, ticks: { font: { family: 'Cairo', weight: 'bold' } } }
+                    x: { 
+                        grid: { color: 'rgba(226, 232, 240, 0.5)' }, 
+                        ticks: { font: { family: 'Cairo', weight: 'bold' } } 
+                    },
+                    y: { 
+                        grid: { display: false }, 
+                        ticks: { font: { family: 'Cairo', weight: 'bold' } } 
+                    }
                 }
             }
         });

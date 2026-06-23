@@ -8,13 +8,19 @@ using System.Threading;
 
 namespace DataAccess.Services;
 
-public interface IGuestService
+public interface IGuestQueryService
 {
     Task<List<GuestDto>> GetAllActiveAsync(CancellationToken cancellationToken = default);
+}
+
+public interface IGuestCommandService
+{
     Task<Result> CreateGuestAsync(GuestDto dto, UserSession session, CancellationToken cancellationToken = default);
     Task<Result> UpdateGuestAsync(GuestDto dto, UserSession session, CancellationToken cancellationToken = default);
     Task<Result> SoftDeleteGuestAsync(int guestId, UserSession session, CancellationToken cancellationToken = default);
 }
+
+public interface IGuestService : IGuestQueryService, IGuestCommandService { }
 
 // ✨ استخدام Primary Constructor وإزالة IAuditService
 public class GuestService : IGuestService
