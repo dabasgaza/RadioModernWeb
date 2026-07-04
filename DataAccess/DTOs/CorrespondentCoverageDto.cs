@@ -1,5 +1,13 @@
-﻿namespace DataAccess.DTOs
+// ============================================================
+// CorrespondentCoverageDto — تغطية المراسل
+// ============================================================
+// المسؤولية: تعريف تغطية المراسل.
+// ============================================================
+namespace DataAccess.DTOs
 {
+    /// <summary>
+    /// سجل تغطية المراسل.
+    /// </summary>
     public record CorrespondentCoverageDto
     {
         public int CoverageId { get; set; }

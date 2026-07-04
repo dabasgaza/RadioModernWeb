@@ -1,10 +1,21 @@
+// ============================================================
+// ProgramConfiguration — البرنامج
+// ============================================================
+// المسؤولية: تعريف البرنامج.
+// ============================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Models.Configurations;
 
+/// <summary>
+/// صنف البرنامج.
+/// </summary>
 public class ProgramConfiguration : IEntityTypeConfiguration<Program>
 {
+    /// <summary>
+    /// إعداد البرنامج.
+    /// </summary>
     public void Configure(EntityTypeBuilder<Program> builder)
     {
         // 1. المفتاح الأساسي (إزالة الاسم القبيح المولد آلياً)

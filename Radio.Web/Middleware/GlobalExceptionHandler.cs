@@ -1,3 +1,8 @@
+// ============================================================
+// GlobalExceptionHandler — Global Exception
+// ============================================================
+// المسؤولية: تعريف Global Exception.
+// ============================================================
 using DataAccess.Common;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -6,12 +11,18 @@ using System.Diagnostics;
 
 namespace Radio.Web.Middleware;
 
+/// <summary>
+/// صنف Global Exception.
+/// </summary>
 public class GlobalExceptionHandler(
     ILogger<GlobalExceptionHandler> logger,
     IWebHostEnvironment env) : IExceptionHandler
 {
     private static readonly ProblemDetailsFactory Factory = new();
 
+    /// <summary>
+    /// محاولة Handle Async.
+    /// </summary>
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
         var problemDetails = Factory.CreateProblemDetails(exception, env);
@@ -29,8 +40,14 @@ public class GlobalExceptionHandler(
         return true;
     }
 
+    /// <summary>
+    /// صنف Problem Details Factory.
+    /// </summary>
     private class ProblemDetailsFactory
     {
+        /// <summary>
+        /// إنشاء Problem Details.
+        /// </summary>
         public ProblemDetails CreateProblemDetails(Exception exception, IWebHostEnvironment env)
         {
             var isDev = env.IsDevelopment();

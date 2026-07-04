@@ -1,8 +1,16 @@
+// ============================================================
+// LayerTests — طبقات المشروع
+// ============================================================
+// المسؤولية: تعريف طبقات المشروع.
+// ============================================================
 using System.Reflection;
 using NetArchTest.Rules;
 
 namespace Radio.Tests.Architecture;
 
+/// <summary>
+/// صنف طبقات المشروع.
+/// </summary>
 [Trait("Category", "Architecture")]
 public class LayerTests
 {
@@ -10,6 +18,9 @@ public class LayerTests
     private static readonly Assembly DataAccessAssembly = typeof(DataAccess.Common.Result).Assembly;
     private static readonly Assembly WebAssembly = typeof(Radio.Web.Controllers.HomeController).Assembly;
 
+    /// <summary>
+    /// Domain_ Should Not Depend On_ بيانات Access.
+    /// </summary>
     [Fact]
     public void Domain_ShouldNotDependOn_DataAccess()
     {
@@ -21,6 +32,9 @@ public class LayerTests
         result.IsSuccessful.Should().BeTrue(result.ToString());
     }
 
+    /// <summary>
+    /// Domain_ Should Not Depend On_ Radio Web.
+    /// </summary>
     [Fact]
     public void Domain_ShouldNotDependOn_RadioWeb()
     {
@@ -32,6 +46,9 @@ public class LayerTests
         result.IsSuccessful.Should().BeTrue(result.ToString());
     }
 
+    /// <summary>
+    /// بيانات Access_ Should Not Depend On_ Radio Web.
+    /// </summary>
     [Fact]
     public void DataAccess_ShouldNotDependOn_RadioWeb()
     {
@@ -43,6 +60,9 @@ public class LayerTests
         result.IsSuccessful.Should().BeTrue(result.ToString());
     }
 
+    /// <summary>
+    /// بيانات Access_ Has Project Reference To_ Domain.
+    /// </summary>
     [Fact]
     public void DataAccess_HasProjectReferenceTo_Domain()
     {
@@ -57,6 +77,9 @@ public class LayerTests
             "DataAccess project must reference Domain project");
     }
 
+    /// <summary>
+    /// Service Classes_ Should End With_ Service.
+    /// </summary>
     [Fact]
     public void ServiceClasses_ShouldEndWith_Service()
     {
@@ -89,6 +112,9 @@ public class LayerTests
         violations.Should().BeEmpty($"all classes in DataAccess.Services should end with 'Service'. Violations: {string.Join(", ", violations.Select(v => v.Name))}");
     }
 
+    /// <summary>
+    /// Business Controllers_ Should Reference_ Service Interfaces.
+    /// </summary>
     [Fact]
     public void BusinessControllers_ShouldReference_ServiceInterfaces()
     {
@@ -120,6 +146,9 @@ public class LayerTests
         }
     }
 
+    /// <summary>
+    /// Interfaces_ Should Follow_ Naming Convention.
+    /// </summary>
     [Fact]
     public void Interfaces_ShouldFollow_NamingConvention()
     {
@@ -138,6 +167,9 @@ public class LayerTests
         violations.Should().BeEmpty($"all interfaces in DataAccess.Services should start with 'I'. Violations: {string.Join(", ", violations.Select(v => v.Name))}");
     }
 
+    /// <summary>
+    /// الكل Services_ Should Implement_ Interface.
+    /// </summary>
     [Fact]
     public void AllServices_ShouldImplement_Interface()
     {
@@ -170,6 +202,9 @@ public class LayerTests
         }
     }
 
+    /// <summary>
+    /// Domain Models_ Should Not Have_ بيانات Access Dependency.
+    /// </summary>
     [Fact]
     public void DomainModels_ShouldNotHave_DataAccessDependency()
     {

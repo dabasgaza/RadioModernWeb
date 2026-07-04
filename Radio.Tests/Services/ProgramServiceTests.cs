@@ -1,3 +1,8 @@
+// ============================================================
+// ProgramServiceTests — البرنامج Service
+// ============================================================
+// المسؤولية: تعريف البرنامج Service.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
@@ -11,6 +16,9 @@ using System.Threading;
 
 namespace Radio.Tests.Services;
 
+/// <summary>
+/// صنف البرنامج Service.
+/// </summary>
 public class ProgramServiceTests : IClassFixture<DatabaseFixture>
 {
     private readonly DatabaseFixture _db;
@@ -24,6 +32,9 @@ public class ProgramServiceTests : IClassFixture<DatabaseFixture>
         _service = new ProgramService(db.DbContextFactory, lookup, Mock.Of<ILogger<ProgramService>>(), ValidValidator.Create<ProgramDto>());
     }
 
+    /// <summary>
+    /// استرجاع النشط Async_ Returns Only Active.
+    /// </summary>
     [Fact]
     public async Task GetAllActiveAsync_ReturnsOnlyActive()
     {
@@ -45,6 +56,9 @@ public class ProgramServiceTests : IClassFixture<DatabaseFixture>
         result.Should().Contain(e => e.ProgramName == "Active Program");
     }
 
+    /// <summary>
+    /// إنشاء البرنامج Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task CreateProgramAsync_Valid_ReturnsSuccess()
     {
@@ -55,6 +69,9 @@ public class ProgramServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// إنشاء البرنامج Async_ Without Permission_ Returns Fail.
+    /// </summary>
     [Fact]
     public async Task CreateProgramAsync_WithoutPermission_ReturnsFail()
     {
@@ -66,6 +83,9 @@ public class ProgramServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeFailure("صلاحية");
     }
 
+    /// <summary>
+    /// تحديث البرنامج Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task UpdateProgramAsync_Valid_ReturnsSuccess()
     {
@@ -83,6 +103,9 @@ public class ProgramServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// تحديث البرنامج Async_ Not Found_ Returns Fail.
+    /// </summary>
     [Fact]
     public async Task UpdateProgramAsync_NotFound_ReturnsFail()
     {
@@ -91,6 +114,9 @@ public class ProgramServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeFailure("غير موجود");
     }
 
+    /// <summary>
+    /// Soft Delete Async_ Valid_ Soft Deletes.
+    /// </summary>
     [Fact]
     public async Task SoftDeleteAsync_Valid_SoftDeletes()
     {

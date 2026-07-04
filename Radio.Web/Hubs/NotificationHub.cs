@@ -1,9 +1,17 @@
-using System.Security.Claims;
+// ============================================================
+// NotificationHub — Hub الإشعارات
+// ============================================================
+// المسؤولية: تعريف Hub الإشعارات.
+// ============================================================
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 
 namespace Radio.Web.Hubs;
 
+/// <summary>
+/// صنف Hub الإشعارات.
+/// </summary>
 [Authorize]
 public class NotificationHub : Hub
 {
@@ -14,6 +22,9 @@ public class NotificationHub : Hub
         _logger = logger;
     }
 
+    /// <summary>
+    /// عند Connected Async.
+    /// </summary>
     public override async Task OnConnectedAsync()
     {
         var user = Context.User?.Identity?.Name ?? "anonymous";
@@ -35,6 +46,9 @@ public class NotificationHub : Hub
         await base.OnConnectedAsync();
     }
 
+    /// <summary>
+    /// عند Disconnected Async.
+    /// </summary>
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         if (exception != null)

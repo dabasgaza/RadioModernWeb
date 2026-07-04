@@ -1,5 +1,13 @@
+// ============================================================
+// WebsitePublishingLog — سجل نشر الموقع
+// ============================================================
+// المسؤولية: تعريف سجل نشر الموقع.
+// ============================================================
 namespace Domain.Models;
 
+/// <summary>
+/// صنف سجل نشر الموقع.
+/// </summary>
 public class WebsitePublishingLog : BaseEntity
 {
     public int WebsitePublishingLogId { get; set; }
@@ -14,5 +22,5 @@ public class WebsitePublishingLog : BaseEntity
     public DateTime PublishedAt { get; set; }
 
     public virtual Episode Episode { get; set; } = null!;
-    public virtual User PublishedByUser { get; set; } = null!;
+    public virtual Domain.Identity.ApplicationUser PublishedByUser { get; set; } = null!;
 }

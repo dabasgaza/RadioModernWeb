@@ -1,11 +1,16 @@
-﻿using DataAccess.Common;
+using DataAccess.Common;
+using Domain.Identity;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Threading;
+using System;
+using System.Linq;
 
 namespace DataAccess.Services
 {
+    /// <summary>
+    /// خدمة جلب سجلات التدقيق والعمليات في النظام.
+    /// </summary>
     public class AuditLogService : IAuditLogService
     {
         private readonly IDbContextFactory<BroadcastWorkflowDBContext> _dbContextFactory;
@@ -57,7 +62,7 @@ namespace DataAccess.Services
 
                 var items = await (from log in logsQuery.OrderByDescending(x => x.ChangedAt).Skip((page - 1) * pageSize).Take(pageSize)
                                    join u in context.Users.AsNoTracking()
-                                       on log.UserId equals u.UserId into userJoin
+                                       on log.UserId equals u.Id into userJoin
                                    from u in userJoin.DefaultIfEmpty()
                                    select new AuditLogDto
                                    {
@@ -69,7 +74,7 @@ namespace DataAccess.Services
                                        NewValues = log.NewValues,
                                        Reason = log.Reason,
                                        UserId = log.UserId,
-                                       Username = u != null ? u.Username : "غير معروف",
+                                       Username = u != null ? u.UserName! : "غير معروف",
                                        UserFullName = u != null ? u.FullName : "غير معروف",
                                        ChangedAt = log.ChangedAt
                                    })
@@ -88,24 +93,23 @@ namespace DataAccess.Services
             }
         }
 
-        public async Task<Result<List<User>>> GetAuditUsersAsync(CancellationToken cancellationToken = default)
+        public async Task<Result<List<ApplicationUser>>> GetAuditUsersAsync(CancellationToken cancellationToken = default)
         {
             try
             {
                 using var context = await _dbContextFactory.CreateDbContextAsync();
-                // ✅ Select الحقول المطلوبة فقط بدلاً من جلب الكيان كاملاً
                 var users = await context.Users
                     .AsNoTracking()
                     .Where(u => u.IsActive)
                     .OrderBy(u => u.FullName)
-                    .Select(u => new User { UserId = u.UserId, FullName = u.FullName, Username = u.Username })
+                    .Select(u => new ApplicationUser { Id = u.Id, FullName = u.FullName, UserName = u.UserName })
                     .ToListAsync(cancellationToken);
-                return Result<List<User>>.Success(users);
+                return Result<List<ApplicationUser>>.Success(users);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An unexpected error occurred during processing");
-                return Result<List<User>>.Fail($"حدث خطأ أثناء جلب المستخدمين: {ex.Message}");
+                return Result<List<ApplicationUser>>.Fail($"حدث خطأ أثناء جلب المستخدمين: {ex.Message}");
             }
         }
     }

@@ -1,10 +1,21 @@
+// ============================================================
+// CorrespondentCoverageConfiguration — تغطية المراسل
+// ============================================================
+// المسؤولية: تعريف تغطية المراسل.
+// ============================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Models.Configurations;
 
+/// <summary>
+/// صنف تغطية المراسل.
+/// </summary>
 public class CorrespondentCoverageConfiguration : IEntityTypeConfiguration<CorrespondentCoverage>
 {
+    /// <summary>
+    /// إعداد تغطية المراسل.
+    /// </summary>
     public void Configure(EntityTypeBuilder<CorrespondentCoverage> builder)
     {
         // 1. المفتاح الأساسي (إزالة الاسم القبيح المولد آلياً)

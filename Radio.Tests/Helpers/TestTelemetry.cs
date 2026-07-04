@@ -1,8 +1,16 @@
+// ============================================================
+// TestTelemetry — التليمتري
+// ============================================================
+// المسؤولية: تعريف التليمتري.
+// ============================================================
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 
 namespace Radio.Tests.Helpers;
 
+/// <summary>
+/// صنف التليمتري.
+/// </summary>
 public static class TestTelemetry
 {
     private static readonly Lazy<TelemetryClient> _instance = new(() =>

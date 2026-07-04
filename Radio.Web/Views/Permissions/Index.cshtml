@@ -1,84 +1,127 @@
 @model PermissionMatrixViewModel
 @{
-    ViewData["Title"] = "مصفوفة الصلاحيات";
+    ViewData["Title"] = "مصفوفة التحكم بالصلاحيات";
     var permissionsByModule = Model.Permissions.ToLookup(p => p.Module);
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+<div class="page-header relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-8 mb-8 border border-primary/10">
+    <div class="absolute inset-0 bg-grid-slate-900/[0.04] bg-[size:20px_20px] pointer-events-none"></div>
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 relative z-10">
         <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>الصلاحيات والأدوار</span>
+            <nav class="breadcrumb flex items-center gap-1.5 text-xs text-ink-muted mb-3">
+                <span class="material-symbols-rounded text-sm">home</span>
+                <a href="/" class="hover:text-primary transition-colors">الرئيسية</a>
+                <span class="material-symbols-rounded text-xs select-none">chevron_left</span>
+                <a href="/Roles" class="hover:text-primary transition-colors">الأدوار الوظيفية</a>
+                <span class="material-symbols-rounded text-xs select-none">chevron_left</span>
+                <span class="text-ink">مصفوفة الصلاحيات</span>
             </nav>
-            <h1>
-                <span class="material-symbols-rounded">security</span>
-                مصفوفة الصلاحيات
+            <h1 class="text-3xl font-black text-ink flex items-center gap-3 tracking-tight">
+                <span class="material-symbols-rounded p-2.5 bg-primary/10 text-primary rounded-2xl shadow-inner-sm">security</span>
+                مصفوفة التحكم بالصلاحيات
             </h1>
-            <p>تخصيص وتعديل صلاحيات الوصول والعمليات لكل دور وظيفي في النظام</p>
+            <p class="text-sm text-ink-muted mt-2">تعيين وتخصيص صلاحيات العمليات والوصول لمختلف صفحات وأقسام النظام</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="/Roles" class="btn-secondary py-2.5 px-4 rounded-xl font-bold flex items-center gap-1.5 transition-all">
+                <span class="material-symbols-rounded">arrow_forward</span>
+                الرجوع للأدوار
+            </a>
         </div>
     </div>
 </div>
 
 <!-- Role Selection Card -->
-<div class="filter-premium">
-    <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-        <div class="md:col-span-1 text-xs font-bold text-ink-muted uppercase tracking-wider">
-            اختر الدور الوظيفي للتعديل:
+<div class="card-premium p-6 rounded-3xl border border-border/60 mb-8 bg-surface/50 backdrop-blur-md">
+    <form method="get" class="flex flex-col md:flex-row items-center gap-6">
+        <div class="flex items-center gap-3 w-full md:w-auto shrink-0">
+            <span class="material-symbols-rounded text-primary p-2 bg-primary/10 rounded-xl">badge</span>
+            <span class="font-black text-ink text-sm">اختر الدور المراد تعديله:</span>
         </div>
-        <div class="md:col-span-3">
-            <select name="roleId" class="form-input" onchange="this.form.submit()">
+        <div class="w-full">
+            <select name="roleId" class="form-input py-3.5 px-4 rounded-2xl w-full border border-border/80 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-bold text-ink" onchange="this.form.submit()">
                 @foreach (var r in Model.Roles)
                 {
-                    <option value="@r.RoleId" selected="@(Model.SelectedRoleId == r.RoleId)">@r.RoleName — @(r.RoleDescription ?? "لا يوجد وصف")</option>
+                    <option value="@r.RoleId" selected="@(Model.SelectedRoleId == r.RoleId)">
+                        @r.RoleName — @(r.RoleDescription ?? "لا يوجد وصف مخصص")
+                    </option>
                 }
             </select>
         </div>
     </form>
 </div>
 
-@if (Model.SelectedRoleId > 0 && permissionsByModule.Any())
+@if (Model.SelectedRoleId > 0)
 {
     <form method="post" action="/Permissions/Update">
         @Html.AntiForgeryToken()
         <input type="hidden" name="roleId" value="@Model.SelectedRoleId" />
 
-        <div class="card-premium">
-            <div class="card-header">
-                <div class="flex items-center gap-2">
-                    <span class="material-symbols-rounded text-primary">admin_panel_settings</span>
-                    <h3 class="font-bold text-ink text-base">صلاحيات الدور: <span class="text-primary font-black">@Model.SelectedRoleName</span></h3>
+        <div class="card-premium overflow-hidden rounded-3xl border border-border/60">
+            <div class="card-header bg-surface-2 p-6 border-b border-border/40 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-rounded text-primary p-2 bg-primary/10 rounded-xl">admin_panel_settings</span>
+                    <div>
+                        <h3 class="font-extrabold text-ink text-base">تعديل صلاحيات الدور: <span class="text-primary font-black text-lg">@Model.SelectedRoleName</span></h3>
+                        <p class="text-xs text-ink-muted mt-1">قم بتفعيل أو إلغاء تفعيل الصلاحيات ثم احفظ التعديلات لتطبق لحظياً</p>
+                    </div>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button type="button" class="btn-secondary py-1 px-3 text-xs flex items-center gap-1" onclick="document.querySelectorAll('input[name=selectedPermissionIds]').forEach(c => c.checked = true)">
-                        <span class="material-symbols-rounded" style="font-size: 16px;">check_box</span>
+                
+                <div class="flex items-center gap-2 self-end sm:self-auto">
+                    <button type="button" class="btn-secondary py-2 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all" onclick="toggleAllCheckboxes(true)">
+                        <span class="material-symbols-rounded text-sm">check_box</span>
                         تحديد الكل
                     </button>
-                    <button type="button" class="btn-secondary py-1 px-3 text-xs flex items-center gap-1" onclick="document.querySelectorAll('input[name=selectedPermissionIds]').forEach(c => c.checked = false)">
-                        <span class="material-symbols-rounded" style="font-size: 16px;">check_box_outline_blank</span>
+                    <button type="button" class="btn-secondary py-2 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all" onclick="toggleAllCheckboxes(false)">
+                        <span class="material-symbols-rounded text-sm">check_box_outline_blank</span>
                         إلغاء الكل
                     </button>
                 </div>
             </div>
+
+            <!-- Quick Search for Permissions -->
+            <div class="p-4 bg-surface-3 border-b border-border/20">
+                <div class="relative w-full">
+                    <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-ink-muted text-sm">search</span>
+                    <input type="text" id="permSearch" placeholder="بحث سريع في الصلاحيات المعروضة..." 
+                           class="form-input pr-11 pl-4 py-2 text-xs rounded-xl w-full border border-border/60 focus:border-primary/50 transition-all" />
+                </div>
+            </div>
             
-            <div class="card-body space-y-6">
+            <div class="card-body p-6 space-y-8 bg-surface/30">
                 @foreach (var module in permissionsByModule)
                 {
-                    <div class="space-y-3">
-                        <h4 class="font-bold text-ink text-xs mb-2 pb-2 border-b border-border/60 flex items-center gap-1.5">
-                            <span class="w-1.5 h-3 bg-primary rounded-full"></span>
-                            @module.Key
-                        </h4>
+                    <div class="module-section space-y-4" data-module="@module.Key.ToLower()">
+                        <div class="flex items-center justify-between border-b border-border/40 pb-2">
+                            <h4 class="font-extrabold text-ink text-sm flex items-center gap-2">
+                                <span class="w-1.5 h-3.5 bg-primary rounded-full"></span>
+                                @module.Key
+                            </h4>
+                            <div class="flex items-center gap-1">
+                                <button type="button" class="text-primary hover:text-primary-active text-xs font-bold px-2 py-1 rounded hover:bg-primary/5 transition-all" 
+                                        onclick="toggleModuleCheckboxes('@module.Key', true)">
+                                    تحديد القسم
+                                </button>
+                                <span class="text-border/60 select-none">|</span>
+                                <button type="button" class="text-ink-muted hover:text-ink text-xs font-bold px-2 py-1 rounded hover:bg-ink/5 transition-all" 
+                                        onclick="toggleModuleCheckboxes('@module.Key', false)">
+                                    إلغاء القسم
+                                </button>
+                            </div>
+                        </div>
+
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             @foreach (var p in module)
                             {
-                                <label class="flex items-center justify-between p-3.5 bg-surface-2 rounded-xl border border-border/60 hover:bg-primary/5 hover:border-primary/20 cursor-pointer transition-all duration-200">
-                                    <span class="text-xs font-bold text-ink-muted">@p.DisplayName</span>
+                                <label class="perm-item flex items-center justify-between p-4 bg-surface rounded-2xl border border-border/60 hover:border-primary/20 hover:shadow-md hover:shadow-primary/2 hover:bg-primary/[0.02] hover:-translate-y-0.5 cursor-pointer transition-all duration-200"
+                                       data-text="@p.DisplayName.ToLower() @p.SystemName.ToLower()">
+                                    <div class="flex flex-col gap-1 pr-2">
+                                        <span class="text-xs font-bold text-ink">@p.DisplayName</span>
+                                        <span class="text-[9px] font-mono text-ink-muted select-all">@p.SystemName</span>
+                                    </div>
                                     <div class="relative inline-flex items-center">
-                                        <input type="checkbox" name="selectedPermissionIds" value="@p.PermissionId" @(p.IsAssigned ? "checked" : "") class="sr-only peer" />
-                                        <div class="w-11 h-6 bg-border peer-focus:outline-none rounded-full peer peer-checked:bg-primary transition-all duration-300
+                                        <input type="checkbox" name="selectedPermissionIds" data-module-name="@module.Key" value="@p.PermissionId" @(p.IsAssigned ? "checked" : "") class="sr-only peer" />
+                                        <div class="w-11 h-6 bg-border/80 peer-focus:outline-none rounded-full peer peer-checked:bg-primary transition-all duration-300
                                                     after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:-translate-x-5"></div>
                                     </div>
                                 </label>
@@ -88,12 +131,55 @@
                 }
             </div>
             
-            <div class="px-5 py-4 bg-surface-2 border-t border-border/60 flex justify-end">
-                <button type="submit" class="btn-primary">
+            <div class="px-6 py-5 bg-surface-2 border-t border-border/40 flex justify-end">
+                <button type="submit" class="btn-primary py-3 px-6 rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-primary/20 transition-all duration-300">
                     <span class="material-symbols-rounded">save</span>
-                    حفظ صلاحيات الدور
+                    حفظ ومزامنة الصلاحيات فورياً
                 </button>
             </div>
         </div>
     </form>
 }
+
+<script>
+    function toggleAllCheckboxes(checked) {
+        document.querySelectorAll('input[name=selectedPermissionIds]').forEach(c => {
+            c.checked = checked;
+        });
+    }
+
+    function toggleModuleCheckboxes(moduleName, checked) {
+        document.querySelectorAll(`input[data-module-name="${moduleName}"]`).forEach(c => {
+            c.checked = checked;
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('permSearch');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                const query = this.value.toLowerCase().trim();
+                const items = document.querySelectorAll('.perm-item');
+
+                items.forEach(item => {
+                    const text = item.getAttribute('data-text');
+                    if (text.includes(query)) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // إخفاء الأقسام الفارغة
+                document.querySelectorAll('.module-section').forEach(section => {
+                    const visibleItems = section.querySelectorAll('.perm-item:not([style*="display: none"])');
+                    if (visibleItems.length === 0) {
+                        section.style.display = 'none';
+                    } else {
+                        section.style.display = '';
+                    }
+                });
+            });
+        }
+    });
+</script>

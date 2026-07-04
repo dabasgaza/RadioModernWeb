@@ -1,11 +1,18 @@
+// ============================================================
+// SystemDiagnosticsService — تشخيص النظام
+// ============================================================
+// المسؤولية: تعريف تشخيص النظام.
+// ============================================================
 using DataAccess.Common;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
-using System.Threading;
 
 namespace DataAccess.Services
 {
+    /// <summary>
+    /// صنف تشخيص النظام.
+    /// </summary>
     public class SystemDiagnosticsService : ISystemDiagnosticsService
     {
         private readonly IConfiguration _configuration;
@@ -19,11 +26,14 @@ namespace DataAccess.Services
             _configuration = configuration;
             _httpClient = new HttpClient();
             _seqUrl = _configuration["Seq:ServerUrl"] ?? "http://localhost:5341";
-            _apiKey = _configuration["Seq:ApiKey"] ?? "";
+            _apiKey = _configuration["Seq:ApiKey"] ?? string.Empty;
             _slowQueryThreshold = _configuration.GetValue<double>("Performance:SlowQueryThresholdMs", 100);
         }
 
         // Models to deserialize Seq API response
+        /// <summary>
+        /// صنف Seq Event Response.
+        /// </summary>
         private class SeqEventResponse
         {
             [JsonPropertyName("Timestamp")]
@@ -45,6 +55,9 @@ namespace DataAccess.Services
             public string? Exception { get; set; }
         }
 
+        /// <summary>
+        /// استرجاع السجلات Async.
+        /// </summary>
         public async Task<Result<List<DiagnosticLogDto>>> GetLogsAsync(string? level = null, string? searchTerm = null, int count = 200, CancellationToken cancellationToken = default)
         {
             try
@@ -92,6 +105,9 @@ namespace DataAccess.Services
             return Result<List<DiagnosticLogDto>>.Success(localLogs);
         }
 
+        /// <summary>
+        /// استرجاع Summary Async.
+        /// </summary>
         public async Task<Result<DiagnosticsSummaryDto>> GetSummaryAsync(CancellationToken cancellationToken = default)
         {
             try
@@ -141,6 +157,9 @@ namespace DataAccess.Services
             return Result<DiagnosticsSummaryDto>.Success(localSummary);
         }
 
+        /// <summary>
+        /// استرجاع Sql Performance السجلات Async.
+        /// </summary>
         public async Task<Result<List<DiagnosticLogDto>>> GetSqlPerformanceLogsAsync(int count = 100, CancellationToken cancellationToken = default)
         {
             try
@@ -177,6 +196,9 @@ namespace DataAccess.Services
             return Result<List<DiagnosticLogDto>>.Success(localSqlLogs);
         }
 
+        /// <summary>
+        /// تحليل Local سجل Files.
+        /// </summary>
         private List<DiagnosticLogDto> ParseLocalLogFiles(string? level = null, string? searchTerm = null, int count = 200)
         {
             var list = new List<DiagnosticLogDto>();
@@ -323,6 +345,9 @@ namespace DataAccess.Services
             return filtered.OrderByDescending(x => x.Timestamp).Take(count).ToList();
         }
 
+        /// <summary>
+        /// تحويل Seq Events.
+        /// </summary>
         private List<DiagnosticLogDto> MapSeqEvents(List<SeqEventResponse> rawEvents)
         {
             var list = new List<DiagnosticLogDto>();
@@ -332,7 +357,7 @@ namespace DataAccess.Services
                 {
                     Timestamp = DateTime.TryParse(raw.Timestamp, out var dt) ? dt.ToLocalTime() : DateTime.Now,
                     Level = raw.Level ?? "Information",
-                    Message = raw.RenderedMessage ?? raw.MessageTemplate ?? "",
+                    Message = raw.RenderedMessage ?? raw.MessageTemplate ?? string.Empty,
                     Exception = raw.Exception
                 };
 
@@ -360,6 +385,9 @@ namespace DataAccess.Services
             return list;
         }
 
+        /// <summary>
+        /// استرجاع Simulated السجلات.
+        /// </summary>
         private List<DiagnosticLogDto> GetSimulatedLogs(string? level = null, string? searchTerm = null, int count = 200)
         {
             var list = new List<DiagnosticLogDto>();
@@ -476,6 +504,9 @@ namespace DataAccess.Services
             return filtered.OrderByDescending(x => x.Timestamp).Take(count).ToList();
         }
 
+        /// <summary>
+        /// Clear السجلات Async.
+        /// </summary>
         public async Task<Result> ClearLogsAsync(CancellationToken cancellationToken = default)
         {
             try

@@ -1,9 +1,16 @@
-﻿using DataAccess.Common;
+// ============================================================
+// IPlatformService — I Platform
+// ============================================================
+// المسؤولية: تعريف I Platform.
+// ============================================================
+using DataAccess.Common;
 using DataAccess.DTOs;
-using System.Threading;
 
 namespace DataAccess.Services;
 
+/// <summary>
+/// واجهة I Platform.
+/// </summary>
 public interface IPlatformService
 {
     Task<List<SocialMediaPlatformDto>> GetAllActiveAsync(CancellationToken cancellationToken = default);

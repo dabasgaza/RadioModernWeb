@@ -1,5 +1,13 @@
+// ============================================================
+// SocialMediaPublishingLogPlatform — سجل-منصة
+// ============================================================
+// المسؤولية: تعريف سجل-منصة.
+// ============================================================
 namespace Domain.Models;
 
+/// <summary>
+/// صنف سجل-منصة.
+/// </summary>
 public class SocialMediaPublishingLogPlatform : BaseEntity
 {
     public int SocialMediaPublishingLogPlatformId { get; set; }

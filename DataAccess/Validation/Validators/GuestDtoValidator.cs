@@ -1,8 +1,16 @@
+// ============================================================
+// GuestDtoValidator — التحقق من الضيف
+// ============================================================
+// المسؤولية: تعريف التحقق من الضيف.
+// ============================================================
 using DataAccess.DTOs;
 using FluentValidation;
 
 namespace DataAccess.Validation.Validators;
 
+/// <summary>
+/// صنف التحقق من الضيف.
+/// </summary>
 public class GuestDtoValidator : AbstractValidator<GuestDto>
 {
     public GuestDtoValidator()

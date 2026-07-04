@@ -1,10 +1,21 @@
+// ============================================================
+// ExecutionLogConfiguration — سجل التنفيذ
+// ============================================================
+// المسؤولية: تعريف سجل التنفيذ.
+// ============================================================
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Models.Configurations;
 
+/// <summary>
+/// صنف سجل التنفيذ.
+/// </summary>
 public class ExecutionLogConfiguration : IEntityTypeConfiguration<ExecutionLog>
 {
+    /// <summary>
+    /// إعداد سجل التنفيذ.
+    /// </summary>
     public void Configure(EntityTypeBuilder<ExecutionLog> builder)
     {
         // 1. المفتاح الأساسي (إزالة الاسم القبيح المولد آلياً)

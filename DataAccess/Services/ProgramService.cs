@@ -1,18 +1,28 @@
+// ============================================================
+// ProgramService — البرنامج
+// ============================================================
+// المسؤولية: تعريف البرنامج.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using Domain.Models;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Threading;
 
 namespace DataAccess.Services;
 
+/// <summary>
+/// واجهة I البرنامج استعلام.
+/// </summary>
 public interface IProgramQueryService
 {
     Task<List<ProgramDto>> GetAllActiveAsync(CancellationToken cancellationToken = default);
 }
 
+/// <summary>
+/// واجهة I البرنامج أمر.
+/// </summary>
 public interface IProgramCommandService
 {
     Task<Result> CreateProgramAsync(ProgramDto dto, UserSession session, CancellationToken cancellationToken = default);
@@ -20,9 +30,15 @@ public interface IProgramCommandService
     Task<Result> SoftDeleteAsync(int programId, UserSession session, CancellationToken cancellationToken = default);
 }
 
+/// <summary>
+/// واجهة I البرنامج.
+/// </summary>
 public interface IProgramService : IProgramQueryService, IProgramCommandService { }
 
 // ✨ استخدام Primary Constructor
+/// <summary>
+/// صنف البرنامج.
+/// </summary>
 public class ProgramService : IProgramService
 {
     private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
@@ -55,6 +71,9 @@ public class ProgramService : IProgramService
                     p.Category,
                     p.ProgramDescription)));
 
+    /// <summary>
+    /// استرجاع النشط Async.
+    /// </summary>
     public async Task<List<ProgramDto>> GetAllActiveAsync(CancellationToken cancellationToken = default)
     {
         using var context = await _contextFactory.CreateDbContextAsync();
@@ -65,6 +84,9 @@ public class ProgramService : IProgramService
         return result;
     }
 
+    /// <summary>
+    /// إنشاء البرنامج Async.
+    /// </summary>
     public async Task<Result> CreateProgramAsync(ProgramDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);
@@ -96,6 +118,9 @@ public class ProgramService : IProgramService
         }
     }
 
+    /// <summary>
+    /// تحديث البرنامج Async.
+    /// </summary>
     public async Task<Result> UpdateProgramAsync(ProgramDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);
@@ -133,6 +158,9 @@ public class ProgramService : IProgramService
     /// حذف برنامج بشكل ناعم (Soft Delete).
     /// </summary>
     /// <param name="programId">معرّف البرنامج المراد حذفه.</param>
+    /// <summary>
+    /// Soft Delete Async.
+    /// </summary>
     /// <param name="session">جلسة المستخدم الحالي للتدقيق.</param>
     public async Task<Result> SoftDeleteAsync(int programId, UserSession session, CancellationToken cancellationToken = default)
     {

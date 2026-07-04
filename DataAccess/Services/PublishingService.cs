@@ -1,3 +1,8 @@
+// ============================================================
+// PublishingService — PublishingService
+// ============================================================
+// المسؤولية: تعريف PublishingService.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using Domain.Models;
@@ -5,10 +10,12 @@ using Microsoft.ApplicationInsights;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Logging;
-using System.Threading;
 
 namespace DataAccess.Services;
 
+/// <summary>
+/// واجهة I Publishing استعلام.
+/// </summary>
 public interface IPublishingQueryService
 {
     Task<List<SocialMediaPlatformDto>> GetAllPlatformsAsync(CancellationToken cancellationToken = default);
@@ -20,6 +27,9 @@ public interface IPublishingQueryService
     Task<List<PublishingRecordDto>> GetAllPublishingRecordsAsync(int? episodeId = null, CancellationToken cancellationToken = default);
 }
 
+/// <summary>
+/// واجهة I Publishing أمر.
+/// </summary>
 public interface IPublishingCommandService
 {
     Task<Result> LogWebsitePublishingAsync(int episodeId, string title, MediaType mediaType, string notes, UserSession session, CancellationToken cancellationToken = default);
@@ -32,9 +42,15 @@ public interface IPublishingCommandService
     Task<Result> DeleteWebsitePublishingLogAsync(int logId, UserSession session, CancellationToken cancellationToken = default);
 }
 
+/// <summary>
+/// واجهة I Publishing.
+/// </summary>
 public interface IPublishingService : IPublishingQueryService, IPublishingCommandService { }
 
 // ✨ استخدام Primary Constructor
+/// <summary>
+/// صنف PublishingService.
+/// </summary>
 public class PublishingService : IPublishingService
 {
     private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
@@ -53,6 +69,9 @@ public class PublishingService : IPublishingService
         _telemetryClient = telemetryClient;
         _logger = logger;
     }
+    /// <summary>
+    /// تسجيل Website Publishing Async.
+    /// </summary>
     public async Task<Result> LogWebsitePublishingAsync(int episodeId, string title, MediaType mediaType, string notes, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodePublish);
@@ -89,6 +108,9 @@ public class PublishingService : IPublishingService
         return Result.Success();
     }
 
+    /// <summary>
+    /// تسجيل Social Publishing Async.
+    /// </summary>
     public async Task<Result> LogSocialPublishingAsync(int episodeId, List<SocialMediaPublishingLogDto> guestLogs, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodePublish);
@@ -156,6 +178,9 @@ public class PublishingService : IPublishingService
 
     /// <summary>
     /// الحصول على جميع منصات السوشيال ميديا المتاحة
+    /// <summary>
+    /// استرجاع الكل Platforms Async.
+    /// </summary>
     /// </summary>
     public async Task<List<SocialMediaPlatformDto>> GetAllPlatformsAsync(CancellationToken cancellationToken = default)
     {
@@ -190,6 +215,9 @@ public class PublishingService : IPublishingService
 
     /// <summary>
     /// حفظ سجل نشر اجتماعي لضيف مع المنصات والروابط
+    /// <summary>
+    /// حفظ Publishing سجل Async.
+    /// </summary>
     /// </summary>
     public async Task<Result<int>> SavePublishingLogAsync(SocialMediaPublishingLogDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
@@ -236,6 +264,9 @@ public class PublishingService : IPublishingService
 
     /// <summary>
     /// نشر حلقة على الموقع الإلكتروني
+    /// <summary>
+    /// نشر Website Async.
+    /// </summary>
     /// </summary>
     public async Task<Result<int>> PublishToWebsiteAsync(WebsitePublishingLogDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
@@ -292,6 +323,9 @@ public class PublishingService : IPublishingService
     /// <summary>
     /// استرجاع سجل النشر الرقمي لضيف معيّن
     /// يُرجع null إذا لم يوجد سجل نشط لهذا الضيف
+    /// <summary>
+    /// استرجاع Social Publishing سجل Async.
+    /// </summary>
     /// </summary>
     public async Task<SocialMediaPublishingLogDto?> GetSocialPublishingLogAsync(int episodeGuestId, CancellationToken cancellationToken = default)
     {
@@ -332,6 +366,9 @@ public class PublishingService : IPublishingService
             log.Platforms);
     }
 
+    /// <summary>
+    /// استرجاع Social Publishing سجل By Id Async.
+    /// </summary>
     public async Task<SocialMediaPublishingLogDto?> GetSocialPublishingLogByIdAsync(int logId, CancellationToken cancellationToken = default)
     {
         using var context = await _contextFactory.CreateDbContextAsync();
@@ -372,6 +409,9 @@ public class PublishingService : IPublishingService
     /// <summary>
     /// استرجاع جميع سجلات النشر الرقمي لحلقة معيّنة
     /// كل ضيف في الحلقة قد يكون له سجل واحد
+    /// <summary>
+    /// استرجاع الحلقة Social السجلات Async.
+    /// </summary>
     /// </summary>
     public async Task<List<SocialMediaPublishingLogDto>> GetEpisodeSocialLogsAsync(int episodeId, CancellationToken cancellationToken = default)
     {
@@ -403,6 +443,9 @@ public class PublishingService : IPublishingService
     /// تعديل سجل نشر رقمي موجود
     /// يحدّث: عنوان المقطع، المدة، نوع الوسائط
     /// ويستبدل جميع روابط المنصات (يحذف القديمة ويضيف الجديدة)
+    /// <summary>
+    /// تحديث Social Publishing سجل Async.
+    /// </summary>
     /// </summary>
     public async Task<Result> UpdateSocialPublishingLogAsync(SocialMediaPublishingLogDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
@@ -457,6 +500,9 @@ public class PublishingService : IPublishingService
     /// <summary>
     /// استرجاع سجل نشر الموقع الإلكتروني لحلقة معيّنة
     /// يُرجع null إذا لم يوجد سجل نشط
+    /// <summary>
+    /// استرجاع Website Publishing سجل Async.
+    /// </summary>
     /// </summary>
     public async Task<WebsitePublishingLogDto?> GetWebsitePublishingLogAsync(int episodeId, CancellationToken cancellationToken = default)
     {
@@ -479,6 +525,9 @@ public class PublishingService : IPublishingService
             log.PublishedAt);
     }
 
+    /// <summary>
+    /// استرجاع Website Publishing سجل By Id Async.
+    /// </summary>
     public async Task<WebsitePublishingLogDto?> GetWebsitePublishingLogByIdAsync(int logId, CancellationToken cancellationToken = default)
     {
         using var context = await _contextFactory.CreateDbContextAsync();
@@ -501,6 +550,9 @@ public class PublishingService : IPublishingService
     /// <summary>
     /// تعديل سجل نشر الموقع الإلكتروني
     /// يحدّث: العنوان، نوع الوسائط، الملاحظات
+    /// <summary>
+    /// تحديث Website Publishing سجل Async.
+    /// </summary>
     /// </summary>
     public async Task<Result> UpdateWebsitePublishingLogAsync(WebsitePublishingLogDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
@@ -525,6 +577,9 @@ public class PublishingService : IPublishingService
         return Result.Success();
     }
 
+    /// <summary>
+    /// حذف Social Publishing سجل Async.
+    /// </summary>
     public async Task<Result> DeleteSocialPublishingLogAsync(int logId, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodePublish);
@@ -549,6 +604,9 @@ public class PublishingService : IPublishingService
         return Result.Success();
     }
 
+    /// <summary>
+    /// حذف Website Publishing سجل Async.
+    /// </summary>
     public async Task<Result> DeleteWebsitePublishingLogAsync(int logId, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodeWebPublish);
@@ -572,6 +630,9 @@ public class PublishingService : IPublishingService
     /// <summary>
     /// استرجاع قائمة موحّدة من جميع سجلات النشر (الأنواع الثلاثة)
     /// تُستخدم في شاشة العرض الشامل مع دعم الفلترة حسب الحلقة
+    /// <summary>
+    /// استرجاع الكل Publishing Records Async.
+    /// </summary>
     /// </summary>
     public async Task<List<PublishingRecordDto>> GetAllPublishingRecordsAsync(int? episodeId = null, CancellationToken cancellationToken = default)
     {
@@ -642,7 +703,7 @@ public class PublishingService : IPublishingService
                 var first = g.First();
                 var guestsList = string.Join("، ", g.Select(x => x.GuestName).Distinct());
                 var allPlatforms = g.SelectMany(x => x.Platforms).Where(p => !string.IsNullOrEmpty(p)).Distinct().ToList();
-                var platformsStr = allPlatforms.Count > 0 ? $" ({string.Join("، ", allPlatforms)})" : "";
+                var platformsStr = allPlatforms.Count > 0 ? $" ({string.Join("، ", allPlatforms)})" : string.Empty;
 
                 return new PublishingRecordDto
                 {

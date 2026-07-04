@@ -1,13 +1,20 @@
+// ============================================================
+// EmployeeService — الموظف
+// ============================================================
+// المسؤولية: تعريف الموظف.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using Domain.Models;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Threading;
 
 namespace DataAccess.Services;
 
+/// <summary>
+/// واجهة I الموظف.
+/// </summary>
 public interface IEmployeeService
 {
     Task<List<EmployeeDto>> GetAllActiveAsync(CancellationToken cancellationToken = default);
@@ -22,6 +29,9 @@ public interface IEmployeeService
 }
 
 // ✨ استخدام Primary Constructor
+/// <summary>
+/// صنف الموظف.
+/// </summary>
 public class EmployeeService : IEmployeeService
 {
     private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
@@ -64,6 +74,9 @@ public class EmployeeService : IEmployeeService
                 .Where(r => r.IsActive)
                 .Select(r => new StaffRoleDto(r.StaffRoleId, r.RoleName)));
 
+    /// <summary>
+    /// استرجاع النشط Async.
+    /// </summary>
     public async Task<List<EmployeeDto>> GetAllActiveAsync(CancellationToken cancellationToken = default)
     {
         using var context = await _contextFactory.CreateDbContextAsync();
@@ -74,6 +87,9 @@ public class EmployeeService : IEmployeeService
         return result;
     }
 
+    /// <summary>
+    /// إنشاء Async.
+    /// </summary>
     public async Task<Result<int>> CreateAsync(EmployeeDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
@@ -109,6 +125,9 @@ public class EmployeeService : IEmployeeService
         }
     }
 
+    /// <summary>
+    /// تحديث Async.
+    /// </summary>
     public async Task<Result> UpdateAsync(EmployeeDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
@@ -142,6 +161,9 @@ public class EmployeeService : IEmployeeService
         }
     }
 
+    /// <summary>
+    /// Soft Delete Async.
+    /// </summary>
     public async Task<Result> SoftDeleteAsync(int employeeId, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
@@ -169,6 +191,9 @@ public class EmployeeService : IEmployeeService
         }
     }
 
+    /// <summary>
+    /// استرجاع الكل الأدوار Async.
+    /// </summary>
     public async Task<List<StaffRoleDto>> GetAllRolesAsync(CancellationToken cancellationToken = default)
     {
         using var context = await _contextFactory.CreateDbContextAsync();
@@ -179,6 +204,9 @@ public class EmployeeService : IEmployeeService
         return result;
     }
 
+    /// <summary>
+    /// إنشاء الدور Async.
+    /// </summary>
     public async Task<Result<int>> CreateRoleAsync(StaffRoleDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
@@ -212,6 +240,9 @@ public class EmployeeService : IEmployeeService
         }
     }
 
+    /// <summary>
+    /// تحديث الدور Async.
+    /// </summary>
     public async Task<Result> UpdateRoleAsync(StaffRoleDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
@@ -243,6 +274,9 @@ public class EmployeeService : IEmployeeService
         }
     }
 
+    /// <summary>
+    /// Soft Delete الدور Async.
+    /// </summary>
     public async Task<Result> SoftDeleteRoleAsync(int roleId, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);

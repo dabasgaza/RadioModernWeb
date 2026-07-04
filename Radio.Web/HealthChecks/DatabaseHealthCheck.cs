@@ -1,9 +1,17 @@
+// ============================================================
+// DatabaseHealthCheck — فحص صحة قاعدة البيانات
+// ============================================================
+// المسؤولية: تعريف فحص صحة قاعدة البيانات.
+// ============================================================
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Radio.Web.HealthChecks;
 
+/// <summary>
+/// صنف فحص صحة قاعدة البيانات.
+/// </summary>
 public class DatabaseHealthCheck(
     IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
     ILogger<DatabaseHealthCheck> logger) : IHealthCheck

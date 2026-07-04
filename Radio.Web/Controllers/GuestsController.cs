@@ -1,14 +1,20 @@
+// ============================================================
+// GuestsController — الضيوف
+// ============================================================
+// المسؤولية: تعريف الضيوف.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Radio.Web.Services;
-using System.Threading;
-using Radio.Web.ViewModels;
 
 namespace Radio.Web.Controllers;
 
+/// <summary>
+/// صنف الضيوف.
+/// </summary>
 [Authorize]
 public class GuestsController : Controller
 {
@@ -21,6 +27,9 @@ public class GuestsController : Controller
         _guests = guests; _currentUser = currentUser; _logger = logger;
     }
 
+    /// <summary>
+    /// عرض قائمة الضيوف.
+    /// </summary>
     public async Task<IActionResult> Index(string? search)
     {
         var list = await _guests.GetAllActiveAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -30,13 +39,19 @@ public class GuestsController : Controller
             list = list.Where(g => (g.FullName?.Contains(s, StringComparison.OrdinalIgnoreCase) ?? false) ||
                                    (g.Organization?.Contains(s, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
         }
-        ViewBag.Search = search ?? "";
+        ViewBag.Search = search ?? string.Empty;
         return View(list.OrderBy(g => g.FullName).ToList());
     }
 
+    /// <summary>
+    /// إنشاء الضيوف.
+    /// </summary>
     [Authorize(Policy = AppPermissions.GuestManage)]
     public IActionResult Create() => View("Edit", new GuestDto(0, string.Empty, null, null, null, null, null));
 
+    /// <summary>
+    /// إنشاء الضيوف.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.GuestManage)]
@@ -47,10 +62,13 @@ public class GuestsController : Controller
         var session = _currentUser.ToUserSession()!;
         var r = await _guests.CreateGuestAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم إضافة الضيف"; return RedirectToAction(nameof(Index)); }
-        ModelState.AddModelError("", r.ErrorMessage!);
+        ModelState.AddModelError(string.Empty, r.ErrorMessage!);
         return View("Edit", model);
     }
 
+    /// <summary>
+    /// تعديل الضيوف.
+    /// </summary>
     [Authorize(Policy = AppPermissions.GuestManage)]
     public async Task<IActionResult> Edit(int id)
     {
@@ -60,6 +78,9 @@ public class GuestsController : Controller
         return View(g);
     }
 
+    /// <summary>
+    /// تعديل الضيوف.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.GuestManage)]
@@ -71,10 +92,13 @@ public class GuestsController : Controller
         var session = _currentUser.ToUserSession()!;
         var r = await _guests.UpdateGuestAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم تحديث الضيف"; return RedirectToAction(nameof(Index)); }
-        ModelState.AddModelError("", r.ErrorMessage!);
+        ModelState.AddModelError(string.Empty, r.ErrorMessage!);
         return View(model);
     }
 
+    /// <summary>
+    /// حذف الضيوف.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.GuestManage)]

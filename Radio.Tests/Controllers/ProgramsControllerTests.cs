@@ -1,3 +1,8 @@
+// ============================================================
+// ProgramsControllerTests — اختبارات البرامج
+// ============================================================
+// المسؤولية: تعريف اختبارات البرامج.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
@@ -11,6 +16,9 @@ using Radio.Web.Services;
 
 namespace Radio.Tests.Controllers;
 
+/// <summary>
+/// صنف اختبارات البرامج.
+/// </summary>
 public class ProgramsControllerTests
 {
     private readonly Mock<IProgramService> _programs = new();
@@ -28,6 +36,9 @@ public class ProgramsControllerTests
         _controller.TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
     }
 
+    /// <summary>
+    /// عرض قائمة _ Returns View.
+    /// </summary>
     [Fact]
     public async Task Index_ReturnsView()
     {
@@ -41,6 +52,9 @@ public class ProgramsControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// عرض قائمة _ Exception_ Returns Error View.
+    /// </summary>
     [Fact]
     public async Task Index_Exception_ReturnsErrorView()
     {
@@ -52,6 +66,9 @@ public class ProgramsControllerTests
         result.Should().BeOfType<ViewResult>().Subject.ViewName.Should().Be("Error");
     }
 
+    /// <summary>
+    /// إنشاء _ Get_ Returns Edit View.
+    /// </summary>
     [Fact]
     public void Create_Get_ReturnsEditView()
     {
@@ -60,6 +77,9 @@ public class ProgramsControllerTests
         result.Should().BeOfType<ViewResult>().Subject.ViewName.Should().Be("Edit");
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Create_Post_Valid_Redirects()
     {
@@ -72,6 +92,9 @@ public class ProgramsControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Empty Name_ Adds نموذج Error.
+    /// </summary>
     [Fact]
     public async Task Create_Post_EmptyName_AddsModelError()
     {
@@ -82,6 +105,9 @@ public class ProgramsControllerTests
         _controller.ModelState["ProgramName"]?.Errors.Should().NotBeEmpty();
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Failure_ Stays On Edit.
+    /// </summary>
     [Fact]
     public async Task Create_Post_Failure_StaysOnEdit()
     {
@@ -94,6 +120,9 @@ public class ProgramsControllerTests
         result.Should().BeOfType<ViewResult>().Subject.ViewName.Should().Be("Edit");
     }
 
+    /// <summary>
+    /// تعديل _ Get_ Existing_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Edit_Get_Existing_ReturnsView()
     {
@@ -105,6 +134,9 @@ public class ProgramsControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Get_ Non Existing_ Returns Not Found.
+    /// </summary>
     [Fact]
     public async Task Edit_Get_NonExisting_ReturnsNotFound()
     {
@@ -116,6 +148,9 @@ public class ProgramsControllerTests
         result.Should().BeOfType<NotFoundResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Post_ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Edit_Post_Valid_Redirects()
     {
@@ -128,6 +163,9 @@ public class ProgramsControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Post_ Empty Name_ Adds نموذج Error.
+    /// </summary>
     [Fact]
     public async Task Edit_Post_EmptyName_AddsModelError()
     {
@@ -138,6 +176,9 @@ public class ProgramsControllerTests
         _controller.ModelState["ProgramName"]?.Errors.Should().NotBeEmpty();
     }
 
+    /// <summary>
+    /// حذف _ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Delete_Valid_Redirects()
     {
@@ -149,6 +190,9 @@ public class ProgramsControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// حذف _ Failure_ Redirects With Error.
+    /// </summary>
     [Fact]
     public async Task Delete_Failure_RedirectsWithError()
     {

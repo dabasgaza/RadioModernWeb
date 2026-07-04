@@ -1,10 +1,17 @@
+// ============================================================
+// ReportsService — التقارير
+// ============================================================
+// المسؤولية: تعريف التقارير.
+// ============================================================
 using DataAccess.DTOs;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Threading;
 
 namespace DataAccess.Services;
 
+/// <summary>
+/// واجهة I التقارير.
+/// </summary>
 public interface IReportsService
 {
     Task<List<TodayEpisodeDto>> GetTodayEpisodesAsync(CancellationToken cancellationToken = default);
@@ -16,8 +23,14 @@ public interface IReportsService
 }
 
 // ✨ استخدام Primary Constructor
+/// <summary>
+/// صنف التقارير.
+/// </summary>
 public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contextFactory) : IReportsService
 {
+    /// <summary>
+    /// استرجاع الحلقة الحالة Stats Async.
+    /// </summary>
     public async Task<Dictionary<string, int>> GetEpisodeStatusStatsAsync(CancellationToken cancellationToken = default)
     {
         using var context = await contextFactory.CreateDbContextAsync();
@@ -31,6 +44,9 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
         return stats.ToDictionary(x => x.StatusName, x => x.Count);
     }
 
+    /// <summary>
+    /// استرجاع Today الحلقات Async.
+    /// </summary>
     public async Task<List<TodayEpisodeDto>> GetTodayEpisodesAsync(CancellationToken cancellationToken = default)
     {
         using var context = await contextFactory.CreateDbContextAsync();
@@ -69,6 +85,9 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
         )).ToList();
     }
 
+    /// <summary>
+    /// استرجاع Most Active البرامج Async.
+    /// </summary>
     public async Task<List<ActiveProgramDto>> GetMostActiveProgramsAsync(CancellationToken cancellationToken = default)
     {
         using var context = await contextFactory.CreateDbContextAsync();
@@ -88,6 +107,9 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
             .ToListAsync(cancellationToken);
     }
 
+    /// <summary>
+    /// استرجاع الحلقات By التاريخ Range Async.
+    /// </summary>
     public async Task<List<DateRangeEpisodeDto>> GetEpisodesByDateRangeAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default)
     {
         using var context = await contextFactory.CreateDbContextAsync();
@@ -125,6 +147,9 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
         )).ToList();
     }
 
+    /// <summary>
+    /// استرجاع Top الضيوف Async.
+    /// </summary>
     public async Task<List<TopGuestDto>> GetTopGuestsAsync(int topCount = 10, CancellationToken cancellationToken = default)
     {
         using var context = await contextFactory.CreateDbContextAsync();
@@ -176,6 +201,9 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
         }).ToList();
     }
 
+    /// <summary>
+    /// استرجاع Cancelled الحلقات Async.
+    /// </summary>
     public async Task<List<CancelledEpisodeDto>> GetCancelledEpisodesAsync(CancellationToken cancellationToken = default)
     {
         using var context = await contextFactory.CreateDbContextAsync();
@@ -215,9 +243,9 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
         var userIds = auditLogs.Where(a => a.UserId.HasValue).Select(a => a.UserId!.Value).Distinct().ToList();
         var users = await context.Users
             .AsNoTracking()
-            .Where(u => userIds.Contains(u.UserId))
-            .Select(u => new { u.UserId, u.FullName })
-            .ToDictionaryAsync(u => u.UserId, u => u.FullName, cancellationToken);
+            .Where(u => userIds.Contains(u.Id))
+            .Select(u => new { u.Id, u.FullName })
+            .ToDictionaryAsync(u => u.Id, u => u.FullName, cancellationToken);
 
         // بناء قاموس آخر سجل إلغاء لكل حلقة
         var logDict = auditLogs
@@ -245,6 +273,9 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
 
     /// <summary>
     /// تنسيق أسماء الضيوف وعناوينهم ومواعيدهم من قائمة GuestDisplayItem
+    /// <summary>
+    /// تنسيق الضيف Items Display.
+    /// </summary>
     /// </summary>
     private static string FormatGuestItemsDisplay(IEnumerable<GuestDisplayItem> guests)
     {
@@ -266,6 +297,9 @@ public class ReportsService(IDbContextFactory<BroadcastWorkflowDBContext> contex
 
     /// <summary>
     /// تنسيق أسماء الضيوف من كيانات EpisodeGuest (للاستخدام الداخلي فقط)
+    /// <summary>
+    /// تنسيق الضيوف Display.
+    /// </summary>
     /// </summary>
     private static string FormatGuestsDisplay(IEnumerable<EpisodeGuest> guests)
     {

@@ -1,18 +1,28 @@
+// ============================================================
+// GuestService — الضيف
+// ============================================================
+// المسؤولية: تعريف الضيف.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using Domain.Models;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Threading;
 
 namespace DataAccess.Services;
 
+/// <summary>
+/// واجهة I الضيف استعلام.
+/// </summary>
 public interface IGuestQueryService
 {
     Task<List<GuestDto>> GetAllActiveAsync(CancellationToken cancellationToken = default);
 }
 
+/// <summary>
+/// واجهة I الضيف أمر.
+/// </summary>
 public interface IGuestCommandService
 {
     Task<Result> CreateGuestAsync(GuestDto dto, UserSession session, CancellationToken cancellationToken = default);
@@ -20,9 +30,15 @@ public interface IGuestCommandService
     Task<Result> SoftDeleteGuestAsync(int guestId, UserSession session, CancellationToken cancellationToken = default);
 }
 
+/// <summary>
+/// واجهة I الضيف.
+/// </summary>
 public interface IGuestService : IGuestQueryService, IGuestCommandService { }
 
 // ✨ استخدام Primary Constructor وإزالة IAuditService
+/// <summary>
+/// صنف الضيف.
+/// </summary>
 public class GuestService : IGuestService
 {
     private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
@@ -60,6 +76,9 @@ public class GuestService : IGuestService
                     string.Empty,
                     string.Empty)));
 
+    /// <summary>
+    /// استرجاع النشط Async.
+    /// </summary>
     public async Task<List<GuestDto>> GetAllActiveAsync(CancellationToken cancellationToken = default)
     {
         using var context = await _contextFactory.CreateDbContextAsync();
@@ -71,6 +90,9 @@ public class GuestService : IGuestService
         return result;
     }
 
+    /// <summary>
+    /// إنشاء الضيف Async.
+    /// </summary>
     public async Task<Result> CreateGuestAsync(GuestDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.GuestManage);
@@ -107,6 +129,9 @@ public class GuestService : IGuestService
         }
     }
 
+    /// <summary>
+    /// تحديث الضيف Async.
+    /// </summary>
     public async Task<Result> UpdateGuestAsync(GuestDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.GuestManage);
@@ -161,6 +186,9 @@ public class GuestService : IGuestService
         }
     }
 
+    /// <summary>
+    /// Soft Delete الضيف Async.
+    /// </summary>
     public async Task<Result> SoftDeleteGuestAsync(int guestId, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.GuestManage);

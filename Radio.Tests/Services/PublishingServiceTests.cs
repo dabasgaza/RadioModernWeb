@@ -1,3 +1,8 @@
+// ============================================================
+// PublishingServiceTests — Publishing Service
+// ============================================================
+// المسؤولية: تعريف Publishing Service.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
@@ -13,6 +18,9 @@ using System.Threading;
 
 namespace Radio.Tests.Services;
 
+/// <summary>
+/// صنف Publishing Service.
+/// </summary>
 [Collection("Sequential")]
 public class PublishingServiceTests : IClassFixture<DatabaseFixture>
 {
@@ -29,6 +37,9 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         _service = new PublishingService(db.DbContextFactory, cache, TestTelemetry.Client, Mock.Of<ILogger<PublishingService>>());
     }
 
+    /// <summary>
+    /// استرجاع الكل Platforms Async_ Returns Platforms.
+    /// </summary>
     [Fact]
     public async Task GetAllPlatformsAsync_ReturnsPlatforms()
     {
@@ -37,6 +48,9 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         result.Should().Contain(p => p.Name == "Facebook");
     }
 
+    /// <summary>
+    /// تسجيل Social Publishing Async_ Valid Log_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task LogSocialPublishingAsync_ValidLog_ReturnsSuccess()
     {
@@ -65,6 +79,9 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// تسجيل Social Publishing Async_ Without Permission_ Returns Fail.
+    /// </summary>
     [Fact]
     public async Task LogSocialPublishingAsync_WithoutPermission_ReturnsFail()
     {
@@ -76,6 +93,9 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeFailure("صلاحية");
     }
 
+    /// <summary>
+    /// تسجيل Website Publishing Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task LogWebsitePublishingAsync_Valid_ReturnsSuccess()
     {
@@ -92,6 +112,9 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// تسجيل Website Publishing Async_ Without Permission_ Returns Fail.
+    /// </summary>
     [Fact]
     public async Task LogWebsitePublishingAsync_WithoutPermission_ReturnsFail()
     {
@@ -102,6 +125,9 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeFailure("صلاحية");
     }
 
+    /// <summary>
+    /// تسجيل Website Publishing Async_ الحلقة Not Found_ Returns Fail.
+    /// </summary>
     [Fact]
     public async Task LogWebsitePublishingAsync_EpisodeNotFound_ReturnsFail()
     {
@@ -110,6 +136,9 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeFailure("لم يتم العثور");
     }
 
+    /// <summary>
+    /// استرجاع Social Publishing سجل Async_ Existing_ Returns.
+    /// </summary>
     [Fact]
     public async Task GetSocialPublishingLogAsync_Existing_ReturnsDto()
     {
@@ -146,6 +175,9 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         result.EpisodeId.Should().Be(30);
     }
 
+    /// <summary>
+    /// استرجاع Social Publishing سجل By Id Async_ Existing_ Returns.
+    /// </summary>
     [Fact]
     public async Task GetSocialPublishingLogByIdAsync_Existing_ReturnsDto()
     {
@@ -182,6 +214,9 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         result.EpisodeId.Should().Be(40);
     }
 
+    /// <summary>
+    /// استرجاع Social Publishing سجل By Id Async_ Not Found_ Returns Null.
+    /// </summary>
     [Fact]
     public async Task GetSocialPublishingLogByIdAsync_NotFound_ReturnsNull()
     {
@@ -189,6 +224,9 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         result.Should().BeNull();
     }
 
+    /// <summary>
+    /// تحديث Social Publishing سجل Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task UpdateSocialPublishingLogAsync_Valid_ReturnsSuccess()
     {
@@ -229,6 +267,9 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// حذف Social Publishing سجل Async_ Valid_ Soft Deletes.
+    /// </summary>
     [Fact]
     public async Task DeleteSocialPublishingLogAsync_Valid_SoftDeletes()
     {
@@ -263,6 +304,9 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// حذف Website Publishing سجل Async_ Valid_ Soft Deletes.
+    /// </summary>
     [Fact]
     public async Task DeleteWebsitePublishingLogAsync_Valid_SoftDeletes()
     {
@@ -280,6 +324,9 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// استرجاع الحلقة Social السجلات Async_ Returns السجلات For الحلقة.
+    /// </summary>
     [Fact]
     public async Task GetEpisodeSocialLogsAsync_ReturnsLogsForEpisode()
     {
@@ -309,6 +356,9 @@ public class PublishingServiceTests : IClassFixture<DatabaseFixture>
         result[0].ClipTitle.Should().Be("Ep42 Clip");
     }
 
+    /// <summary>
+    /// استرجاع الكل Publishing Records Async_ Returns الكل.
+    /// </summary>
     [Fact]
     public async Task GetAllPublishingRecordsAsync_ReturnsAll()
     {

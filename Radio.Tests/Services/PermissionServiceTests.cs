@@ -1,53 +1,48 @@
+using System.Threading;
+using System.Threading.Tasks;
+using DataAccess.Common;
 using DataAccess.Services;
-using Domain.Models;
-using Radio.Tests.TestData.Fixtures;
+using FluentAssertions;
+using Xunit;
 
-namespace Radio.Tests.Services;
-
-public class PermissionServiceTests : IClassFixture<DatabaseFixture>
+namespace Radio.Tests.Services
 {
-    private readonly DatabaseFixture _db;
-    private readonly PermissionService _sut;
-
-    public PermissionServiceTests(DatabaseFixture db)
+    public class PermissionServiceTests
     {
-        _db = db;
-        _sut = new PermissionService(db.DbContextFactory);
-    }
+        private readonly PermissionService _sut;
 
-    [Fact]
-    public async Task GetAllPermissionsAsync_ReturnsAll()
-    {
-        await using var ctx = await _db.CreateContextAsync();
-        ctx.Permissions.Add(new Permission { PermissionId = 1, SystemName = "episode.view", DisplayName = "عرض الحلقات", Module = "Episodes" });
-        ctx.Permissions.Add(new Permission { PermissionId = 2, SystemName = "guest.edit", DisplayName = "تعديل الضيوف", Module = "Guests" });
-        await ctx.SaveChangesAsync();
+        public PermissionServiceTests()
+        {
+            _sut = new PermissionService();
+        }
 
-        var result = await _sut.GetAllPermissionsAsync(CancellationToken.None);
+        [Fact]
+        public async Task GetAllPermissionsAsync_ReturnsAll()
+        {
+            var result = await _sut.GetAllPermissionsAsync(CancellationToken.None);
 
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().Contain(p => p.SystemName == "episode.view");
-        result.Value.Should().Contain(p => p.SystemName == "guest.edit");
-    }
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Should().Contain(p => p.SystemName == AppPermissions.UserManage);
+            result.Value.Should().Contain(p => p.SystemName == AppPermissions.ProgramManage);
+            result.Value.Count.Should().BeGreaterThan(0);
+        }
 
-    [Fact]
-    public async Task GetPermissionByIdAsync_Existing_ReturnsPermission()
-    {
-        await using var ctx = await _db.CreateContextAsync();
-        ctx.Permissions.Add(new Permission { PermissionId = 10, SystemName = "episode.delete", DisplayName = "حذف الحلقات", Module = "Episodes" });
-        await ctx.SaveChangesAsync();
+        [Fact]
+        public async Task GetPermissionByIdAsync_Existing_ReturnsPermission()
+        {
+            // بما أن المعرفات افتراضية وتبدأ من 1، فإن المعرف 1 موجود دائماً
+            var result = await _sut.GetPermissionByIdAsync(1, CancellationToken.None);
 
-        var result = await _sut.GetPermissionByIdAsync(10, CancellationToken.None);
+            result.IsSuccess.Should().BeTrue();
+            result.Value.SystemName.Should().NotBeNullOrEmpty();
+        }
 
-        result.IsSuccess.Should().BeTrue();
-        result.Value.SystemName.Should().Be("episode.delete");
-    }
+        [Fact]
+        public async Task GetPermissionByIdAsync_NonExisting_ReturnsFail()
+        {
+            var result = await _sut.GetPermissionByIdAsync(999, CancellationToken.None);
 
-    [Fact]
-    public async Task GetPermissionByIdAsync_NonExisting_ReturnsFail()
-    {
-        var result = await _sut.GetPermissionByIdAsync(999, CancellationToken.None);
-
-        result.IsSuccess.Should().BeFalse();
+            result.IsSuccess.Should().BeFalse();
+        }
     }
 }

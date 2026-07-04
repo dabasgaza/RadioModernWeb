@@ -1,10 +1,21 @@
+// ============================================================
+// AuditLogConfiguration — سجل التدقيق
+// ============================================================
+// المسؤولية: تعريف سجل التدقيق.
+// ============================================================
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Models.Configurations
 {
+    /// <summary>
+    /// صنف سجل التدقيق.
+    /// </summary>
     internal class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
     {
+        /// <summary>
+        /// إعداد سجل التدقيق.
+        /// </summary>
         public void Configure(EntityTypeBuilder<AuditLog> builder)
         {
             // 1. المفتاح الأساسي (تم إزالة الاسم القبيح المولد آلياً)

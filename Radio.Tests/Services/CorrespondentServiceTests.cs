@@ -1,3 +1,8 @@
+// ============================================================
+// CorrespondentServiceTests — المراسل Service
+// ============================================================
+// المسؤولية: تعريف المراسل Service.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
@@ -11,6 +16,9 @@ using System.Threading;
 
 namespace Radio.Tests.Services;
 
+/// <summary>
+/// صنف المراسل Service.
+/// </summary>
 public class CorrespondentServiceTests : IClassFixture<DatabaseFixture>
 {
     private readonly DatabaseFixture _db;
@@ -24,6 +32,9 @@ public class CorrespondentServiceTests : IClassFixture<DatabaseFixture>
         _service = new CorrespondentService(db.DbContextFactory, lookup, Mock.Of<ILogger<CorrespondentService>>(), ValidValidator.Create<CorrespondentDto>());
     }
 
+    /// <summary>
+    /// استرجاع النشط Async_ Returns Only Active.
+    /// </summary>
     [Fact]
     public async Task GetAllActiveAsync_ReturnsOnlyActive()
     {
@@ -37,6 +48,9 @@ public class CorrespondentServiceTests : IClassFixture<DatabaseFixture>
         result.Should().Contain(e => e.FullName == "Active Corr");
     }
 
+    /// <summary>
+    /// إنشاء Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task CreateAsync_Valid_ReturnsSuccess()
     {
@@ -45,6 +59,9 @@ public class CorrespondentServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// تحديث Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task UpdateAsync_Valid_ReturnsSuccess()
     {

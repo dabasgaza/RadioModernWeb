@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <!-- Application Insights -->
-    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="3.1.2" />
 
     <!-- ASP.NET Core MVC + Identity -->

@@ -1,3 +1,8 @@
+// ============================================================
+// EpisodeServiceTests — الحلقات
+// ============================================================
+// المسؤولية: تعريف الحلقات.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.Services;
 using Domain.Models;
@@ -10,6 +15,9 @@ using System.Threading;
 
 namespace Radio.Tests.Services;
 
+/// <summary>
+/// صنف الحلقات.
+/// </summary>
 [Collection("Sequential")]
 public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetime
 {
@@ -17,6 +25,9 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
     private readonly IEpisodeService _service;
     private readonly UserSession _admin = UserSessionBuilder.CreateAdmin();
     private static int _nextId = 1000;
+    /// <summary>
+    /// Next Id.
+    /// </summary>
     private int NextId() => Interlocked.Increment(ref _nextId);
 
     public EpisodeServiceTests(DatabaseFixture db)
@@ -25,9 +36,18 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         _service = new EpisodeService(db.DbContextFactory, TestTelemetry.Client, Mock.Of<ILogger<EpisodeService>>());
     }
 
+    /// <summary>
+    /// تهيئة Async.
+    /// </summary>
     public async Task InitializeAsync() => await _db.ResetAsync();
+    /// <summary>
+    /// تخلص من الموارد Async.
+    /// </summary>
     public Task DisposeAsync() => Task.CompletedTask;
 
+    /// <summary>
+    /// استرجاع النشط الحلقات Async_ Returns Only Active.
+    /// </summary>
     [Fact]
     public async Task GetActiveEpisodesAsync_ReturnsOnlyActive()
     {
@@ -50,6 +70,9 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         result[0].EpisodeName.Should().Be("Active");
     }
 
+    /// <summary>
+    /// استرجاع النشط الحلقة By Id Async_ Existing_ Returns.
+    /// </summary>
     [Fact]
     public async Task GetActiveEpisodeByIdAsync_Existing_ReturnsDto()
     {
@@ -70,6 +93,9 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         result.EpisodeDescription.Should().Be("Desc");
     }
 
+    /// <summary>
+    /// استرجاع النشط الحلقة By Id Async_ Not Found_ Returns Null.
+    /// </summary>
     [Fact]
     public async Task GetActiveEpisodeByIdAsync_NotFound_ReturnsNull()
     {
@@ -77,6 +103,9 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         result.Should().BeNull();
     }
 
+    /// <summary>
+    /// استرجاع النشط الحلقة By Id Async_ Inactive_ Returns Null.
+    /// </summary>
     [Fact]
     public async Task GetActiveEpisodeByIdAsync_Inactive_ReturnsNull()
     {
@@ -93,6 +122,9 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         result.Should().BeNull();
     }
 
+    /// <summary>
+    /// استرجاع الحلقة الضيوف Async_ Returns الضيوف.
+    /// </summary>
     [Fact]
     public async Task GetEpisodeGuestsAsync_ReturnsGuests()
     {
@@ -117,6 +149,9 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         result[0].Topic.Should().Be("Politics");
     }
 
+    /// <summary>
+    /// إنشاء الحلقة Async_ Valid Dto_ Returns Success With Id.
+    /// </summary>
     [Fact]
     public async Task CreateEpisodeAsync_ValidDto_ReturnsSuccessWithId()
     {
@@ -128,6 +163,9 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         result.Value.Should().BeGreaterThan(0);
     }
 
+    /// <summary>
+    /// إنشاء الحلقة Async_ Without Permission_ Returns Fail.
+    /// </summary>
     [Fact]
     public async Task CreateEpisodeAsync_WithoutPermission_ReturnsFail()
     {
@@ -139,6 +177,9 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         result.ShouldBeFailure("صلاحية");
     }
 
+    /// <summary>
+    /// تحديث الحلقة Async_ Valid Dto_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task UpdateEpisodeAsync_ValidDto_ReturnsSuccess()
     {
@@ -158,6 +199,9 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// تحديث الحلقة Async_ Not Found_ Returns Fail.
+    /// </summary>
     [Fact]
     public async Task UpdateEpisodeAsync_NotFound_ReturnsFail()
     {
@@ -166,6 +210,9 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         result.ShouldBeFailure("غير موجودة");
     }
 
+    /// <summary>
+    /// حذف الحلقة Async_ Valid_ Soft Deletes.
+    /// </summary>
     [Fact]
     public async Task DeleteEpisodeAsync_Valid_SoftDeletes()
     {
@@ -183,6 +230,9 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// حذف الحلقة Async_ Without Permission_ Returns Fail.
+    /// </summary>
     [Fact]
     public async Task DeleteEpisodeAsync_WithoutPermission_ReturnsFail()
     {
@@ -193,6 +243,9 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         result.ShouldBeFailure("صلاحية");
     }
 
+    /// <summary>
+    /// تحديث الحالة Async_ Transition_ Returns Expected.
+    /// </summary>
     [Theory]
     [InlineData(0, DataAccess.Services.EpisodeStatusValues.Executed, true)]
     [InlineData(1, DataAccess.Services.EpisodeStatusValues.Cancelled, true)]
@@ -215,6 +268,9 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         result.IsSuccess.Should().Be(shouldSucceed);
     }
 
+    /// <summary>
+    /// إلغاء الحلقة Async_ With Reason_ Sets الحالة And Reason.
+    /// </summary>
     [Fact]
     public async Task CancelEpisodeAsync_WithReason_SetsStatusAndReason()
     {
@@ -232,6 +288,9 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// إلغاء الحلقة Async_ Without Permission_ Returns Fail.
+    /// </summary>
     [Fact]
     public async Task CancelEpisodeAsync_WithoutPermission_ReturnsFail()
     {
@@ -241,6 +300,9 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         result.ShouldBeFailure("صلاحية");
     }
 
+    /// <summary>
+    /// Revert الحلقة الحالة Async_ From Executed_ Returns To Planned.
+    /// </summary>
     [Fact]
     public async Task RevertEpisodeStatusAsync_FromExecuted_ReturnsToPlanned()
     {
@@ -258,6 +320,9 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// إلغاء الحلقات Batch Async_ Mixed_ Returns Counts.
+    /// </summary>
     [Fact]
     public async Task CancelEpisodesBatchAsync_Mixed_ReturnsCounts()
     {
@@ -301,6 +366,9 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         }
     }
 
+    /// <summary>
+    /// حذف الحلقات Batch Async_ الكل Exist_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task DeleteEpisodesBatchAsync_AllExist_ReturnsSuccess()
     {

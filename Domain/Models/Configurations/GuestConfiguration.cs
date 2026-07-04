@@ -1,10 +1,21 @@
+// ============================================================
+// GuestConfiguration — الضيف
+// ============================================================
+// المسؤولية: تعريف الضيف.
+// ============================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Models.Configurations;
 
+/// <summary>
+/// صنف الضيف.
+/// </summary>
 public class GuestConfiguration : IEntityTypeConfiguration<Guest>
 {
+    /// <summary>
+    /// إعداد الضيف.
+    /// </summary>
     public void Configure(EntityTypeBuilder<Guest> builder)
     {
         // 1. المفتاح الأساسي (إزالة الاسم القبيح المولد آلياً)

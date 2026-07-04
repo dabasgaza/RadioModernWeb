@@ -1,10 +1,17 @@
+// ============================================================
+// ClaimsPrincipalExtensions — Claims Principal Extensions
+// ============================================================
+// المسؤولية: تعريف Claims Principal Extensions.
+// ============================================================
 using System.Security.Claims;
-using DataAccess.Common;
 
 namespace Radio.Web.Security;
 
 /// <summary>
 /// Extension methods for ClaimsPrincipal to check permissions easily in Razor Views.
+/// <summary>
+/// صنف Claims Principal Extensions.
+/// </summary>
 /// </summary>
 public static class ClaimsPrincipalExtensions
 {

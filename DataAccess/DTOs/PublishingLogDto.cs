@@ -1,5 +1,13 @@
-﻿namespace DataAccess.DTOs
+// ============================================================
+// PublishingLogDto — سجل النشر
+// ============================================================
+// المسؤولية: تعريف سجل النشر.
+// ============================================================
+namespace DataAccess.DTOs
 {
+    /// <summary>
+    /// سجل سجل النشر.
+    /// </summary>
     public record PublishingLogDto
     {
         public int EpisodeId { get; set; }

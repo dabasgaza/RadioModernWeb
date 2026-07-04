@@ -1,10 +1,21 @@
+// ============================================================
+// EpisodeStatusTransitionTests — انتقال حالة الحلقة
+// ============================================================
+// المسؤولية: تعريف انتقال حالة الحلقة.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.Services;
 
 namespace Radio.Tests.Common;
 
+/// <summary>
+/// صنف انتقال حالة الحلقة.
+/// </summary>
 public class EpisodeStatusTransitionTests
 {
+    /// <summary>
+    /// Is Valid_ Returns Expected.
+    /// </summary>
     [Theory]
     [InlineData(EpisodeStatusValues.Planned, EpisodeStatusValues.Executed, true)]
     [InlineData(EpisodeStatusValues.Planned, EpisodeStatusValues.Cancelled, true)]
@@ -27,6 +38,9 @@ public class EpisodeStatusTransitionTests
         Assert.Equal(expected, EpisodeStatusTransition.IsValid(from, to));
     }
 
+    /// <summary>
+    /// استرجاع الكل owed Transitions_ From Planned_ Returns Executed And Cancelled.
+    /// </summary>
     [Fact]
     public void GetAllowedTransitions_FromPlanned_ReturnsExecutedAndCancelled()
     {
@@ -36,6 +50,9 @@ public class EpisodeStatusTransitionTests
         Assert.Contains(EpisodeStatusValues.Cancelled, allowed);
     }
 
+    /// <summary>
+    /// استرجاع الكل owed Transitions_ From Executed_ Returns Published And Cancelled.
+    /// </summary>
     [Fact]
     public void GetAllowedTransitions_FromExecuted_ReturnsPublishedAndCancelled()
     {
@@ -45,6 +62,9 @@ public class EpisodeStatusTransitionTests
         Assert.Contains(EpisodeStatusValues.Cancelled, allowed);
     }
 
+    /// <summary>
+    /// استرجاع الكل owed Transitions_ From Cancelled_ Returns Empty.
+    /// </summary>
     [Fact]
     public void GetAllowedTransitions_FromCancelled_ReturnsEmpty()
     {
@@ -52,6 +72,9 @@ public class EpisodeStatusTransitionTests
         Assert.Empty(allowed);
     }
 
+    /// <summary>
+    /// استرجاع الكل owed Transitions_ From Unknown_ Returns Empty.
+    /// </summary>
     [Fact]
     public void GetAllowedTransitions_FromUnknown_ReturnsEmpty()
     {
@@ -59,6 +82,9 @@ public class EpisodeStatusTransitionTests
         Assert.Empty(allowed);
     }
 
+    /// <summary>
+    /// Is Valid_ Same Status_ Returns False.
+    /// </summary>
     [Fact]
     public void IsValid_SameStatus_ReturnsFalse()
     {

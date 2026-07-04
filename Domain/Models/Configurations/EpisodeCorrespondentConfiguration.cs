@@ -1,10 +1,21 @@
+// ============================================================
+// EpisodeCorrespondentConfiguration — حلقة-مراسل
+// ============================================================
+// المسؤولية: تعريف حلقة-مراسل.
+// ============================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Models.Configurations;
 
+/// <summary>
+/// صنف حلقة-مراسل.
+/// </summary>
 public class EpisodeCorrespondentConfiguration : IEntityTypeConfiguration<EpisodeCorrespondent>
 {
+    /// <summary>
+    /// إعداد حلقة-مراسل.
+    /// </summary>
     public void Configure(EntityTypeBuilder<EpisodeCorrespondent> builder)
     {
         // 1. المفتاح الأساسي

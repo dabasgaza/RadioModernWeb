@@ -1,14 +1,20 @@
+// ============================================================
+// StaffControllers — الموظفين
+// ============================================================
+// المسؤولية: تعريف الموظفين.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Radio.Web.Services;
-using System.Threading;
-using Radio.Web.ViewModels;
 
 namespace Radio.Web.Controllers;
 
+/// <summary>
+/// صنف EmployeesController.
+/// </summary>
 [Authorize]
 public class EmployeesController : Controller
 {
@@ -21,6 +27,9 @@ public class EmployeesController : Controller
         _employees = employees; _currentUser = currentUser; _logger = logger;
     }
 
+    /// <summary>
+    /// عرض قائمة EmployeesController.
+    /// </summary>
     public async Task<IActionResult> Index(string? search)
     {
         var list = await _employees.GetAllActiveAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -29,10 +38,13 @@ public class EmployeesController : Controller
             var s = search.Trim();
             list = list.Where(e => e.FullName?.Contains(s, StringComparison.OrdinalIgnoreCase) ?? false).ToList();
         }
-        ViewBag.Search = search ?? "";
+        ViewBag.Search = search ?? string.Empty;
         return View(list.OrderBy(e => e.FullName).ToList());
     }
 
+    /// <summary>
+    /// إنشاء EmployeesController.
+    /// </summary>
     [Authorize(Policy = AppPermissions.StaffManage)]
     public async Task<IActionResult> Create()
     {
@@ -40,6 +52,9 @@ public class EmployeesController : Controller
         return View("Edit", new EmployeeDto(0, string.Empty, null, null, null));
     }
 
+    /// <summary>
+    /// إنشاء EmployeesController.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.StaffManage)]
@@ -49,11 +64,14 @@ public class EmployeesController : Controller
         var session = _currentUser.ToUserSession()!;
         var r = await _employees.CreateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم إضافة الموظف"; return RedirectToAction(nameof(Index)); }
-        ModelState.AddModelError("", r.ErrorMessage!);
+        ModelState.AddModelError(string.Empty, r.ErrorMessage!);
         ViewBag.StaffRoles = await _employees.GetAllRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         return View("Edit", model);
     }
 
+    /// <summary>
+    /// تعديل EmployeesController.
+    /// </summary>
     [Authorize(Policy = AppPermissions.StaffManage)]
     public async Task<IActionResult> Edit(int id)
     {
@@ -64,6 +82,9 @@ public class EmployeesController : Controller
         return View(e);
     }
 
+    /// <summary>
+    /// تعديل EmployeesController.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.StaffManage)]
@@ -74,11 +95,14 @@ public class EmployeesController : Controller
         var session = _currentUser.ToUserSession()!;
         var r = await _employees.UpdateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم تحديث الموظف"; return RedirectToAction(nameof(Index)); }
-        ModelState.AddModelError("", r.ErrorMessage!);
+        ModelState.AddModelError(string.Empty, r.ErrorMessage!);
         ViewBag.StaffRoles = await _employees.GetAllRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         return View(model);
     }
 
+    /// <summary>
+    /// حذف EmployeesController.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.StaffManage)]
@@ -92,6 +116,9 @@ public class EmployeesController : Controller
     }
 }
 
+/// <summary>
+/// صنف الموظفين الأدوار.
+/// </summary>
 [Authorize]
 public class StaffRolesController : Controller
 {
@@ -103,15 +130,24 @@ public class StaffRolesController : Controller
         _employees = employees; _currentUser = currentUser;
     }
 
+    /// <summary>
+    /// عرض قائمة الموظفين الأدوار.
+    /// </summary>
     public async Task<IActionResult> Index()
     {
         var list = await _employees.GetAllRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         return View(list);
     }
 
+    /// <summary>
+    /// إنشاء الموظفين الأدوار.
+    /// </summary>
     [Authorize(Policy = AppPermissions.StaffManage)]
     public IActionResult Create() => View("Edit", new StaffRoleDto(0, string.Empty));
 
+    /// <summary>
+    /// إنشاء الموظفين الأدوار.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.StaffManage)]
@@ -121,10 +157,13 @@ public class StaffRolesController : Controller
         var session = _currentUser.ToUserSession()!;
         var r = await _employees.CreateRoleAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم إضافة الدور"; return RedirectToAction(nameof(Index)); }
-        ModelState.AddModelError("", r.ErrorMessage!);
+        ModelState.AddModelError(string.Empty, r.ErrorMessage!);
         return View("Edit", model);
     }
 
+    /// <summary>
+    /// تعديل الموظفين الأدوار.
+    /// </summary>
     [Authorize(Policy = AppPermissions.StaffManage)]
     public async Task<IActionResult> Edit(int id)
     {
@@ -134,6 +173,9 @@ public class StaffRolesController : Controller
         return View(r);
     }
 
+    /// <summary>
+    /// تعديل الموظفين الأدوار.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.StaffManage)]
@@ -144,10 +186,13 @@ public class StaffRolesController : Controller
         var session = _currentUser.ToUserSession()!;
         var r = await _employees.UpdateRoleAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم تحديث الدور"; return RedirectToAction(nameof(Index)); }
-        ModelState.AddModelError("", r.ErrorMessage!);
+        ModelState.AddModelError(string.Empty, r.ErrorMessage!);
         return View(model);
     }
 
+    /// <summary>
+    /// حذف الموظفين الأدوار.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.StaffManage)]
@@ -161,6 +206,9 @@ public class StaffRolesController : Controller
     }
 }
 
+/// <summary>
+/// صنف Social Platforms.
+/// </summary>
 [Authorize]
 public class SocialPlatformsController : Controller
 {
@@ -172,15 +220,24 @@ public class SocialPlatformsController : Controller
         _platforms = platforms; _currentUser = currentUser;
     }
 
+    /// <summary>
+    /// عرض قائمة Social Platforms.
+    /// </summary>
     public async Task<IActionResult> Index()
     {
         var list = await _platforms.GetAllActiveAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         return View(list);
     }
 
+    /// <summary>
+    /// إنشاء Social Platforms.
+    /// </summary>
     [Authorize(Policy = AppPermissions.StaffManage)]
     public IActionResult Create() => View("Edit", new SocialMediaPlatformDto(0, string.Empty, null));
 
+    /// <summary>
+    /// إنشاء Social Platforms.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.StaffManage)]
@@ -190,10 +247,13 @@ public class SocialPlatformsController : Controller
         var session = _currentUser.ToUserSession()!;
         var r = await _platforms.CreateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم إضافة المنصة"; return RedirectToAction(nameof(Index)); }
-        ModelState.AddModelError("", r.ErrorMessage!);
+        ModelState.AddModelError(string.Empty, r.ErrorMessage!);
         return View("Edit", model);
     }
 
+    /// <summary>
+    /// تعديل Social Platforms.
+    /// </summary>
     [Authorize(Policy = AppPermissions.StaffManage)]
     public async Task<IActionResult> Edit(int id)
     {
@@ -203,6 +263,9 @@ public class SocialPlatformsController : Controller
         return View(p);
     }
 
+    /// <summary>
+    /// تعديل Social Platforms.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.StaffManage)]
@@ -213,10 +276,13 @@ public class SocialPlatformsController : Controller
         var session = _currentUser.ToUserSession()!;
         var r = await _platforms.UpdateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم تحديث المنصة"; return RedirectToAction(nameof(Index)); }
-        ModelState.AddModelError("", r.ErrorMessage!);
+        ModelState.AddModelError(string.Empty, r.ErrorMessage!);
         return View(model);
     }
 
+    /// <summary>
+    /// حذف Social Platforms.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.StaffManage)]

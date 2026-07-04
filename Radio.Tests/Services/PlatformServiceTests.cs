@@ -1,3 +1,8 @@
+// ============================================================
+// PlatformServiceTests — Platform Service
+// ============================================================
+// المسؤولية: تعريف Platform Service.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
@@ -11,6 +16,9 @@ using System.Threading;
 
 namespace Radio.Tests.Services;
 
+/// <summary>
+/// صنف Platform Service.
+/// </summary>
 public class PlatformServiceTests : IClassFixture<DatabaseFixture>
 {
     private readonly DatabaseFixture _db;
@@ -24,6 +32,9 @@ public class PlatformServiceTests : IClassFixture<DatabaseFixture>
         _service = new PlatformService(db.DbContextFactory, lookup, Mock.Of<ILogger<PlatformService>>(), ValidValidator.Create<SocialMediaPlatformDto>());
     }
 
+    /// <summary>
+    /// استرجاع النشط Async_ Returns الكل.
+    /// </summary>
     [Fact]
     public async Task GetAllActiveAsync_ReturnsAll()
     {
@@ -31,6 +42,9 @@ public class PlatformServiceTests : IClassFixture<DatabaseFixture>
         result.Should().HaveCount(3);
     }
 
+    /// <summary>
+    /// إنشاء Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task CreateAsync_Valid_ReturnsSuccess()
     {
@@ -39,6 +53,9 @@ public class PlatformServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// تحديث Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task UpdateAsync_Valid_ReturnsSuccess()
     {
@@ -47,6 +64,9 @@ public class PlatformServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// حذف Async_ Valid_ Soft Deletes.
+    /// </summary>
     [Fact]
     public async Task DeleteAsync_Valid_SoftDeletes()
     {

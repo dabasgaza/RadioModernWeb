@@ -1,10 +1,21 @@
+// ============================================================
+// DatabaseBackupLogConfiguration — سجل النسخ الاحتياطي
+// ============================================================
+// المسؤولية: تعريف سجل النسخ الاحتياطي.
+// ============================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Models.Configurations;
 
+/// <summary>
+/// صنف سجل النسخ الاحتياطي.
+/// </summary>
 public class DatabaseBackupLogConfiguration : IEntityTypeConfiguration<DatabaseBackupLog>
 {
+    /// <summary>
+    /// إعداد سجل النسخ الاحتياطي.
+    /// </summary>
     public void Configure(EntityTypeBuilder<DatabaseBackupLog> builder)
     {
         builder.HasKey(e => e.DatabaseBackupLogId);

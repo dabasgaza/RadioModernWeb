@@ -1,50 +1,74 @@
 using DataAccess.Common;
 using DataAccess.DTOs;
-using Domain.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Threading;
+using System;
+using System.Linq;
+using System.Reflection;
 
-namespace DataAccess.Services;
-
-/// <summary>
-/// خدمة قراءة الصلاحيات فقط.
-/// الصلاحيات تُعرَّف في AppPermissions وتُزامَن تلقائياً مع DB عبر DbSeeder — لا يمكن إنشاؤها أو حذفها يدوياً.
-/// </summary>
-public interface IPermissionService
+namespace DataAccess.Services
 {
-    Task<Result<List<PermissionDto>>> GetAllPermissionsAsync(CancellationToken cancellationToken = default);
-    Task<Result<PermissionDto>> GetPermissionByIdAsync(int id, CancellationToken cancellationToken = default);
-}
-
-public class PermissionService(IDbContextFactory<BroadcastWorkflowDBContext> contextFactory) : IPermissionService
-{
-    public async Task<Result<List<PermissionDto>>> GetAllPermissionsAsync(CancellationToken cancellationToken = default)
+    /// <summary>
+    /// واجهة خدمة الصلاحيات.
+    /// </summary>
+    public interface IPermissionService
     {
-        await using var context = await contextFactory.CreateDbContextAsync();
-
-        var permissions = await context.Permissions
-            .AsNoTracking()
-            .OrderBy(p => p.Module)
-            .ThenBy(p => p.DisplayName)
-            .Select(p => new PermissionDto(p.PermissionId, p.SystemName, p.DisplayName, p.Module))
-            .ToListAsync(cancellationToken);
-
-        return Result<List<PermissionDto>>.Success(permissions);
+        Task<Result<List<PermissionDto>>> GetAllPermissionsAsync(CancellationToken cancellationToken = default);
+        Task<Result<PermissionDto>> GetPermissionByIdAsync(int id, CancellationToken cancellationToken = default);
+        Task<List<PermissionDto>> GetPermissionsListAsync();
     }
 
-    public async Task<Result<PermissionDto>> GetPermissionByIdAsync(int id, CancellationToken cancellationToken = default)
+    /// <summary>
+    /// خدمة الصلاحيات باستخدام القراءة بالانعكاس (Reflection) من ثوابت AppPermissions
+    /// وتعيين معرفات افتراضية (Synthetic IDs) للتوافق التام مع الواجهات والنظام.
+    /// </summary>
+    public class PermissionService : IPermissionService
     {
-        await using var context = await contextFactory.CreateDbContextAsync();
+        private static readonly List<PermissionDto> _cachedPermissions;
 
-        var p = await context.Permissions
-            .AsNoTracking()
-            .Where(x => x.PermissionId == id)
-            .Select(x => new PermissionDto(x.PermissionId, x.SystemName, x.DisplayName, x.Module))
-            .FirstOrDefaultAsync(cancellationToken);
+        static PermissionService()
+        {
+            _cachedPermissions = new List<PermissionDto>();
+            var fields = typeof(AppPermissions).GetFields(
+                BindingFlags.Public |
+                BindingFlags.Static |
+                BindingFlags.FlattenHierarchy);
 
-        if (p is null)
-            return Result<PermissionDto>.Fail("الصلاحية غير موجودة.");
+            int idCounter = 1;
+            foreach (var field in fields)
+            {
+                if (field.IsLiteral && !field.IsInitOnly && field.FieldType == typeof(string))
+                {
+                    var systemName = (string)field.GetValue(null)!;
+                    var attr = (PermissionInfoAttribute?)Attribute.GetCustomAttribute(field, typeof(PermissionInfoAttribute));
+                    var displayName = attr?.DisplayName ?? systemName;
+                    var module = attr?.Module ?? "عام";
 
-        return Result<PermissionDto>.Success(p);
+                    _cachedPermissions.Add(new PermissionDto(idCounter++, systemName, displayName, module));
+                }
+            }
+        }
+
+        public Task<List<PermissionDto>> GetPermissionsListAsync()
+        {
+            return Task.FromResult(_cachedPermissions);
+        }
+
+        public Task<Result<List<PermissionDto>>> GetAllPermissionsAsync(CancellationToken cancellationToken = default)
+        {
+            var ordered = _cachedPermissions
+                .OrderBy(p => p.Module)
+                .ThenBy(p => p.DisplayName)
+                .ToList();
+
+            return Task.FromResult(Result<List<PermissionDto>>.Success(ordered));
+        }
+
+        public Task<Result<PermissionDto>> GetPermissionByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var p = _cachedPermissions.FirstOrDefault(x => x.PermissionId == id);
+            if (p is null)
+                return Task.FromResult(Result<PermissionDto>.Fail("الصلاحية المطلوبة غير موجودة."));
+
+            return Task.FromResult(Result<PermissionDto>.Success(p));
+        }
     }
 }

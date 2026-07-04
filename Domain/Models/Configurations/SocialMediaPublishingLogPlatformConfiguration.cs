@@ -1,10 +1,21 @@
+// ============================================================
+// SocialMediaPublishingLogPlatformConfiguration — سجل-منصة
+// ============================================================
+// المسؤولية: تعريف سجل-منصة.
+// ============================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Models.Configurations;
 
+/// <summary>
+/// صنف سجل-منصة.
+/// </summary>
 public class SocialMediaPublishingLogPlatformConfiguration : IEntityTypeConfiguration<SocialMediaPublishingLogPlatform>
 {
+    /// <summary>
+    /// إعداد سجل-منصة.
+    /// </summary>
     public void Configure(EntityTypeBuilder<SocialMediaPublishingLogPlatform> builder)
     {
         builder.HasKey(e => e.SocialMediaPublishingLogPlatformId);

@@ -1,8 +1,16 @@
+// ============================================================
+// SocialMediaPublishingLogDtoValidator — التحقق من سجل النشر
+// ============================================================
+// المسؤولية: تعريف التحقق من سجل النشر.
+// ============================================================
 using DataAccess.DTOs;
 using FluentValidation;
 
 namespace DataAccess.Validation.Validators;
 
+/// <summary>
+/// صنف التحقق من سجل النشر.
+/// </summary>
 public class SocialMediaPublishingLogDtoValidator : AbstractValidator<SocialMediaPublishingLogDto>
 {
     public SocialMediaPublishingLogDtoValidator()

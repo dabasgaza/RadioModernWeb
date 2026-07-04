@@ -1,3 +1,8 @@
+// ============================================================
+// CoverageServiceTests — التغطية Service
+// ============================================================
+// المسؤولية: تعريف التغطية Service.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
@@ -9,6 +14,9 @@ using System.Threading;
 
 namespace Radio.Tests.Services;
 
+/// <summary>
+/// صنف التغطية Service.
+/// </summary>
 public class CoverageServiceTests : IClassFixture<DatabaseFixture>
 {
     private readonly DatabaseFixture _db;
@@ -21,6 +29,9 @@ public class CoverageServiceTests : IClassFixture<DatabaseFixture>
         _service = new CoverageService(db.DbContextFactory);
     }
 
+    /// <summary>
+    /// استرجاع الكل Async_ Returns Coverages.
+    /// </summary>
     [Fact]
     public async Task GetAllAsync_ReturnsCoverages()
     {
@@ -36,6 +47,9 @@ public class CoverageServiceTests : IClassFixture<DatabaseFixture>
         result.Should().Contain(c => c.Location == "City Center");
     }
 
+    /// <summary>
+    /// حذف Async_ Valid_ Soft Deletes.
+    /// </summary>
     [Fact]
     public async Task DeleteAsync_Valid_SoftDeletes()
     {
@@ -51,6 +65,9 @@ public class CoverageServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// إنشاء Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task CreateAsync_Valid_ReturnsSuccess()
     {
@@ -61,6 +78,9 @@ public class CoverageServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// استرجاع حسب Id Async_ Existing_ Returns التغطية.
+    /// </summary>
     [Fact]
     public async Task GetByIdAsync_Existing_ReturnsCoverage()
     {
@@ -78,6 +98,9 @@ public class CoverageServiceTests : IClassFixture<DatabaseFixture>
         result!.Location.Should().Be("FindMe");
     }
 
+    /// <summary>
+    /// استرجاع حسب Id Async_ Non Existing_ Returns Null.
+    /// </summary>
     [Fact]
     public async Task GetByIdAsync_NonExisting_ReturnsNull()
     {
@@ -86,6 +109,9 @@ public class CoverageServiceTests : IClassFixture<DatabaseFixture>
         result.Should().BeNull();
     }
 
+    /// <summary>
+    /// تحديث Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task UpdateAsync_Valid_ReturnsSuccess()
     {

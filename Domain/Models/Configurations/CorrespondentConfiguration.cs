@@ -1,10 +1,21 @@
+// ============================================================
+// CorrespondentConfiguration — المراسل
+// ============================================================
+// المسؤولية: تعريف المراسل.
+// ============================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Models.Configurations;
 
+/// <summary>
+/// صنف المراسل.
+/// </summary>
 public class CorrespondentConfiguration : IEntityTypeConfiguration<Correspondent>
 {
+    /// <summary>
+    /// إعداد المراسل.
+    /// </summary>
     public void Configure(EntityTypeBuilder<Correspondent> builder)
     {
         // 1. المفتاح الأساسي (تم إزالة الاسم القبيح المولد آلياً)

@@ -1,9 +1,17 @@
+// ============================================================
+// ValidValidator — المدقق الصالح
+// ============================================================
+// المسؤولية: تعريف المدقق الصالح.
+// ============================================================
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
 
 namespace Radio.Tests.Helpers;
 
+/// <summary>
+/// صنف المدقق الصالح.
+/// </summary>
 public static class ValidValidator
 {
     public static IValidator<T> Create<T>()

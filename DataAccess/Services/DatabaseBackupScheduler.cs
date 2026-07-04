@@ -1,10 +1,18 @@
-﻿using Microsoft.Extensions.Configuration;
+// ============================================================
+// DatabaseBackupScheduler — النسخ الاحتياطي
+// ============================================================
+// المسؤولية: تعريف النسخ الاحتياطي.
+// ============================================================
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace DataAccess.Services
 {
+    /// <summary>
+    /// صنف النسخ الاحتياطي.
+    /// </summary>
     public class DatabaseBackupScheduler : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
@@ -21,6 +29,9 @@ namespace DataAccess.Services
             _configuration = configuration;
         }
 
+        /// <summary>
+        /// تنفيذ Async.
+        /// </summary>
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation("خدمة جدولة النسخ الاحتياطي لقاعدة البيانات قد بدأت.");

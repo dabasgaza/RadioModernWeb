@@ -1,11 +1,18 @@
+// ============================================================
+// ExecutionService — ExecutionService
+// ============================================================
+// المسؤولية: تعريف ExecutionService.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Threading;
 
 namespace DataAccess.Services;
 
+/// <summary>
+/// واجهة I Execution.
+/// </summary>
 public interface IExecutionService
 {
     // ✨ استقبال DTO بدلاً من الكيان
@@ -17,8 +24,14 @@ public interface IExecutionService
 }
 
 // ✨ استخدام Primary Constructor
+/// <summary>
+/// صنف ExecutionService.
+/// </summary>
 public class ExecutionService(IDbContextFactory<BroadcastWorkflowDBContext> contextFactory) : IExecutionService
 {
+    /// <summary>
+    /// تسجيل Execution Async.
+    /// </summary>
     public async Task<Result> LogExecutionAsync(ExecutionLogDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodeExecute);
@@ -71,6 +84,9 @@ public class ExecutionService(IDbContextFactory<BroadcastWorkflowDBContext> cont
     /// <summary>
     /// استرجاع سجل التنفيذ لحلقة معيّنة
     /// يُرجع null إذا لم يوجد سجل تنفيذ نشط
+    /// <summary>
+    /// استرجاع Execution سجل Async.
+    /// </summary>
     /// </summary>
     public async Task<ExecutionLogDto?> GetExecutionLogAsync(int episodeId, CancellationToken cancellationToken = default)
     {
@@ -101,6 +117,9 @@ public class ExecutionService(IDbContextFactory<BroadcastWorkflowDBContext> cont
     /// تعديل سجل تنفيذ موجود
     /// يحدّث: المدة، الملاحظات، المشاكل التقنية
     /// لا يُغيّر حالة الحلقة — فقط يحدّث البيانات
+    /// <summary>
+    /// تحديث Execution سجل Async.
+    /// </summary>
     /// </summary>
     public async Task<Result> UpdateExecutionLogAsync(ExecutionLogDto dto, UserSession session, CancellationToken cancellationToken = default)
     {

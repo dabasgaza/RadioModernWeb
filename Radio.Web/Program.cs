@@ -1,11 +1,18 @@
+// ============================================================
+// Program — البرنامج
+// ============================================================
+// المسؤولية: تعريف البرنامج.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.Data;
 using DataAccess.Security;
 using DataAccess.Seeding;
 using DataAccess.Services;
 using DataAccess.Services.Messaging;
+using DataAccess.Validation.Validators;
 using Domain.Identity;
 using Domain.Models;
+using FluentValidation;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.DataProtection;
@@ -13,7 +20,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
-using System.IO.Compression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Radio.Web.HealthChecks;
@@ -22,10 +28,8 @@ using Radio.Web.Middleware;
 using Radio.Web.Security;
 using Radio.Web.Services;
 using Serilog;
+using System.IO.Compression;
 using System.Threading.RateLimiting;
-using FluentValidation;
-using FluentValidation.AspNetCore;
-using DataAccess.Validation.Validators;
 
 // ───────────────────────────────────────────────────────────────────────
 // Startup
@@ -100,6 +104,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.SameSite = SameSiteMode.Strict;
     options.Cookie.IsEssential = true;
+    options.EventsType = typeof(CustomCookieAuthenticationEvents); // تحديث الصلاحيات ديناميكياً
 });
 
 // --- Authorization ---
@@ -137,8 +142,6 @@ builder.Services.AddHostedService<MessageServiceInitializer>();
 
 // --- Application Services ---
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-builder.Services.AddScoped<IIdentitySynchronizer, IdentitySynchronizer>();
-builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGuestService, GuestService>();
 builder.Services.AddScoped<IGuestQueryService>(sp => sp.GetRequiredService<IGuestService>());
 builder.Services.AddScoped<IGuestCommandService>(sp => sp.GetRequiredService<IGuestService>());
@@ -163,6 +166,8 @@ builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IDatabaseManagementService, DatabaseManagementService>();
 builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 builder.Services.AddScoped<ISystemDiagnosticsService, SystemDiagnosticsService>();
+builder.Services.AddScoped<IRolePermissionCacheService, RolePermissionCacheService>();
+builder.Services.AddScoped<CustomCookieAuthenticationEvents>();
 builder.Services.AddHostedService<DatabaseBackupScheduler>();
 
 // --- Localization ---
@@ -235,7 +240,6 @@ builder.Services.Configure<GzipCompressionProviderOptions>(options =>
     options.Level = CompressionLevel.Fastest);
 
 // --- FluentValidation ---
-builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<GuestDtoValidator>();
 
 // --- MVC + Runtime Compilation ---
@@ -282,82 +286,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     // Migration-first approach: MigrateAsync creates/updates schema, DbSeeder seeds data.
     await using var devMigrateCtx = await devCtxFactory.CreateDbContextAsync();
     await devMigrateCtx.Database.MigrateAsync();
-    await DbSeeder.SeedAsync(devCtxFactory);
-
-    // Seed Identity roles first (must precede user role assignment)
-    var devUserManager = devServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-    var devRoleManager = devServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-    var devCtx = await devCtxFactory.CreateDbContextAsync();
-    await using (devCtx)
-    {
-        var domainRoles = await devCtx.Roles
-            .Where(r => r.IsActive)
-            .ToListAsync();
-        foreach (var dr in domainRoles)
-        {
-            if (await devRoleManager.RoleExistsAsync(dr.RoleName))
-                continue;
-            await devRoleManager.CreateAsync(new ApplicationRole
-            {
-                Name = dr.RoleName,
-                RoleDescription = dr.RoleDescription,
-                DomainRoleId = dr.RoleId,
-                IsActive = true,
-            });
-        }
-
-        // Seed Identity users and assign roles
-        var domainUsers = await devCtx.Users
-            .Where(u => u.IsActive)
-            .ToListAsync();
-        foreach (var du in domainUsers)
-        {
-            var existing = await devUserManager.FindByNameAsync(du.Username);
-            if (existing != null)
-            {
-                // ponytail: fix existing Identity user with DomainUserId == 0
-                if (existing.DomainUserId == 0)
-                {
-                    existing.DomainUserId = du.UserId;
-                    existing.DomainRoleId = du.RoleId;
-                    existing.Email = du.EmailAddress;
-                    existing.FullName = du.FullName;
-                    existing.DisplayPhoneNumber = du.PhoneNumber;
-                    await devUserManager.UpdateAsync(existing);
-                    Log.Information("Fixed DomainUserId for {Username} → {Id}", du.Username, du.UserId);
-                }
-                continue;
-            }
-            var userEmail = string.IsNullOrWhiteSpace(du.EmailAddress)
-                ? $"{du.Username}@broadcast.pro"
-                : du.EmailAddress;
-            var appUser = new ApplicationUser
-            {
-                UserName = du.Username,
-                Email = userEmail,
-                FullName = du.FullName,
-                DisplayPhoneNumber = du.PhoneNumber,
-                DomainUserId = du.UserId,
-                DomainRoleId = du.RoleId,
-                IsActive = true,
-                EmailConfirmed = true,
-            };
-            var result = await devUserManager.CreateAsync(appUser, adminPassword);
-            if (!result.Succeeded)
-                Log.Warning("Failed to seed Identity user {Username}: {Errors}",
-                    du.Username, string.Join(", ", result.Errors.Select(e => e.Description)));
-            else
-            {
-                // ponytail: assign user to their role in Identity so ClaimTypes.Role is populated
-                var roleName = await devCtx.Roles
-                    .Where(r => r.RoleId == du.RoleId)
-                    .Select(r => r.RoleName)
-                    .FirstOrDefaultAsync();
-                if (roleName != null)
-                    await devUserManager.AddToRoleAsync(appUser, roleName);
-            }
-        }
-    }
+    await DbSeeder.SeedAsync(devCtxFactory, adminPassword);
 }
 
 app.UseMiddleware<LogContextMiddleware>();

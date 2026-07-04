@@ -1,7 +1,15 @@
+// ============================================================
+// ActiveEpisodeDto — الحلقة النشطة
+// ============================================================
+// المسؤولية: تعريف الحلقة النشطة.
+// ============================================================
 using DataAccess.Services;
 
 namespace DataAccess.DTOs
 {
+    /// <summary>
+    /// صنف الحلقة النشطة.
+    /// </summary>
     public class ActiveEpisodeDto
     {
         public int EpisodeId { get; init; }
@@ -32,5 +40,8 @@ namespace DataAccess.DTOs
 
     /// <summary>مراسل مضاف لحلقة بكامل بياناته القابلة للتحرير</summary>
     public record EpisodeCorrespondentDto(int Id, int CorrespondentId, string FullName, string? Topic, TimeSpan? HostingTime);
+    /// <summary>
+    /// سجل حلقة-موظف.
+    /// </summary>
     public record EpisodeEmployeeDto(int Id, int EmployeeId, string? FullName = null, string? StaffRoleName = null);
 }

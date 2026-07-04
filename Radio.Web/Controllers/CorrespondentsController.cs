@@ -1,14 +1,20 @@
+// ============================================================
+// CorrespondentsController — المراسلين
+// ============================================================
+// المسؤولية: تعريف المراسلين.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Radio.Web.Services;
-using System.Threading;
-using Radio.Web.ViewModels;
 
 namespace Radio.Web.Controllers;
 
+/// <summary>
+/// صنف المراسلين.
+/// </summary>
 [Authorize]
 public class CorrespondentsController : Controller
 {
@@ -21,6 +27,9 @@ public class CorrespondentsController : Controller
         _correspondents = correspondents; _currentUser = currentUser; _logger = logger;
     }
 
+    /// <summary>
+    /// عرض قائمة المراسلين.
+    /// </summary>
     public async Task<IActionResult> Index(string? search)
     {
         var list = await _correspondents.GetAllActiveAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -29,13 +38,19 @@ public class CorrespondentsController : Controller
             var s = search.Trim();
             list = list.Where(c => c.FullName?.Contains(s, StringComparison.OrdinalIgnoreCase) ?? false).ToList();
         }
-        ViewBag.Search = search ?? "";
+        ViewBag.Search = search ?? string.Empty;
         return View(list.OrderBy(c => c.FullName).ToList());
     }
 
+    /// <summary>
+    /// إنشاء المراسلين.
+    /// </summary>
     [Authorize(Policy = AppPermissions.CoordinationManage)]
     public IActionResult Create() => View("Edit", new CorrespondentDto(0, string.Empty, null, null));
 
+    /// <summary>
+    /// إنشاء المراسلين.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.CoordinationManage)]
@@ -45,10 +60,13 @@ public class CorrespondentsController : Controller
         var session = _currentUser.ToUserSession()!;
         var r = await _correspondents.CreateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم إضافة المراسل"; return RedirectToAction(nameof(Index)); }
-        ModelState.AddModelError("", r.ErrorMessage!);
+        ModelState.AddModelError(string.Empty, r.ErrorMessage!);
         return View("Edit", model);
     }
 
+    /// <summary>
+    /// تعديل المراسلين.
+    /// </summary>
     [Authorize(Policy = AppPermissions.CoordinationManage)]
     public async Task<IActionResult> Edit(int id)
     {
@@ -58,6 +76,9 @@ public class CorrespondentsController : Controller
         return View(c);
     }
 
+    /// <summary>
+    /// تعديل المراسلين.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.CoordinationManage)]
@@ -68,10 +89,13 @@ public class CorrespondentsController : Controller
         var session = _currentUser.ToUserSession()!;
         var r = await _correspondents.UpdateAsync(model, session, cancellationToken: HttpContext?.RequestAborted ?? default);
         if (r.IsSuccess) { TempData["Success"] = "تم تحديث المراسل"; return RedirectToAction(nameof(Index)); }
-        ModelState.AddModelError("", r.ErrorMessage!);
+        ModelState.AddModelError(string.Empty, r.ErrorMessage!);
         return View(model);
     }
 
+    /// <summary>
+    /// حذف المراسلين.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.CoordinationManage)]
@@ -85,6 +109,9 @@ public class CorrespondentsController : Controller
     }
 
     // Coverage listing for a correspondent
+    /// <summary>
+    /// التغطية.
+    /// </summary>
     public async Task<IActionResult> Coverage(int id)
     {
         var coverages = await _correspondents.GetCoverageAsync(id, cancellationToken: HttpContext?.RequestAborted ?? default);

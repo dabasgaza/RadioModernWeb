@@ -1,7 +1,15 @@
+// ============================================================
+// CollectionSyncHelper — Collection Sync
+// ============================================================
+// المسؤولية: تعريف Collection Sync.
+// ============================================================
 using Domain.Models;
 
 namespace DataAccess.Common;
 
+/// <summary>
+/// صنف Collection Sync.
+/// </summary>
 public static class CollectionSyncHelper
 {
     public static void Sync<TEntity, TDto>(

@@ -1,3 +1,8 @@
+// ============================================================
+// CorrespondentsControllerTests — اختبارات المراسلين
+// ============================================================
+// المسؤولية: تعريف اختبارات المراسلين.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
@@ -11,6 +16,9 @@ using Radio.Web.Services;
 
 namespace Radio.Tests.Controllers;
 
+/// <summary>
+/// صنف اختبارات المراسلين.
+/// </summary>
 public class CorrespondentsControllerTests
 {
     private readonly Mock<ICorrespondentService> _correspondents = new();
@@ -27,6 +35,9 @@ public class CorrespondentsControllerTests
         _controller.TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
     }
 
+    /// <summary>
+    /// عرض قائمة _ Returns View With المراسلين.
+    /// </summary>
     [Fact]
     public async Task Index_ReturnsViewWithCorrespondents()
     {
@@ -38,6 +49,9 @@ public class CorrespondentsControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// عرض قائمة _ Search_ Returns Filtered.
+    /// </summary>
     [Fact]
     public async Task Index_Search_ReturnsFiltered()
     {
@@ -54,6 +68,9 @@ public class CorrespondentsControllerTests
         model.Should().HaveCount(1);
     }
 
+    /// <summary>
+    /// إنشاء _ Get_ Returns Edit View.
+    /// </summary>
     [Fact]
     public void Create_Get_ReturnsEditView()
     {
@@ -62,6 +79,9 @@ public class CorrespondentsControllerTests
         result.Should().BeOfType<ViewResult>().Subject.ViewName.Should().Be("Edit");
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Create_Post_Valid_Redirects()
     {
@@ -74,6 +94,9 @@ public class CorrespondentsControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Invalid Model_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Create_Post_InvalidModel_ReturnsView()
     {
@@ -85,6 +108,9 @@ public class CorrespondentsControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Failure_ Stays On Edit.
+    /// </summary>
     [Fact]
     public async Task Create_Post_Failure_StaysOnEdit()
     {
@@ -98,6 +124,9 @@ public class CorrespondentsControllerTests
         viewResult.ViewData.ModelState.ErrorCount.Should().BePositive();
     }
 
+    /// <summary>
+    /// تعديل _ Get_ Existing_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Edit_Get_Existing_ReturnsView()
     {
@@ -109,6 +138,9 @@ public class CorrespondentsControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Get_ Non Existing_ Returns Not Found.
+    /// </summary>
     [Fact]
     public async Task Edit_Get_NonExisting_ReturnsNotFound()
     {
@@ -120,6 +152,9 @@ public class CorrespondentsControllerTests
         result.Should().BeOfType<NotFoundResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Post_ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Edit_Post_Valid_Redirects()
     {
@@ -132,6 +167,9 @@ public class CorrespondentsControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Post_ Invalid Model_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Edit_Post_InvalidModel_ReturnsView()
     {
@@ -143,6 +181,9 @@ public class CorrespondentsControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Post_ Failure_ Stays On Edit.
+    /// </summary>
     [Fact]
     public async Task Edit_Post_Failure_StaysOnEdit()
     {
@@ -156,6 +197,9 @@ public class CorrespondentsControllerTests
         viewResult.ViewData.ModelState.ErrorCount.Should().BePositive();
     }
 
+    /// <summary>
+    /// حذف _ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Delete_Valid_Redirects()
     {
@@ -167,6 +211,9 @@ public class CorrespondentsControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// حذف _ Failure_ Redirects With Error.
+    /// </summary>
     [Fact]
     public async Task Delete_Failure_RedirectsWithError()
     {
@@ -178,6 +225,9 @@ public class CorrespondentsControllerTests
         _controller.TempData["Error"].Should().Be("لا يمكن الحذف");
     }
 
+    /// <summary>
+    /// Coverage_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Coverage_ReturnsView()
     {

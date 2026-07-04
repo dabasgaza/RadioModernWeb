@@ -1,9 +1,18 @@
+// ============================================================
+// DatabaseFixture — قاعدة البيانات للاختبار
+// ============================================================
+// المسؤولية: تعريف قاعدة البيانات للاختبار.
+// ============================================================
 using DataAccess.Data;
+using Domain.Identity;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Radio.Tests.TestData.Fixtures;
 
+/// <summary>
+/// صنف قاعدة البيانات للاختبار.
+/// </summary>
 public class DatabaseFixture : IAsyncLifetime
 {
     private readonly DbContextOptions<BroadcastWorkflowDBContext> _options;
@@ -19,14 +28,23 @@ public class DatabaseFixture : IAsyncLifetime
         DbContextFactory = new TestDbContextFactory(_options);
     }
 
+    /// <summary>
+    /// تهيئة Async.
+    /// </summary>
     public async Task InitializeAsync()
     {
         await using var context = await DbContextFactory.CreateDbContextAsync();
         await SeedBasicDataAsync(context);
     }
 
+    /// <summary>
+    /// تخلص من الموارد Async.
+    /// </summary>
     public Task DisposeAsync() => Task.CompletedTask;
 
+    /// <summary>
+    /// بذر البيانات Basic بيانات Async.
+    /// </summary>
     private static async Task SeedBasicDataAsync(BroadcastWorkflowDBContext context)
     {
         if (!await context.EpisodeStatuses.AnyAsync())
@@ -51,11 +69,11 @@ public class DatabaseFixture : IAsyncLifetime
 
         if (!await context.Roles.AnyAsync())
         {
-            var adminRole = new Role { RoleId = 1, RoleName = "Admin", RoleDescription = "مسؤول النظام", IsActive = true, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow };
+            var adminRole = new ApplicationRole { Id = 1, Name = "Admin", NormalizedName = "ADMIN", RoleDescription = "مسؤول النظام", IsActive = true };
             context.Roles.Add(adminRole);
-            context.Users.Add(new User
+            context.Users.Add(new ApplicationUser
             {
-                UserId = 1, Username = "admin", FullName = "Admin User", PasswordHash = "hash",
+                Id = 1, UserName = "admin", NormalizedUserName = "ADMIN", FullName = "Admin User", PasswordHash = "hash",
                 RoleId = 1, IsActive = true, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow
             });
         }
@@ -107,6 +125,9 @@ public class DatabaseFixture : IAsyncLifetime
         await context.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// إعادة تعيين Async.
+    /// </summary>
     public async Task ResetAsync()
     {
         await using var ctx = await CreateContextAsync();
@@ -114,6 +135,9 @@ public class DatabaseFixture : IAsyncLifetime
         await InitializeAsync();
     }
 
+    /// <summary>
+    /// إنشاء السياق Async.
+    /// </summary>
     public async Task<BroadcastWorkflowDBContext> CreateContextAsync()
     {
         var ctx = await DbContextFactory.CreateDbContextAsync();
@@ -121,10 +145,19 @@ public class DatabaseFixture : IAsyncLifetime
         return ctx;
     }
 
+    /// <summary>
+    /// صنف Test Db السياق Factory.
+    /// </summary>
     private sealed class TestDbContextFactory(DbContextOptions<BroadcastWorkflowDBContext> options)
         : IDbContextFactory<BroadcastWorkflowDBContext>
     {
+        /// <summary>
+        /// إنشاء Db السياق.
+        /// </summary>
         public BroadcastWorkflowDBContext CreateDbContext() => new TestBroadcastWorkflowDbContext(options);
+        /// <summary>
+        /// إنشاء Db السياق Async.
+        /// </summary>
         public async Task<BroadcastWorkflowDBContext> CreateDbContextAsync()
             => await Task.FromResult(new TestBroadcastWorkflowDbContext(options));
     }

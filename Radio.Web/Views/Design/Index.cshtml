@@ -1,0 +1,38 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "نظام التصميم";
+}
+
+<section class="p-6">
+    <div class="page-header text-right">
+        <h1 class="text-2xl font-bold">نظام التصميم — Components</h1>
+        <p class="text-ink-soft">مثال على مكونات قابلة لإعادة الاستخدام والشرح لاستخدامها داخل المشروع.</p>
+    </div>
+
+    <div class="design-grid">
+        <div>
+            <h2 class="font-semibold mb-2 text-right">Card</h2>
+            @Html.Partial("~/Views/Shared/Components/_Card.cshtml", new { Title = "بطاقة إحصائية", Body = "هذا نص داخل البطاقة. يمكنك تمرير HTML أو نص عادي كـ model." })
+        </div>
+
+        <div>
+            <h2 class="font-semibold mb-2 text-right">Buttons</h2>
+            <div class="flex flex-col gap-2 items-end">
+                @Html.Partial("~/Views/Shared/Components/_Button.cshtml", new { Text = "الأساسي", Class = "" })
+                @Html.Partial("~/Views/Shared/Components/_Button.cshtml", new { Text = "ثانوي", Class = "secondary" })
+                @Html.Partial("~/Views/Shared/Components/_Button.cshtml", new { Text = "شبح", Class = "ghost" })
+            </div>
+        </div>
+
+        <div>
+            <h2 class="font-semibold mb-2 text-right">Theme & Utilities</h2>
+            <div class="ds-card">
+                <div class="ds-card-body text-right">
+                    <p>تبديل السمة يتم عبر زر أعلى الشاشة (أيقونة المصباح). يتم حفظ الإعداد في localStorage.</p>
+                    <p class="mt-2">اختصارات: <span class="kbd">Ctrl</span> + <span class="kbd">Enter</span> لإرسال النموذج.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>

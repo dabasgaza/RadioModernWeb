@@ -1,5 +1,13 @@
+// ============================================================
+// SocialMediaPlatform — منصة التواصل
+// ============================================================
+// المسؤولية: تعريف منصة التواصل.
+// ============================================================
 namespace Domain.Models;
 
+/// <summary>
+/// صنف منصة التواصل.
+/// </summary>
 public class SocialMediaPlatform : BaseEntity
 {
     public int SocialMediaPlatformId { get; set; }

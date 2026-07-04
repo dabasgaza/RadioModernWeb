@@ -1,13 +1,19 @@
-using System.Diagnostics;
-using System.Threading;
-using DataAccess.Common;
+// ============================================================
+// HomeController — الصفحة الرئيسية
+// ============================================================
+// المسؤولية: تعريف الصفحة الرئيسية.
+// ============================================================
 using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Radio.Web.ViewModels;
+using System.Diagnostics;
 
 namespace Radio.Web.Controllers;
 
+/// <summary>
+/// صنف الصفحة الرئيسية.
+/// </summary>
 [Authorize]
 public class HomeController : Controller
 {
@@ -25,6 +31,9 @@ public class HomeController : Controller
         _logger = logger;
     }
 
+    /// <summary>
+    /// عرض قائمة الصفحة الرئيسية.
+    /// </summary>
     public async Task<IActionResult> Index()
     {
         try
@@ -54,6 +63,9 @@ public class HomeController : Controller
         }
     }
 
+    /// <summary>
+    /// Error.
+    /// </summary>
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

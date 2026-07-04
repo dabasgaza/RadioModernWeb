@@ -1,16 +1,22 @@
+// ============================================================
+// EpisodesController — الحلقات
+// ============================================================
+// المسؤولية: تعريف الحلقات.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
-using Domain.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Radio.Web.Services;
-using System.Threading;
 using Radio.Web.ViewModels;
 
 namespace Radio.Web.Controllers;
 
+/// <summary>
+/// صنف الحلقات.
+/// </summary>
 [Authorize]
 public class EpisodesController : Controller
 {
@@ -44,6 +50,9 @@ public class EpisodesController : Controller
     }
 
     // GET: /Episodes
+    /// <summary>
+    /// عرض قائمة الحلقات.
+    /// </summary>
     public async Task<IActionResult> Index(string? search, byte? status, int? programId)
     {
         try
@@ -67,7 +76,7 @@ public class EpisodesController : Controller
             {
                 Episodes = filtered.OrderByDescending(e => e.ScheduledExecutionTime ?? DateTime.MinValue).ToList(),
                 Programs = programs,
-                SearchTerm = search ?? "",
+                SearchTerm = search ?? string.Empty,
                 StatusFilter = status,
                 ProgramFilter = programId
             };
@@ -81,6 +90,9 @@ public class EpisodesController : Controller
     }
 
     // GET: /Episodes/Details/5
+    /// <summary>
+    /// عرض تفاصيل الحلقات.
+    /// </summary>
     public async Task<IActionResult> Details(int id)
     {
         var episode = await _query.GetActiveEpisodeByIdAsync(id, cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -96,6 +108,9 @@ public class EpisodesController : Controller
     }
 
     // GET: /Episodes/Create
+    /// <summary>
+    /// إنشاء الحلقات.
+    /// </summary>
     [Authorize(Policy = AppPermissions.EpisodeManage)]
     public async Task<IActionResult> Create()
     {
@@ -106,6 +121,9 @@ public class EpisodesController : Controller
     }
 
     // POST: /Episodes/Create
+    /// <summary>
+    /// إنشاء الحلقات.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.EpisodeManage)]
@@ -117,7 +135,7 @@ public class EpisodesController : Controller
         {
             if (!validation.IsValid)
                 foreach (var err in validation.Errors)
-                    ModelState.AddModelError("", err.ErrorMessage);
+                    ModelState.AddModelError(string.Empty, err.ErrorMessage);
             var vm = await BuildEditViewModelAsync(dto);
             return View("Edit", vm);
         }
@@ -129,12 +147,15 @@ public class EpisodesController : Controller
             TempData["Success"] = "تم إنشاء الحلقة بنجاح";
             return RedirectToAction(nameof(Details), new { id = result.Value });
         }
-        ModelState.AddModelError("", result.ErrorMessage!);
+        ModelState.AddModelError(string.Empty, result.ErrorMessage!);
         var vm2 = await BuildEditViewModelAsync(dto);
         return View("Edit", vm2);
     }
 
     // GET: /Episodes/Edit/5
+    /// <summary>
+    /// تعديل الحلقات.
+    /// </summary>
     [Authorize(Policy = AppPermissions.EpisodeEdit)]
     public async Task<IActionResult> Edit(int id)
     {
@@ -160,6 +181,9 @@ public class EpisodesController : Controller
     }
 
     // POST: /Episodes/Edit/5
+    /// <summary>
+    /// تعديل الحلقات.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.EpisodeEdit)]
@@ -171,7 +195,7 @@ public class EpisodesController : Controller
         {
             if (!validation.IsValid)
                 foreach (var err in validation.Errors)
-                    ModelState.AddModelError("", err.ErrorMessage);
+                    ModelState.AddModelError(string.Empty, err.ErrorMessage);
             var vm = await BuildEditViewModelAsync(dto);
             return View(vm);
         }
@@ -183,12 +207,15 @@ public class EpisodesController : Controller
             TempData["Success"] = "تم تحديث الحلقة بنجاح";
             return RedirectToAction(nameof(Details), new { id });
         }
-        ModelState.AddModelError("", result.ErrorMessage!);
+        ModelState.AddModelError(string.Empty, result.ErrorMessage!);
         var vm2 = await BuildEditViewModelAsync(dto);
         return View(vm2);
     }
 
     // POST: /Episodes/Delete/5
+    /// <summary>
+    /// حذف الحلقات.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.EpisodeDelete)]
@@ -202,6 +229,9 @@ public class EpisodesController : Controller
     }
 
     // POST: /Episodes/Execute/5
+    /// <summary>
+    /// تنفيذ الحلقات.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.EpisodeExecute)]
@@ -223,6 +253,9 @@ public class EpisodesController : Controller
     }
 
     // POST: /Episodes/Cancel/5
+    /// <summary>
+    /// إلغاء الحلقات.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.EpisodeRevert)]
@@ -241,6 +274,9 @@ public class EpisodesController : Controller
     }
 
     // POST: /Episodes/Revert/5
+    /// <summary>
+    /// Revert.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.EpisodeRevert)]
@@ -259,6 +295,9 @@ public class EpisodesController : Controller
     }
 
     // POST: /Episodes/BatchDelete
+    /// <summary>
+    /// Batch Delete.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.EpisodeDelete)]
@@ -272,6 +311,9 @@ public class EpisodesController : Controller
     }
 
     // POST: /Episodes/BatchCancel
+    /// <summary>
+    /// Batch Cancel.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.EpisodeRevert)]
@@ -289,6 +331,9 @@ public class EpisodesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    /// <summary>
+    /// بناء Edit View نموذج Async.
+    /// </summary>
     private async Task<EpisodeEditViewModel> BuildEditViewModelAsync(EpisodeDto dto)
     {
         var programs = await _lookup.GetProgramsAsync(cancellationToken: HttpContext?.RequestAborted ?? default);

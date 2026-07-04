@@ -1,10 +1,21 @@
+// ============================================================
+// SocialMediaPlatformConfiguration — منصة التواصل
+// ============================================================
+// المسؤولية: تعريف منصة التواصل.
+// ============================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Models.Configurations;
 
+/// <summary>
+/// صنف منصة التواصل.
+/// </summary>
 public class SocialMediaPlatformConfiguration : IEntityTypeConfiguration<SocialMediaPlatform>
 {
+    /// <summary>
+    /// إعداد منصة التواصل.
+    /// </summary>
     public void Configure(EntityTypeBuilder<SocialMediaPlatform> builder)
     {
         builder.HasKey(e => e.SocialMediaPlatformId);

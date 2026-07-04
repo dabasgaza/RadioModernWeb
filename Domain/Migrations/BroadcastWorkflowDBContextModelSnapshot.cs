@@ -34,11 +34,10 @@ namespace Domain.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DomainRoleId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsSuperAdmin")
                         .HasColumnType("bit");
@@ -52,7 +51,8 @@ namespace Domain.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("RoleDescription")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.HasKey("Id");
 
@@ -79,14 +79,17 @@ namespace Domain.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
                     b.Property<string>("DisplayPhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("DomainRoleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DomainUserId")
-                        .HasColumnType("int");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -97,10 +100,13 @@ namespace Domain.Migrations
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<DateTime?>("LastLoginAt")
                         .HasColumnType("datetime2");
@@ -128,17 +134,36 @@ namespace Domain.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int")
+                        .HasColumnName("DomainRoleId");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -147,6 +172,8 @@ namespace Domain.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("UpdatedByUserId");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -1015,124 +1042,6 @@ namespace Domain.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.Models.Permission", b =>
-                {
-                    b.Property<int>("PermissionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PermissionId"));
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Module")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("SystemName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("PermissionId");
-
-                    b.HasIndex("SystemName")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Permissions_SystemName");
-
-                    b.ToTable("Permissions");
-
-                    b.HasData(
-                        new
-                        {
-                            PermissionId = 1,
-                            DisplayName = "إدارة المستخدمين",
-                            Module = "المستخدمين",
-                            SystemName = "USER_MANAGE"
-                        },
-                        new
-                        {
-                            PermissionId = 2,
-                            DisplayName = "إدارة البرامج",
-                            Module = "البرامج",
-                            SystemName = "PROGRAM_MANAGE"
-                        },
-                        new
-                        {
-                            PermissionId = 3,
-                            DisplayName = "إدارة الحلقات",
-                            Module = "الحلقات",
-                            SystemName = "EPISODE_MANAGE"
-                        },
-                        new
-                        {
-                            PermissionId = 4,
-                            DisplayName = "تنفيذ الحلقات",
-                            Module = "الحلقات",
-                            SystemName = "EPISODE_EXECUTE"
-                        },
-                        new
-                        {
-                            PermissionId = 5,
-                            DisplayName = "نشر رقمي",
-                            Module = "الحلقات",
-                            SystemName = "EPISODE_PUBLISH"
-                        },
-                        new
-                        {
-                            PermissionId = 6,
-                            DisplayName = "نشر الموقع",
-                            Module = "الحلقات",
-                            SystemName = "EPISODE_WEB_PUBLISH"
-                        },
-                        new
-                        {
-                            PermissionId = 7,
-                            DisplayName = "تعديل الحلقات",
-                            Module = "الحلقات",
-                            SystemName = "EPISODE_EDIT"
-                        },
-                        new
-                        {
-                            PermissionId = 8,
-                            DisplayName = "حذف الحلقات",
-                            Module = "الحلقات",
-                            SystemName = "EPISODE_DELETE"
-                        },
-                        new
-                        {
-                            PermissionId = 9,
-                            DisplayName = "إدارة الضيوف",
-                            Module = "الضيوف",
-                            SystemName = "GUEST_MANAGE"
-                        },
-                        new
-                        {
-                            PermissionId = 10,
-                            DisplayName = "إدارة التنسيق الميداني",
-                            Module = "التنسيق",
-                            SystemName = "CORR_MANAGE"
-                        },
-                        new
-                        {
-                            PermissionId = 11,
-                            DisplayName = "عرض التقارير",
-                            Module = "التقارير",
-                            SystemName = "VIEW_REPORTS"
-                        },
-                        new
-                        {
-                            PermissionId = 12,
-                            DisplayName = "تراجع عن تنفيذ/نشر",
-                            Module = "الحلقات",
-                            SystemName = "EPISODE_REVERT"
-                        });
-                });
-
             modelBuilder.Entity("Domain.Models.Program", b =>
                 {
                     b.Property<int>("ProgramId")
@@ -1236,231 +1145,6 @@ namespace Domain.Migrations
                             ProgramDescription = "برنامج ثقافي أدبي",
                             ProgramName = "نافذة ثقافية",
                             UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc)
-                        });
-                });
-
-            modelBuilder.Entity("Domain.Models.Role", b =>
-                {
-                    b.Property<int>("RoleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleId"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int?>("CreatedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("RoleDescription")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("RoleName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("RoleId");
-
-                    b.HasIndex("CreatedByUserId");
-
-                    b.HasIndex("RoleName")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Roles_RoleName");
-
-                    b.HasIndex("UpdatedByUserId");
-
-                    b.ToTable("Roles");
-
-                    b.HasData(
-                        new
-                        {
-                            RoleId = 1,
-                            CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsActive = true,
-                            RoleDescription = "مسؤول النظام — صلاحيات كاملة",
-                            RoleName = "Admin",
-                            UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsActive = true,
-                            RoleDescription = "مدير البرامج",
-                            RoleName = "ProgramMgr",
-                            UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            RoleId = 3,
-                            CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsActive = true,
-                            RoleDescription = "مخرج البث",
-                            RoleName = "Director",
-                            UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            RoleId = 4,
-                            CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsActive = true,
-                            RoleDescription = "ناشر الموقع",
-                            RoleName = "WebPublisher",
-                            UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc)
-                        });
-                });
-
-            modelBuilder.Entity("Domain.Models.RolePermission", b =>
-                {
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PermissionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("RoleId", "PermissionId");
-
-                    b.HasIndex("PermissionId");
-
-                    b.ToTable("RolePermissions");
-
-                    b.HasData(
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 1
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 2
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 3
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 4
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 5
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 6
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 7
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 8
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 9
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 10
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 11
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 12
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 2
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 3
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 4
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 5
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 7
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 9
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 11
-                        },
-                        new
-                        {
-                            RoleId = 3,
-                            PermissionId = 4
-                        },
-                        new
-                        {
-                            RoleId = 3,
-                            PermissionId = 11
-                        },
-                        new
-                        {
-                            RoleId = 4,
-                            PermissionId = 6
-                        },
-                        new
-                        {
-                            RoleId = 4,
-                            PermissionId = 11
                         });
                 });
 
@@ -1708,100 +1392,6 @@ namespace Domain.Migrations
                     b.ToTable("StaffRoles");
                 });
 
-            modelBuilder.Entity("Domain.Models.User", b =>
-                {
-                    b.Property<int>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int?>("CreatedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("EmailAddress")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<DateTime?>("LastLoginAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("UserId");
-
-                    b.HasIndex("CreatedByUserId");
-
-                    b.HasIndex("RoleId");
-
-                    b.HasIndex("UpdatedByUserId");
-
-                    b.HasIndex(new[] { "IsActive", "FullName" }, "IX_Users_IsActive_FullName");
-
-                    b.HasIndex(new[] { "Username" }, "UQ_Users_Username")
-                        .IsUnique();
-
-                    b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = 1,
-                            CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            EmailAddress = "admin@broadcast.pro",
-                            FullName = "مدير النظام",
-                            IsActive = true,
-                            PasswordHash = "$2a$11$24Mf/Vktd2tHGnC3f/iyTOmKMaQtcy4T0qOT07h22jC0Teor66hZa",
-                            RoleId = 1,
-                            UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Username = "admin"
-                        });
-                });
-
             modelBuilder.Entity("Domain.Models.WebsitePublishingLog", b =>
                 {
                     b.Property<int>("WebsitePublishingLogId")
@@ -1980,13 +1570,30 @@ namespace Domain.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Identity.ApplicationUser", b =>
+                {
+                    b.HasOne("Domain.Identity.ApplicationUser", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Domain.Identity.ApplicationUser", "UpdatedByUser")
+                        .WithMany()
+                        .HasForeignKey("UpdatedByUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("UpdatedByUser");
+                });
+
             modelBuilder.Entity("Domain.Models.Correspondent", b =>
                 {
-                    b.HasOne("Domain.Models.User", "CreatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId");
 
-                    b.HasOne("Domain.Models.User", "UpdatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId");
 
@@ -2003,7 +1610,7 @@ namespace Domain.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Models.User", "CreatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId");
 
@@ -2012,7 +1619,7 @@ namespace Domain.Migrations
                         .HasForeignKey("GuestId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Models.User", "UpdatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId");
 
@@ -2027,12 +1634,12 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Models.DatabaseBackupLog", b =>
                 {
-                    b.HasOne("Domain.Models.User", "CreatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Models.User", "UpdatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -2044,7 +1651,7 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Models.Employee", b =>
                 {
-                    b.HasOne("Domain.Models.User", "CreatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -2054,7 +1661,7 @@ namespace Domain.Migrations
                         .HasForeignKey("StaffRoleId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Models.User", "UpdatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -2068,7 +1675,7 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Models.Episode", b =>
                 {
-                    b.HasOne("Domain.Models.User", "CreatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId");
 
@@ -2084,7 +1691,7 @@ namespace Domain.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Models.User", "UpdatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId");
 
@@ -2105,7 +1712,7 @@ namespace Domain.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Models.User", "CreatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -2116,7 +1723,7 @@ namespace Domain.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Models.User", "UpdatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -2132,7 +1739,7 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Models.EpisodeEmployee", b =>
                 {
-                    b.HasOne("Domain.Models.User", "CreatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -2149,7 +1756,7 @@ namespace Domain.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Models.User", "UpdatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -2165,7 +1772,7 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Models.EpisodeGuest", b =>
                 {
-                    b.HasOne("Domain.Models.User", "CreatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId");
 
@@ -2181,7 +1788,7 @@ namespace Domain.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Models.User", "UpdatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId");
 
@@ -2196,7 +1803,7 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Models.ExecutionLog", b =>
                 {
-                    b.HasOne("Domain.Models.User", "CreatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -2207,13 +1814,13 @@ namespace Domain.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Models.User", "ExecutedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "ExecutedByUser")
                         .WithMany("ExecutionLogs")
                         .HasForeignKey("ExecutedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Models.User", "UpdatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -2229,11 +1836,11 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Models.Guest", b =>
                 {
-                    b.HasOne("Domain.Models.User", "CreatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId");
 
-                    b.HasOne("Domain.Models.User", "UpdatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId");
 
@@ -2244,11 +1851,11 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Models.Program", b =>
                 {
-                    b.HasOne("Domain.Models.User", "CreatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId");
 
-                    b.HasOne("Domain.Models.User", "UpdatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId");
 
@@ -2257,50 +1864,14 @@ namespace Domain.Migrations
                     b.Navigation("UpdatedByUser");
                 });
 
-            modelBuilder.Entity("Domain.Models.Role", b =>
-                {
-                    b.HasOne("Domain.Models.User", "CreatedByUser")
-                        .WithMany()
-                        .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Models.User", "UpdatedByUser")
-                        .WithMany()
-                        .HasForeignKey("UpdatedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedByUser");
-
-                    b.Navigation("UpdatedByUser");
-                });
-
-            modelBuilder.Entity("Domain.Models.RolePermission", b =>
-                {
-                    b.HasOne("Domain.Models.Permission", "Permission")
-                        .WithMany("RolePermissions")
-                        .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Models.Role", "Role")
-                        .WithMany("RolePermissions")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Permission");
-
-                    b.Navigation("Role");
-                });
-
             modelBuilder.Entity("Domain.Models.SocialMediaPlatform", b =>
                 {
-                    b.HasOne("Domain.Models.User", "CreatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Models.User", "UpdatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -2312,7 +1883,7 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Models.SocialMediaPublishingLog", b =>
                 {
-                    b.HasOne("Domain.Models.User", "CreatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -2323,13 +1894,13 @@ namespace Domain.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Models.User", "PublishedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "PublishedByUser")
                         .WithMany("SocialMediaPublishingLogs")
                         .HasForeignKey("PublishedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Models.User", "UpdatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -2345,7 +1916,7 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Models.SocialMediaPublishingLogPlatform", b =>
                 {
-                    b.HasOne("Domain.Models.User", "CreatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -2362,7 +1933,7 @@ namespace Domain.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Models.User", "UpdatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -2378,49 +1949,24 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Models.StaffRole", b =>
                 {
-                    b.HasOne("Domain.Models.User", "CreatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Models.User", "UpdatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("CreatedByUser");
-
-                    b.Navigation("UpdatedByUser");
-                });
-
-            modelBuilder.Entity("Domain.Models.User", b =>
-                {
-                    b.HasOne("Domain.Models.User", "CreatedByUser")
-                        .WithMany("InverseCreatedByUser")
-                        .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Models.Role", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Models.User", "UpdatedByUser")
-                        .WithMany("InverseUpdatedByUser")
-                        .HasForeignKey("UpdatedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedByUser");
-
-                    b.Navigation("Role");
 
                     b.Navigation("UpdatedByUser");
                 });
 
             modelBuilder.Entity("Domain.Models.WebsitePublishingLog", b =>
                 {
-                    b.HasOne("Domain.Models.User", "CreatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -2431,13 +1977,13 @@ namespace Domain.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Models.User", "PublishedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "PublishedByUser")
                         .WithMany("WebsitePublishingLogs")
                         .HasForeignKey("PublishedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Models.User", "UpdatedByUser")
+                    b.HasOne("Domain.Identity.ApplicationUser", "UpdatedByUser")
                         .WithMany()
                         .HasForeignKey("UpdatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -2502,6 +2048,15 @@ namespace Domain.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.Identity.ApplicationUser", b =>
+                {
+                    b.Navigation("ExecutionLogs");
+
+                    b.Navigation("SocialMediaPublishingLogs");
+
+                    b.Navigation("WebsitePublishingLogs");
+                });
+
             modelBuilder.Entity("Domain.Models.Correspondent", b =>
                 {
                     b.Navigation("CorrespondentCoverages");
@@ -2537,21 +2092,9 @@ namespace Domain.Migrations
                     b.Navigation("EpisodeGuests");
                 });
 
-            modelBuilder.Entity("Domain.Models.Permission", b =>
-                {
-                    b.Navigation("RolePermissions");
-                });
-
             modelBuilder.Entity("Domain.Models.Program", b =>
                 {
                     b.Navigation("Episodes");
-                });
-
-            modelBuilder.Entity("Domain.Models.Role", b =>
-                {
-                    b.Navigation("RolePermissions");
-
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Domain.Models.SocialMediaPlatform", b =>
@@ -2567,19 +2110,6 @@ namespace Domain.Migrations
             modelBuilder.Entity("Domain.Models.StaffRole", b =>
                 {
                     b.Navigation("Employees");
-                });
-
-            modelBuilder.Entity("Domain.Models.User", b =>
-                {
-                    b.Navigation("ExecutionLogs");
-
-                    b.Navigation("InverseCreatedByUser");
-
-                    b.Navigation("InverseUpdatedByUser");
-
-                    b.Navigation("SocialMediaPublishingLogs");
-
-                    b.Navigation("WebsitePublishingLogs");
                 });
 #pragma warning restore 612, 618
         }

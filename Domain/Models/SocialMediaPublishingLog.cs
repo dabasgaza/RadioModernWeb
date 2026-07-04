@@ -1,5 +1,13 @@
+// ============================================================
+// SocialMediaPublishingLog — سجل النشر الرقمي
+// ============================================================
+// المسؤولية: تعريف سجل النشر الرقمي.
+// ============================================================
 namespace Domain.Models;
 
+/// <summary>
+/// صنف سجل النشر الرقمي.
+/// </summary>
 public class SocialMediaPublishingLog : BaseEntity
 {
     public int SocialMediaPublishingLogId { get; set; }
@@ -15,7 +23,7 @@ public class SocialMediaPublishingLog : BaseEntity
     public DateTime PublishedAt { get; set; }
 
     public virtual EpisodeGuest EpisodeGuest { get; set; } = null!;
-    public virtual User PublishedByUser { get; set; } = null!;
+    public virtual Domain.Identity.ApplicationUser PublishedByUser { get; set; } = null!;
 
     public virtual ICollection<SocialMediaPublishingLogPlatform> Platforms { get; set; } = new List<SocialMediaPublishingLogPlatform>();
 }

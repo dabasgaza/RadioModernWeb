@@ -1,14 +1,20 @@
-using System.ComponentModel.DataAnnotations;
+// ============================================================
+// AccountController — الحسابات
+// ============================================================
+// المسؤولية: تعريف الحسابات.
+// ============================================================
 using Domain.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Radio.Web.Services;
+using System.ComponentModel.DataAnnotations;
 
 namespace Radio.Web.Controllers;
 
+/// <summary>
+/// صنف الحسابات.
+/// </summary>
 public class AccountController : Controller
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
@@ -20,6 +26,9 @@ public class AccountController : Controller
         _logger = logger;
     }
 
+    /// <summary>
+    /// تسجيل دخول الحسابات.
+    /// </summary>
     [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> Login(string? returnUrl = null)
@@ -30,6 +39,9 @@ public class AccountController : Controller
         return View();
     }
 
+    /// <summary>
+    /// تسجيل دخول الحسابات.
+    /// </summary>
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
@@ -68,6 +80,9 @@ public class AccountController : Controller
         return View(model);
     }
 
+    /// <summary>
+    /// تسجيل خروج الحسابات.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
@@ -77,10 +92,16 @@ public class AccountController : Controller
         return RedirectToAction("Login");
     }
 
+    /// <summary>
+    /// Access Denied.
+    /// </summary>
     [HttpGet]
     [AllowAnonymous]
     public IActionResult AccessDenied() => View();
 
+    /// <summary>
+    /// Profile.
+    /// </summary>
     [HttpGet]
     public IActionResult Profile()
     {
@@ -88,6 +109,9 @@ public class AccountController : Controller
         return View();
     }
 
+    /// <summary>
+    /// Settings.
+    /// </summary>
     [HttpGet]
     public IActionResult Settings()
     {
@@ -96,6 +120,9 @@ public class AccountController : Controller
     }
 }
 
+/// <summary>
+/// صنف LoginViewModel.
+/// </summary>
 public class LoginViewModel
 {
     [Required(ErrorMessage = "اسم المستخدم مطلوب.")]

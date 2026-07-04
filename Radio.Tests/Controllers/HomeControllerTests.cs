@@ -1,3 +1,8 @@
+// ============================================================
+// HomeControllerTests — اختبارات الصفحة الرئيسية
+// ============================================================
+// المسؤولية: تعريف اختبارات الصفحة الرئيسية.
+// ============================================================
 using DataAccess.DTOs;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Http;
@@ -8,6 +13,9 @@ using Radio.Web.ViewModels;
 
 namespace Radio.Tests.Controllers;
 
+/// <summary>
+/// صنف اختبارات الصفحة الرئيسية.
+/// </summary>
 public class HomeControllerTests
 {
     private readonly Mock<IReportsService> _reports = new();
@@ -21,6 +29,9 @@ public class HomeControllerTests
         _controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
     }
 
+    /// <summary>
+    /// عرض قائمة _ Returns View With Dashboard.
+    /// </summary>
     [Fact]
     public async Task Index_ReturnsViewWithDashboard()
     {
@@ -36,6 +47,9 @@ public class HomeControllerTests
         viewResult.Model.Should().BeOfType<DashboardViewModel>();
     }
 
+    /// <summary>
+    /// عرض قائمة _ Exception_ Returns Error View.
+    /// </summary>
     [Fact]
     public async Task Index_Exception_ReturnsErrorView()
     {
@@ -47,6 +61,9 @@ public class HomeControllerTests
         result.Should().BeOfType<ViewResult>().Subject.ViewName.Should().Be("Error");
     }
 
+    /// <summary>
+    /// Error_ Returns View.
+    /// </summary>
     [Fact]
     public void Error_ReturnsView()
     {

@@ -1,12 +1,19 @@
+// ============================================================
+// ApplicationManagers — مديري التطبيق
+// ============================================================
+// المسؤولية: تعريف مديري التطبيق.
+// ============================================================
 using Domain.Identity;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Radio.Web.Security;
 
 /// <summary>
 /// مدير المستخدمين المخصص — يضيف منطقاً للتعامل مع ApplicationUser.
+/// <summary>
+/// صنف Application المستخدم.
+/// </summary>
 /// </summary>
 public class ApplicationUserManager : UserManager<ApplicationUser>
 {
@@ -28,6 +35,9 @@ public class ApplicationUserManager : UserManager<ApplicationUser>
 
 /// <summary>
 /// مدير الأدوار المخصص.
+/// <summary>
+/// صنف Application الدور.
+/// </summary>
 /// </summary>
 public class ApplicationRoleManager : RoleManager<ApplicationRole>
 {
@@ -44,6 +54,9 @@ public class ApplicationRoleManager : RoleManager<ApplicationRole>
 
 /// <summary>
 /// مدير تسجيل الدخول المخصص — يحدّث LastLoginAt ويتحقق من IsActive.
+/// <summary>
+/// صنف Application Sign In.
+/// </summary>
 /// </summary>
 public class ApplicationSignInManager : SignInManager<ApplicationUser>
 {

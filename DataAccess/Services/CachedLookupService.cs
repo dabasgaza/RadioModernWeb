@@ -1,12 +1,19 @@
+// ============================================================
+// CachedLookupService — البيانات المخبأة
+// ============================================================
+// المسؤولية: تعريف البيانات المخبأة.
+// ============================================================
 using DataAccess.DTOs;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.DependencyInjection;
-using System.Threading;
 
 namespace DataAccess.Services;
 
+/// <summary>
+/// واجهة I Cached Lookup.
+/// </summary>
 public interface ICachedLookupService
 {
     Task<List<StaffRoleDto>> GetStaffRolesAsync(CancellationToken cancellationToken = default);
@@ -21,6 +28,9 @@ public interface ICachedLookupService
     Task InvalidateByEntity(string entityName, CancellationToken cancellationToken = default);
 }
 
+/// <summary>
+/// صنف البيانات المخبأة.
+/// </summary>
 public class CachedLookupService : ICachedLookupService
 {
     private static readonly TimeSpan CacheDuration = TimeSpan.FromHours(1);
@@ -34,6 +44,9 @@ public class CachedLookupService : ICachedLookupService
         _scopeFactory = scopeFactory;
     }
 
+    /// <summary>
+    /// استرجاع الموظفين الأدوار Async.
+    /// </summary>
     public async Task<List<StaffRoleDto>> GetStaffRolesAsync(CancellationToken cancellationToken = default)
     {
         return await _cache.GetOrCreateAsync("lookup:staffroles", async _ =>
@@ -48,6 +61,9 @@ public class CachedLookupService : ICachedLookupService
         }, new HybridCacheEntryOptions { Expiration = CacheDuration }) ?? [];
     }
 
+    /// <summary>
+    /// استرجاع البرامج Async.
+    /// </summary>
     public async Task<List<ProgramDto>> GetProgramsAsync(CancellationToken cancellationToken = default)
     {
         return await _cache.GetOrCreateAsync("lookup:programs", async _ =>
@@ -62,6 +78,9 @@ public class CachedLookupService : ICachedLookupService
         }, new HybridCacheEntryOptions { Expiration = CacheDuration }) ?? [];
     }
 
+    /// <summary>
+    /// استرجاع الضيوف Async.
+    /// </summary>
     public async Task<List<GuestDto>> GetGuestsAsync(CancellationToken cancellationToken = default)
     {
         return await _cache.GetOrCreateAsync("lookup:guests", async _ =>
@@ -76,6 +95,9 @@ public class CachedLookupService : ICachedLookupService
         }, new HybridCacheEntryOptions { Expiration = CacheDuration }) ?? [];
     }
 
+    /// <summary>
+    /// استرجاع المراسلين Async.
+    /// </summary>
     public async Task<List<CorrespondentDto>> GetCorrespondentsAsync(CancellationToken cancellationToken = default)
     {
         return await _cache.GetOrCreateAsync("lookup:correspondents", async _ =>
@@ -90,6 +112,9 @@ public class CachedLookupService : ICachedLookupService
         }, new HybridCacheEntryOptions { Expiration = CacheDuration }) ?? [];
     }
 
+    /// <summary>
+    /// استرجاع Employees Async.
+    /// </summary>
     public async Task<List<EmployeeDto>> GetEmployeesAsync(CancellationToken cancellationToken = default)
     {
         return await _cache.GetOrCreateAsync("lookup:employees", async _ =>
@@ -105,6 +130,9 @@ public class CachedLookupService : ICachedLookupService
         }, new HybridCacheEntryOptions { Expiration = CacheDuration }) ?? [];
     }
 
+    /// <summary>
+    /// استرجاع Social Platforms Async.
+    /// </summary>
     public async Task<List<SocialMediaPlatformDto>> GetSocialPlatformsAsync(CancellationToken cancellationToken = default)
     {
         return await _cache.GetOrCreateAsync("platforms", async _ =>
@@ -119,6 +147,9 @@ public class CachedLookupService : ICachedLookupService
         }, new HybridCacheEntryOptions { Expiration = CacheDuration }) ?? [];
     }
 
+    /// <summary>
+    /// استرجاع الحلقة Statuses Async.
+    /// </summary>
     public async Task<Dictionary<byte, string>> GetEpisodeStatusesAsync(CancellationToken cancellationToken = default)
     {
         return await _cache.GetOrCreateAsync("lookup:episodestatuses", async _ =>
@@ -132,11 +163,17 @@ public class CachedLookupService : ICachedLookupService
         }, new HybridCacheEntryOptions { Expiration = CacheDuration }) ?? [];
     }
 
+    /// <summary>
+    /// Invalidate.
+    /// </summary>
     public async Task Invalidate(string key, CancellationToken cancellationToken = default)
     {
         await _cache.RemoveAsync(key);
     }
 
+    /// <summary>
+    /// Invalidate الكل.
+    /// </summary>
     public async Task InvalidateAll(CancellationToken cancellationToken = default)
     {
         foreach (var key in s_allKeys)
@@ -160,6 +197,9 @@ public class CachedLookupService : ICachedLookupService
         ["Episode"] = new[] { "lookup:episodestatuses" },
     };
 
+    /// <summary>
+    /// Invalidate By Entity.
+    /// </summary>
     public async Task InvalidateByEntity(string entityName, CancellationToken cancellationToken = default)
     {
         if (EntityCacheMap.TryGetValue(entityName, out var keys))

@@ -1,10 +1,17 @@
+// ============================================================
+// IDatabaseManagementService — I Database Management
+// ============================================================
+// المسؤولية: تعريف I Database Management.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using Domain.Models;
-using System.Threading;
 
 namespace DataAccess.Services
 {
+    /// <summary>
+    /// واجهة I Database Management.
+    /// </summary>
     public interface IDatabaseManagementService
     {
         Task<Result<string>> BackupDatabaseAsync(string? customBackupFolder = null, CancellationToken cancellationToken = default);

@@ -1,8 +1,16 @@
+// ============================================================
+// SystemViewModels — النظام
+// ============================================================
+// المسؤولية: تعريف النظام.
+// ============================================================
 using DataAccess.Services;
 using Domain.Models;
 
 namespace Radio.Web.ViewModels;
 
+/// <summary>
+/// صنف Social Publishing.
+/// </summary>
 public class SocialPublishingViewModel
 {
     public DataAccess.DTOs.ActiveEpisodeDto? Episode { get; set; }
@@ -10,29 +18,41 @@ public class SocialPublishingViewModel
     public List<DataAccess.DTOs.SocialMediaPlatformDto> Platforms { get; set; } = new();
 }
 
+/// <summary>
+/// صنف Social Publishing Form.
+/// </summary>
 public class SocialPublishingFormModel
 {
     public List<GuestSocialLogFormItem> GuestLogs { get; set; } = new();
 }
 
+/// <summary>
+/// صنف الضيف Social سجل Form عنصر.
+/// </summary>
 public class GuestSocialLogFormItem
 {
     public int LogId { get; set; }
     public int EpisodeGuestId { get; set; }
     public int EpisodeId { get; set; }
-    public string ClipTitle { get; set; } = "";
+    public string ClipTitle { get; set; } = string.Empty;
     public int? DurationMinutes { get; set; }
     public MediaType MediaType { get; set; }
     public List<PlatformUrlFormItem> Platforms { get; set; } = new();
     public string? GuestName { get; set; }
 }
 
+/// <summary>
+/// صنف Platform Url Form عنصر.
+/// </summary>
 public class PlatformUrlFormItem
 {
     public int PlatformId { get; set; }
     public string? Url { get; set; }
 }
 
+/// <summary>
+/// صنف Social Publishing Edit.
+/// </summary>
 public class SocialPublishingEditViewModel
 {
     public DataAccess.DTOs.SocialMediaPublishingLogDto? Log { get; set; }
@@ -42,6 +62,9 @@ public class SocialPublishingEditViewModel
     public List<DataAccess.DTOs.PublishingRecordDto> EpisodePublishingRecords { get; set; } = new();
 }
 
+/// <summary>
+/// صنف Website Publish Edit.
+/// </summary>
 public class WebsitePublishEditViewModel
 {
     public DataAccess.DTOs.WebsitePublishingLogDto? Log { get; set; }
@@ -49,6 +72,9 @@ public class WebsitePublishEditViewModel
     public List<DataAccess.DTOs.PublishingRecordDto> EpisodePublishingRecords { get; set; } = new();
 }
 
+/// <summary>
+/// صنف التقارير.
+/// </summary>
 public class ReportsViewModel
 {
     public List<DataAccess.DTOs.TodayEpisodeDto> TodayEpisodes { get; set; } = new();
@@ -58,18 +84,27 @@ public class ReportsViewModel
     public List<DataAccess.DTOs.CancelledEpisodeDto> CancelledEpisodes { get; set; } = new();
 }
 
+/// <summary>
+/// صنف DiagnosticsViewModel.
+/// </summary>
 public class DiagnosticsViewModel
 {
     public DiagnosticsSummaryDto Summary { get; set; } = new();
     public List<DiagnosticLogDto> Logs { get; set; } = new();
 }
 
+/// <summary>
+/// صنف البرنامج.
+/// </summary>
 public class ProgramViewModel
 {
     public DataAccess.DTOs.ProgramDto Program { get; set; } = null!;
     public int EpisodeCount { get; set; }
 }
 
+/// <summary>
+/// صنف لوحة تحكم قاعدة البيانات.
+/// </summary>
 public class DatabaseDashboardViewModel
 {
     public long DatabaseSizeBytes { get; set; }
@@ -85,7 +120,7 @@ public class DatabaseDashboardViewModel
     public int RetentionDays { get; set; }
     public long BackupFolderSizeBytes { get; set; }
     public int FailureCount { get; set; }
-    public string DatabaseName { get; set; } = "";
+    public string DatabaseName { get; set; } = string.Empty;
     public long TotalSizeBytes => DatabaseSizeBytes + DatabaseLogSizeBytes;
     public string DatabaseSizeFormatted => FormatBytes(DatabaseSizeBytes);
     public string LogSizeFormatted => FormatBytes(DatabaseLogSizeBytes);

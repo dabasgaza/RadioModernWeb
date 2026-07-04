@@ -1,4 +1,9 @@
-﻿using DataAccess.Common;
+// ============================================================
+// DatabaseManagementService — إدارة قاعدة البيانات
+// ============================================================
+// المسؤولية: تعريف إدارة قاعدة البيانات.
+// ============================================================
+using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Security;
 using Domain.Models;
@@ -6,10 +11,12 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Threading;
 
 namespace DataAccess.Services
 {
+    /// <summary>
+    /// صنف إدارة قاعدة البيانات.
+    /// </summary>
     public class DatabaseManagementService : IDatabaseManagementService
     {
         private readonly IDbContextFactory<BroadcastWorkflowDBContext> _dbContextFactory;
@@ -34,6 +41,9 @@ namespace DataAccess.Services
 
         /// <summary>
         /// قراءة نص الاتصال الآمن — يدعم التشفير بـ DPAPI ومتغيرات البيئة.
+        /// <summary>
+        /// استرجاع سلسلة الاتصال.
+        /// </summary>
         /// </summary>
         private string GetConnectionString()
         {
@@ -45,12 +55,18 @@ namespace DataAccess.Services
             return "Server=.;Database=BroadcastWorkflowDB;Trusted_Connection=True;TrustServerCertificate=True;";
         }
 
+        /// <summary>
+        /// استرجاع Database الاسم.
+        /// </summary>
         private string GetDatabaseName(string connectionString)
         {
             var builder = new SqlConnectionStringBuilder(connectionString);
             return builder.InitialCatalog;
         }
 
+        /// <summary>
+        /// نسخ احتياطي Database Async.
+        /// </summary>
         public async Task<Result<string>> BackupDatabaseAsync(string? customBackupFolder = null, CancellationToken cancellationToken = default)
         {
             try
@@ -128,6 +144,9 @@ namespace DataAccess.Services
             }
         }
 
+        /// <summary>
+        /// استعادة Database Async.
+        /// </summary>
         public async Task<Result> RestoreDatabaseAsync(string backupFilePath, CancellationToken cancellationToken = default)
         {
             try
@@ -211,6 +230,9 @@ namespace DataAccess.Services
             }
         }
 
+        /// <summary>
+        /// تهيئة Database Async.
+        /// </summary>
         public async Task<Result> InitializeDatabaseAsync(CancellationToken cancellationToken = default)
         {
             try
@@ -226,6 +248,9 @@ namespace DataAccess.Services
             }
         }
 
+        /// <summary>
+        /// إعادة تعيين Database Async.
+        /// </summary>
         public async Task<Result> ResetDatabaseAsync(CancellationToken cancellationToken = default)
         {
             try
@@ -266,6 +291,9 @@ namespace DataAccess.Services
             }
         }
 
+        /// <summary>
+        /// استرجاع Backup History Async.
+        /// </summary>
         public async Task<Result<List<DatabaseBackupLog>>> GetBackupHistoryAsync(CancellationToken cancellationToken = default)
         {
             try
@@ -288,6 +316,9 @@ namespace DataAccess.Services
             }
         }
 
+        /// <summary>
+        /// Cloud Sync Backup Async.
+        /// </summary>
         public async Task<Result> CloudSyncBackupAsync(string localBackupPath, CancellationToken cancellationToken = default)
         {
             try
@@ -344,6 +375,9 @@ namespace DataAccess.Services
             }
         }
 
+        /// <summary>
+        /// تشغيل Retention Policy Async.
+        /// </summary>
         public async Task<Result> RunRetentionPolicyAsync(int retentionDays, CancellationToken cancellationToken = default)
         {
             try
@@ -394,11 +428,14 @@ namespace DataAccess.Services
             }
         }
 
+        /// <summary>
+        /// استرجاع Database Dashboard Async.
+        /// </summary>
         public async Task<DatabaseDashboardDto?> GetDatabaseDashboardAsync(CancellationToken cancellationToken = default)
         {
             long dataSize = 0, logSize = 0;
             int activeConnections = 0;
-            string dbName = "";
+            string dbName = string.Empty;
             try
             {
                 var connectionString = GetConnectionString();
@@ -497,6 +534,9 @@ namespace DataAccess.Services
                 retention, folderSize, failureCount, dbName);
         }
 
+        /// <summary>
+        /// تسجيل Backup Async.
+        /// </summary>
         private async Task LogBackupAsync(string path, string type, long size, string status, string? error = null, CancellationToken cancellationToken = default)
         {
             try

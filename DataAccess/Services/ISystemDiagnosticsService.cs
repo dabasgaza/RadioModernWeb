@@ -1,8 +1,15 @@
+// ============================================================
+// ISystemDiagnosticsService — I النظام Diagnostics
+// ============================================================
+// المسؤولية: تعريف I النظام Diagnostics.
+// ============================================================
 using DataAccess.Common;
-using System.Threading;
 
 namespace DataAccess.Services
 {
+    /// <summary>
+    /// صنف Diagnostic سجل.
+    /// </summary>
     public class DiagnosticLogDto
     {
         public DateTime Timestamp { get; set; }
@@ -15,6 +22,9 @@ namespace DataAccess.Services
         public bool IsSlowQuery { get; set; }
     }
 
+    /// <summary>
+    /// صنف Diagnostics Summary.
+    /// </summary>
     public class DiagnosticsSummaryDto
     {
         public int TotalLogs { get; set; }
@@ -25,6 +35,9 @@ namespace DataAccess.Services
         public double AverageQueryTimeMs { get; set; }
     }
 
+    /// <summary>
+    /// واجهة I النظام Diagnostics.
+    /// </summary>
     public interface ISystemDiagnosticsService
     {
         Task<Result<List<DiagnosticLogDto>>> GetLogsAsync(string? level = null, string? searchTerm = null, int count = 200, CancellationToken cancellationToken = default);

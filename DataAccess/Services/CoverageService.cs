@@ -1,11 +1,18 @@
-﻿using DataAccess.Common;
+// ============================================================
+// CoverageService — التغطية
+// ============================================================
+// المسؤولية: تعريف التغطية.
+// ============================================================
+using DataAccess.Common;
 using DataAccess.DTOs;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Threading;
 
 namespace DataAccess.Services
 {
+    /// <summary>
+    /// واجهة I التغطية.
+    /// </summary>
     public interface ICoverageService
     {
         Task<List<CoverageDto>> GetAllAsync(CancellationToken cancellationToken = default);
@@ -16,8 +23,14 @@ namespace DataAccess.Services
     }
 
     // ✨ استخدام Primary Constructor
+    /// <summary>
+    /// صنف التغطية.
+    /// </summary>
     public class CoverageService(IDbContextFactory<BroadcastWorkflowDBContext> contextFactory) : ICoverageService
     {
+        /// <summary>
+        /// استرجاع الكل Async.
+        /// </summary>
         public async Task<List<CoverageDto>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             using var context = await contextFactory.CreateDbContextAsync();
@@ -40,6 +53,9 @@ namespace DataAccess.Services
                 .ToListAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// استرجاع حسب Id Async.
+        /// </summary>
         public async Task<CoverageDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             using var context = await contextFactory.CreateDbContextAsync();
@@ -61,6 +77,9 @@ namespace DataAccess.Services
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// إنشاء Async.
+        /// </summary>
         public async Task<Result> CreateAsync(CoverageDto dto, UserSession session, CancellationToken cancellationToken = default)
         {
             var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);
@@ -84,6 +103,9 @@ namespace DataAccess.Services
             return Result.Success();
         }
 
+        /// <summary>
+        /// تحديث Async.
+        /// </summary>
         public async Task<Result> UpdateAsync(CoverageDto dto, UserSession session, CancellationToken cancellationToken = default)
         {
             var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);
@@ -113,6 +135,9 @@ namespace DataAccess.Services
             }
         }
 
+        /// <summary>
+        /// حذف Async.
+        /// </summary>
         public async Task<Result> DeleteAsync(int id, UserSession session, CancellationToken cancellationToken = default)
         {
             var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);

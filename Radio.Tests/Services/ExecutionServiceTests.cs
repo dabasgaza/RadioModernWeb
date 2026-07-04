@@ -1,3 +1,8 @@
+// ============================================================
+// ExecutionServiceTests — Execution Service
+// ============================================================
+// المسؤولية: تعريف Execution Service.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
@@ -9,6 +14,9 @@ using System.Threading;
 
 namespace Radio.Tests.Services;
 
+/// <summary>
+/// صنف Execution Service.
+/// </summary>
 public class ExecutionServiceTests : IClassFixture<DatabaseFixture>
 {
     private readonly DatabaseFixture _db;
@@ -21,6 +29,9 @@ public class ExecutionServiceTests : IClassFixture<DatabaseFixture>
         _service = new ExecutionService(db.DbContextFactory);
     }
 
+    /// <summary>
+    /// تسجيل Execution Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task LogExecutionAsync_Valid_ReturnsSuccess()
     {
@@ -43,6 +54,9 @@ public class ExecutionServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// تسجيل Execution Async_ Without Permission_ Returns Fail.
+    /// </summary>
     [Fact]
     public async Task LogExecutionAsync_WithoutPermission_ReturnsFail()
     {
@@ -58,6 +72,9 @@ public class ExecutionServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeFailure("صلاحية");
     }
 
+    /// <summary>
+    /// تسجيل Execution Async_ الحلقة Not Found_ Returns Fail.
+    /// </summary>
     [Fact]
     public async Task LogExecutionAsync_EpisodeNotFound_ReturnsFail()
     {
@@ -71,6 +88,9 @@ public class ExecutionServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeFailure("غير موجودة");
     }
 
+    /// <summary>
+    /// تسجيل Execution Async_ Already Published_ Returns Fail.
+    /// </summary>
     [Fact]
     public async Task LogExecutionAsync_AlreadyPublished_ReturnsFail()
     {
@@ -88,6 +108,9 @@ public class ExecutionServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeFailure("نشر");
     }
 
+    /// <summary>
+    /// استرجاع Execution سجل Async_ Existing_ Returns سجل.
+    /// </summary>
     [Fact]
     public async Task GetExecutionLogAsync_Existing_ReturnsLog()
     {
@@ -110,6 +133,9 @@ public class ExecutionServiceTests : IClassFixture<DatabaseFixture>
         result!.EpisodeId.Should().Be(10);
     }
 
+    /// <summary>
+    /// استرجاع Execution سجل Async_ Non Existing_ Returns Null.
+    /// </summary>
     [Fact]
     public async Task GetExecutionLogAsync_NonExisting_ReturnsNull()
     {
@@ -118,6 +144,9 @@ public class ExecutionServiceTests : IClassFixture<DatabaseFixture>
         result.Should().BeNull();
     }
 
+    /// <summary>
+    /// تحديث Execution سجل Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task UpdateExecutionLogAsync_Valid_ReturnsSuccess()
     {
@@ -144,6 +173,9 @@ public class ExecutionServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// تحديث Execution سجل Async_ Non Existing_ Returns Fail.
+    /// </summary>
     [Fact]
     public async Task UpdateExecutionLogAsync_NonExisting_ReturnsFail()
     {
@@ -153,6 +185,9 @@ public class ExecutionServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeFailure("غير موجود");
     }
 
+    /// <summary>
+    /// تحديث Execution سجل Async_ Without Permission_ Returns Fail.
+    /// </summary>
     [Fact]
     public async Task UpdateExecutionLogAsync_WithoutPermission_ReturnsFail()
     {

@@ -1,5 +1,13 @@
-﻿namespace DataAccess.DTOs
+// ============================================================
+// CoverageDto — التغطية
+// ============================================================
+// المسؤولية: تعريف التغطية.
+// ============================================================
+namespace DataAccess.DTOs
 {
+    /// <summary>
+    /// سجل التغطية.
+    /// </summary>
     public record CoverageDto
     {
         public int CoverageId { get; init; }

@@ -1,3 +1,8 @@
+// ============================================================
+// EpisodesControllerTests — اختبارات الحلقات
+// ============================================================
+// المسؤولية: تعريف اختبارات الحلقات.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
@@ -16,6 +21,9 @@ using System.Threading;
 
 namespace Radio.Tests.Controllers;
 
+/// <summary>
+/// صنف اختبارات الحلقات.
+/// </summary>
 public class EpisodesControllerTests
 {
     private readonly Mock<IEpisodeQueryService> _query = new();
@@ -41,6 +49,9 @@ public class EpisodesControllerTests
         _controller.TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
     }
 
+    /// <summary>
+    /// عرض قائمة _ Returns View With الحلقة قائمة.
+    /// </summary>
     [Fact]
     public async Task Index_ReturnsViewWithEpisodeListViewModel()
     {
@@ -53,6 +64,9 @@ public class EpisodesControllerTests
         viewResult.Model.Should().BeOfType<EpisodeListViewModel>();
     }
 
+    /// <summary>
+    /// عرض تفاصيل _ Existing Episode_ Returns View With Details.
+    /// </summary>
     [Fact]
     public async Task Details_ExistingEpisode_ReturnsViewWithDetailsViewModel()
     {
@@ -70,6 +84,9 @@ public class EpisodesControllerTests
         viewResult.Model.Should().BeOfType<EpisodeDetailsViewModel>();
     }
 
+    /// <summary>
+    /// عرض تفاصيل _ Not Found_ Returns Not Found.
+    /// </summary>
     [Fact]
     public async Task Details_NotFound_ReturnsNotFound()
     {
@@ -80,6 +97,9 @@ public class EpisodesControllerTests
         result.Should().BeOfType<NotFoundResult>();
     }
 
+    /// <summary>
+    /// إنشاء _ Valid_ Stores Temp بيانات And Redirects.
+    /// </summary>
     [Fact]
     public async Task Create_Valid_StoresTempDataAndRedirects()
     {
@@ -99,6 +119,9 @@ public class EpisodesControllerTests
         redirect.ActionName.Should().NotBeNullOrEmpty();
     }
 
+    /// <summary>
+    /// إنشاء _ Invalid Model_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Create_InvalidModel_ReturnsView()
     {
@@ -111,6 +134,9 @@ public class EpisodesControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Get_ Existing Episode_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Edit_Get_ExistingEpisode_ReturnsView()
     {
@@ -123,6 +149,9 @@ public class EpisodesControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Post_ Valid Form_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Edit_Post_ValidForm_Redirects()
     {
@@ -141,6 +170,9 @@ public class EpisodesControllerTests
         redirect.ActionName.Should().NotBeNullOrEmpty();
     }
 
+    /// <summary>
+    /// حذف _ Existing_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Delete_Existing_Redirects()
     {
@@ -152,6 +184,9 @@ public class EpisodesControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// تنفيذ _ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Execute_Valid_Redirects()
     {
@@ -163,6 +198,9 @@ public class EpisodesControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// إلغاء _ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Cancel_Valid_Redirects()
     {
@@ -174,6 +212,9 @@ public class EpisodesControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// Batch Delete_ With Ids_ Redirects.
+    /// </summary>
     [Fact]
     public async Task BatchDelete_WithIds_Redirects()
     {
@@ -182,6 +223,9 @@ public class EpisodesControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// Batch Cancel_ With Ids_ Redirects.
+    /// </summary>
     [Fact]
     public async Task BatchCancel_WithIds_Redirects()
     {

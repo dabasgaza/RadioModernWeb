@@ -1,16 +1,25 @@
+// ============================================================
+// EpisodeService.Commands — أوامر الحلقات
+// ============================================================
+// المسؤولية: تعريف أوامر الحلقات.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using Domain.Models;
-using Microsoft.ApplicationInsights;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using System.Threading;
+using System.Text.Json;
 
 namespace DataAccess.Services;
 
+/// <summary>
+/// صنف الحلقات.
+/// </summary>
 public partial class EpisodeService
 {
+    /// <summary>
+    /// إنشاء الحلقة Async.
+    /// </summary>
     public async Task<Result<int>> CreateEpisodeAsync(EpisodeDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodeManage);
@@ -61,14 +70,19 @@ public partial class EpisodeService
                 foreach (var g in dto.Guests)
                     episode.EpisodeGuests.Add(new EpisodeGuest
                     {
-                        GuestId = g.GuestId, Topic = g.Topic, HostingTime = g.HostingTime, ClipNotes = g.ClipNotes
+                        GuestId = g.GuestId,
+                        Topic = g.Topic,
+                        HostingTime = g.HostingTime,
+                        ClipNotes = g.ClipNotes
                     });
 
             if (dto.Correspondents?.Count > 0)
                 foreach (var c in dto.Correspondents)
                     episode.EpisodeCorrespondents.Add(new EpisodeCorrespondent
                     {
-                        CorrespondentId = c.CorrespondentId, Topic = c.Topic, HostingTime = c.HostingTime
+                        CorrespondentId = c.CorrespondentId,
+                        Topic = c.Topic,
+                        HostingTime = c.HostingTime
                     });
 
             if (dto.Employees?.Count > 0)
@@ -86,6 +100,9 @@ public partial class EpisodeService
         }
     }
 
+    /// <summary>
+    /// تحديث الحلقة Async.
+    /// </summary>
     public async Task<Result> UpdateEpisodeAsync(EpisodeDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodeEdit);
@@ -191,6 +208,9 @@ public partial class EpisodeService
         }
     }
 
+    /// <summary>
+    /// تحديث الحالة Async.
+    /// </summary>
     public async Task<Result> UpdateStatusAsync(int episodeId, byte newStatusId, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = newStatusId == EpisodeStatusValues.Executed
@@ -220,6 +240,9 @@ public partial class EpisodeService
         return Result.Success();
     }
 
+    /// <summary>
+    /// Revert الحلقة الحالة Async.
+    /// </summary>
     public async Task<Result> RevertEpisodeStatusAsync(int episodeId, string reason, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodeRevert);
@@ -283,6 +306,9 @@ public partial class EpisodeService
         return Result.Success();
     }
 
+    /// <summary>
+    /// إلغاء الحلقة Async.
+    /// </summary>
     public async Task<Result> CancelEpisodeAsync(int episodeId, string reason, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodeManage);
@@ -308,6 +334,9 @@ public partial class EpisodeService
         return Result.Success();
     }
 
+    /// <summary>
+    /// تحديث Cancellation Reason Async.
+    /// </summary>
     public async Task<Result> UpdateCancellationReasonAsync(int episodeId, string newReason, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodeEdit);
@@ -325,6 +354,9 @@ public partial class EpisodeService
         return Result.Success();
     }
 
+    /// <summary>
+    /// تبديل Website Publish Async.
+    /// </summary>
     public async Task<Result> ToggleWebsitePublishAsync(int episodeId, bool isPublished, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodeWebPublish);
@@ -363,6 +395,9 @@ public partial class EpisodeService
         return Result.Success();
     }
 
+    /// <summary>
+    /// حذف الحلقة Async.
+    /// </summary>
     public async Task<Result> DeleteEpisodeAsync(int episodeId, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.EpisodeDelete);
@@ -484,6 +519,9 @@ public partial class EpisodeService
         }
     }
 
+    /// <summary>
+    /// Is Valid Transition.
+    /// </summary>
     private static bool IsValidTransition(byte fromStatus, byte toStatus)
     {
         return EpisodeStatusTransition.IsValid(fromStatus, toStatus);

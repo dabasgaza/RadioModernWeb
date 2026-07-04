@@ -1,3 +1,8 @@
+// ============================================================
+// BCryptPasswordHasher — B Crypt كلمة المرور Hasher
+// ============================================================
+// المسؤولية: تعريف B Crypt كلمة المرور Hasher.
+// ============================================================
 using Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 
@@ -12,11 +17,17 @@ namespace Radio.Web.Security;
 /// هذا الـ Hasher:
 ///   - HashPassword: يستخدم BCrypt.HashPassword
 ///   - VerifyHashedPassword: يستخدم BCrypt.Verify ويرجع Success/Failure
+/// <summary>
+/// صنف B Crypt كلمة المرور Hasher.
+/// </summary>
 /// </summary>
 public class BCryptPasswordHasher : IPasswordHasher<ApplicationUser>
 {
     private const int WorkFactor = 11; // نفس WorkFactor المستخدم في النظام الأصلي
 
+    /// <summary>
+    /// التحقق من h كلمة المرور.
+    /// </summary>
     public string HashPassword(ApplicationUser user, string password)
     {
         if (string.IsNullOrEmpty(password))

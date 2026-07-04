@@ -1,14 +1,22 @@
-using System.Security.Claims;
+// ============================================================
+// CurrentUserService — المستخدم الحالي
+// ============================================================
+// المسؤولية: تعريف المستخدم الحالي.
+// ============================================================
 using DataAccess.Common;
+using System.Security.Claims;
 
 namespace Radio.Web.Services;
 
+/// <summary>
+/// واجهة I Current المستخدم.
+/// </summary>
 public interface ICurrentUserService
 {
     ClaimsPrincipal? User { get; }
     bool IsAuthenticated { get; }
     int DomainUserId { get; }
-    int DomainRoleId { get; }
+    int RoleId { get; }
     string? UserName { get; }
     string? FullName { get; }
     string? PrimaryRole { get; }
@@ -17,6 +25,9 @@ public interface ICurrentUserService
     bool HasPermission(string permissionName);
 }
 
+/// <summary>
+/// صنف المستخدم الحالي.
+/// </summary>
 public class CurrentUserService : ICurrentUserService
 {
     private readonly IHttpContextAccessor _httpContext;
@@ -29,7 +40,7 @@ public class CurrentUserService : ICurrentUserService
     public ClaimsPrincipal? User => _httpContext.HttpContext?.User;
     public bool IsAuthenticated => User?.Identity?.IsAuthenticated == true;
     public int DomainUserId => int.TryParse(User?.FindFirstValue("DomainUserId"), out var id) ? id : 0;
-    public int DomainRoleId => int.TryParse(User?.FindFirstValue("DomainRoleId"), out var id) ? id : 0;
+    public int RoleId => int.TryParse(User?.FindFirstValue("DomainRoleId"), out var id) ? id : 0;
     public string? UserName => User?.FindFirstValue(ClaimTypes.Name);
     public string? FullName => User?.FindFirstValue("FullName");
     public string? PrimaryRole => User?.FindFirstValue(ClaimTypes.Role);
@@ -37,6 +48,9 @@ public class CurrentUserService : ICurrentUserService
     public IReadOnlyList<string> Permissions =>
         User?.FindAll("Permission").Select(c => c.Value).ToList() ?? new List<string>();
 
+    /// <summary>
+    /// التحقق من الصلاحية.
+    /// </summary>
     public bool HasPermission(string permissionName)
     {
         if (!IsAuthenticated) return false;
@@ -44,6 +58,9 @@ public class CurrentUserService : ICurrentUserService
         return Permissions.Contains(permissionName);
     }
 
+    /// <summary>
+    /// To المستخدم الجلسة.
+    /// </summary>
     public UserSession? ToUserSession()
     {
         if (!IsAuthenticated) return null;

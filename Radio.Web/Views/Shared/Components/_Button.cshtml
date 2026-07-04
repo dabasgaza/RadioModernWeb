@@ -1,0 +1,13 @@
+@model dynamic
+@{
+    string text = null;
+    string extraClass = string.Empty;
+    if (Model is string) {
+        text = Model as string;
+    } else if (Model != null) {
+        try { text = Model.Text ?? Model.Text?.ToString(); } catch { }
+        try { extraClass = Model.Class ?? string.Empty; } catch { }
+    }
+    if (string.IsNullOrEmpty(text)) text = ViewData["Text"] as string ?? "Button";
+}
+<button class="btn @extraClass" type="button">@text</button>

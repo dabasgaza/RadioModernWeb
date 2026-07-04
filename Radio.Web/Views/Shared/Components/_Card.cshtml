@@ -1,0 +1,22 @@
+@model dynamic
+@{
+    string title = null;
+    string body = null;
+    if (Model is string) { body = Model as string; }
+    else if (Model != null) {
+        try { title = Model.Title; } catch { }
+        try { body = Model.Body ?? Model.Content ?? Model.Html; } catch { }
+    }
+    if (string.IsNullOrEmpty(body)) body = ViewData["Body"] as string ?? string.Empty;
+}
+<div class="ds-card">
+    @if (!string.IsNullOrEmpty(title))
+    {
+        <div class="ds-card-header text-right">
+            <h3 class="font-bold">@title</h3>
+        </div>
+    }
+    <div class="ds-card-body text-right">
+        @Html.Raw(body)
+    </div>
+</div>

@@ -1,8 +1,16 @@
+// ============================================================
+// EpisodeStatus — حالة الحلقة
+// ============================================================
+// المسؤولية: تعريف حالة الحلقة.
+// ============================================================
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Models
 {
+    /// <summary>
+    /// صنف حالة الحلقة.
+    /// </summary>
     public class EpisodeStatus
     {
         [Key]

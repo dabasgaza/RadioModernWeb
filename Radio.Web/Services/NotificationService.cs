@@ -1,8 +1,15 @@
-using DataAccess.Services;
+// ============================================================
+// NotificationService — الإشعارات
+// ============================================================
+// المسؤولية: تعريف الإشعارات.
+// ============================================================
 using Microsoft.AspNetCore.SignalR;
 
 namespace Radio.Web.Services;
 
+/// <summary>
+/// صنف الإشعارات.
+/// </summary>
 public class NotificationService
 {
     private readonly IHubContext<Hubs.NotificationHub> _hubContext;
@@ -14,6 +21,9 @@ public class NotificationService
         _logger = logger;
     }
 
+    /// <summary>
+    /// بناء Payload.
+    /// </summary>
     private object BuildPayload(string type, string title, string message, string? payload = null) => new
     {
         Type = type,
@@ -23,6 +33,9 @@ public class NotificationService
         Timestamp = DateTime.UtcNow
     };
 
+    /// <summary>
+    /// Broadcast Async.
+    /// </summary>
     public async Task BroadcastAsync(string type, string title, string message, string? payload = null)
     {
         try
@@ -35,6 +48,9 @@ public class NotificationService
         }
     }
 
+    /// <summary>
+    /// إرسال To المستخدم Async.
+    /// </summary>
     public async Task SendToUserAsync(int userId, string type, string title, string message, string? payload = null)
     {
         try
@@ -48,6 +64,9 @@ public class NotificationService
         }
     }
 
+    /// <summary>
+    /// إرسال To الدور Async.
+    /// </summary>
     public async Task SendToRoleAsync(string role, string type, string title, string message, string? payload = null)
     {
         try
@@ -61,10 +80,16 @@ public class NotificationService
         }
     }
 
+    /// <summary>
+    /// إرسال إشعار الحلقة الحالة Changed Async.
+    /// </summary>
     public async Task NotifyEpisodeStatusChangedAsync(int episodeId, byte newStatusId)
         => await BroadcastAsync("EpisodeStatusChanged", "تحديث حالة الحلقة",
             $"تم تحديث حالة الحلقة #{episodeId} إلى الحالة {newStatusId}", episodeId.ToString());
 
+    /// <summary>
+    /// إرسال إشعار التدقيق سجل Created Async.
+    /// </summary>
     public async Task NotifyAuditLogCreatedAsync(string tableName, string action)
         => await BroadcastAsync("AuditLogCreated", "سجل تدقيق جديد",
             $"عملية {action} على {tableName}", null);

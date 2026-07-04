@@ -1,10 +1,21 @@
+// ============================================================
+// EpisodeGuestConfiguration — حلقة-ضيف
+// ============================================================
+// المسؤولية: تعريف حلقة-ضيف.
+// ============================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Models.Configurations;
 
+/// <summary>
+/// صنف حلقة-ضيف.
+/// </summary>
 public class EpisodeGuestConfiguration : IEntityTypeConfiguration<EpisodeGuest>
 {
+    /// <summary>
+    /// إعداد حلقة-ضيف.
+    /// </summary>
     public void Configure(EntityTypeBuilder<EpisodeGuest> builder)
     {
         // 1. المفتاح الأساسي (إزالة الاسم القبيح)

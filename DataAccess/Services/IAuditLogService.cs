@@ -1,9 +1,16 @@
+// ============================================================
+// IAuditLogService — I التدقيق سجل
+// ============================================================
+// المسؤولية: تعريف I التدقيق سجل.
+// ============================================================
 using DataAccess.Common;
-using Domain.Models;
-using System.Threading;
+using Domain.Identity;
 
 namespace DataAccess.Services
 {
+    /// <summary>
+    /// صنف سجل التدقيق.
+    /// </summary>
     public class AuditLogDto
     {
         public int AuditLogId { get; set; }
@@ -19,12 +26,18 @@ namespace DataAccess.Services
         public DateTime ChangedAt { get; set; }
     }
 
+    /// <summary>
+    /// صنف مقسم التدقيق سجل النتيجة.
+    /// </summary>
     public class PagedAuditLogResult
     {
-        public List<AuditLogDto> Items { get; set; } = [];
+        public List<AuditLogDto> Items { get; set; } = new();
         public int TotalCount { get; set; }
     }
 
+    /// <summary>
+    /// واجهة I التدقيق سجل.
+    /// </summary>
     public interface IAuditLogService
     {
         Task<Result<PagedAuditLogResult>> GetFilteredAuditLogsAsync(
@@ -37,6 +50,6 @@ namespace DataAccess.Services
             int pageSize = 100,
             CancellationToken cancellationToken = default);
 
-        Task<Result<List<User>>> GetAuditUsersAsync(CancellationToken cancellationToken = default);
+        Task<Result<List<ApplicationUser>>> GetAuditUsersAsync(CancellationToken cancellationToken = default);
     }
 }

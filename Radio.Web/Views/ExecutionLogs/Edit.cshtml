@@ -1,0 +1,67 @@
+@model ExecutionLogDto
+@{ ViewData["Title"] = "تعديل سجل التنفيذ"; }
+
+<div class="page-header">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <span class="material-symbols-rounded">home</span>
+                <a href="/">الرئيسية</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <a href="/ExecutionLogs">سجلات التنفيذ</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <span>تعديل سجل التنفيذ</span>
+            </nav>
+            <h1>
+                <span class="material-symbols-rounded text-primary">play_circle</span>
+                تعديل سجل التنفيذ
+            </h1>
+        </div>
+    </div>
+</div>
+
+<form method="post" action="/ExecutionLogs/Edit/@Model.ExecutionLogId" class="max-w-2xl mx-auto">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="ExecutionLogId" value="@Model.ExecutionLogId" />
+    <input type="hidden" name="EpisodeId" value="@Model.EpisodeId" />
+    <input type="hidden" name="ExecutedByUserId" value="@Model.ExecutedByUserId" />
+
+    @if (ViewContext.ModelState.ErrorCount > 0)
+    {
+        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-6 font-semibold text-sm"></div>
+    }
+
+    <div class="card-premium">
+        <div class="card-header">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-success">play_circle</span>
+                <h3 class="font-bold text-ink text-base">تفاصيل التنفيذ</h3>
+            </div>
+        </div>
+        <div class="card-body space-y-4">
+            <div>
+                <label class="form-label">مدة التنفيذ (بالدقائق)</label>
+                <input type="number" name="DurationMinutes" value="@Model.DurationMinutes" min="1" max="720" class="form-input" />
+            </div>
+            <div>
+                <label class="form-label">ملاحظات التنفيذ</label>
+                <textarea name="ExecutionNotes" rows="4" class="form-input" placeholder="أي ملاحظات حول عملية التنفيذ…">@Model.ExecutionNotes</textarea>
+            </div>
+            <div>
+                <label class="form-label">المشاكل التي واجهت التنفيذ</label>
+                <textarea name="IssuesEncountered" rows="4" class="form-input" placeholder="أي مشاكل تقنية أو إدارية أثناء التنفيذ…">@Model.IssuesEncountered</textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-2 mt-6">
+        <a href="/ExecutionLogs" class="btn-secondary">
+            <span class="material-symbols-rounded">arrow_forward</span>
+            رجوع
+        </a>
+        <button type="submit" class="btn-primary">
+            <span class="material-symbols-rounded">save</span>
+            حفظ التعديلات
+        </button>
+    </div>
+</form>

@@ -1,9 +1,20 @@
+// ============================================================
+// LogContextMiddleware — سجل السياق Middleware
+// ============================================================
+// المسؤولية: تعريف سجل السياق Middleware.
+// ============================================================
 using Serilog.Context;
 
 namespace Radio.Web.Middleware;
 
+/// <summary>
+/// صنف سجل السياق Middleware.
+/// </summary>
 public class LogContextMiddleware(RequestDelegate next)
 {
+    /// <summary>
+    /// Invoke Async.
+    /// </summary>
     public async Task InvokeAsync(HttpContext context)
     {
         using (LogContext.PushProperty("CorrelationId", context.TraceIdentifier))

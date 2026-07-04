@@ -1,10 +1,21 @@
+// ============================================================
+// SocialMediaPublishingLogConfiguration — سجل النشر الرقمي
+// ============================================================
+// المسؤولية: تعريف سجل النشر الرقمي.
+// ============================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Models.Configurations;
 
+/// <summary>
+/// صنف سجل النشر الرقمي.
+/// </summary>
 public class SocialMediaPublishingLogConfiguration : IEntityTypeConfiguration<SocialMediaPublishingLog>
 {
+    /// <summary>
+    /// إعداد سجل النشر الرقمي.
+    /// </summary>
     public void Configure(EntityTypeBuilder<SocialMediaPublishingLog> builder)
     {
         builder.HasKey(e => e.SocialMediaPublishingLogId);

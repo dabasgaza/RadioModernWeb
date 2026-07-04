@@ -1,10 +1,21 @@
+// ============================================================
+// StaffRoleConfiguration — المسمى الوظيفي
+// ============================================================
+// المسؤولية: تعريف المسمى الوظيفي.
+// ============================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Models.Configurations;
 
+/// <summary>
+/// صنف المسمى الوظيفي.
+/// </summary>
 public class StaffRoleConfiguration : IEntityTypeConfiguration<StaffRole>
 {
+    /// <summary>
+    /// إعداد المسمى الوظيفي.
+    /// </summary>
     public void Configure(EntityTypeBuilder<StaffRole> builder)
     {
         builder.HasKey(e => e.StaffRoleId);

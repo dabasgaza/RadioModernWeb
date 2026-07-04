@@ -1,5 +1,13 @@
-﻿namespace DataAccess.DTOs
+// ============================================================
+// ExecutionLogDto — سجل التنفيذ
+// ============================================================
+// المسؤولية: تعريف سجل التنفيذ.
+// ============================================================
+namespace DataAccess.DTOs
 {
+    /// <summary>
+    /// سجل سجل التنفيذ.
+    /// </summary>
     public record ExecutionLogDto
     {
         public int ExecutionLogId { get; set; }

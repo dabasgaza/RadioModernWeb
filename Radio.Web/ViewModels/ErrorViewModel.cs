@@ -1,5 +1,13 @@
+// ============================================================
+// ErrorViewModel — ViewModel الخطأ
+// ============================================================
+// المسؤولية: تعريف ViewModel الخطأ.
+// ============================================================
 namespace Radio.Web.ViewModels;
 
+/// <summary>
+/// صنف ViewModel الخطأ.
+/// </summary>
 public class ErrorViewModel
 {
     public string? RequestId { get; set; }
@@ -7,6 +15,9 @@ public class ErrorViewModel
     public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 }
 
+/// <summary>
+/// صنف DashboardViewModel.
+/// </summary>
 public class DashboardViewModel
 {
     public List<DataAccess.DTOs.TodayEpisodeDto> TodayEpisodes { get; set; } = new();

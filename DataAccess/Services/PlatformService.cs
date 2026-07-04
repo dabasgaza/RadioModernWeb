@@ -1,13 +1,20 @@
+// ============================================================
+// PlatformService — PlatformService
+// ============================================================
+// المسؤولية: تعريف PlatformService.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using Domain.Models;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Threading;
 
 namespace DataAccess.Services;
 
+/// <summary>
+/// صنف PlatformService.
+/// </summary>
 public class PlatformService : IPlatformService
 {
     private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
@@ -26,6 +33,9 @@ public class PlatformService : IPlatformService
         _logger = logger;
         _platformValidator = platformValidator;
     }
+    /// <summary>
+    /// استرجاع النشط Async.
+    /// </summary>
     public async Task<List<SocialMediaPlatformDto>> GetAllActiveAsync(CancellationToken cancellationToken = default)
     {
         using var context = await _contextFactory.CreateDbContextAsync();
@@ -37,6 +47,9 @@ public class PlatformService : IPlatformService
             .ToListAsync(cancellationToken);
     }
 
+    /// <summary>
+    /// إنشاء Async.
+    /// </summary>
     public async Task<Result<int>> CreateAsync(SocialMediaPlatformDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
@@ -70,6 +83,9 @@ public class PlatformService : IPlatformService
         }
     }
 
+    /// <summary>
+    /// تحديث Async.
+    /// </summary>
     public async Task<Result> UpdateAsync(SocialMediaPlatformDto dto, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);
@@ -102,6 +118,9 @@ public class PlatformService : IPlatformService
         }
     }
 
+    /// <summary>
+    /// حذف Async.
+    /// </summary>
     public async Task<Result> DeleteAsync(int platformId, UserSession session, CancellationToken cancellationToken = default)
     {
         var permCheck = session.EnsurePermission(AppPermissions.StaffManage);

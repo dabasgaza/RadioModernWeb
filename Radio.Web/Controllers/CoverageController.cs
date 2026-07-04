@@ -1,14 +1,21 @@
+// ============================================================
+// CoverageController — التغطية
+// ============================================================
+// المسؤولية: تعريف التغطية.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Radio.Web.Services;
-using System.Threading;
 using Radio.Web.ViewModels;
 
 namespace Radio.Web.Controllers;
 
+/// <summary>
+/// صنف التغطية.
+/// </summary>
 [Authorize]
 public class CoverageController : Controller
 {
@@ -24,6 +31,9 @@ public class CoverageController : Controller
         _currentUser = currentUser; _logger = logger;
     }
 
+    /// <summary>
+    /// عرض قائمة التغطية.
+    /// </summary>
     public async Task<IActionResult> Index()
     {
         var list = await _coverage.GetAllAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -33,6 +43,9 @@ public class CoverageController : Controller
         return View(vm);
     }
 
+    /// <summary>
+    /// إنشاء التغطية.
+    /// </summary>
     [Authorize(Policy = AppPermissions.CoordinationManage)]
     public async Task<IActionResult> Create()
     {
@@ -47,6 +60,9 @@ public class CoverageController : Controller
         return View("Edit", vm);
     }
 
+    /// <summary>
+    /// إنشاء التغطية.
+    /// </summary>
     [Authorize(Policy = AppPermissions.CoordinationManage)]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -60,6 +76,9 @@ public class CoverageController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    /// <summary>
+    /// تعديل التغطية.
+    /// </summary>
     [Authorize(Policy = AppPermissions.CoordinationManage)]
     public async Task<IActionResult> Edit(int id)
     {
@@ -76,6 +95,9 @@ public class CoverageController : Controller
         return View(vm);
     }
 
+    /// <summary>
+    /// تعديل التغطية.
+    /// </summary>
     [Authorize(Policy = AppPermissions.CoordinationManage)]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -90,6 +112,9 @@ public class CoverageController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    /// <summary>
+    /// حذف التغطية.
+    /// </summary>
     [Authorize(Policy = AppPermissions.CoordinationManage)]
     [HttpPost]
     [ValidateAntiForgeryToken]

@@ -1,3 +1,8 @@
+// ============================================================
+// ValidationPipelineTests — التحقق من الصحة
+// ============================================================
+// المسؤولية: تعريف التحقق من الصحة.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Validation;
@@ -6,8 +11,14 @@ using Radio.Tests.Helpers;
 
 namespace Radio.Tests.Validation;
 
+/// <summary>
+/// صنف التحقق من الصحة.
+/// </summary>
 public class ValidationPipelineTests
 {
+    /// <summary>
+    /// التحقق من صحة Publishing Log_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public void ValidatePublishingLog_Valid_ReturnsSuccess()
     {
@@ -18,6 +29,9 @@ public class ValidationPipelineTests
         result.IsSuccess.Should().BeTrue();
     }
 
+    /// <summary>
+    /// التحقق من صحة Publishing Log_ Invalid الضيف Id_ Returns Error.
+    /// </summary>
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
@@ -30,6 +44,9 @@ public class ValidationPipelineTests
         result.ShouldBeFailure("ضيف");
     }
 
+    /// <summary>
+    /// التحقق من صحة Publishing Log_ Empty Clip Title_ Returns Error.
+    /// </summary>
     [Fact]
     public void ValidatePublishingLog_EmptyClipTitle_ReturnsError()
     {
@@ -40,6 +57,9 @@ public class ValidationPipelineTests
         result.ShouldBeFailure("عنوان");
     }
 
+    /// <summary>
+    /// التحقق من صحة Publishing Log_ Null Clip Title_ Returns Error.
+    /// </summary>
     [Fact]
     public void ValidatePublishingLog_NullClipTitle_ReturnsError()
     {
@@ -50,6 +70,9 @@ public class ValidationPipelineTests
         result.ShouldBeFailure("عنوان");
     }
 
+    /// <summary>
+    /// التحقق من صحة Publishing Log_ No Platforms_ Returns Error.
+    /// </summary>
     [Fact]
     public void ValidatePublishingLog_NoPlatforms_ReturnsError()
     {
@@ -60,6 +83,9 @@ public class ValidationPipelineTests
         result.ShouldBeFailure("منصة");
     }
 
+    /// <summary>
+    /// التحقق من صحة Publishing Log_ Invalid Url_ Returns Error.
+    /// </summary>
     [Fact]
     public void ValidatePublishingLog_InvalidUrl_ReturnsError()
     {
@@ -70,6 +96,9 @@ public class ValidationPipelineTests
         result.ShouldBeFailure("غير صالحة");
     }
 
+    /// <summary>
+    /// التحقق من صحة Publishing Log_ Missing Urls_ Returns Error.
+    /// </summary>
     [Fact]
     public void ValidatePublishingLog_MissingUrls_ReturnsError()
     {
@@ -80,6 +109,9 @@ public class ValidationPipelineTests
         result.ShouldBeFailure("رابط");
     }
 
+    /// <summary>
+    /// التحقق من صحة Publishing Batch_ Empty List_ Returns Error.
+    /// </summary>
     [Fact]
     public void ValidatePublishingBatch_EmptyList_ReturnsError()
     {
@@ -88,6 +120,9 @@ public class ValidationPipelineTests
         result.ShouldBeFailure("بيانات");
     }
 
+    /// <summary>
+    /// التحقق من صحة Publishing Batch_ Null List_ Returns Error.
+    /// </summary>
     [Fact]
     public void ValidatePublishingBatch_NullList_ReturnsError()
     {
@@ -96,6 +131,9 @@ public class ValidationPipelineTests
         result.ShouldBeFailure("بيانات");
     }
 
+    /// <summary>
+    /// التحقق من صحة Publishing Batch_ Valid List_ Returns Success.
+    /// </summary>
     [Fact]
     public void ValidatePublishingBatch_ValidList_ReturnsSuccess()
     {

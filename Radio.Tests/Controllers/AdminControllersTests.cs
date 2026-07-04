@@ -1,3 +1,8 @@
+// ============================================================
+// AdminControllersTests — اختبارات الإدارة
+// ============================================================
+// المسؤولية: تعريف اختبارات الإدارة.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
@@ -15,6 +20,9 @@ using Radio.Web.ViewModels;
 
 namespace Radio.Tests.Controllers;
 
+/// <summary>
+/// صنف المستخدمين Controller.
+/// </summary>
 public class UsersControllerTests
 {
     private readonly Mock<IUserService> _users = new();
@@ -31,6 +39,9 @@ public class UsersControllerTests
         _controller.TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
     }
 
+    /// <summary>
+    /// عرض قائمة _ Returns View.
+    /// </summary>
     [Fact]
     public async Task Index_ReturnsView()
     {
@@ -41,6 +52,9 @@ public class UsersControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// إنشاء _ Get_ Returns Edit View.
+    /// </summary>
     [Fact]
     public async Task Create_Get_ReturnsEditView()
     {
@@ -51,6 +65,9 @@ public class UsersControllerTests
         result.Should().BeOfType<ViewResult>().Subject.ViewName.Should().Be("Edit");
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Create_Post_Valid_Redirects()
     {
@@ -63,6 +80,9 @@ public class UsersControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Failure_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Create_Post_Failure_ReturnsView()
     {
@@ -75,6 +95,9 @@ public class UsersControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Get_ Existing_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Edit_Get_Existing_ReturnsView()
     {
@@ -87,6 +110,9 @@ public class UsersControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Get_ Non Existing_ Returns Not Found.
+    /// </summary>
     [Fact]
     public async Task Edit_Get_NonExisting_ReturnsNotFound()
     {
@@ -97,6 +123,9 @@ public class UsersControllerTests
         result.Should().BeOfType<NotFoundResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Post_ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Edit_Post_Valid_Redirects()
     {
@@ -109,6 +138,9 @@ public class UsersControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// تبديل Status_ Existing_ Redirects.
+    /// </summary>
     [Fact]
     public async Task ToggleStatus_Existing_Redirects()
     {
@@ -122,6 +154,9 @@ public class UsersControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// تبديل Status_ Non Existing_ Returns Not Found.
+    /// </summary>
     [Fact]
     public async Task ToggleStatus_NonExisting_ReturnsNotFound()
     {
@@ -132,6 +167,9 @@ public class UsersControllerTests
         result.Should().BeOfType<NotFoundResult>();
     }
 
+    /// <summary>
+    /// حذف _ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Delete_Valid_Redirects()
     {
@@ -144,6 +182,9 @@ public class UsersControllerTests
     }
 }
 
+/// <summary>
+/// صنف الأدوار Controller.
+/// </summary>
 public class RolesControllerTests
 {
     private readonly Mock<IUserService> _users = new();
@@ -160,6 +201,9 @@ public class RolesControllerTests
         _controller.TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
     }
 
+    /// <summary>
+    /// عرض قائمة _ Returns View.
+    /// </summary>
     [Fact]
     public async Task Index_ReturnsView()
     {
@@ -170,6 +214,9 @@ public class RolesControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// إنشاء _ Get_ Returns Edit View.
+    /// </summary>
     [Fact]
     public void Create_Get_ReturnsEditView()
     {
@@ -178,6 +225,9 @@ public class RolesControllerTests
         result.Should().BeOfType<ViewResult>().Subject.ViewName.Should().Be("Edit");
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Create_Post_Valid_Redirects()
     {
@@ -189,6 +239,9 @@ public class RolesControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Empty Name_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Create_Post_EmptyName_ReturnsView()
     {
@@ -197,6 +250,9 @@ public class RolesControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Get_ Existing_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Edit_Get_Existing_ReturnsView()
     {
@@ -208,6 +264,9 @@ public class RolesControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Get_ Non Existing_ Returns Not Found.
+    /// </summary>
     [Fact]
     public async Task Edit_Get_NonExisting_ReturnsNotFound()
     {
@@ -218,6 +277,9 @@ public class RolesControllerTests
         result.Should().BeOfType<NotFoundResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Post_ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Edit_Post_Valid_Redirects()
     {
@@ -229,6 +291,9 @@ public class RolesControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// حذف _ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Delete_Valid_Redirects()
     {
@@ -239,8 +304,41 @@ public class RolesControllerTests
 
         result.Should().BeOfType<RedirectToActionResult>();
     }
+
+    /// <summary>
+    /// اختبار نسخ الدور GET عند وجود الدور المصدر.
+    /// </summary>
+    [Fact]
+    public async Task Clone_Get_Existing_ReturnsView()
+    {
+        _users.Setup(u => u.GetRolesAsync(CancellationToken.None))
+            .ReturnsAsync([new RoleDto { RoleId = 3, RoleName = "موجود" }]);
+
+        var result = await _controller.Clone(3);
+
+        result.Should().BeOfType<ViewResult>();
+        ((int)_controller.ViewBag.SourceRoleId).Should().Be(3);
+        ((string)_controller.ViewBag.SourceRoleName).Should().Be("موجود");
+    }
+
+    /// <summary>
+    /// اختبار نسخ الدور POST بنجاح.
+    /// </summary>
+    [Fact]
+    public async Task Clone_Post_Valid_Redirects()
+    {
+        _users.Setup(u => u.CloneRoleAsync(3, "دور جديد", "وصف", _admin, CancellationToken.None))
+            .ReturnsAsync(Result<int>.Success(4));
+
+        var result = await _controller.Clone(3, "دور جديد", "وصف");
+
+        result.Should().BeOfType<RedirectToActionResult>();
+    }
 }
 
+/// <summary>
+/// صنف التدقيق السجلات Controller.
+/// </summary>
 public class AuditLogsControllerTests
 {
     private readonly Mock<IAuditLogService> _auditLog = new();
@@ -253,6 +351,9 @@ public class AuditLogsControllerTests
         _controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
     }
 
+    /// <summary>
+    /// عرض قائمة _ Returns View.
+    /// </summary>
     [Fact]
     public async Task Index_ReturnsView()
     {

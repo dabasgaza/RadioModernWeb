@@ -1,10 +1,21 @@
+// ============================================================
+// WebsitePublishingLogConfiguration — سجل نشر الموقع
+// ============================================================
+// المسؤولية: تعريف سجل نشر الموقع.
+// ============================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Models.Configurations;
 
+/// <summary>
+/// صنف سجل نشر الموقع.
+/// </summary>
 public class WebsitePublishingLogConfiguration : IEntityTypeConfiguration<WebsitePublishingLog>
 {
+    /// <summary>
+    /// إعداد سجل نشر الموقع.
+    /// </summary>
     public void Configure(EntityTypeBuilder<WebsitePublishingLog> builder)
     {
         builder.HasKey(e => e.WebsitePublishingLogId);

@@ -1,9 +1,17 @@
+// ============================================================
+// CurrentSessionProvider — مزود الجلسة
+// ============================================================
+// المسؤولية: تعريف مزود الجلسة.
+// ============================================================
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DataAccess.Common
 {
+    /// <summary>
+    /// صنف مزود الجلسة.
+    /// </summary>
     public class CurrentSessionProvider(IServiceProvider serviceProvider)
     {
         private static readonly AsyncLocal<UserSession?> _current = new();
@@ -14,6 +22,9 @@ namespace DataAccess.Common
             set => _current.Value = value;
         }
 
+        /// <summary>
+        /// Refresh الصلاحيات Async.
+        /// </summary>
         public async Task RefreshPermissionsAsync()
         {
             if (CurrentSession == null) return;
@@ -21,24 +32,24 @@ namespace DataAccess.Common
             var contextFactory = serviceProvider.GetRequiredService<IDbContextFactory<BroadcastWorkflowDBContext>>();
             await using var context = await contextFactory.CreateDbContextAsync();
 
-            var userRoleInfo = await context.Users
+            var user = await context.Users
                 .AsNoTracking()
-                .Where(u => u.UserId == CurrentSession.UserId)
-                .Select(u => new
-                {
-                    RoleName = u.Role != null ? u.Role.RoleName : "Unknown",
-                    Permissions = u.Role != null
-                        ? u.Role.RolePermissions
-                            .Select(rp => rp.Permission.SystemName)
-                            .ToList()
-                        : new List<string>()
-                })
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(u => u.Id == CurrentSession.UserId);
 
-            if (userRoleInfo != null)
+            if (user != null)
             {
-                CurrentSession.RoleName = userRoleInfo.RoleName;
-                CurrentSession.Permissions = userRoleInfo.Permissions;
+                var role = await context.Roles
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(r => r.Id == user.RoleId);
+
+                var permissions = await context.RoleClaims
+                    .AsNoTracking()
+                    .Where(rc => rc.RoleId == user.RoleId && rc.ClaimType == "Permission" && rc.ClaimValue != null)
+                    .Select(rc => rc.ClaimValue!)
+                    .ToListAsync();
+
+                CurrentSession.RoleName = role?.Name ?? "Unknown";
+                CurrentSession.Permissions = permissions;
             }
         }
     }

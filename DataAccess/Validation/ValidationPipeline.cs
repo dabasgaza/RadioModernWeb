@@ -1,16 +1,27 @@
+// ============================================================
+// ValidationPipeline — التحقق من الصحة
+// ============================================================
+// المسؤولية: تعريف التحقق من الصحة.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
-using Domain.Models;
+using Domain.Identity;
 
 namespace DataAccess.Validation
 {
     /// <summary>
     /// أنبوب تحقق مركزي — يجمع أخطاء المدخلات ويعيد Result.Success/Fail
     /// بدلاً من رمي استثناءات، لتجنب الضغط على الموارد.
+    /// <summary>
+    /// صنف التحقق من الصحة.
+    /// </summary>
     /// </summary>
     [Obsolete("استخدم FluentValidation (IValidator<T>) بدلاً من ValidationPipeline. راجع DataAccess/Validation/Validators/")]
     public static class ValidationPipeline
     {
+        /// <summary>
+        /// التحقق من صحة الضيف.
+        /// </summary>
         public static Result ValidateGuest(GuestDto dto)
         {
             var errors = new List<string>();
@@ -24,6 +35,9 @@ namespace DataAccess.Validation
             return BuildResult(errors);
         }
 
+        /// <summary>
+        /// التحقق من صحة Platform.
+        /// </summary>
         public static Result ValidatePlatform(SocialMediaPlatformDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Name))
@@ -32,6 +46,9 @@ namespace DataAccess.Validation
             return Result.Success();
         }
 
+        /// <summary>
+        /// التحقق من صحة الموظف.
+        /// </summary>
         public static Result ValidateEmployee(EmployeeDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.FullName))
@@ -43,6 +60,9 @@ namespace DataAccess.Validation
             return Result.Success();
         }
 
+        /// <summary>
+        /// التحقق من صحة المسمى الوظيفي.
+        /// </summary>
         public static Result ValidateStaffRole(StaffRoleDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.RoleName))
@@ -51,14 +71,17 @@ namespace DataAccess.Validation
             return Result.Success();
         }
 
-        public static Result ValidateUser(User dto, bool isNew)
+        /// <summary>
+        /// التحقق من صحة المستخدم.
+        /// </summary>
+        public static Result ValidateUser(ApplicationUser dto, bool isNew)
         {
             var errors = new List<string>();
 
             if (string.IsNullOrWhiteSpace(dto.FullName))
                 errors.Add("اسم المستخدم مطلوب.");
 
-            if (string.IsNullOrWhiteSpace(dto.Username))
+            if (string.IsNullOrWhiteSpace(dto.UserName))
                 errors.Add("اسم المستخدم مطلوب.");
 
             if (isNew && string.IsNullOrWhiteSpace(dto.PasswordHash))
@@ -70,6 +93,9 @@ namespace DataAccess.Validation
             return BuildResult(errors);
         }
 
+        /// <summary>
+        /// التحقق من صحة المراسل.
+        /// </summary>
         public static Result ValidateCorrespondent(CorrespondentDto dto)
         {
             var errors = new List<string>();
@@ -83,6 +109,9 @@ namespace DataAccess.Validation
             return BuildResult(errors);
         }
 
+        /// <summary>
+        /// التحقق من صحة التغطية.
+        /// </summary>
         public static Result ValidateCoverage(CoverageDto dto)
         {
             var errors = new List<string>();
@@ -96,6 +125,9 @@ namespace DataAccess.Validation
             return BuildResult(errors);
         }
 
+        /// <summary>
+        /// التحقق من صحة الحلقة.
+        /// </summary>
         public static Result ValidateEpisode(EpisodeDto dto)
         {
             var errors = new List<string>();
@@ -112,6 +144,9 @@ namespace DataAccess.Validation
             return BuildResult(errors);
         }
 
+        /// <summary>
+        /// التحقق من صحة البرنامج.
+        /// </summary>
         public static Result ValidateProgram(ProgramDto dto)
         {
             var errors = new List<string>();
@@ -122,6 +157,9 @@ namespace DataAccess.Validation
             return BuildResult(errors);
         }
 
+        /// <summary>
+        /// التحقق من صحة المستخدم.
+        /// </summary>
         public static Result ValidateUser(UserDto dto, string? password)
         {
             var errors = new List<string>();
@@ -144,6 +182,9 @@ namespace DataAccess.Validation
             return BuildResult(errors);
         }
 
+        /// <summary>
+        /// التحقق من صحة سجل النشر.
+        /// </summary>
         public static Result ValidatePublishingLog(SocialMediaPublishingLogDto dto)
         {
             var errors = new List<string>();
@@ -181,6 +222,9 @@ namespace DataAccess.Validation
             return BuildResult(errors);
         }
 
+        /// <summary>
+        /// التحقق من صحة Publishing Batch.
+        /// </summary>
         public static Result ValidatePublishingBatch(List<SocialMediaPublishingLogDto> guestLogs)
             => ValidatePublishingBatch(guestLogs, null);
 
@@ -188,6 +232,9 @@ namespace DataAccess.Validation
         /// التحقق من دفعة سجلات النشر مع أسماء الضيوف لرسائل خطأ أوضح
         /// </summary>
         /// <param name="guestLogs">قائمة سجلات النشر</param>
+        /// <summary>
+        /// التحقق من صحة Publishing Batch.
+        /// </summary>
         /// <param name="guestNames">أسماء الضيوف (اختياري) — تُظهر اسم الضيف بدل رقمه في رسائل الخطأ</param>
         public static Result ValidatePublishingBatch(List<SocialMediaPublishingLogDto> guestLogs, List<string>? guestNames)
         {
@@ -243,6 +290,9 @@ namespace DataAccess.Validation
         /// التحقق من صحة الرابط — يقبل الروابط مع أو بدون بروتوكول
         /// مثال صالح: "youtube.com/watch?v=..." أو "https://youtube.com/..."
         /// مثال غير صالح: "hello world" أو "abc"
+        /// <summary>
+        /// Is Valid Url.
+        /// </summary>
         /// </summary>
         private static bool IsValidUrl(string url)
         {
@@ -268,6 +318,9 @@ namespace DataAccess.Validation
             return true;
         }
 
+        /// <summary>
+        /// بناء نتيجة العملية.
+        /// </summary>
         private static Result BuildResult(List<string> errors) =>
             errors.Count > 0
                 ? Result.Fail(string.Join(Environment.NewLine, errors))

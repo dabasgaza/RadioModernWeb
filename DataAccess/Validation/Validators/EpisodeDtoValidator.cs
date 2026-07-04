@@ -1,8 +1,16 @@
+// ============================================================
+// EpisodeDtoValidator — التحقق من الحلقة
+// ============================================================
+// المسؤولية: تعريف التحقق من الحلقة.
+// ============================================================
 using DataAccess.DTOs;
 using FluentValidation;
 
 namespace DataAccess.Validation.Validators;
 
+/// <summary>
+/// صنف التحقق من الحلقة.
+/// </summary>
 public class EpisodeDtoValidator : AbstractValidator<EpisodeDto>
 {
     public EpisodeDtoValidator()

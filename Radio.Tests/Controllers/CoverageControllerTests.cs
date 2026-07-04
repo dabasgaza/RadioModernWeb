@@ -1,3 +1,8 @@
+// ============================================================
+// CoverageControllerTests — اختبارات التغطية
+// ============================================================
+// المسؤولية: تعريف اختبارات التغطية.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
@@ -11,6 +16,9 @@ using Radio.Web.Services;
 
 namespace Radio.Tests.Controllers;
 
+/// <summary>
+/// صنف اختبارات التغطية.
+/// </summary>
 public class CoverageControllerTests
 {
     private readonly Mock<ICoverageService> _coverage = new();
@@ -29,6 +37,9 @@ public class CoverageControllerTests
         _controller.TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
     }
 
+    /// <summary>
+    /// عرض قائمة _ Returns View.
+    /// </summary>
     [Fact]
     public async Task Index_ReturnsView()
     {
@@ -41,6 +52,9 @@ public class CoverageControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// إنشاء _ Get_ Returns Edit View.
+    /// </summary>
     [Fact]
     public async Task Create_Get_ReturnsEditView()
     {
@@ -52,6 +66,9 @@ public class CoverageControllerTests
         result.Should().BeOfType<ViewResult>().Subject.ViewName.Should().Be("Edit");
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Create_Post_Valid_Redirects()
     {
@@ -63,6 +80,9 @@ public class CoverageControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Invalid Model_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Create_Post_InvalidModel_Redirects()
     {
@@ -73,6 +93,9 @@ public class CoverageControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Failure_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Create_Post_Failure_Redirects()
     {
@@ -85,6 +108,9 @@ public class CoverageControllerTests
         _controller.TempData["Error"].Should().Be("خطأ");
     }
 
+    /// <summary>
+    /// تعديل _ Get_ Existing_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Edit_Get_Existing_ReturnsView()
     {
@@ -98,6 +124,9 @@ public class CoverageControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Get_ Non Existing_ Returns Not Found.
+    /// </summary>
     [Fact]
     public async Task Edit_Get_NonExisting_ReturnsNotFound()
     {
@@ -109,6 +138,9 @@ public class CoverageControllerTests
         result.Should().BeOfType<NotFoundResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Post_ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Edit_Post_Valid_Redirects()
     {
@@ -120,6 +152,9 @@ public class CoverageControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Post_ Invalid Model_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Edit_Post_InvalidModel_Redirects()
     {
@@ -130,6 +165,9 @@ public class CoverageControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// حذف _ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Delete_Valid_Redirects()
     {
@@ -141,6 +179,9 @@ public class CoverageControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// حذف _ Failure_ Redirects With Error.
+    /// </summary>
     [Fact]
     public async Task Delete_Failure_RedirectsWithError()
     {

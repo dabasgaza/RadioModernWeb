@@ -1,15 +1,21 @@
+// ============================================================
+// ProgramsController — البرامج
+// ============================================================
+// المسؤولية: تعريف البرامج.
+// ============================================================
 using DataAccess.Common;
-using DataAccess.Validation;
 using DataAccess.DTOs;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Radio.Web.Services;
-using System.Threading;
 using Radio.Web.ViewModels;
 
 namespace Radio.Web.Controllers;
 
+/// <summary>
+/// صنف البرامج.
+/// </summary>
 [Authorize]
 public class ProgramsController : Controller
 {
@@ -30,6 +36,9 @@ public class ProgramsController : Controller
         _logger = logger;
     }
 
+    /// <summary>
+    /// عرض قائمة البرامج.
+    /// </summary>
     public async Task<IActionResult> Index(string? search)
     {
         try
@@ -42,7 +51,7 @@ public class ProgramsController : Controller
                     (p.ProgramName?.Contains(s, StringComparison.OrdinalIgnoreCase) ?? false) ||
                     (p.Category?.Contains(s, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
             }
-            ViewBag.Search = search ?? "";
+            ViewBag.Search = search ?? string.Empty;
 
             var episodes = await _episodes.GetActiveEpisodesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
             var model = programs.Select(p => new ProgramViewModel
@@ -61,9 +70,15 @@ public class ProgramsController : Controller
     }
 
 
+    /// <summary>
+    /// إنشاء البرامج.
+    /// </summary>
     [Authorize(Policy = AppPermissions.ProgramManage)]
     public IActionResult Create() => View("Edit", new ProgramDto(0, string.Empty, null, null));
 
+    /// <summary>
+    /// إنشاء البرامج.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.ProgramManage)]
@@ -81,10 +96,13 @@ public class ProgramsController : Controller
             TempData["Success"] = "تم إنشاء البرنامج بنجاح";
             return RedirectToAction(nameof(Index));
         }
-        ModelState.AddModelError("", result.ErrorMessage!);
+        ModelState.AddModelError(string.Empty, result.ErrorMessage!);
         return View("Edit", model);
     }
 
+    /// <summary>
+    /// تعديل البرامج.
+    /// </summary>
     [Authorize(Policy = AppPermissions.ProgramManage)]
     public async Task<IActionResult> Edit(int id)
     {
@@ -94,6 +112,9 @@ public class ProgramsController : Controller
         return View(program);
     }
 
+    /// <summary>
+    /// تعديل البرامج.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.ProgramManage)]
@@ -112,10 +133,13 @@ public class ProgramsController : Controller
             TempData["Success"] = "تم تحديث البرنامج";
             return RedirectToAction(nameof(Index));
         }
-        ModelState.AddModelError("", result.ErrorMessage!);
+        ModelState.AddModelError(string.Empty, result.ErrorMessage!);
         return View(model);
     }
 
+    /// <summary>
+    /// حذف البرامج.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = AppPermissions.ProgramManage)]

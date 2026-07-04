@@ -1,7 +1,15 @@
+// ============================================================
+// UserSession — جلسة المستخدم
+// ============================================================
+// المسؤولية: تعريف جلسة المستخدم.
+// ============================================================
 namespace DataAccess.Common;
 
 /// <summary>
 /// بيانات الجلسة النشطة للمستخدم — تُملأ عند تسجيل الدخول وتُحدَّث عند تغيير الصلاحيات
+/// <summary>
+/// صنف جلسة المستخدم.
+/// </summary>
 /// </summary>
 public class UserSession
 {
@@ -18,6 +26,9 @@ public class UserSession
     /// <summary>
     /// يتحقق إن كان المستخدم يملك صلاحية معيّنة.
     /// المستخدم ذو دور "Admin" يملك جميع الصلاحيات تلقائياً.
+    /// <summary>
+    /// التحقق من الصلاحية.
+    /// </summary>
     /// </summary>
     public bool HasPermission(string permissionName)
         => RoleName == "Admin" || Permissions.Contains(permissionName);

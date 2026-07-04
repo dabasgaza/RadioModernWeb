@@ -1,8 +1,16 @@
+// ============================================================
+// UserDtoValidator — التحقق من المستخدم
+// ============================================================
+// المسؤولية: تعريف التحقق من المستخدم.
+// ============================================================
 using DataAccess.DTOs;
 using FluentValidation;
 
 namespace DataAccess.Validation.Validators;
 
+/// <summary>
+/// صنف التحقق من المستخدم.
+/// </summary>
 public class UserDtoValidator : AbstractValidator<UserDto>
 {
     public UserDtoValidator()
@@ -18,6 +26,9 @@ public class UserDtoValidator : AbstractValidator<UserDto>
     }
 }
 
+/// <summary>
+/// صنف المستخدم Create.
+/// </summary>
 public class UserCreateValidator : AbstractValidator<(UserDto Dto, string? Password)>
 {
     public UserCreateValidator()

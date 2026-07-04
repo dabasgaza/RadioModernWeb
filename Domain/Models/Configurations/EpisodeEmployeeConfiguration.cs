@@ -1,10 +1,21 @@
+// ============================================================
+// EpisodeEmployeeConfiguration — حلقة-موظف
+// ============================================================
+// المسؤولية: تعريف حلقة-موظف.
+// ============================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Models.Configurations;
 
+/// <summary>
+/// صنف حلقة-موظف.
+/// </summary>
 public class EpisodeEmployeeConfiguration : IEntityTypeConfiguration<EpisodeEmployee>
 {
+    /// <summary>
+    /// إعداد حلقة-موظف.
+    /// </summary>
     public void Configure(EntityTypeBuilder<EpisodeEmployee> builder)
     {
         // 1. المفتاح الأساسي

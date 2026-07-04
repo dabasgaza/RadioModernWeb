@@ -1,5 +1,13 @@
+// ============================================================
+// AppPermissions — الصلاحيات النظامية
+// ============================================================
+// المسؤولية: تعريف الصلاحيات النظامية.
+// ============================================================
 namespace DataAccess.Common
 {
+    /// <summary>
+    /// صنف الصلاحية معلومات Attribute.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Field)]
     public class PermissionInfoAttribute(string displayName, string module) : Attribute
     {
@@ -9,6 +17,9 @@ namespace DataAccess.Common
 
     /// <summary>
     /// يحتوي على كافة ثوابت الصلاحيات لضمان عدم وجود أخطاء إملائية في الكود
+    /// <summary>
+    /// صنف الصلاحيات النظامية.
+    /// </summary>
     /// </summary>
     public static class AppPermissions
     {

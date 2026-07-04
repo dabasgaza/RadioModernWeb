@@ -1,13 +1,20 @@
+// ============================================================
+// CorrespondentService — المراسل
+// ============================================================
+// المسؤولية: تعريف المراسل.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using Domain.Models;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Threading;
 
 namespace DataAccess.Services
 {
+    /// <summary>
+    /// واجهة I المراسل.
+    /// </summary>
     public interface ICorrespondentService
     {
         // ✨ إرجاع DTOs بدلاً من الكيانات
@@ -19,6 +26,9 @@ namespace DataAccess.Services
     }
 
     // ✨ استخدام Primary Constructor
+    /// <summary>
+    /// صنف المراسل.
+    /// </summary>
     public class CorrespondentService : ICorrespondentService
     {
         private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
@@ -52,6 +62,9 @@ namespace DataAccess.Services
                         c.AssignedLocations
                     )));
 
+        /// <summary>
+        /// استرجاع النشط Async.
+        /// </summary>
         public async Task<List<CorrespondentDto>> GetAllActiveAsync(CancellationToken cancellationToken = default)
         {
             using var context = await _contextFactory.CreateDbContextAsync();
@@ -62,6 +75,9 @@ namespace DataAccess.Services
             return result;
         }
 
+        /// <summary>
+        /// إنشاء Async.
+        /// </summary>
         public async Task<Result> CreateAsync(CorrespondentDto dto, UserSession session, CancellationToken cancellationToken = default)
         {
             var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);
@@ -93,6 +109,9 @@ namespace DataAccess.Services
             }
         }
 
+        /// <summary>
+        /// تحديث Async.
+        /// </summary>
         public async Task<Result> UpdateAsync(CorrespondentDto dto, UserSession session, CancellationToken cancellationToken = default)
         {
             var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);
@@ -124,6 +143,9 @@ namespace DataAccess.Services
             }
         }
 
+        /// <summary>
+        /// Soft Delete Async.
+        /// </summary>
         public async Task<Result> SoftDeleteAsync(int id, UserSession session, CancellationToken cancellationToken = default)
         {
             var permCheck = session.EnsurePermission(AppPermissions.CoordinationManage);
@@ -149,6 +171,9 @@ namespace DataAccess.Services
             }
         }
 
+        /// <summary>
+        /// استرجاع التغطية Async.
+        /// </summary>
         public async Task<List<CorrespondentCoverageDto>> GetCoverageAsync(int correspondentId, CancellationToken cancellationToken = default)
         {
             using var context = await _contextFactory.CreateDbContextAsync();

@@ -1,7 +1,15 @@
+// ============================================================
+// AdminViewModels — الإدارة
+// ============================================================
+// المسؤولية: تعريف الإدارة.
+// ============================================================
 using DataAccess.DTOs;
 
 namespace Radio.Web.ViewModels;
 
+/// <summary>
+/// صنف المستخدم.
+/// </summary>
 public class UserViewModel
 {
     public int UserId { get; set; }
@@ -13,6 +21,9 @@ public class UserViewModel
     public bool IsActive { get; set; } = true;
     public string? Password { get; set; }
 
+    /// <summary>
+    /// To Dto.
+    /// </summary>
     public UserDto ToDto() => new()
     {
         UserId = UserId,
@@ -25,6 +36,9 @@ public class UserViewModel
     };
 }
 
+/// <summary>
+/// صنف الصلاحية المصفوفة.
+/// </summary>
 public class PermissionMatrixViewModel
 {
     public List<RoleDto> Roles { get; set; } = new();

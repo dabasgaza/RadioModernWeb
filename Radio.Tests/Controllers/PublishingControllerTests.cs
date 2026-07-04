@@ -1,3 +1,8 @@
+// ============================================================
+// PublishingControllerTests — اختبارات النشر
+// ============================================================
+// المسؤولية: تعريف اختبارات النشر.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
@@ -16,6 +21,9 @@ using System.Threading;
 
 namespace Radio.Tests.Controllers;
 
+/// <summary>
+/// صنف اختبارات النشر.
+/// </summary>
 public class PublishingControllerTests
 {
     private readonly Mock<IPublishingQueryService> _query = new();
@@ -38,6 +46,9 @@ public class PublishingControllerTests
         _controller.TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
     }
 
+    /// <summary>
+    /// Record.
+    /// </summary>
     private static PublishingRecordDto Record(int id, string type, int epId, string epName, string progName, string summary, DateTime date, string by) =>
         new()
         {
@@ -46,6 +57,9 @@ public class PublishingControllerTests
             Summary = summary, RecordDate = date, RecordedBy = by
         };
 
+    /// <summary>
+    /// عرض قائمة _ Returns View With Records.
+    /// </summary>
     [Fact]
     public async Task Index_ReturnsViewWithRecords()
     {
@@ -61,6 +75,9 @@ public class PublishingControllerTests
         viewResult.Model.Should().BeAssignableTo<IEnumerable<PublishingRecordDto>>();
     }
 
+    /// <summary>
+    /// عرض قائمة _ البحث Filter_ Returns Filtered.
+    /// </summary>
     [Fact]
     public async Task Index_SearchFilter_ReturnsFiltered()
     {
@@ -78,6 +95,9 @@ public class PublishingControllerTests
         model![0].EpisodeName.Should().Be("Special Ep");
     }
 
+    /// <summary>
+    /// تسجيل Social_ Get_ Existing Episode_ Returns View.
+    /// </summary>
     [Fact]
     public async Task LogSocial_Get_ExistingEpisode_ReturnsView()
     {
@@ -94,6 +114,9 @@ public class PublishingControllerTests
         viewResult.Model.Should().BeOfType<SocialPublishingViewModel>();
     }
 
+    /// <summary>
+    /// تسجيل Social_ Get_ Nonexistent Episode_ Returns View With Null.
+    /// </summary>
     [Fact]
     public async Task LogSocial_Get_NonexistentEpisode_ReturnsViewWithNull()
     {
@@ -107,6 +130,9 @@ public class PublishingControllerTests
         vm!.Episode.Should().BeNull();
     }
 
+    /// <summary>
+    /// تسجيل Social_ Post_ Valid_ Redirects To Index.
+    /// </summary>
     [Fact]
     public async Task LogSocial_Post_Valid_RedirectsToIndex()
     {
@@ -123,6 +149,9 @@ public class PublishingControllerTests
         redirect.ActionName.Should().Be(nameof(PublishingController.Index));
     }
 
+    /// <summary>
+    /// تسجيل Social_ Post_ Failure_ Redirects Back.
+    /// </summary>
     [Fact]
     public async Task LogSocial_Post_Failure_RedirectsBack()
     {
@@ -139,6 +168,9 @@ public class PublishingControllerTests
         redirect.ActionName.Should().Be(nameof(PublishingController.LogSocial));
     }
 
+    /// <summary>
+    /// تعديل _ Get_ Existing Log_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Edit_Get_ExistingLog_ReturnsView()
     {
@@ -162,6 +194,9 @@ public class PublishingControllerTests
         viewResult.Model.Should().BeOfType<SocialPublishingEditViewModel>();
     }
 
+    /// <summary>
+    /// تعديل _ Get_ Nonexistent Log_ Returns Not Found.
+    /// </summary>
     [Fact]
     public async Task Edit_Get_NonexistentLog_ReturnsNotFound()
     {
@@ -173,6 +208,9 @@ public class PublishingControllerTests
         result.Should().BeOfType<NotFoundResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Post_ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Edit_Post_Valid_Redirects()
     {
@@ -188,6 +226,9 @@ public class PublishingControllerTests
         redirect.ActionName.Should().Be(nameof(PublishingController.Index));
     }
 
+    /// <summary>
+    /// تعديل _ Post_ No الضيف Log_ Returns Bad Request.
+    /// </summary>
     [Fact]
     public async Task Edit_Post_NoGuestLog_ReturnsBadRequest()
     {
@@ -198,6 +239,9 @@ public class PublishingControllerTests
         result.Should().BeOfType<BadRequestResult>();
     }
 
+    /// <summary>
+    /// حذف _ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Delete_Valid_Redirects()
     {
@@ -210,6 +254,9 @@ public class PublishingControllerTests
         redirect.ActionName.Should().Be(nameof(PublishingController.Index));
     }
 
+    /// <summary>
+    /// حذف _ Failure_ Redirects With Error.
+    /// </summary>
     [Fact]
     public async Task Delete_Failure_RedirectsWithError()
     {

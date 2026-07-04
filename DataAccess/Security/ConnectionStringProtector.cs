@@ -1,6 +1,10 @@
-using System.Security.Cryptography;
-using System.Text;
+// ============================================================
+// ConnectionStringProtector — حماية الاتصال
+// ============================================================
+// المسؤولية: تعريف حماية الاتصال.
+// ============================================================
 using Microsoft.AspNetCore.DataProtection;
+using System.Text;
 
 namespace DataAccess.Security;
 
@@ -21,6 +25,9 @@ namespace DataAccess.Security;
 ///   - مفاتيح التشفير تُدار بواسطة IDataProtectionProvider (افتراضياً في ~/.aspnet/DataProtection-Keys)
 ///   - في النشر الإنتاجي، يجب توجيه مفاتيح التشفير إلى موقع مشترك (KeyVault, FileShare, Redis)
 ///   - لا يمكن فك التشفير دون الوصول لنفس المفاتيح
+/// <summary>
+/// صنف حماية الاتصال.
+/// </summary>
 /// </summary>
 public class ConnectionStringProtector
 {
@@ -38,6 +45,9 @@ public class ConnectionStringProtector
 
     /// <summary>
     /// تشفير نص الاتصال.
+    /// <summary>
+    /// Encrypt.
+    /// </summary>
     /// </summary>
     public string Encrypt(string plainText)
     {
@@ -51,6 +61,9 @@ public class ConnectionStringProtector
 
     /// <summary>
     /// فك تشفير نص الاتصال.
+    /// <summary>
+    /// Decrypt.
+    /// </summary>
     /// </summary>
     public string Decrypt(string encryptedBase64)
     {
@@ -64,6 +77,9 @@ public class ConnectionStringProtector
 
     /// <summary>
     /// فحص ما إذا كانت القيمة مشفرة (تبدأ بـ "ENC:").
+    /// <summary>
+    /// Is Encrypted.
+    /// </summary>
     /// </summary>
     public static bool IsEncrypted(string? value)
     {
@@ -72,6 +88,9 @@ public class ConnectionStringProtector
 
     /// <summary>
     /// فك تشفير القيمة تلقائياً إذا كانت مشفرة، أو إرجاعها كما هي.
+    /// <summary>
+    /// Unprotect If Encrypted.
+    /// </summary>
     /// </summary>
     public string UnprotectIfEncrypted(string? value)
     {
@@ -89,6 +108,9 @@ public class ConnectionStringProtector
 
     /// <summary>
     /// محاولة فك التشفير بأمان — ترجع false بدلاً من رمي استثناء عند الفشل.
+    /// <summary>
+    /// محاولة Unprotect.
+    /// </summary>
     /// </summary>
     public bool TryUnprotect(string? value, out string result)
     {

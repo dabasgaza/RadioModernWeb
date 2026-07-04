@@ -1,3 +1,8 @@
+// ============================================================
+// StaffControllersTests — اختبارات الموظفين
+// ============================================================
+// المسؤولية: تعريف اختبارات الموظفين.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
@@ -11,6 +16,9 @@ using Radio.Web.Services;
 
 namespace Radio.Tests.Controllers;
 
+/// <summary>
+/// صنف Employees Controller.
+/// </summary>
 public class EmployeesControllerTests
 {
     private readonly Mock<IEmployeeService> _employees = new();
@@ -27,6 +35,9 @@ public class EmployeesControllerTests
         _controller.TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
     }
 
+    /// <summary>
+    /// عرض قائمة _ Returns View.
+    /// </summary>
     [Fact]
     public async Task Index_ReturnsView()
     {
@@ -37,6 +48,9 @@ public class EmployeesControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// إنشاء _ Get_ Returns Edit View.
+    /// </summary>
     [Fact]
     public async Task Create_Get_ReturnsEditView()
     {
@@ -47,6 +61,9 @@ public class EmployeesControllerTests
         result.Should().BeOfType<ViewResult>().Subject.ViewName.Should().Be("Edit");
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Create_Post_Valid_Redirects()
     {
@@ -58,6 +75,9 @@ public class EmployeesControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Invalid Model_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Create_Post_InvalidModel_ReturnsView()
     {
@@ -69,6 +89,9 @@ public class EmployeesControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Failure_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Create_Post_Failure_ReturnsView()
     {
@@ -81,6 +104,9 @@ public class EmployeesControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Get_ Existing_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Edit_Get_Existing_ReturnsView()
     {
@@ -93,6 +119,9 @@ public class EmployeesControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Get_ Non Existing_ Returns Not Found.
+    /// </summary>
     [Fact]
     public async Task Edit_Get_NonExisting_ReturnsNotFound()
     {
@@ -103,6 +132,9 @@ public class EmployeesControllerTests
         result.Should().BeOfType<NotFoundResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Post_ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Edit_Post_Valid_Redirects()
     {
@@ -114,6 +146,9 @@ public class EmployeesControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// حذف _ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Delete_Valid_Redirects()
     {
@@ -125,6 +160,9 @@ public class EmployeesControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// حذف _ Failure_ Redirects With Error.
+    /// </summary>
     [Fact]
     public async Task Delete_Failure_RedirectsWithError()
     {
@@ -137,6 +175,9 @@ public class EmployeesControllerTests
     }
 }
 
+/// <summary>
+/// صنف الموظفين الأدوار Controller.
+/// </summary>
 public class StaffRolesControllerTests
 {
     private readonly Mock<IEmployeeService> _employees = new();
@@ -153,6 +194,9 @@ public class StaffRolesControllerTests
         _controller.TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
     }
 
+    /// <summary>
+    /// عرض قائمة _ Returns View.
+    /// </summary>
     [Fact]
     public async Task Index_ReturnsView()
     {
@@ -163,6 +207,9 @@ public class StaffRolesControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// إنشاء _ Get_ Returns Edit View.
+    /// </summary>
     [Fact]
     public void Create_Get_ReturnsEditView()
     {
@@ -171,6 +218,9 @@ public class StaffRolesControllerTests
         result.Should().BeOfType<ViewResult>().Subject.ViewName.Should().Be("Edit");
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Create_Post_Valid_Redirects()
     {
@@ -182,6 +232,9 @@ public class StaffRolesControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Failure_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Create_Post_Failure_ReturnsView()
     {
@@ -193,6 +246,9 @@ public class StaffRolesControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Get_ Existing_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Edit_Get_Existing_ReturnsView()
     {
@@ -204,6 +260,9 @@ public class StaffRolesControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Get_ Non Existing_ Returns Not Found.
+    /// </summary>
     [Fact]
     public async Task Edit_Get_NonExisting_ReturnsNotFound()
     {
@@ -214,6 +273,9 @@ public class StaffRolesControllerTests
         result.Should().BeOfType<NotFoundResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Post_ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Edit_Post_Valid_Redirects()
     {
@@ -225,6 +287,9 @@ public class StaffRolesControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// حذف _ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Delete_Valid_Redirects()
     {
@@ -236,6 +301,9 @@ public class StaffRolesControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// حذف _ Failure_ Redirects With Error.
+    /// </summary>
     [Fact]
     public async Task Delete_Failure_RedirectsWithError()
     {
@@ -248,6 +316,9 @@ public class StaffRolesControllerTests
     }
 }
 
+/// <summary>
+/// صنف Social Platforms Controller.
+/// </summary>
 public class SocialPlatformsControllerTests
 {
     private readonly Mock<IPlatformService> _platforms = new();
@@ -264,6 +335,9 @@ public class SocialPlatformsControllerTests
         _controller.TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
     }
 
+    /// <summary>
+    /// عرض قائمة _ Returns View.
+    /// </summary>
     [Fact]
     public async Task Index_ReturnsView()
     {
@@ -274,6 +348,9 @@ public class SocialPlatformsControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// إنشاء _ Get_ Returns Edit View.
+    /// </summary>
     [Fact]
     public void Create_Get_ReturnsEditView()
     {
@@ -282,6 +359,9 @@ public class SocialPlatformsControllerTests
         result.Should().BeOfType<ViewResult>().Subject.ViewName.Should().Be("Edit");
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Create_Post_Valid_Redirects()
     {
@@ -293,6 +373,9 @@ public class SocialPlatformsControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// إنشاء _ Post_ Invalid Model_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Create_Post_InvalidModel_ReturnsView()
     {
@@ -303,6 +386,9 @@ public class SocialPlatformsControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Get_ Existing_ Returns View.
+    /// </summary>
     [Fact]
     public async Task Edit_Get_Existing_ReturnsView()
     {
@@ -314,6 +400,9 @@ public class SocialPlatformsControllerTests
         result.Should().BeOfType<ViewResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Get_ Non Existing_ Returns Not Found.
+    /// </summary>
     [Fact]
     public async Task Edit_Get_NonExisting_ReturnsNotFound()
     {
@@ -324,6 +413,9 @@ public class SocialPlatformsControllerTests
         result.Should().BeOfType<NotFoundResult>();
     }
 
+    /// <summary>
+    /// تعديل _ Post_ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Edit_Post_Valid_Redirects()
     {
@@ -335,6 +427,9 @@ public class SocialPlatformsControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// حذف _ Valid_ Redirects.
+    /// </summary>
     [Fact]
     public async Task Delete_Valid_Redirects()
     {
@@ -346,6 +441,9 @@ public class SocialPlatformsControllerTests
         result.Should().BeOfType<RedirectToActionResult>();
     }
 
+    /// <summary>
+    /// حذف _ Failure_ Redirects With Error.
+    /// </summary>
     [Fact]
     public async Task Delete_Failure_RedirectsWithError()
     {

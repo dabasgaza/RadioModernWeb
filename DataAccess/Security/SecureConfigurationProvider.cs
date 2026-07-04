@@ -1,3 +1,8 @@
+// ============================================================
+// SecureConfigurationProvider — آمن الإعدادات
+// ============================================================
+// المسؤولية: تعريف آمن الإعدادات.
+// ============================================================
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
@@ -17,6 +22,9 @@ namespace DataAccess.Security;
 ///
 /// 🥉 الأولوية 3: نص الاتصال بصيغة نص عادي في appsettings.json
 ///     - بدون أمان — مخصص لبيئة التطوير فقط
+/// <summary>
+/// صنف آمن الإعدادات.
+/// </summary>
 /// </summary>
 public class SecureConfigurationProvider
 {
@@ -34,6 +42,9 @@ public class SecureConfigurationProvider
 
     /// <summary>
     /// قراءة نص الاتصال الآمن من التهيئة مع دعم التشفير ومتغيرات البيئة.
+    /// <summary>
+    /// استرجاع آمن Connection String.
+    /// </summary>
     /// </summary>
     public string GetSecureConnectionString(IConfiguration configuration, string connectionName = "DefaultConnection")
     {
@@ -77,6 +88,9 @@ public class SecureConfigurationProvider
 
     /// <summary>
     /// فحص حالة أمان نص الاتصال الحالي.
+    /// <summary>
+    /// استرجاع Security الحالة.
+    /// </summary>
     /// </summary>
     public ConnectionStringSecurityStatus GetSecurityStatus(IConfiguration configuration, string connectionName = "DefaultConnection")
     {
@@ -127,6 +141,9 @@ public class SecureConfigurationProvider
 
 /// <summary>
 /// حالة أمان نص الاتصال — تُستخدم في شاشات التشخيص.
+/// <summary>
+/// صنف Connection String Security الحالة.
+/// </summary>
 /// </summary>
 public class ConnectionStringSecurityStatus
 {

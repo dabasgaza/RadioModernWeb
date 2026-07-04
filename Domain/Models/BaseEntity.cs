@@ -1,7 +1,15 @@
+// ============================================================
+// BaseEntity — Base Entity
+// ============================================================
+// المسؤولية: تعريف Base Entity.
+// ============================================================
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Models
 {
+    /// <summary>
+    /// صنف Base Entity.
+    /// </summary>
     public abstract class BaseEntity
     {
         public bool IsActive { get; set; } = true;
@@ -14,8 +22,8 @@ namespace Domain.Models
         public byte[] RowVersion { get; set; } = null!;
 
         // Navigation properties for audit trail
-        public virtual User? CreatedByUser { get; set; }
-        public virtual User? UpdatedByUser { get; set; }
+        public virtual Domain.Identity.ApplicationUser? CreatedByUser { get; set; }
+        public virtual Domain.Identity.ApplicationUser? UpdatedByUser { get; set; }
 
     }
 }

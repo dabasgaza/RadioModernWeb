@@ -1,4 +1,8 @@
-using System.IO;
+// ============================================================
+// SystemControllers — النظام
+// ============================================================
+// المسؤولية: تعريف النظام.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
@@ -8,12 +12,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Radio.Web.Security;
 using Radio.Web.Services;
 using Radio.Web.ViewModels;
 
 namespace Radio.Web.Controllers;
 
+/// <summary>
+/// صنف النشر.
+/// </summary>
 [Authorize]
 public class PublishingController : Controller
 {
@@ -29,6 +35,9 @@ public class PublishingController : Controller
         _query = query; _command = command; _episodes = episodes; _currentUser = currentUser; _logger = logger; _lookup = lookup!;
     }
 
+    /// <summary>
+    /// عرض قائمة النشر.
+    /// </summary>
     public async Task<IActionResult> Index(string? search = null, string? type = null, int? programId = null, int? episodeId = null)
     {
         var list = await _query.GetAllPublishingRecordsAsync(episodeId, cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -46,14 +55,17 @@ public class PublishingController : Controller
             list = list.Where(r => (r.EpisodeName?.Contains(s, StringComparison.OrdinalIgnoreCase) ?? false) ||
                                    (r.Summary?.Contains(s, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
         }
-        ViewBag.Search = search ?? "";
-        ViewBag.TypeFilter = type ?? "";
+        ViewBag.Search = search ?? string.Empty;
+        ViewBag.TypeFilter = type ?? string.Empty;
         ViewBag.ProgramFilter = programId;
         ViewBag.EpisodeFilter = episodeId;
         ViewBag.Programs = _lookup != null ? await _lookup.GetProgramsAsync(cancellationToken: HttpContext?.RequestAborted ?? default) : new List<ProgramDto>();
         return View(list.OrderByDescending(r => r.RecordDate).ToList());
     }
 
+    /// <summary>
+    /// تسجيل Social.
+    /// </summary>
     [Authorize(Policy = AppPermissions.EpisodePublish)]
     public async Task<IActionResult> LogSocial(int id)
     {
@@ -64,6 +76,9 @@ public class PublishingController : Controller
         return View(vm);
     }
 
+    /// <summary>
+    /// تسجيل Social.
+    /// </summary>
     [Authorize(Policy = AppPermissions.EpisodePublish)]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -74,7 +89,7 @@ public class PublishingController : Controller
             0, g.EpisodeGuestId, id, g.ClipTitle,
             g.DurationMinutes.HasValue ? TimeSpan.FromMinutes(g.DurationMinutes.Value) : null,
             g.MediaType,
-            g.Platforms.Select(p => new PlatformPublishDto(p.PlatformId, "", p.Url)).ToList()
+            g.Platforms.Select(p => new PlatformPublishDto(p.PlatformId, string.Empty, p.Url)).ToList()
         )).ToList();
 
         var r = await _command.LogSocialPublishingAsync(id, logs, session, cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -83,6 +98,9 @@ public class PublishingController : Controller
         return RedirectToAction(nameof(LogSocial), new { id });
     }
 
+    /// <summary>
+    /// تعديل النشر.
+    /// </summary>
     [Authorize(Policy = AppPermissions.EpisodePublish)]
     public async Task<IActionResult> Edit(int id)
     {
@@ -108,7 +126,7 @@ public class PublishingController : Controller
                 LogId = sl.LogId,
                 EpisodeGuestId = sl.EpisodeGuestId,
                 EpisodeId = sl.EpisodeId,
-                ClipTitle = sl.ClipTitle ?? "",
+                ClipTitle = sl.ClipTitle ?? string.Empty,
                 DurationMinutes = (int?)(sl.Duration?.TotalMinutes),
                 MediaType = sl.MediaType,
                 GuestName = guestLookup.GetValueOrDefault(sl.EpisodeGuestId, "ضيف غير معروف"),
@@ -122,6 +140,9 @@ public class PublishingController : Controller
         return View(vm);
     }
 
+    /// <summary>
+    /// تعديل النشر.
+    /// </summary>
     [Authorize(Policy = AppPermissions.EpisodePublish)]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -140,7 +161,7 @@ public class PublishingController : Controller
                 guestLog.LogId, guestLog.EpisodeGuestId, guestLog.EpisodeId, guestLog.ClipTitle,
                 guestLog.DurationMinutes.HasValue ? TimeSpan.FromMinutes(guestLog.DurationMinutes.Value) : null,
                 guestLog.MediaType,
-                guestLog.Platforms.Select(p => new PlatformPublishDto(p.PlatformId, "", p.Url)).ToList()
+                guestLog.Platforms.Select(p => new PlatformPublishDto(p.PlatformId, string.Empty, p.Url)).ToList()
             );
 
             var r = await _command.UpdateSocialPublishingLogAsync(dto, session, cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -157,6 +178,9 @@ public class PublishingController : Controller
         return RedirectToAction(nameof(Edit), new { id });
     }
 
+    /// <summary>
+    /// حذف النشر.
+    /// </summary>
     [Authorize(Policy = AppPermissions.EpisodePublish)]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -170,6 +194,9 @@ public class PublishingController : Controller
     }
 }
 
+/// <summary>
+/// صنف Execution السجلات.
+/// </summary>
 [Authorize]
 public class ExecutionLogsController : Controller
 {
@@ -181,6 +208,9 @@ public class ExecutionLogsController : Controller
         _publishing = publishing; _episodes = episodes;
     }
 
+    /// <summary>
+    /// عرض قائمة Execution السجلات.
+    /// </summary>
     public async Task<IActionResult> Index()
     {
         var records = await _publishing.GetAllPublishingRecordsAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -189,6 +219,9 @@ public class ExecutionLogsController : Controller
     }
 }
 
+/// <summary>
+/// صنف Website Publishing.
+/// </summary>
 [Authorize]
 public class WebsitePublishingController : Controller
 {
@@ -202,6 +235,9 @@ public class WebsitePublishingController : Controller
         _query = query; _command = command; _episodes = episodes; _currentUser = currentUser;
     }
 
+    /// <summary>
+    /// عرض قائمة Website Publishing.
+    /// </summary>
     public async Task<IActionResult> Index()
     {
         var records = await _query.GetAllPublishingRecordsAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -209,6 +245,9 @@ public class WebsitePublishingController : Controller
         return View(websites);
     }
 
+    /// <summary>
+    /// نشر Website Publishing.
+    /// </summary>
     [Authorize(Policy = AppPermissions.EpisodeWebPublish)]
     public async Task<IActionResult> Publish(int id)
     {
@@ -216,6 +255,9 @@ public class WebsitePublishingController : Controller
         return View(episode);
     }
 
+    /// <summary>
+    /// نشر Website Publishing.
+    /// </summary>
     [Authorize(Policy = AppPermissions.EpisodeWebPublish)]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -228,6 +270,9 @@ public class WebsitePublishingController : Controller
         return RedirectToAction(nameof(Publish), new { id });
     }
 
+    /// <summary>
+    /// تعديل Website Publishing.
+    /// </summary>
     [Authorize(Policy = AppPermissions.EpisodeWebPublish)]
     public async Task<IActionResult> Edit(int id)
     {
@@ -245,6 +290,9 @@ public class WebsitePublishingController : Controller
         return View(vm);
     }
 
+    /// <summary>
+    /// تعديل Website Publishing.
+    /// </summary>
     [Authorize(Policy = AppPermissions.EpisodeWebPublish)]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -258,6 +306,9 @@ public class WebsitePublishingController : Controller
         return RedirectToAction(nameof(Edit), new { id });
     }
 
+    /// <summary>
+    /// حذف Website Publishing.
+    /// </summary>
     [Authorize(Policy = AppPermissions.EpisodeWebPublish)]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -271,6 +322,9 @@ public class WebsitePublishingController : Controller
     }
 }
 
+/// <summary>
+/// صنف التقارير.
+/// </summary>
 [Authorize]
 public class ReportsController : Controller
 {
@@ -282,6 +336,9 @@ public class ReportsController : Controller
         _reports = reports; _logger = logger;
     }
 
+    /// <summary>
+    /// عرض قائمة التقارير.
+    /// </summary>
     public async Task<IActionResult> Index()
     {
         var today = await _reports.GetTodayEpisodesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -301,6 +358,9 @@ public class ReportsController : Controller
         return View(vm);
     }
 
+    /// <summary>
+    /// By التاريخ Range.
+    /// </summary>
     public async Task<IActionResult> ByDateRange(DateTime? from, DateTime? to)
     {
         from ??= DateTime.UtcNow.AddDays(-30);
@@ -311,6 +371,9 @@ public class ReportsController : Controller
         return View(list);
     }
 
+    /// <summary>
+    /// إلغاء led.
+    /// </summary>
     public async Task<IActionResult> Cancelled()
     {
         var list = await _reports.GetCancelledEpisodesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -318,11 +381,13 @@ public class ReportsController : Controller
     }
 }
 
+/// <summary>
+/// صنف DatabaseController.
+/// </summary>
 [Authorize]
 public class DatabaseController : Controller
 {
     private readonly IDatabaseManagementService _db;
-    private readonly IIdentitySynchronizer _sync;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IDbContextFactory<BroadcastWorkflowDBContext> _ctxFactory;
     private readonly ILogger<DatabaseController> _logger;
@@ -330,16 +395,18 @@ public class DatabaseController : Controller
 
     public DatabaseController(
         IDatabaseManagementService db,
-        IIdentitySynchronizer sync,
         UserManager<ApplicationUser> userManager,
         IDbContextFactory<BroadcastWorkflowDBContext> ctxFactory,
         ILogger<DatabaseController> logger,
         IConfiguration configuration)
     {
-        _db = db; _sync = sync; _userManager = userManager; _ctxFactory = ctxFactory; _logger = logger;
+        _db = db; _userManager = userManager; _ctxFactory = ctxFactory; _logger = logger;
         _configuration = configuration;
     }
 
+    /// <summary>
+    /// عرض قائمة DatabaseController.
+    /// </summary>
     public async Task<IActionResult> Index()
     {
         var ct = HttpContext?.RequestAborted ?? default;
@@ -360,12 +427,15 @@ public class DatabaseController : Controller
             RetentionDays = dashboard?.RetentionDays ?? 30,
             BackupFolderSizeBytes = dashboard?.BackupFolderSizeBytes ?? 0,
             FailureCount = dashboard?.FailureCount ?? 0,
-            DatabaseName = dashboard?.DatabaseName ?? "",
+            DatabaseName = dashboard?.DatabaseName ?? string.Empty,
             BackupLogs = logs.IsSuccess ? logs.Value ?? new() : new()
         };
         return View(vm);
     }
 
+    /// <summary>
+    /// نسخ احتياطي DatabaseController.
+    /// </summary>
     [Authorize(Policy = AppPermissions.DatabaseManage)]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -380,6 +450,9 @@ public class DatabaseController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    /// <summary>
+    /// استعادة DatabaseController.
+    /// </summary>
     [Authorize(Policy = AppPermissions.DatabaseManage)]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -406,6 +479,9 @@ public class DatabaseController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    /// <summary>
+    /// استعادة From سجل.
+    /// </summary>
     [Authorize(Policy = AppPermissions.DatabaseManage)]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -430,6 +506,9 @@ public class DatabaseController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    /// <summary>
+    /// تهيئة DatabaseController.
+    /// </summary>
     [Authorize(Policy = AppPermissions.DatabaseManage)]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -441,6 +520,9 @@ public class DatabaseController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    /// <summary>
+    /// إعادة تعيين DatabaseController.
+    /// </summary>
     [Authorize(Policy = AppPermissions.DatabaseManage)]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -453,6 +535,9 @@ public class DatabaseController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    /// <summary>
+    /// Cloud Sync.
+    /// </summary>
     [Authorize(Policy = AppPermissions.DatabaseManage)]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -485,6 +570,9 @@ public class DatabaseController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    /// <summary>
+    /// تشغيل Retention.
+    /// </summary>
     [Authorize(Policy = AppPermissions.DatabaseManage)]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -498,6 +586,9 @@ public class DatabaseController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    /// <summary>
+    /// حذف Backup سجل.
+    /// </summary>
     [Authorize(Policy = AppPermissions.DatabaseManage)]
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -525,6 +616,9 @@ public class DatabaseController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    /// <summary>
+    /// Download Backup.
+    /// </summary>
     [Authorize(Policy = AppPermissions.DatabaseManage)]
     public async Task<IActionResult> DownloadBackup(int id)
     {
@@ -549,81 +643,35 @@ public class DatabaseController : Controller
         }
     }
 
+    /// <summary>
+    /// بذر البيانات Identity.
+    /// </summary>
     [Authorize(Policy = AppPermissions.DatabaseManage)]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SeedIdentity()
+    public IActionResult SeedIdentity()
     {
-        var defaultPassword = _configuration["Admin:InitialPassword"]
-            ?? throw new InvalidOperationException("Admin:InitialPassword must be set in configuration");
-
-        if (defaultPassword == "Admin@123")
-        {
-            TempData["Error"] = "كلمة المرور الافتراضية Admin@123 غير مسموح بها في الإنتاج";
-            return RedirectToAction(nameof(Index));
-        }
-
-        await using var context = await _ctxFactory.CreateDbContextAsync();
-
-        var domainUsers = await context.Users
-            .Where(u => u.IsActive)
-            .ToListAsync();
-
-        var synced = 0;
-        var fixedDomain = 0;
-        foreach (var du in domainUsers)
-        {
-            try
-            {
-                var existing = await _userManager.FindByNameAsync(du.Username);
-                if (existing != null)
-                {
-                    if (existing.DomainUserId == 0)
-                    {
-                        existing.DomainUserId = du.UserId;
-                        existing.DomainRoleId = du.RoleId;
-                        existing.Email = du.EmailAddress;
-                        existing.FullName = du.FullName;
-                        await _userManager.UpdateAsync(existing);
-                        fixedDomain++;
-                    }
-                    continue;
-                }
-
-                await _sync.CreateUserAsync(
-                    du.Username, defaultPassword, du.FullName,
-                    du.EmailAddress, du.PhoneNumber, du.RoleId, cancellationToken: HttpContext?.RequestAborted ?? default);
-                synced++;
-
-                var roleName = await context.Roles
-                    .Where(r => r.RoleId == du.RoleId)
-                    .Select(r => r.RoleName)
-                    .FirstOrDefaultAsync();
-                if (roleName != null)
-                {
-                    var created = await _userManager.FindByNameAsync(du.Username);
-                    if (created != null)
-                        await _userManager.AddToRoleAsync(created, roleName);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Failed to sync user {Username}", du.Username);
-            }
-        }
-
-        TempData["Success"] = $"تمت مزامنة {synced} مستخدم/مستخدمين إلى Identity، وتم إصلاح {fixedDomain}.";
+        TempData["Success"] = "النظام يعمل بالفعل بالكامل تحت مظلة ASP.NET Core Identity.";
         return RedirectToAction(nameof(Index));
     }
 }
 
+/// <summary>
+/// صنف DiagnosticsController.
+/// </summary>
 [Authorize]
 public class DiagnosticsController : Controller
 {
     private readonly ISystemDiagnosticsService _diag;
 
+    /// <summary>
+    /// تهيئة DiagnosticsController.
+    /// </summary>
     public DiagnosticsController(ISystemDiagnosticsService diag) => _diag = diag;
 
+    /// <summary>
+    /// عرض قائمة DiagnosticsController.
+    /// </summary>
     public async Task<IActionResult> Index()
     {
         var summary = await _diag.GetSummaryAsync(cancellationToken: HttpContext?.RequestAborted ?? default);

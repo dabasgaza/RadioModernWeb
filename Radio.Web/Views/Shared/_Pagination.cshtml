@@ -1,0 +1,94 @@
+@model dynamic
+@{
+    var pageIndex = (int)Model.PageIndex;
+    var totalPages = (int)Model.TotalPages;
+    var totalCount = (int)Model.TotalCount;
+    var queryDict = Context.Request.Query
+        .Where(kv => kv.Key != "page")
+        .ToDictionary(kv => kv.Key, kv => kv.Value.ToString());
+    var startRecord = (pageIndex - 1) * 20 + 1;
+    var endRecord = Math.Min(pageIndex * 20, totalCount);
+}
+
+<div class="pagination-bar">
+    <div class="pagination-info">
+        عرض <strong>@startRecord</strong>–<strong>@endRecord</strong> من <strong>@totalCount</strong> حلقة
+    </div>
+
+    @if (totalPages > 1)
+    {
+        <div class="pagination-controls">
+            @if (pageIndex > 1)
+            {
+                <a href="?@string.Join("&", queryDict.Select(kv => $"{kv.Key}={kv.Value}"))&page=@(pageIndex - 1)"
+                   class="pagination-nav" title="السابق">
+                    <span class="material-symbols-rounded">chevron_right</span>
+                </a>
+            }
+            else
+            {
+                <span class="pagination-nav disabled">
+                    <span class="material-symbols-rounded">chevron_right</span>
+                </span>
+            }
+
+            @{
+                var startPage = Math.Max(1, pageIndex - 2);
+                var endPage = Math.Min(totalPages, pageIndex + 2);
+
+                if (startPage > 1)
+                {
+                    <a href="?@string.Join("&", queryDict.Select(kv => $"{kv.Key}={kv.Value}"))&page=1"
+                       class="pagination-page">1</a>
+                    if (startPage > 2)
+                    {
+                        <span class="pagination-ellipsis">…</span>
+                    }
+                }
+
+                for (var i = startPage; i <= endPage; i++)
+                {
+                    if (i == pageIndex)
+                    {
+                        <span class="pagination-page active">@i</span>
+                    }
+                    else
+                    {
+                        <a href="?@string.Join("&", queryDict.Select(kv => $"{kv.Key}={kv.Value}"))&page=@i"
+                           class="pagination-page">@i</a>
+                    }
+                }
+
+                if (endPage < totalPages)
+                {
+                    if (endPage < totalPages - 1)
+                    {
+                        <span class="pagination-ellipsis">…</span>
+                    }
+                    <a href="?@string.Join("&", queryDict.Select(kv => $"{kv.Key}={kv.Value}"))&page=@totalPages"
+                       class="pagination-page">@totalPages</a>
+                }
+            }
+
+            @if (pageIndex < totalPages)
+            {
+                <a href="?@string.Join("&", queryDict.Select(kv => $"{kv.Key}={kv.Value}"))&page=@(pageIndex + 1)"
+                   class="pagination-nav" title="التالي">
+                    <span class="material-symbols-rounded">chevron_left</span>
+                </a>
+            }
+            else
+            {
+                <span class="pagination-nav disabled">
+                    <span class="material-symbols-rounded">chevron_left</span>
+                </span>
+            }
+        </div>
+    }
+    else if (totalCount > 0)
+    {
+        <div class="pagination-controls">
+            <span class="pagination-page active">1</span>
+        </div>
+    }
+</div>

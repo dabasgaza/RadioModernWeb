@@ -1,3 +1,8 @@
+// ============================================================
+// EmployeeServiceTests — الموظف Service
+// ============================================================
+// المسؤولية: تعريف الموظف Service.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
@@ -11,6 +16,9 @@ using System.Threading;
 
 namespace Radio.Tests.Services;
 
+/// <summary>
+/// صنف الموظف Service.
+/// </summary>
 public class EmployeeServiceTests : IClassFixture<DatabaseFixture>
 {
     private readonly DatabaseFixture _db;
@@ -24,6 +32,9 @@ public class EmployeeServiceTests : IClassFixture<DatabaseFixture>
         _service = new EmployeeService(db.DbContextFactory, lookup, Mock.Of<ILogger<EmployeeService>>(), ValidValidator.Create<EmployeeDto>(), ValidValidator.Create<StaffRoleDto>());
     }
 
+    /// <summary>
+    /// استرجاع النشط Async_ Returns الكل.
+    /// </summary>
     [Fact]
     public async Task GetAllActiveAsync_ReturnsAll()
     {
@@ -36,6 +47,9 @@ public class EmployeeServiceTests : IClassFixture<DatabaseFixture>
         result.Should().Contain(e => e.FullName == "Emp1");
     }
 
+    /// <summary>
+    /// إنشاء Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task CreateAsync_Valid_ReturnsSuccess()
     {
@@ -46,6 +60,9 @@ public class EmployeeServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// استرجاع الكل الأدوار Async_ Returns الأدوار.
+    /// </summary>
     [Fact]
     public async Task GetAllRolesAsync_ReturnsRoles()
     {
@@ -53,6 +70,9 @@ public class EmployeeServiceTests : IClassFixture<DatabaseFixture>
         result.Should().Contain(r => r.RoleName == "مذيع");
     }
 
+    /// <summary>
+    /// إنشاء الدور Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task CreateRoleAsync_Valid_ReturnsSuccess()
     {
@@ -63,6 +83,9 @@ public class EmployeeServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// تحديث Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task UpdateAsync_Valid_ReturnsSuccess()
     {
@@ -76,6 +99,9 @@ public class EmployeeServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// Soft Delete Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task SoftDeleteAsync_Valid_ReturnsSuccess()
     {
@@ -88,6 +114,9 @@ public class EmployeeServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// تحديث الدور Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task UpdateRoleAsync_Valid_ReturnsSuccess()
     {
@@ -101,6 +130,9 @@ public class EmployeeServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// Soft Delete الدور Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task SoftDeleteRoleAsync_Valid_ReturnsSuccess()
     {

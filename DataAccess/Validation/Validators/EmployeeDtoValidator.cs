@@ -1,8 +1,16 @@
+// ============================================================
+// EmployeeDtoValidator — التحقق من الموظف
+// ============================================================
+// المسؤولية: تعريف التحقق من الموظف.
+// ============================================================
 using DataAccess.DTOs;
 using FluentValidation;
 
 namespace DataAccess.Validation.Validators;
 
+/// <summary>
+/// صنف التحقق من الموظف.
+/// </summary>
 public class EmployeeDtoValidator : AbstractValidator<EmployeeDto>
 {
     public EmployeeDtoValidator()

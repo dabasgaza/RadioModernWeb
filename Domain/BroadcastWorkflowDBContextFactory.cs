@@ -1,3 +1,8 @@
+// ============================================================
+// BroadcastWorkflowDBContextFactory — مصنع السياق
+// ============================================================
+// المسؤولية: تعريف مصنع السياق.
+// ============================================================
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -8,9 +13,15 @@ namespace Domain;
 /// <summary>
 /// مصنع وقت التصميم لـ EF Core migrations — يُستخدم فقط بواسطة `dotnet ef`.
 /// في وقت التشغيل، يُسجَّل الـ DbContextFactory في Radio.Web/Program.cs.
+/// <summary>
+/// صنف مصنع السياق.
+/// </summary>
 /// </summary>
 public class BroadcastWorkflowDBContextFactory : IDesignTimeDbContextFactory<BroadcastWorkflowDBContext>
 {
+    /// <summary>
+    /// إنشاء Db السياق.
+    /// </summary>
     public BroadcastWorkflowDBContext CreateDbContext(string[] args)
     {
         // ابحث عن appsettings.json في Radio.Web (المشروع الذي يحتوي على ملفات الإعداد)

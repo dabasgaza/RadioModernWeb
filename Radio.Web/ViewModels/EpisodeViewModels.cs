@@ -1,22 +1,36 @@
+// ============================================================
+// EpisodeViewModels — الحلقات
+// ============================================================
+// المسؤولية: تعريف الحلقات.
+// ============================================================
 using DataAccess.DTOs;
 
 namespace Radio.Web.ViewModels;
 
+/// <summary>
+/// صنف الحلقة قائمة.
+/// </summary>
 public class EpisodeListViewModel
 {
     public List<ActiveEpisodeDto> Episodes { get; set; } = new();
     public List<ProgramDto> Programs { get; set; } = new();
-    public string SearchTerm { get; set; } = "";
+    public string SearchTerm { get; set; } = string.Empty;
     public byte? StatusFilter { get; set; }
     public int? ProgramFilter { get; set; }
 }
 
+/// <summary>
+/// صنف الحلقة Details.
+/// </summary>
 public class EpisodeDetailsViewModel
 {
     public ActiveEpisodeDto Episode { get; set; } = default!;
     public List<PublishingRecordDto> PublishingRecords { get; set; } = new();
 }
 
+/// <summary>
+/// صنف تحرير الحلقة.
+/// </summary>
 public class EpisodeEditViewModel
 {
     public EpisodeDto Episode { get; set; } = default!;
@@ -29,6 +43,9 @@ public class EpisodeEditViewModel
     public List<EmployeeDto> Employees { get; set; } = new();
 }
 
+/// <summary>
+/// صنف الحلقة Edit Form.
+/// </summary>
 public class EpisodeEditFormModel
 {
     public int EpisodeId { get; set; }
@@ -44,14 +61,20 @@ public class EpisodeEditFormModel
     public List<EpisodeCorrespondentFormItem> Correspondents { get; set; } = new();
     public List<EpisodeEmployeeFormItem> Employees { get; set; } = new();
 
+    /// <summary>
+    /// To Dto.
+    /// </summary>
     public EpisodeDto ToDto() => new(
         EpisodeId, ProgramId,
-        Guests.Select(g => new EpisodeGuestDto(g.EpisodeGuestId, g.GuestId, g.FullName ?? "", g.Topic, g.HostingTime, g.ClipNotes)).ToList(),
-        Correspondents.Select(c => new EpisodeCorrespondentDto(c.Id, c.CorrespondentId, c.FullName ?? "", c.Topic, c.HostingTime)).ToList(),
+        Guests.Select(g => new EpisodeGuestDto(g.EpisodeGuestId, g.GuestId, g.FullName ?? string.Empty, g.Topic, g.HostingTime, g.ClipNotes)).ToList(),
+        Correspondents.Select(c => new EpisodeCorrespondentDto(c.Id, c.CorrespondentId, c.FullName ?? string.Empty, c.Topic, c.HostingTime)).ToList(),
         Employees.Select(e => new EpisodeEmployeeDto(e.Id, e.EmployeeId, e.FullName, e.StaffRoleName)).ToList(),
         EpisodeName, EpisodeDescription, ScheduledDate, BroadcastTime, SpecialNotes);
 }
 
+/// <summary>
+/// صنف الحلقة الضيف Form عنصر.
+/// </summary>
 public class EpisodeGuestFormItem
 {
     public int EpisodeGuestId { get; set; }
@@ -62,6 +85,9 @@ public class EpisodeGuestFormItem
     public string? ClipNotes { get; set; }
 }
 
+/// <summary>
+/// صنف الحلقة المراسل Form عنصر.
+/// </summary>
 public class EpisodeCorrespondentFormItem
 {
     public int Id { get; set; }
@@ -71,6 +97,9 @@ public class EpisodeCorrespondentFormItem
     public TimeSpan? HostingTime { get; set; }
 }
 
+/// <summary>
+/// صنف الحلقة الموظف Form عنصر.
+/// </summary>
 public class EpisodeEmployeeFormItem
 {
     public int Id { get; set; }

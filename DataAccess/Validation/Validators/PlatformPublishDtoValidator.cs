@@ -1,8 +1,16 @@
+// ============================================================
+// PlatformPublishDtoValidator — التحقق من نشر المنصة
+// ============================================================
+// المسؤولية: تعريف التحقق من نشر المنصة.
+// ============================================================
 using DataAccess.DTOs;
 using FluentValidation;
 
 namespace DataAccess.Validation.Validators;
 
+/// <summary>
+/// صنف التحقق من نشر المنصة.
+/// </summary>
 public class PlatformPublishDtoValidator : AbstractValidator<PlatformPublishDto>
 {
     public PlatformPublishDtoValidator()
@@ -15,6 +23,9 @@ public class PlatformPublishDtoValidator : AbstractValidator<PlatformPublishDto>
             .Must(BeValidUrl).WithMessage("رابط النشر غير صالح.");
     }
 
+    /// <summary>
+    /// Be Valid Url.
+    /// </summary>
     private static bool BeValidUrl(string? url)
     {
         if (string.IsNullOrWhiteSpace(url)) return false;

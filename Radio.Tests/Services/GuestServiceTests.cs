@@ -1,3 +1,8 @@
+// ============================================================
+// GuestServiceTests — الضيف Service
+// ============================================================
+// المسؤولية: تعريف الضيف Service.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using DataAccess.Services;
@@ -11,6 +16,9 @@ using System.Threading;
 
 namespace Radio.Tests.Services;
 
+/// <summary>
+/// صنف الضيف Service.
+/// </summary>
 public class GuestServiceTests : IClassFixture<DatabaseFixture>
 {
     private readonly DatabaseFixture _db;
@@ -24,6 +32,9 @@ public class GuestServiceTests : IClassFixture<DatabaseFixture>
         _service = new GuestService(db.DbContextFactory, lookup, Mock.Of<ILogger<GuestService>>(), ValidValidator.Create<GuestDto>());
     }
 
+    /// <summary>
+    /// استرجاع النشط Async_ Returns Only Active.
+    /// </summary>
     [Fact]
     public async Task GetAllActiveAsync_ReturnsOnlyActive()
     {
@@ -37,6 +48,9 @@ public class GuestServiceTests : IClassFixture<DatabaseFixture>
         result.Should().Contain(e => e.FullName == "Active");
     }
 
+    /// <summary>
+    /// إنشاء الضيف Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task CreateGuestAsync_Valid_ReturnsSuccess()
     {
@@ -47,6 +61,9 @@ public class GuestServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// إنشاء الضيف Async_ Without Permission_ Returns Fail.
+    /// </summary>
     [Fact]
     public async Task CreateGuestAsync_WithoutPermission_ReturnsFail()
     {
@@ -58,6 +75,9 @@ public class GuestServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeFailure("صلاحية");
     }
 
+    /// <summary>
+    /// تحديث الضيف Async_ Valid_ Returns Success.
+    /// </summary>
     [Fact]
     public async Task UpdateGuestAsync_Valid_ReturnsSuccess()
     {
@@ -71,6 +91,9 @@ public class GuestServiceTests : IClassFixture<DatabaseFixture>
         result.ShouldBeSuccess();
     }
 
+    /// <summary>
+    /// Soft Delete الضيف Async_ Valid_ Soft Deletes.
+    /// </summary>
     [Fact]
     public async Task SoftDeleteGuestAsync_Valid_SoftDeletes()
     {

@@ -1,3 +1,8 @@
+// ============================================================
+// ApplicationUser — المستخدم
+// ============================================================
+// المسؤولية: تعريف المستخدم.
+// ============================================================
 using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Identity;
@@ -12,6 +17,9 @@ namespace Domain.Identity;
 ///   - الربط: ApplicationUser.DomainUserId ↔ User.UserId
 ///
 /// ملاحظة: UserName في Identity يطابق Username في جدول Users الأصلي.
+/// <summary>
+/// صنف المستخدم.
+/// </summary>
 /// </summary>
 public class ApplicationUser : IdentityUser<int>
 {
@@ -21,30 +29,41 @@ public class ApplicationUser : IdentityUser<int>
     /// <summary>رقم الهاتف المعروض في الواجهة (مطابق لـ User.PhoneNumber)</summary>
     public string? DisplayPhoneNumber { get; set; }
 
-    /// <summary>معرّف الـ User الأصلي في Domain (FK إلى Users.UserId)</summary>
-    public int DomainUserId { get; set; }
-
     /// <summary>معرّف الدور الأصلي في Domain (FK إلى Roles.RoleId)</summary>
-    public int DomainRoleId { get; set; }
+    public int RoleId { get; set; }
 
     /// <summary>وقت آخر تسجيل دخول — يُحدَّث عند كل Login</summary>
     public DateTime? LastLoginAt { get; set; }
 
     /// <summary>هل الحساب نشط في النظام القديم؟ (للتوافق مع Soft Delete)</summary>
     public bool IsActive { get; set; } = true;
+
+    // حقول التدقيق (Audit Columns) لـ Identity Users
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public int? CreatedByUserId { get; set; }
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    public int? UpdatedByUserId { get; set; }
+    public byte[]? RowVersion { get; set; }
+
+    public virtual ApplicationUser? CreatedByUser { get; set; }
+    public virtual ApplicationUser? UpdatedByUser { get; set; }
+
+    public virtual ICollection<Domain.Models.WebsitePublishingLog> WebsitePublishingLogs { get; set; } = new List<Domain.Models.WebsitePublishingLog>();
+    public virtual ICollection<Domain.Models.SocialMediaPublishingLog> SocialMediaPublishingLogs { get; set; } = new List<Domain.Models.SocialMediaPublishingLog>();
+    public virtual ICollection<Domain.Models.ExecutionLog> ExecutionLogs { get; set; } = new List<Domain.Models.ExecutionLog>();
 }
 
 /// <summary>
 /// يمثّل دور التطبيق في نظام ASP.NET Core Identity.
 /// يستخدم PK من نوع int ليتوافق مع جدول Roles الأصلي.
+/// <summary>
+/// صنف Application الدور.
+/// </summary>
 /// </summary>
 public class ApplicationRole : IdentityRole<int>
 {
     /// <summary>الوصف العربي للدور (مطابق لـ Role.RoleDescription في Domain)</summary>
     public string? RoleDescription { get; set; }
-
-    /// <summary>معرّف الـ Role الأصلي في Domain</summary>
-    public int DomainRoleId { get; set; }
 
     /// <summary>هل الدور نشط؟</summary>
     public bool IsActive { get; set; } = true;

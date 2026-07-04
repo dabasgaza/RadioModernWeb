@@ -1,8 +1,16 @@
+// ============================================================
+// SessionCaptureMiddleware — الجلسة Capture Middleware
+// ============================================================
+// المسؤولية: تعريف الجلسة Capture Middleware.
+// ============================================================
 using DataAccess.Common;
 using Radio.Web.Services;
 
 namespace Radio.Web.Middleware
 {
+    /// <summary>
+    /// صنف الجلسة Capture Middleware.
+    /// </summary>
     public class SessionCaptureMiddleware
     {
         private readonly RequestDelegate _next;

@@ -1,10 +1,21 @@
+// ============================================================
+// UserSessionBuilder — جلسة المستخدم
+// ============================================================
+// المسؤولية: تعريف جلسة المستخدم.
+// ============================================================
 using DataAccess.Common;
 using Radio.Web.Services;
 
 namespace Radio.Tests.TestData.Builders;
 
+/// <summary>
+/// صنف جلسة المستخدم.
+/// </summary>
 public static class UserSessionBuilder
 {
+    /// <summary>
+    /// إنشاء الإدارة.
+    /// </summary>
     public static UserSession CreateAdmin()
         => new()
         {
@@ -12,6 +23,9 @@ public static class UserSessionBuilder
             RoleName = "Admin", Permissions = []
         };
 
+    /// <summary>
+    /// إنشاء Limited.
+    /// </summary>
     public static UserSession CreateLimited(params string[] permissions)
         => new()
         {
@@ -19,6 +33,9 @@ public static class UserSessionBuilder
             RoleName = "Operator", Permissions = [.. permissions]
         };
 
+    /// <summary>
+    /// إنشاء With الكل الصلاحيات.
+    /// </summary>
     public static UserSession CreateWithAllPermissions()
         => CreateLimited(
             AppPermissions.EpisodeManage, AppPermissions.EpisodeEdit,
@@ -30,12 +47,21 @@ public static class UserSessionBuilder
             AppPermissions.DatabaseManage, AppPermissions.ViewAuditLogs
         );
 
+    /// <summary>
+    /// إنشاء Mock.
+    /// </summary>
     public static Mock<ICurrentUserService> CreateMock()
         => CreateMock(CreateAdmin());
 
+    /// <summary>
+    /// إنشاء Mock.
+    /// </summary>
     public static Mock<ICurrentUserService> CreateMock(params string[] permissions)
         => CreateMock(CreateLimited(permissions));
 
+    /// <summary>
+    /// إنشاء Mock.
+    /// </summary>
     public static Mock<ICurrentUserService> CreateMock(UserSession session)
     {
         var mock = new Mock<ICurrentUserService>();

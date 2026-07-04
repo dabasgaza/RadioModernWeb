@@ -1,10 +1,21 @@
+// ============================================================
+// CollectionSyncHelperTests — Collection Sync Helper
+// ============================================================
+// المسؤولية: تعريف Collection Sync Helper.
+// ============================================================
 using DataAccess.Common;
 using Domain.Models;
 
 namespace Radio.Tests.Common;
 
+/// <summary>
+/// صنف Collection Sync Helper.
+/// </summary>
 public class CollectionSyncHelperTests
 {
+    /// <summary>
+    /// صنف Test Entity.
+    /// </summary>
     private sealed class TestEntity : BaseEntity
     {
         public int Id { get; set; }
@@ -12,8 +23,14 @@ public class CollectionSyncHelperTests
         public string Name { get; set; } = "";
     }
 
+    /// <summary>
+    /// سجل TestDto.
+    /// </summary>
     private sealed record TestDto(int Id, int Fk, string Name);
 
+    /// <summary>
+    /// مزامنة _ Adds New Entity_ When Dto Has Zero Id.
+    /// </summary>
     [Fact]
     public void Sync_AddsNewEntity_WhenDtoHasZeroId()
     {
@@ -35,6 +52,9 @@ public class CollectionSyncHelperTests
         Assert.Equal(10, added[0].ForeignKey);
     }
 
+    /// <summary>
+    /// مزامنة _ Updates Existing Entity_ When Dto Id Matches.
+    /// </summary>
     [Fact]
     public void Sync_UpdatesExistingEntity_WhenDtoIdMatches()
     {
@@ -54,6 +74,9 @@ public class CollectionSyncHelperTests
         Assert.Equal("Updated", existing.Name);
     }
 
+    /// <summary>
+    /// مزامنة _ Soft Deletes_ When Dto Id Missing.
+    /// </summary>
     [Fact]
     public void Sync_SoftDeletes_WhenDtoIdMissing()
     {
@@ -73,6 +96,9 @@ public class CollectionSyncHelperTests
         Assert.False(existing.IsActive);
     }
 
+    /// <summary>
+    /// مزامنة _ Restores Soft Deleted_ When Fk Matches Deleted.
+    /// </summary>
     [Fact]
     public void Sync_RestoresSoftDeleted_WhenFkMatchesDeleted()
     {

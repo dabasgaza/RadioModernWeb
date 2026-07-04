@@ -1,5 +1,13 @@
+// ============================================================
+// EpisodeCorrespondent — حلقة-مراسل
+// ============================================================
+// المسؤولية: تعريف حلقة-مراسل.
+// ============================================================
 namespace Domain.Models;
 
+/// <summary>
+/// صنف حلقة-مراسل.
+/// </summary>
 public class EpisodeCorrespondent : BaseEntity
 {
     public int EpisodeCorrespondentId { get; set; }

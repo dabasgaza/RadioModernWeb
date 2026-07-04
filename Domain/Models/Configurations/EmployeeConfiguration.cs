@@ -1,10 +1,21 @@
+// ============================================================
+// EmployeeConfiguration — الموظف
+// ============================================================
+// المسؤولية: تعريف الموظف.
+// ============================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Models.Configurations;
 
+/// <summary>
+/// صنف الموظف.
+/// </summary>
 public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
 {
+    /// <summary>
+    /// إعداد الموظف.
+    /// </summary>
     public void Configure(EntityTypeBuilder<Employee> builder)
     {
         builder.HasKey(e => e.EmployeeId);

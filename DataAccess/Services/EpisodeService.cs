@@ -1,14 +1,20 @@
+// ============================================================
+// EpisodeService — الحلقات
+// ============================================================
+// المسؤولية: تعريف الحلقات.
+// ============================================================
 using DataAccess.Common;
 using DataAccess.DTOs;
 using Domain.Models;
 using Microsoft.ApplicationInsights;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using System.Threading;
 
 namespace DataAccess.Services;
 
+/// <summary>
+/// واجهة I الحلقة استعلام.
+/// </summary>
 public interface IEpisodeQueryService
 {
     Task<List<ActiveEpisodeDto>> GetActiveEpisodesAsync(CancellationToken cancellationToken = default);
@@ -17,6 +23,9 @@ public interface IEpisodeQueryService
     Task<List<ConflictInfo>> GetConflictingEpisodesAsync(int programId, DateTime scheduledTime, int? excludeEpisodeId = null, CancellationToken cancellationToken = default);
 }
 
+/// <summary>
+/// واجهة I الحلقة أمر.
+/// </summary>
 public interface IEpisodeCommandService
 {
     Task<Result<int>> CreateEpisodeAsync(EpisodeDto dto, UserSession session, CancellationToken cancellationToken = default);
@@ -31,8 +40,14 @@ public interface IEpisodeCommandService
     Task<(int success, int fail)> DeleteEpisodesBatchAsync(List<int> episodeIds, UserSession session, CancellationToken cancellationToken = default);
 }
 
+/// <summary>
+/// واجهة I الحلقة.
+/// </summary>
 public interface IEpisodeService : IEpisodeQueryService, IEpisodeCommandService { }
 
+/// <summary>
+/// صنف الحلقات.
+/// </summary>
 public partial class EpisodeService : IEpisodeService
 {
     private readonly IDbContextFactory<BroadcastWorkflowDBContext> _contextFactory;
@@ -50,6 +65,9 @@ public partial class EpisodeService : IEpisodeService
     }
 }
 
+/// <summary>
+/// صنف الحلقة الحالة Values.
+/// </summary>
 public static class EpisodeStatusValues
 {
     public const byte Planned = 0;
@@ -58,6 +76,9 @@ public static class EpisodeStatusValues
     public const byte WebsitePublished = 3;
     public const byte Cancelled = 4;
 
+    /// <summary>
+    /// استرجاع Display الاسم.
+    /// </summary>
     public static string GetDisplayName(byte statusId) => statusId switch
     {
         Planned => "مجدولة",
@@ -69,5 +90,8 @@ public static class EpisodeStatusValues
     };
 }
 
+/// <summary>
+/// سجل Conflict معلومات.
+/// </summary>
 public record ConflictInfo(int EpisodeId, string EpisodeName, string ProgramName, DateTime ScheduledTime, ConflictLevel Level);
 public enum ConflictLevel { Medium, High }

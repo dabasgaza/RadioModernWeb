@@ -1,14 +1,20 @@
-using DataAccess.Common;
+// ============================================================
+// EpisodeService.Queries — استعلامات الحلقات
+// ============================================================
+// المسؤولية: تعريف استعلامات الحلقات.
+// ============================================================
 using DataAccess.DTOs;
 using Domain.Models;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Threading;
 
 namespace DataAccess.Services;
 
+/// <summary>
+/// صنف الحلقات.
+/// </summary>
 public partial class EpisodeService
 {
     private static readonly Func<BroadcastWorkflowDBContext, IAsyncEnumerable<ActiveEpisodeDto>> s_compiledActiveEpisodes =
@@ -93,11 +99,17 @@ public partial class EpisodeService
                         .ToList(),
                 }));
 
+    /// <summary>
+    /// Set الضيوف Display.
+    /// </summary>
     private static void SetGuestsDisplay(ActiveEpisodeDto episode)
     {
         episode.GuestsDisplay = string.Join(" · ", episode.GuestItems.Select(g => g.Name));
     }
 
+    /// <summary>
+    /// استرجاع النشط الحلقات Async.
+    /// </summary>
     public async Task<List<ActiveEpisodeDto>> GetActiveEpisodesAsync(CancellationToken cancellationToken = default)
     {
         var operation = _telemetryClient.StartOperation<RequestTelemetry>("GetActiveEpisodes");
@@ -129,6 +141,9 @@ public partial class EpisodeService
         }
     }
 
+    /// <summary>
+    /// استرجاع النشط الحلقة By Id Async.
+    /// </summary>
     public async Task<ActiveEpisodeDto?> GetActiveEpisodeByIdAsync(int episodeId, CancellationToken cancellationToken = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
@@ -147,6 +162,9 @@ public partial class EpisodeService
         return episode;
     }
 
+    /// <summary>
+    /// استرجاع الحلقة الضيوف Async.
+    /// </summary>
     public async Task<List<EpisodeGuestDto>> GetEpisodeGuestsAsync(int episodeId, CancellationToken cancellationToken = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
@@ -164,6 +182,9 @@ public partial class EpisodeService
             .ToListAsync(cancellationToken);
     }
 
+    /// <summary>
+    /// استرجاع Conflicting الحلقات Async.
+    /// </summary>
     public async Task<List<ConflictInfo>> GetConflictingEpisodesAsync(int programId, DateTime scheduledTime, int? excludeEpisodeId = null, CancellationToken cancellationToken = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
@@ -181,8 +202,8 @@ public partial class EpisodeService
                      && e.ScheduledExecutionTime.Value < windowEnd)
             .Select(e => new ConflictInfo(
                 e.EpisodeId,
-                e.EpisodeName ?? "",
-                e.Program != null ? e.Program.ProgramName : "",
+                e.EpisodeName ?? string.Empty,
+                e.Program != null ? e.Program.ProgramName : string.Empty,
                 e.ScheduledExecutionTime!.Value,
                 e.ProgramId == programId ? ConflictLevel.High : ConflictLevel.Medium))
             .ToListAsync(cancellationToken);

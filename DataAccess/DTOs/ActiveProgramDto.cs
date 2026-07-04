@@ -1,5 +1,13 @@
-﻿namespace DataAccess.DTOs
+// ============================================================
+// ActiveProgramDto — البرنامج النشط
+// ============================================================
+// المسؤولية: تعريف البرنامج النشط.
+// ============================================================
+namespace DataAccess.DTOs
 {
+    /// <summary>
+    /// سجل البرنامج النشط.
+    /// </summary>
     public record ActiveProgramDto
     {
         public string ProgramName { get; init; } = string.Empty;

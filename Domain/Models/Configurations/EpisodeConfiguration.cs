@@ -1,10 +1,21 @@
+// ============================================================
+// EpisodeConfiguration — الحلقة
+// ============================================================
+// المسؤولية: تعريف الحلقة.
+// ============================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Models.Configurations;
 
+/// <summary>
+/// صنف الحلقة.
+/// </summary>
 public class EpisodeConfiguration : IEntityTypeConfiguration<Episode>
 {
+    /// <summary>
+    /// إعداد الحلقة.
+    /// </summary>
     public void Configure(EntityTypeBuilder<Episode> builder)
     {
         // 1. المفتاح الأساسي

@@ -1,14 +1,22 @@
+// ============================================================
+// AuditInterceptor — التدقيق التلقائي
+// ============================================================
+// المسؤولية: تعريف التدقيق التلقائي.
+// ============================================================
 using DataAccess.Common;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace DataAccess.Data
 {
     /// <summary>
     /// معترض عمليات الحفظ: يقوم بتحديث تواريخ التعديل تلقائياً وتسجيل التغييرات في جدول AuditLogs
+    /// <summary>
+    /// صنف التدقيق التلقائي.
+    /// </summary>
     /// </summary>
     public class AuditInterceptor : SaveChangesInterceptor
     {
@@ -155,6 +163,9 @@ namespace DataAccess.Data
         /// <summary>
         /// محاولة تسجيل التغييرات في جدول AuditLogs بأمان.
         /// إذا فشل التسجيل، لا يمنع العملية الأساسية بل يُسجّل الخطأ في Debug Output.
+        /// <summary>
+        /// محاولة Add التدقيق السجلات.
+        /// </summary>
         /// </summary>
         private void TryAddAuditLogs(DbContext context, List<AuditLog> entries)
         {

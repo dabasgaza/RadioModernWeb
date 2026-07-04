@@ -1,9 +1,17 @@
+// ============================================================
+// TestDataFactory — بيانات الاختبار
+// ============================================================
+// المسؤولية: تعريف بيانات الاختبار.
+// ============================================================
 using DataAccess.DTOs;
 using Domain.Models;
 using Radio.Web.ViewModels;
 
 namespace Radio.Tests.Helpers;
 
+/// <summary>
+/// صنف بيانات الاختبار.
+/// </summary>
 public static class TestDataFactory
 {
     public static SocialMediaPublishingLogDto CreateSocialLog(
@@ -34,6 +42,9 @@ public static class TestDataFactory
             Platforms = [new PlatformUrlFormItem { PlatformId = 1, Url = "https://facebook.com" }]
         };
 
+    /// <summary>
+    /// إنشاء Social Form.
+    /// </summary>
     public static SocialPublishingFormModel CreateSocialForm(params GuestSocialLogFormItem[] items)
         => new() { GuestLogs = [.. items] };
 }
