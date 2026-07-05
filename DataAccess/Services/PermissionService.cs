@@ -37,12 +37,11 @@ namespace DataAccess.Services
             {
                 if (field.IsLiteral && !field.IsInitOnly && field.FieldType == typeof(string))
                 {
-                    var systemName = (string)field.GetValue(null)!;
                     var attr = (PermissionInfoAttribute?)Attribute.GetCustomAttribute(field, typeof(PermissionInfoAttribute));
-                    var displayName = attr?.DisplayName ?? systemName;
-                    var module = attr?.Module ?? "عام";
+                    if (attr == null) continue; // تجاوز الصلاحيات القديمة المتوافقة تلقائياً لتفادي تكرارها وقسم "عام"
 
-                    _cachedPermissions.Add(new PermissionDto(idCounter++, systemName, displayName, module));
+                    var systemName = (string)field.GetValue(null)!;
+                    _cachedPermissions.Add(new PermissionDto(idCounter++, systemName, attr.DisplayName, attr.Module));
                 }
             }
         }

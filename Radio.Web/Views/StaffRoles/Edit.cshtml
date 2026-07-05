@@ -2,37 +2,22 @@
 @{
     ViewData["Title"] = Model.StaffRoleId == 0 ? "دور جديد" : "تعديل دور";
     var isEdit = Model.StaffRoleId != 0;
+    ViewBag.IsEdit = isEdit;
+    ViewBag.Icon = isEdit ? "edit" : "add";
+    ViewBag.Title = isEdit ? "تعديل بيانات الدور" : "إضافة دور وظيفي جديد";
+    ViewBag.Description = "إدخال وتحديث بيانات المسمى الوظيفي لطاقم العمل";
+    ViewBag.EntityName = "المسميات الوظيفية";
+    ViewBag.EntityUrl = "/StaffRoles";
+    ViewBag.BackUrl = "/StaffRoles";
+    ViewBag.BackText = "الرجوع للمسميات";
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <a href="/StaffRoles">المسميات الوظيفية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>@(isEdit ? "تعديل دور" : "دور جديد")</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded text-primary">@(isEdit ? "edit" : "add")</span>
-                @(isEdit ? "تعديل دور" : "دور جديد")
-            </h1>
-            <p>إدخال وتحديث بيانات المسمى الوظيفي لطاقم العمل</p>
-        </div>
-        <div class="flex items-center gap-2">
-            <a href="/StaffRoles" class="btn-secondary">
-                <span class="material-symbols-rounded">arrow_forward</span>
-                الرجوع للمسميات
-            </a>
-        </div>
-    </div>
-</div>
+<partial name="_CreateEditHeader" />
 
-<form method="post" action="@(isEdit ? $"/StaffRoles/Edit/{Model.StaffRoleId}" : "/StaffRoles/Create")" class="max-w-2xl">
+<form method="post" action="@(isEdit ? $"/StaffRoles/Edit/{Model.StaffRoleId}" : "/StaffRoles/Create")" class="max-w-lg mx-auto">
     @Html.AntiForgeryToken()
     @if (isEdit) { <input type="hidden" name="StaffRoleId" value="@Model.StaffRoleId" /> }
+
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
         <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-6 font-semibold text-sm"></div>
@@ -41,24 +26,22 @@
     <div class="card-premium">
         <div class="card-header">
             <div class="flex items-center gap-2">
-                <span class="material-symbols-rounded text-primary">work</span>
+                <span class="material-symbols-rounded text-primary">badge</span>
                 <h3 class="font-bold text-ink text-base">بيانات الدور</h3>
             </div>
         </div>
         <div class="card-body">
-            <div class="space-y-4">
-                <div>
-                    <label class="form-label">اسم الدور *</label>
-                    <div class="input-wrapper">
-                        <span class="material-symbols-rounded input-icon">badge</span>
-                        <input type="text" name="RoleName" value="@Model.RoleName" class="form-input" required placeholder="مثال: مخرج" />
-                    </div>
+            <div>
+                <label class="form-label">اسم الدور *</label>
+                <div class="input-wrapper">
+                    <span class="material-symbols-rounded input-icon">badge</span>
+                    <input type="text" name="RoleName" value="@Model.RoleName" class="form-input" required placeholder="مثال: مخرج" />
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="flex items-center justify-end gap-2 mt-6">
+    <div class="flex items-center justify-center gap-2 mt-6">
         <a href="/StaffRoles" class="btn-secondary">
             <span class="material-symbols-rounded">cancel</span>
             إلغاء

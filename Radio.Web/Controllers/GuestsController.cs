@@ -30,6 +30,7 @@ public class GuestsController : Controller
     /// <summary>
     /// عرض قائمة الضيوف.
     /// </summary>
+    [Authorize(Policy = AppPermissions.GuestView)]
     public async Task<IActionResult> Index(string? search)
     {
         var list = await _guests.GetAllActiveAsync(cancellationToken: HttpContext?.RequestAborted ?? default);

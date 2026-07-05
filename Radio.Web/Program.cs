@@ -16,6 +16,7 @@ using FluentValidation;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
@@ -110,21 +111,41 @@ builder.Services.ConfigureApplicationCookie(options =>
 // --- Authorization ---
 builder.Services.AddAuthorization(options =>
 {
+    // View policies — تسمح بـ View أو Manage (الإدارة تتضمن المشاهدة)
+    options.AddPolicy(AppPermissions.UserView, p => p.RequireAssertion(ctx =>
+        ctx.User.HasPermission(AppPermissions.UserManage) || ctx.User.HasPermission(AppPermissions.UserView)));
+    options.AddPolicy(AppPermissions.ProgramView, p => p.RequireAssertion(ctx =>
+        ctx.User.HasPermission(AppPermissions.ProgramManage) || ctx.User.HasPermission(AppPermissions.ProgramView)));
+    options.AddPolicy(AppPermissions.EpisodeView, p => p.RequireAssertion(ctx =>
+        ctx.User.HasPermission(AppPermissions.EpisodeManage) || ctx.User.HasPermission(AppPermissions.EpisodeView)));
+    options.AddPolicy(AppPermissions.GuestView, p => p.RequireAssertion(ctx =>
+        ctx.User.HasPermission(AppPermissions.GuestManage) || ctx.User.HasPermission(AppPermissions.GuestView)));
+    options.AddPolicy(AppPermissions.CoordinationView, p => p.RequireAssertion(ctx =>
+        ctx.User.HasPermission(AppPermissions.CoordinationManage) || ctx.User.HasPermission(AppPermissions.CoordinationView)));
+    options.AddPolicy(AppPermissions.StaffView, p => p.RequireAssertion(ctx =>
+        ctx.User.HasPermission(AppPermissions.StaffManage) || ctx.User.HasPermission(AppPermissions.StaffView)));
+    options.AddPolicy(AppPermissions.DatabaseView, p => p.RequireAssertion(ctx =>
+        ctx.User.HasPermission(AppPermissions.DatabaseManage) || ctx.User.HasPermission(AppPermissions.DatabaseView)));
+
+    // Manage policies — تسمح بـ Manage فقط
+    options.AddPolicy(AppPermissions.UserManage, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.UserManage)));
+    options.AddPolicy(AppPermissions.ProgramManage, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.ProgramManage)));
     options.AddPolicy(AppPermissions.EpisodeManage, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.EpisodeManage)));
+    options.AddPolicy(AppPermissions.GuestManage, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.GuestManage)));
+    options.AddPolicy(AppPermissions.CoordinationManage, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.CoordinationManage)));
+    options.AddPolicy(AppPermissions.StaffManage, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.StaffManage)));
+    options.AddPolicy(AppPermissions.DatabaseManage, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.DatabaseManage)));
+
+    // Special action policies — تتطلب صلاحيتها المحددة فقط
     options.AddPolicy(AppPermissions.EpisodeEdit, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.EpisodeEdit)));
+    options.AddPolicy(AppPermissions.EpisodeDelete, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.EpisodeDelete)));
     options.AddPolicy(AppPermissions.EpisodeExecute, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.EpisodeExecute)));
     options.AddPolicy(AppPermissions.EpisodePublish, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.EpisodePublish)));
-    options.AddPolicy(AppPermissions.EpisodeDelete, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.EpisodeDelete)));
-    options.AddPolicy(AppPermissions.EpisodeRevert, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.EpisodeRevert)));
-    options.AddPolicy(AppPermissions.ProgramManage, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.ProgramManage)));
-    options.AddPolicy(AppPermissions.GuestManage, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.GuestManage)));
-    options.AddPolicy(AppPermissions.StaffManage, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.StaffManage)));
-    options.AddPolicy(AppPermissions.CoordinationManage, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.CoordinationManage)));
-    options.AddPolicy(AppPermissions.ViewReports, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.ViewReports)));
-    options.AddPolicy(AppPermissions.DatabaseManage, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.DatabaseManage)));
-    options.AddPolicy(AppPermissions.ViewAuditLogs, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.ViewAuditLogs)));
     options.AddPolicy(AppPermissions.EpisodeWebPublish, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.EpisodeWebPublish)));
-    options.AddPolicy(AppPermissions.UserManage, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.UserManage)));
+    options.AddPolicy(AppPermissions.EpisodeRevert, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.EpisodeRevert)));
+    options.AddPolicy(AppPermissions.PublishingRecordView, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.PublishingRecordView)));
+    options.AddPolicy(AppPermissions.ViewReports, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.ViewReports)));
+    options.AddPolicy(AppPermissions.ViewAuditLogs, p => p.RequireAssertion(ctx => ctx.User.HasPermission(AppPermissions.ViewAuditLogs)));
 });
 
 // --- Database Interceptors ---
@@ -167,6 +188,9 @@ builder.Services.AddScoped<IDatabaseManagementService, DatabaseManagementService
 builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 builder.Services.AddScoped<ISystemDiagnosticsService, SystemDiagnosticsService>();
 builder.Services.AddScoped<IRolePermissionCacheService, RolePermissionCacheService>();
+builder.Services.AddScoped<IPermissionEvaluationService, PermissionEvaluationService>();
+builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, DynamicPermissionPolicyProvider>();
 builder.Services.AddScoped<CustomCookieAuthenticationEvents>();
 builder.Services.AddHostedService<DatabaseBackupScheduler>();
 
@@ -249,6 +273,10 @@ builder.Services.AddControllersWithViews(options =>
     options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(_ => "القيمة مطلوبة");
     options.ModelBindingMessageProvider.SetMissingBindRequiredValueAccessor(_ => "حقل مطلوب");
     options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((x, y) => $"القيمة '{x}' غير صالحة لـ {y}");
+    options.ModelBindingMessageProvider.SetMissingKeyOrValueAccessor(() => "حقل مطلوب");
+    options.ModelBindingMessageProvider.SetUnknownValueIsInvalidAccessor(x => $"القيمة المقدمة '{x}' غير صالحة");
+    options.ModelBindingMessageProvider.SetNonPropertyAttemptedValueIsInvalidAccessor(x => $"القيمة '{x}' غير صالحة");
+    options.ModelBindingMessageProvider.SetNonPropertyValueMustBeANumberAccessor(() => "يرجى إدخال رقم صحيح");
 })
 .AddRazorRuntimeCompilation()
 .AddSessionStateTempDataProvider();
@@ -290,6 +318,18 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 }
 
 app.UseMiddleware<LogContextMiddleware>();
+app.Use(async (context, next) =>
+{
+    Radio.Web.Security.HttpContextHolder.Current = context;
+    try
+    {
+        await next();
+    }
+    finally
+    {
+        Radio.Web.Security.HttpContextHolder.Current = null;
+    }
+});
 app.UseSerilogRequestLogging();
 
 if (!app.Environment.IsDevelopment())

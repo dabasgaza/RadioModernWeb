@@ -310,16 +310,23 @@
                             @{
                                 var execLog = Model.PublishingRecords.FirstOrDefault(r => r.RecordType == "Execution");
                             }
-                            @if (execLog != null)
-                            {
-                                <div class="bg-surface-3 p-3 rounded-xl border border-border/50">
-                                    <div class="text-[10px] font-bold text-ink-muted mb-1">الملخص والمدة</div>
-                                    <div class="font-bold text-ink text-sm flex items-center gap-1.5">
-                                        <span class="material-symbols-rounded text-sm text-success">hourglass_empty</span>
-                                        @execLog.Summary
-                                    </div>
-                                </div>
-                            }
+                    @if (execLog != null)
+                    {
+                        <div class="bg-surface-3 p-3 rounded-xl border border-border/50">
+                            <div class="text-[10px] font-bold text-ink-muted mb-1">الملخص والمدة</div>
+                            <div class="font-bold text-ink text-sm flex items-center gap-1.5">
+                                <span class="material-symbols-rounded text-sm text-success">hourglass_empty</span>
+                                @execLog.Summary
+                            </div>
+                        </div>
+                    }
+                    @if (User.HasPermission(AppPermissions.EpisodeExecute) && execLog != null)
+                    {
+                        <a href="/ExecutionLogs/Edit/@execLog.RecordId" class="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl border border-success/30 bg-success/5 hover:bg-success/10 text-success hover:text-success/80 transition font-semibold text-xs text-center mt-4">
+                            <span class="material-symbols-rounded text-sm">edit</span>
+                            تعديل بيانات التنفيذ
+                        </a>
+                    }
                         </div>
                     }
                     else

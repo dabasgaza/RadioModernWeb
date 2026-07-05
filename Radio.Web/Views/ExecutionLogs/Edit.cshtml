@@ -1,24 +1,17 @@
 @model ExecutionLogDto
-@{ ViewData["Title"] = "تعديل سجل التنفيذ"; }
+@{
+    ViewData["Title"] = "تعديل سجل التنفيذ";
+    ViewBag.IsEdit = true;
+    ViewBag.Icon = "play_circle";
+    ViewBag.Title = "تعديل سجل التنفيذ";
+    ViewBag.Description = "تحديث بيانات المدة والملاحظات والمشاكل المتعلقة بتنفيذ الحلقة";
+    ViewBag.EntityName = "سجلات التنفيذ";
+    ViewBag.EntityUrl = "/ExecutionLogs";
+    ViewBag.BackUrl = "/ExecutionLogs";
+    ViewBag.BackText = "الرجوع للسجلات";
+}
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <a href="/ExecutionLogs">سجلات التنفيذ</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>تعديل سجل التنفيذ</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded text-primary">play_circle</span>
-                تعديل سجل التنفيذ
-            </h1>
-        </div>
-    </div>
-</div>
+<partial name="_CreateEditHeader" />
 
 <form method="post" action="/ExecutionLogs/Edit/@Model.ExecutionLogId" class="max-w-2xl mx-auto">
     @Html.AntiForgeryToken()
@@ -41,15 +34,24 @@
         <div class="card-body space-y-4">
             <div>
                 <label class="form-label">مدة التنفيذ (بالدقائق)</label>
-                <input type="number" name="DurationMinutes" value="@Model.DurationMinutes" min="1" max="720" class="form-input" />
+                <div class="input-wrapper">
+                    <span class="material-symbols-rounded input-icon">schedule</span>
+                    <input type="number" name="DurationMinutes" value="@Model.DurationMinutes" min="1" max="720" class="form-input" placeholder="مثال: 60" />
+                </div>
             </div>
             <div>
                 <label class="form-label">ملاحظات التنفيذ</label>
-                <textarea name="ExecutionNotes" rows="4" class="form-input" placeholder="أي ملاحظات حول عملية التنفيذ…">@Model.ExecutionNotes</textarea>
+                <div class="input-wrapper">
+                    <span class="material-symbols-rounded input-icon" style="top:1rem;transform:none">notes</span>
+                    <textarea name="ExecutionNotes" rows="4" class="form-input" placeholder="أي ملاحظات حول عملية التنفيذ…">@Model.ExecutionNotes</textarea>
+                </div>
             </div>
             <div>
                 <label class="form-label">المشاكل التي واجهت التنفيذ</label>
-                <textarea name="IssuesEncountered" rows="4" class="form-input" placeholder="أي مشاكل تقنية أو إدارية أثناء التنفيذ…">@Model.IssuesEncountered</textarea>
+                <div class="input-wrapper">
+                    <span class="material-symbols-rounded input-icon" style="top:1rem;transform:none">warning</span>
+                    <textarea name="IssuesEncountered" rows="4" class="form-input" placeholder="أي مشاكل تقنية أو إدارية أثناء التنفيذ…">@Model.IssuesEncountered</textarea>
+                </div>
             </div>
         </div>
     </div>

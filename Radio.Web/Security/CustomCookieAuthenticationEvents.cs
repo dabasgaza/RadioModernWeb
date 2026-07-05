@@ -1,24 +1,31 @@
 using DataAccess.Services;
+using Domain.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Radio.Web.Security
 {
     /// <summary>
-    /// أحداث مخصصة لمصادقة الكوكيز لإعادة بناء وتحديث صلاحيات المستخدم ديناميكياً عند كل طلب.
+    /// معالج أحداث مصادقة الكوكيز لتحديث حالة حساب المستخدم ودوره وصلاحياته ديناميكياً ولحظياً.
     /// </summary>
     public class CustomCookieAuthenticationEvents : CookieAuthenticationEvents
     {
-        private readonly IRolePermissionCacheService _permissionCache;
+        private readonly IPermissionEvaluationService _evaluationService;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<CustomCookieAuthenticationEvents> _logger;
 
         public CustomCookieAuthenticationEvents(
-            IRolePermissionCacheService permissionCache,
+            IPermissionEvaluationService evaluationService,
+            UserManager<ApplicationUser> userManager,
             ILogger<CustomCookieAuthenticationEvents> logger)
         {
-            _permissionCache = permissionCache;
+            _evaluationService = evaluationService;
+            _userManager = userManager;
             _logger = logger;
         }
 
@@ -27,26 +34,49 @@ namespace Radio.Web.Security
             var principal = context.Principal;
             if (principal?.Identity?.IsAuthenticated == true)
             {
-                var roleIdClaim = principal.FindFirst("DomainRoleId");
-                if (roleIdClaim != null && int.TryParse(roleIdClaim.Value, out var roleId))
+                var userIdClaim = principal.FindFirst("DomainUserId");
+                if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var userId))
                 {
-                    // جلب الصلاحيات المحدثة فورياً من التخزين المؤقت
-                    var permissions = await _permissionCache.GetPermissionsForRoleAsync(roleId);
+                    var user = await _userManager.FindByIdAsync(userId.ToString());
+                    if (user == null || !user.IsActive)
+                    {
+                        context.RejectPrincipal();
+                        _logger.LogWarning("تم رفض جلسة المستخدم {UserId} - الحساب غير نشط أو تم تعطيله حديثاً", userId);
+                        return;
+                    }
+
+                    var currentRoleId = user.RoleId;
+
+                    // 1. تسخين وتحديث ذاكرة الصلاحيات المؤقتة بشكل غير متزامن في بداية الطلب
+                    // هذا يضمن توفر الصلاحيات في الكاش طوال فترة دورة حياة الطلب الحالي للاستدعاء المتزامن في الـ Views
+                    await _evaluationService.GetEffectivePermissionsAsync(userId, currentRoleId);
+                    await _evaluationService.GetUserOverridesAsync(userId);
 
                     if (principal.Identity is ClaimsIdentity identity)
                     {
-                        // إزالة الصلاحيات القديمة من الهوية الحالية لمنع تراكم التكرار
-                        var existingPermissionClaims = identity.FindAll("Permission").ToList();
-                        foreach (var claim in existingPermissionClaims)
+                        // 2. التحقق من تطابق دور المستخدم الحالي وتحديث الكوكي عند الاختلاف فقط
+                        var roleIdClaim = identity.FindFirst("DomainRoleId");
+                        if (roleIdClaim != null)
                         {
-                            identity.RemoveClaim(claim);
+                            if (roleIdClaim.Value != currentRoleId.ToString())
+                            {
+                                identity.RemoveClaim(roleIdClaim);
+                                identity.AddClaim(new Claim("DomainRoleId", currentRoleId.ToString()));
+                                context.ShouldRenew = true; // تجديد الكوكي مع حفظ التعديلات في المتصفح
+                                _logger.LogInformation("تم تحديث دور المستخدم {UserId} من {OldRole} إلى {NewRole} ديناميكياً وتجديد الجلسة", userId, roleIdClaim.Value, currentRoleId);
+                            }
+                        }
+                        else
+                        {
+                            identity.AddClaim(new Claim("DomainRoleId", currentRoleId.ToString()));
+                            context.ShouldRenew = true;
                         }
 
-                        // إضافة الصلاحيات النشطة الجديدة
-                        foreach (var permission in permissions)
-                        {
-                            identity.AddClaim(new Claim("Permission", permission));
-                        }
+                        // لم نعد نقوم بحشو صلاحيات المستخدم كـ Claims داخل الكوكي لتجنب تضخم حجم الكوكي (Cookie Bloat).
+                        // بدلاً من ذلك، نعتمد بالكامل على التحقق اللحظي عبر الكاش المحدث من خلال IPermissionEvaluationService.
+                        var existingPermissionClaims = identity.FindAll("Permission").ToList();
+                        foreach (var claim in existingPermissionClaims)
+                            identity.RemoveClaim(claim);
                     }
                 }
             }

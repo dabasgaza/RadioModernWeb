@@ -1,145 +1,118 @@
 @using DataAccess.Common
 @inject ICurrentUserService CurrentUser
+@{
+    var controller = ViewContext.RouteData.Values["Controller"]?.ToString();
+    bool IsActive(string c) => controller == c;
+    bool HasAny(params string[] perms) => perms.Any(p => CurrentUser.HasPermission(p));
+}
+<div class="flex items-center gap-2 h-16 px-4 border-b border-base-200 bg-gradient-to-l from-primary to-secondary shrink-0">
+    <a href="/" class="flex items-center gap-2 text-white">
+        <span class="material-symbols-rounded text-2xl">radio</span>
+        <span class="font-bold text-lg">نظام البث الإذاعي</span>
+    </a>
+</div>
+<ul class="menu menu-md p-3 gap-0.5 overflow-y-auto flex-1 bg-base-100 flex-nowrap">
+    <li><a href="/" class="@(IsActive("Home") ? "active" : "")">
+        <span class="material-symbols-rounded">dashboard</span>لوحة التحكم
+    </a></li>
 
-<aside class="fixed top-0 right-0 z-40 h-screen w-72 glass-sidebar transform transition-transform duration-300 -translate-x-full lg:translate-x-0" id="sidebar">
-    <div class="flex items-center justify-between h-16 px-5 border-b border-border/50 bg-gradient-to-l from-primary to-secondary shadow-md">
-        <a href="/" class="flex items-center gap-2 text-white">
-            <span class="material-symbols-rounded text-2xl">radio</span>
-            <span class="font-bold text-lg">نظام البث الإذاعي</span>
-        </a>
-        <button class="lg:hidden text-white" onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full')">
-            <span class="material-symbols-rounded">close</span>
-        </button>
-    </div>
+    @if (HasAny(AppPermissions.EpisodesView, AppPermissions.EpisodesCreate, AppPermissions.EpisodesEdit, AppPermissions.ExecutionExecute))
+    {
+        <li><a href="/Episodes" class="@(IsActive("Episodes") ? "active" : "")">
+            <span class="material-symbols-rounded">podcasts</span>الحلقات
+        </a></li>
+    }
 
-    <nav class="p-3 overflow-y-auto h-[calc(100vh-4rem)] sidebar-nav">
-        <a href="/" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
-            <span class="material-symbols-rounded">dashboard</span>
-            <span>لوحة التحكم</span>
-        </a>
+    @if (HasAny(AppPermissions.ProgramsView, AppPermissions.ProgramsManage))
+    {
+        <li><a href="/Programs" class="@(IsActive("Programs") ? "active" : "")">
+            <span class="material-symbols-rounded">radio</span>البرامج
+        </a></li>
+    }
 
-        @if (CurrentUser.HasPermission(AppPermissions.EpisodeManage) || CurrentUser.HasPermission(AppPermissions.EpisodeEdit) || CurrentUser.HasPermission(AppPermissions.EpisodeExecute))
-        {
-            <a href="/Episodes" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Episodes" ? "active" : "")">
-                <span class="material-symbols-rounded">podcasts</span>
-                <span>الحلقات</span>
-            </a>
-        }
+    @if (HasAny(AppPermissions.GuestsView, AppPermissions.GuestsManage))
+    {
+        <li><a href="/Guests" class="@(IsActive("Guests") ? "active" : "")">
+            <span class="material-symbols-rounded">people_alt</span>الضيوف
+        </a></li>
+    }
 
-        @if (CurrentUser.HasPermission(AppPermissions.ProgramManage))
-        {
-            <a href="/Programs" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Programs" ? "active" : "")">
-                <span class="material-symbols-rounded">radio</span>
-                <span>البرامج</span>
-            </a>
-        }
+    @if (HasAny(AppPermissions.CoordinationView, AppPermissions.CoordinationManage))
+    {
+        <li><a href="/Correspondents" class="@(IsActive("Correspondents") ? "active" : "")">
+            <span class="material-symbols-rounded">map</span>المراسلون
+        </a></li>
+        <li><a href="/Coverage" class="@(IsActive("Coverage") ? "active" : "")">
+            <span class="material-symbols-rounded">edit_location_alt</span>التغطيات الميدانية
+        </a></li>
+    }
 
-        @if (CurrentUser.HasPermission(AppPermissions.GuestManage))
-        {
-            <a href="/Guests" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Guests" ? "active" : "")">
-                <span class="material-symbols-rounded">people_alt</span>
-                <span>الضيوف</span>
-            </a>
-        }
+    @if (HasAny(AppPermissions.StaffView, AppPermissions.StaffManage))
+    {
+        <li>
+            <details @(IsActive("Employees") || IsActive("StaffRoles") ? "open" : "")>
+                <summary><span class="material-symbols-rounded">badge</span>طاقم العمل</summary>
+                <ul>
+                    <li><a href="/Employees" class="@(IsActive("Employees") ? "active" : "")">الموظفون</a></li>
+                    <li><a href="/StaffRoles" class="@(IsActive("StaffRoles") ? "active" : "")">المسميات الوظيفية</a></li>
+                </ul>
+            </details>
+        </li>
+        <li><a href="/SocialPlatforms" class="@(IsActive("SocialPlatforms") ? "active" : "")">
+            <span class="material-symbols-rounded">share</span>منصات النشر
+        </a></li>
+    }
 
-        @if (CurrentUser.HasPermission(AppPermissions.CoordinationManage))
-        {
-            <a href="/Correspondents" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Correspondents" ? "active" : "")">
-                <span class="material-symbols-rounded">map</span>
-                <span>المراسلون</span>
-            </a>
-            <a href="/Coverage" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Coverage" ? "active" : "")">
-                <span class="material-symbols-rounded">edit_location_alt</span>
-                <span>التغطيات الميدانية</span>
-            </a>
-        }
+    @if (HasAny(AppPermissions.SocialPublishingView, AppPermissions.WebsitePublishingView, AppPermissions.ExecutionView, AppPermissions.SocialPublishingPublish, AppPermissions.WebsitePublishingPublish, AppPermissions.ExecutionExecute))
+    {
+        <li>
+            <details @(IsActive("Publishing") || IsActive("WebsitePublishing") || IsActive("ExecutionLogs") ? "open" : "")>
+                <summary><span class="material-symbols-rounded">publish</span>النشر الرقمي</summary>
+                <ul>
+                    @if (HasAny(AppPermissions.SocialPublishingPublish, AppPermissions.SocialPublishingView))
+                    {
+                        <li><a href="/Publishing" class="@(IsActive("Publishing") ? "active" : "")">النشر الاجتماعي</a></li>
+                    }
+                    @if (HasAny(AppPermissions.WebsitePublishingPublish, AppPermissions.WebsitePublishingView))
+                    {
+                        <li><a href="/WebsitePublishing" class="@(IsActive("WebsitePublishing") ? "active" : "")">نشر الموقع</a></li>
+                    }
+                    @if (HasAny(AppPermissions.ExecutionExecute, AppPermissions.ExecutionView))
+                    {
+                        <li><a href="/ExecutionLogs" class="@(IsActive("ExecutionLogs") ? "active" : "")">سجلات التنفيذ</a></li>
+                    }
+                </ul>
+            </details>
+        </li>
+    }
 
-        @if (CurrentUser.HasPermission(AppPermissions.StaffManage))
-        {
-            <div class="nav-group">
-                <button class="nav-link w-full text-right" onclick="toggleSubmenu(this)">
-                    <span class="material-symbols-rounded">badge</span>
-                    <span class="flex-1">طاقم العمل</span>
-                    <span class="material-symbols-rounded submenu-arrow">expand_more</span>
-                </button>
-                <div class="submenu hidden">
-                    <a href="/Employees" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Employees" ? "active" : "")">
-                        <span>الموظفون</span>
-                    </a>
-                    <a href="/StaffRoles" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "StaffRoles" ? "active" : "")">
-                        <span>المسميات الوظيفية</span>
-                    </a>
-                </div>
-            </div>
-        }
+    @if (CurrentUser.HasPermission(AppPermissions.ReportsView))
+    {
+        <li><a href="/Reports" class="@(IsActive("Reports") ? "active" : "")">
+            <span class="material-symbols-rounded">assessment</span>التقارير
+        </a></li>
+    }
 
-        @if (CurrentUser.HasPermission(AppPermissions.EpisodePublish) || CurrentUser.HasPermission(AppPermissions.EpisodeWebPublish))
-        {
-            <div class="nav-group">
-                <button class="nav-link w-full text-right" onclick="toggleSubmenu(this)">
-                    <span class="material-symbols-rounded">publish</span>
-                    <span class="flex-1">النشر الرقمي</span>
-                    <span class="material-symbols-rounded submenu-arrow">expand_more</span>
-                </button>
-                <div class="submenu hidden">
-                    <a href="/Publishing" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Publishing" ? "active" : "")">
-                        <span>النشر الاجتماعي</span>
-                    </a>
-                    <a href="/WebsitePublishing" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "WebsitePublishing" ? "active" : "")">
-                        <span>نشر الموقع</span>
-                    </a>
-                    <a href="/ExecutionLogs" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ExecutionLogs" ? "active" : "")">
-                        <span>سجلات التنفيذ</span>
-                    </a>
-                </div>
-            </div>
-        }
-
-        @if (CurrentUser.HasPermission(AppPermissions.StaffManage))
-        {
-            <a href="/SocialPlatforms" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "SocialPlatforms" ? "active" : "")">
-                <span class="material-symbols-rounded">share</span>
-                <span>منصات النشر</span>
-            </a>
-        }
-
-        @if (CurrentUser.HasPermission(AppPermissions.ViewReports))
-        {
-            <a href="/Reports" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reports" ? "active" : "")">
-                <span class="material-symbols-rounded">assessment</span>
-                <span>التقارير</span>
-            </a>
-        }
-
-        @if (CurrentUser.HasPermission(AppPermissions.UserManage))
-        {
-            <div class="nav-group">
-                <button class="nav-link w-full text-right" onclick="toggleSubmenu(this)">
-                    <span class="material-symbols-rounded">admin_panel_settings</span>
-                    <span class="flex-1">إدارة النظام</span>
-                    <span class="material-symbols-rounded submenu-arrow">expand_more</span>
-                </button>
-                <div class="submenu hidden">
-                    <a href="/Users" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Users" ? "active" : "")">
-                        <span>المستخدمون</span>
-                    </a>
-                    <a href="/Roles" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Roles" ? "active" : "")">
-                        <span>الأدوار</span>
-                    </a>
-                    <a href="/Permissions" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Permissions" ? "active" : "")">
-                        <span>الصلاحيات</span>
-                    </a>
-                    <a href="/AuditLogs" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "AuditLogs" ? "active" : "")">
-                        <span>سجل التدقيق</span>
-                    </a>
-                    <a href="/Database" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Database" ? "active" : "")">
-                        <span>قاعدة البيانات</span>
-                    </a>
-                    <a href="/Diagnostics" class="nav-link sub-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Diagnostics" ? "active" : "")">
-                        <span>تشخيص النظام</span>
-                    </a>
-                </div>
-            </div>
-        }
-    </nav>
-</aside>
+    @if (HasAny(AppPermissions.AdminUsersManage, AppPermissions.AdminRolesManage))
+    {
+        <li>
+            <details @(IsActive("Users") || IsActive("Roles") || IsActive("Permissions") || IsActive("AuditLogs") || IsActive("Database") || IsActive("Diagnostics") ? "open" : "")>
+                <summary><span class="material-symbols-rounded">admin_panel_settings</span>إدارة النظام</summary>
+                <ul>
+                    <li><a href="/Users" class="@(IsActive("Users") ? "active" : "")">المستخدمون</a></li>
+                    <li><a href="/Roles" class="@(IsActive("Roles") ? "active" : "")">الأدوار</a></li>
+                    <li><a href="/Permissions" class="@(IsActive("Permissions") ? "active" : "")">الصلاحيات</a></li>
+                    @if (CurrentUser.HasPermission(AppPermissions.SystemViewAuditLogs))
+                    {
+                        <li><a href="/AuditLogs" class="@(IsActive("AuditLogs") ? "active" : "")">سجل التدقيق</a></li>
+                    }
+                    @if (CurrentUser.HasPermission(AppPermissions.SystemDatabaseManage))
+                    {
+                        <li><a href="/Database" class="@(IsActive("Database") ? "active" : "")">قاعدة البيانات</a></li>
+                        <li><a href="/Diagnostics" class="@(IsActive("Diagnostics") ? "active" : "")">تشخيص النظام</a></li>
+                    }
+                </ul>
+            </details>
+        </li>
+    }
+</ul>

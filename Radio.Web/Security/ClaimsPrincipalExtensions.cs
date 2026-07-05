@@ -1,21 +1,20 @@
 // ============================================================
 // ClaimsPrincipalExtensions — Claims Principal Extensions
 // ============================================================
-// المسؤولية: تعريف Claims Principal Extensions.
+// المسؤولية: تعريف Claims Principal Extensions والتحقق الفعال.
 // ============================================================
 using System.Security.Claims;
+using DataAccess.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Radio.Web.Security;
 
 /// <summary>
 /// Extension methods for ClaimsPrincipal to check permissions easily in Razor Views.
-/// <summary>
-/// صنف Claims Principal Extensions.
-/// </summary>
 /// </summary>
 public static class ClaimsPrincipalExtensions
 {
-    /// <summary>هل المستخدم يملك صلاحية معيّنة؟ (Admin يملك كل الصلاحيات)</summary>
+    /// <summary>هل المستخدم يملك صلاحية معيّنة؟ (SuperAdmin يملك كل الصلاحيات)</summary>
     public static bool HasPermission(this ClaimsPrincipal user, string permissionName)
     {
         if (user?.Identity?.IsAuthenticated != true) return false;
@@ -23,6 +22,18 @@ public static class ClaimsPrincipalExtensions
         // SuperAdmin bypasses role-permission table
         if (user.HasClaim(c => c.Type == "SuperAdmin")) return true;
 
+        // محاولة استخدام محرك تقييم الصلاحيات الجديد والمرن
+        var httpContext = HttpContextHolder.Current;
+        if (httpContext != null)
+        {
+            var evaluationService = httpContext.RequestServices.GetService<IPermissionEvaluationService>();
+            if (evaluationService != null)
+            {
+                return evaluationService.HasPermission(user, permissionName);
+            }
+        }
+
+        // Fallback إلى الكليّمات المباشرة في الكوكي في حال عدم توفر سياق الطلب
         return user.HasClaim("Permission", permissionName);
     }
 

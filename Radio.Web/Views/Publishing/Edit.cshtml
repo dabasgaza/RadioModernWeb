@@ -3,33 +3,17 @@
     ViewData["Title"] = "تعديل سجل النشر الرقمي";
     var log = Model.Log;
     var episode = Model.Episode;
+    ViewBag.IsEdit = true;
+    ViewBag.Icon = "share";
+    ViewBag.Title = "تعديل سجل النشر الرقمي";
+    ViewBag.Description = "تحديث وتعديل تفاصيل النشر على منصات السوشيال ميديا والروابط المرتبطة";
+    ViewBag.EntityName = "سجل النشر الموحد";
+    ViewBag.EntityUrl = "/Publishing";
+    ViewBag.BackUrl = "/Publishing";
+    ViewBag.BackText = "الرجوع للسجل الموحد";
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <a href="/Publishing">سجل النشر الموحد</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>تعديل سجل النشر الرقمي</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded text-primary">edit</span>
-                تعديل سجل النشر الرقمي
-            </h1>
-            <p>تحديث وتعديل تفاصيل النشر على منصات السوشيال ميديا والروابط المرتبطة</p>
-        </div>
-        <div class="flex items-center gap-2">
-            <a href="/Publishing" class="btn-secondary">
-                <span class="material-symbols-rounded">arrow_forward</span>
-                الرجوع للسجل الموحد
-            </a>
-        </div>
-    </div>
-</div>
+<partial name="_CreateEditHeader" />
 
 @if (log == null)
 {
@@ -38,16 +22,23 @@
 }
 
 <!-- Episode Info -->
-<div class="bg-surface rounded-xl border border-border p-5 mb-4">
-    <div class="flex items-center justify-between">
-        <div>
-            <h3 class="text-lg font-bold text-ink">@(episode?.EpisodeName ?? "—")</h3>
-            <p class="text-sm text-ink-muted">@(episode?.ProgramName ?? "")</p>
+<div class="card-premium mb-4">
+    <div class="card-body">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-rounded text-primary">podcasts</span>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-ink">@(episode?.EpisodeName ?? "—")</h3>
+                    <p class="text-sm text-ink-muted">@(episode?.ProgramName ?? "")</p>
+                </div>
+            </div>
+            <a href="/Episodes/Details/@log.EpisodeId" class="btn-secondary text-sm" target="_blank">
+                <span class="material-symbols-rounded">open_in_new</span>
+                عرض الحلقة
+            </a>
         </div>
-        <a href="/Episodes/Details/@log.EpisodeId" class="btn-secondary text-sm" target="_blank">
-            <span class="material-symbols-rounded">open_in_new</span>
-            عرض الحلقة
-        </a>
     </div>
 </div>
 
@@ -75,19 +66,28 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label class="form-label">عنوان المقطع</label>
-                                <input type="text" name="GuestLogs[@i].ClipTitle" value="@item.ClipTitle" class="form-input" placeholder="عنوان المقطع المنشور" />
+                                <div class="input-wrapper">
+                                    <span class="material-symbols-rounded input-icon">title</span>
+                                    <input type="text" name="GuestLogs[@i].ClipTitle" value="@item.ClipTitle" class="form-input" placeholder="عنوان المقطع المنشور" />
+                                </div>
                             </div>
                             <div>
                                 <label class="form-label">المدة (دقيقة)</label>
-                                <input type="number" name="GuestLogs[@i].DurationMinutes" value="@item.DurationMinutes" class="form-input" placeholder="مدة المقطع بالدقائق" min="1" />
+                                <div class="input-wrapper">
+                                    <span class="material-symbols-rounded input-icon">timer</span>
+                                    <input type="number" name="GuestLogs[@i].DurationMinutes" value="@item.DurationMinutes" class="form-input" placeholder="مدة المقطع بالدقائق" min="1" />
+                                </div>
                             </div>
                             <div>
                                 <label class="form-label">نوع الوسائط</label>
-                                <select name="GuestLogs[@i].MediaType" class="form-input">
-                                    <option value="1" selected="@(item.MediaType == MediaType.Audio)">صوت</option>
-                                    <option value="2" selected="@(item.MediaType == MediaType.Video)">فيديو</option>
-                                    <option value="3" selected="@(item.MediaType == MediaType.Both)">صوت وفيديو</option>
-                                </select>
+                                <div class="input-wrapper">
+                                    <span class="material-symbols-rounded input-icon">category</span>
+                                    <select name="GuestLogs[@i].MediaType" class="form-input">
+                                        <option value="1" selected="@(item.MediaType == MediaType.Audio)">صوت</option>
+                                        <option value="2" selected="@(item.MediaType == MediaType.Video)">فيديو</option>
+                                        <option value="3" selected="@(item.MediaType == MediaType.Both)">صوت وفيديو</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
@@ -166,14 +166,14 @@
 </form>
 
 <!-- All Publishing Records for this Episode -->
-<div class="bg-surface rounded-xl border border-border mt-8 shadow-sm">
-    <div class="p-5 border-b border-border bg-surface-3 rounded-t-xl">
-        <h3 class="font-bold text-ink flex items-center gap-2">
+<div class="card-premium mt-8">
+    <div class="card-header">
+        <div class="flex items-center gap-2">
             <span class="material-symbols-rounded text-primary">history</span>
-            كافة سجلات النشر والإنتاج الخاصة بهذه الحلقة (@(Model.EpisodePublishingRecords?.Count ?? 0))
-        </h3>
+            <h3 class="font-bold text-ink text-base">كافة سجلات النشر والإنتاج الخاصة بهذه الحلقة (@(Model.EpisodePublishingRecords?.Count ?? 0))</h3>
+        </div>
     </div>
-    <div class="p-5">
+    <div class="card-body">
         @if (Model.EpisodePublishingRecords == null || !Model.EpisodePublishingRecords.Any())
         {
             <p class="text-sm text-ink-muted">لا توجد سجلات أخرى لهذه الحلقة.</p>

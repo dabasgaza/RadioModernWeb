@@ -87,11 +87,12 @@ namespace DataAccess.Services
             try
             {
                 await using var context = await _contextFactory.CreateDbContextAsync();
-                return await context.RoleClaims
+                var list = await context.RoleClaims
                     .AsNoTracking()
                     .Where(rc => rc.RoleId == roleId && rc.ClaimType == "Permission" && rc.ClaimValue != null)
                     .Select(rc => rc.ClaimValue!)
                     .ToListAsync();
+                return list.Select(DataAccess.Common.AppPermissions.Normalize).ToList();
             }
             catch (Exception ex)
             {

@@ -34,6 +34,7 @@ public class CoverageController : Controller
     /// <summary>
     /// عرض قائمة التغطية.
     /// </summary>
+    [Authorize(Policy = AppPermissions.CoordinationView)]
     public async Task<IActionResult> Index()
     {
         var list = await _coverage.GetAllAsync(cancellationToken: HttpContext?.RequestAborted ?? default);

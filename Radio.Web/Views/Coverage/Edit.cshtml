@@ -3,33 +3,17 @@
     var coverage = Model.Coverage;
     ViewData["Title"] = coverage.CoverageId == 0 ? "تغطية جديدة" : "تعديل تغطية";
     var isEdit = coverage.CoverageId != 0;
+    ViewBag.IsEdit = isEdit;
+    ViewBag.Icon = isEdit ? "edit" : "add";
+    ViewBag.Title = isEdit ? "تعديل بيانات التغطية" : "إضافة تغطية جديدة";
+    ViewBag.Description = "إدخال وتحديث بيانات التغطية الميدانية وربطها بالمراسل والضيف";
+    ViewBag.EntityName = "التغطيات الميدانية";
+    ViewBag.EntityUrl = "/Coverage";
+    ViewBag.BackUrl = "/Coverage";
+    ViewBag.BackText = "الرجوع للتغطيات";
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <a href="/Coverage">التغطيات الميدانية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>@(isEdit ? "تعديل تغطية" : "تغطية جديدة")</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded text-primary">@(isEdit ? "edit" : "add")</span>
-                @(isEdit ? "تعديل تغطية" : "تغطية جديدة")
-            </h1>
-            <p>إدخال وتحديث بيانات التغطية الميدانية وربطها بالمراسل والضيف</p>
-        </div>
-        <div class="flex items-center gap-2">
-            <a href="/Coverage" class="btn-secondary">
-                <span class="material-symbols-rounded">arrow_forward</span>
-                الرجوع للتغطيات
-            </a>
-        </div>
-    </div>
-</div>
+<partial name="_CreateEditHeader" />
 
 <form method="post" action="@(isEdit ? $"/Coverage/Edit/{coverage.CoverageId}" : "/Coverage/Create")" class="max-w-2xl">
     @Html.AntiForgeryToken()
@@ -96,14 +80,14 @@
                     <label class="form-label">الوقت المجدول</label>
                     <div class="input-wrapper">
                         <span class="material-symbols-rounded input-icon">schedule</span>
-                        <input type="datetime-local" name="ScheduledTime" value="@(coverage.ScheduledTime?.ToString("yyyy-MM-ddTHH:mm"))" class="form-input" />
+                        <input type="text" name="ScheduledTime" value="@(coverage.ScheduledTime?.ToString("yyyy-MM-ddTHH:mm"))" class="form-input datetimepicker" />
                     </div>
                 </div>
                 <div>
                     <label class="form-label">الوقت الفعلي</label>
                     <div class="input-wrapper">
                         <span class="material-symbols-rounded input-icon">access_time</span>
-                        <input type="datetime-local" name="ActualTime" value="@(coverage.ActualTime?.ToString("yyyy-MM-ddTHH:mm"))" class="form-input" />
+                        <input type="text" name="ActualTime" value="@(coverage.ActualTime?.ToString("yyyy-MM-ddTHH:mm"))" class="form-input datetimepicker" />
                     </div>
                 </div>
             </div>

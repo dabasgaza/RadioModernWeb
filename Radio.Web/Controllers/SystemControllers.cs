@@ -38,9 +38,21 @@ public class PublishingController : Controller
     /// <summary>
     /// عرض قائمة النشر.
     /// </summary>
+    [Authorize(Policy = AppPermissions.EpisodeView)]
     public async Task<IActionResult> Index(string? search = null, string? type = null, int? programId = null, int? episodeId = null)
     {
         var list = await _query.GetAllPublishingRecordsAsync(episodeId, cancellationToken: HttpContext?.RequestAborted ?? default);
+
+        // فلترة السجلات حسب صلاحيات المستخدم — يعرض فقط أنواع السجلات المسموح بها
+        var allowedTypes = new List<string>();
+        if (_currentUser.HasPermission(AppPermissions.ExecutionView) || _currentUser.HasPermission(AppPermissions.ExecutionExecute))
+            allowedTypes.Add("Execution");
+        if (_currentUser.HasPermission(AppPermissions.SocialPublishingView) || _currentUser.HasPermission(AppPermissions.SocialPublishingPublish))
+            allowedTypes.Add("SocialMedia");
+        if (_currentUser.HasPermission(AppPermissions.WebsitePublishingView) || _currentUser.HasPermission(AppPermissions.WebsitePublishingPublish))
+            allowedTypes.Add("Website");
+        list = list.Where(r => allowedTypes.Contains(r.RecordType)).ToList();
+
         if (!string.IsNullOrWhiteSpace(type))
         {
             list = list.Where(r => r.RecordType == type).ToList();
@@ -197,15 +209,24 @@ public class PublishingController : Controller
 /// <summary>
 /// صنف Execution السجلات.
 /// </summary>
-[Authorize]
+[Authorize(Policy = AppPermissions.EpisodeView)]
 public class ExecutionLogsController : Controller
 {
     private readonly IPublishingQueryService _publishing;
     private readonly IEpisodeQueryService _episodes;
+    private readonly IExecutionService _execution;
+    private readonly ICurrentUserService _currentUser;
 
-    public ExecutionLogsController(IPublishingQueryService publishing, IEpisodeQueryService episodes)
+    public ExecutionLogsController(
+        IPublishingQueryService publishing,
+        IEpisodeQueryService episodes,
+        IExecutionService execution,
+        ICurrentUserService currentUser)
     {
-        _publishing = publishing; _episodes = episodes;
+        _publishing = publishing;
+        _episodes = episodes;
+        _execution = execution;
+        _currentUser = currentUser;
     }
 
     /// <summary>
@@ -216,6 +237,37 @@ public class ExecutionLogsController : Controller
         var records = await _publishing.GetAllPublishingRecordsAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         var executions = records.Where(r => r.RecordType == "Execution").ToList();
         return View(executions);
+    }
+
+    /// <summary>
+    /// عرض نموذج تعديل سجل التنفيذ.
+    /// </summary>
+    public async Task<IActionResult> Edit(int id)
+    {
+        var log = await _execution.GetByExecutionLogIdAsync(id, cancellationToken: HttpContext?.RequestAborted ?? default);
+        if (log == null) return NotFound();
+        return View(log);
+    }
+
+    /// <summary>
+    /// حفظ تعديل سجل التنفيذ.
+    /// </summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, ExecutionLogDto form)
+    {
+        if (!ModelState.IsValid) return View(form);
+
+        form = form with { ExecutionLogId = id };
+        var session = _currentUser.ToUserSession()!;
+        var r = await _execution.UpdateExecutionLogAsync(form, session, cancellationToken: HttpContext?.RequestAborted ?? default);
+        if (r.IsSuccess)
+        {
+            TempData["Success"] = "تم تحديث سجل التنفيذ";
+            return RedirectToAction(nameof(Index));
+        }
+        TempData["Error"] = r.ErrorMessage;
+        return View(form);
     }
 }
 
@@ -238,6 +290,7 @@ public class WebsitePublishingController : Controller
     /// <summary>
     /// عرض قائمة Website Publishing.
     /// </summary>
+    [Authorize(Policy = AppPermissions.EpisodeView)]
     public async Task<IActionResult> Index()
     {
         var records = await _query.GetAllPublishingRecordsAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -325,7 +378,7 @@ public class WebsitePublishingController : Controller
 /// <summary>
 /// صنف التقارير.
 /// </summary>
-[Authorize]
+[Authorize(Policy = AppPermissions.ViewReports)]
 public class ReportsController : Controller
 {
     private readonly IReportsService _reports;
@@ -384,7 +437,7 @@ public class ReportsController : Controller
 /// <summary>
 /// صنف DatabaseController.
 /// </summary>
-[Authorize]
+[Authorize(Policy = AppPermissions.DatabaseView)]
 public class DatabaseController : Controller
 {
     private readonly IDatabaseManagementService _db;
@@ -659,7 +712,7 @@ public class DatabaseController : Controller
 /// <summary>
 /// صنف DiagnosticsController.
 /// </summary>
-[Authorize]
+[Authorize(Policy = AppPermissions.DatabaseView)]
 public class DiagnosticsController : Controller
 {
     private readonly ISystemDiagnosticsService _diag;

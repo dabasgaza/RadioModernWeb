@@ -2,19 +2,6 @@
 // Radio Web MVC — Client-side helpers
 // ═══════════════════════════════════════════════════════════════════════════
 
-// ─── Dark Mode ───
-function toggleDarkMode() {
-    const html = document.documentElement;
-    const isDark = html.classList.toggle('dark');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    updateThemeIcon(isDark);
-}
-
-function updateThemeIcon(isDark) {
-    const icon = document.getElementById('theme-icon');
-    if (icon) icon.textContent = isDark ? 'light_mode' : 'dark_mode';
-}
-
 window.RadioWeb = {
     copyToClipboard: async function (text) {
         try { await navigator.clipboard.writeText(text); return true; }
@@ -111,9 +98,8 @@ toastr.options = {
 document.addEventListener('DOMContentLoaded', function () {
     console.log('✓ Radio Web MVC initialized');
 
-    // ─── Theme icon init ───
-    const isDarkInit = document.documentElement.classList.contains('dark');
-    updateThemeIcon(isDarkInit);
+    // ─── Init Preline ───
+    if (window.HSStaticMethods) HSStaticMethods.autoInit();
 
     // ─── Back-to-top visibility ───
     const backToTop = document.getElementById('back-to-top');
@@ -148,8 +134,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 cancelButtonText: 'إلغاء',
                 customClass: {
                     popup: 'rounded-2xl',
-                    confirmButton: 'btn-danger',
-                    cancelButton: 'btn-secondary'
+                    confirmButton: 'btn btn-error',
+                    cancelButton: 'btn btn-ghost'
                 }
             }).then((result) => {
                 if (result.isConfirmed) {

@@ -17,7 +17,7 @@ namespace Radio.Tests.Services;
 /// <summary>
 /// صنف Execution Service.
 /// </summary>
-public class ExecutionServiceTests : IClassFixture<DatabaseFixture>
+public class ExecutionServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetime
 {
     private readonly DatabaseFixture _db;
     private readonly IExecutionService _service;
@@ -28,6 +28,9 @@ public class ExecutionServiceTests : IClassFixture<DatabaseFixture>
         _db = db;
         _service = new ExecutionService(db.DbContextFactory);
     }
+
+    public async ValueTask InitializeAsync() => await _db.ResetAsync();
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
     /// <summary>
     /// تسجيل Execution Async_ Valid_ Returns Success.

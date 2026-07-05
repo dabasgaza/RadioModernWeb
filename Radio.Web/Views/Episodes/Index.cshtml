@@ -96,7 +96,8 @@
                     <tr>
                         <th class="px-5 py-3 text-right font-semibold">الحلقة</th>
                         <th class="px-5 py-3 text-right font-semibold">البرنامج</th>
-                        <th class="px-5 py-3 text-right font-semibold">الموعد</th>
+                        <th class="px-5 py-3 text-right font-semibold">اليوم</th>
+                        <th class="px-5 py-3 text-right font-semibold">التاريخ والوقت</th>
                         <th class="px-5 py-3 text-right font-semibold">الضيوف</th>
                         <th class="px-5 py-3 text-right font-semibold">الحالة</th>
                         <th class="px-5 py-3 text-right font-semibold">إجراءات</th>
@@ -119,8 +120,26 @@
                             <td class="px-5 py-3">
                                 @if (ep.ScheduledExecutionTime.HasValue)
                                 {
-                                    <div class="text-ink font-semibold">@ep.ScheduledExecutionTime.Value.ToString("yyyy-MM-dd")</div>
-                                    <div class="text-xs text-ink-muted">@ep.ScheduledExecutionTime.Value.ToString("HH:mm")</div>
+                                    <span class="badge badge-secondary inline-flex items-center gap-1.5 py-1 px-2.5 font-bold shadow-sm">
+                                        <span class="material-symbols-rounded text-sm">calendar_today</span>
+                                        @ep.ScheduledExecutionTime.Value.ToString("dddd", new System.Globalization.CultureInfo("ar"))
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-ink-soft">—</span>
+                                }
+                            </td>
+                            <td class="px-5 py-3">
+                                @if (ep.ScheduledExecutionTime.HasValue)
+                                {
+                                    <div class="flex flex-col">
+                                        <span class="text-ink font-semibold">@ep.ScheduledExecutionTime.Value.ToString("yyyy-MM-dd")</span>
+                                        <span class="text-xs text-ink-muted flex items-center gap-1 mt-0.5">
+                                            <span class="material-symbols-rounded text-[14px] text-primary/70">schedule</span>
+                                            @ep.ScheduledExecutionTime.Value.ToString("hh:mm tt", new System.Globalization.CultureInfo("ar"))
+                                        </span>
+                                    </div>
                                 }
                                 else
                                 {
@@ -141,28 +160,28 @@
                                 <span class="status-badge @GetStatusCssClass(ep.StatusId)">@ep.StatusText</span>
                             </td>
                             <td class="px-5 py-3">
-                                <div class="flex items-center gap-1.5">
-                                    <a href="/Episodes/Details/@ep.EpisodeId" class="icon-btn icon-btn-info" title="عرض">
+                                <div class="action-dock">
+                                    <a href="/Episodes/Details/@ep.EpisodeId" class="action-dock-btn btn-info" title="عرض">
                                         <span class="material-symbols-rounded">visibility</span>
                                     </a>
-                                    <a href="/Publishing?episodeId=@ep.EpisodeId" class="icon-btn icon-btn-secondary" title="سجل النشر والإنتاج">
+                                    <a href="/Publishing?episodeId=@ep.EpisodeId" class="action-dock-btn btn-share" title="سجل النشر والإنتاج">
                                         <span class="material-symbols-rounded">share</span>
                                     </a>
                                     @if (User.HasPermission(AppPermissions.EpisodeEdit))
                                     {
-                                        <a href="/Episodes/Edit/@ep.EpisodeId" class="icon-btn icon-btn-primary" title="تعديل">
+                                        <a href="/Episodes/Edit/@ep.EpisodeId" class="action-dock-btn btn-edit" title="تعديل">
                                             <span class="material-symbols-rounded">edit</span>
                                         </a>
                                     }
                                     @if (User.HasPermission(AppPermissions.EpisodeExecute) && ep.StatusId == 0)
                                     {
-                                        <button type="button" class="icon-btn icon-btn-success" title="تسجيل تنفيذ" onclick="openExecuteModal(@ep.EpisodeId, '@ep.EpisodeName')">
+                                        <button type="button" class="action-dock-btn btn-success" title="تسجيل تنفيذ" onclick="openExecuteModal(@ep.EpisodeId, '@ep.EpisodeName')">
                                             <span class="material-symbols-rounded">play_circle</span>
                                         </button>
                                     }
                                     @if (User.HasPermission(AppPermissions.EpisodeRevert) && ep.CanCancel)
                                     {
-                                        <button type="button" class="icon-btn icon-btn-danger" title="إلغاء" onclick="openCancelModal(@ep.EpisodeId, '@ep.EpisodeName')">
+                                        <button type="button" class="action-dock-btn btn-danger" title="إلغاء" onclick="openCancelModal(@ep.EpisodeId, '@ep.EpisodeName')">
                                             <span class="material-symbols-rounded">cancel</span>
                                         </button>
                                     }

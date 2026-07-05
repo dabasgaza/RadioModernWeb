@@ -208,9 +208,11 @@
                                             <span class="material-symbols-rounded text-sm">delete</span>
                                         </button>
                                     }
-                                    @if (r.RecordType == "Execution")
+                                    @if (r.RecordType == "Execution" && (User.HasPermission(AppPermissions.ExecutionExecute) || User.HasPermission(AppPermissions.ExecutionEdit)))
                                     {
-                                        <span class="text-xs text-ink-soft italic">غير قابل للتعديل</span>
+                                        <a href="/ExecutionLogs/Edit/@r.RecordId" class="icon-btn bg-emerald-50 text-emerald-600 hover:bg-emerald-100 p-2 rounded-lg transition" title="تعديل سجل التنفيذ">
+                                            <span class="material-symbols-rounded text-sm">edit</span>
+                                        </a>
                                     }
                                 </div>
                             </td>

@@ -2,37 +2,22 @@
 @{
     ViewData["Title"] = Model.CorrespondentId == 0 ? "مراسل جديد" : "تعديل مراسل";
     var isEdit = Model.CorrespondentId != 0;
+    ViewBag.IsEdit = isEdit;
+    ViewBag.Icon = isEdit ? "edit" : "add";
+    ViewBag.Title = isEdit ? "تعديل بيانات المراسل" : "إضافة مراسل جديد";
+    ViewBag.Description = "إدخال وتحديث البيانات الأساسية وتفاصيل مواقع التغطية للمراسل الميداني";
+    ViewBag.EntityName = "المراسلون";
+    ViewBag.EntityUrl = "/Correspondents";
+    ViewBag.BackUrl = "/Correspondents";
+    ViewBag.BackText = "الرجوع للمراسلين";
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <a href="/Correspondents">المراسلون</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>@(isEdit ? "تعديل مراسل" : "مراسل جديد")</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded">map</span>
-                @(isEdit ? "تعديل مراسل" : "مراسل جديد")
-            </h1>
-            <p>إدخال وتحديث البيانات الأساسية وتفاصيل مواقع التغطية للمراسل الميداني</p>
-        </div>
-        <div class="flex items-center gap-2">
-            <a href="/Correspondents" class="btn-secondary">
-                <span class="material-symbols-rounded">arrow_forward</span>
-                الرجوع للمراسلين
-            </a>
-        </div>
-    </div>
-</div>
+<partial name="_CreateEditHeader" />
 
 <form method="post" action="@(isEdit ? $"/Correspondents/Edit/{Model.CorrespondentId}" : "/Correspondents/Create")" class="max-w-2xl">
     @Html.AntiForgeryToken()
     @if (isEdit) { <input type="hidden" name="CorrespondentId" value="@Model.CorrespondentId" /> }
+
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
         <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-6 font-semibold text-sm"></div>
@@ -48,15 +33,24 @@
         <div class="card-body space-y-4">
             <div>
                 <label class="form-label">الاسم الكامل *</label>
-                <input type="text" name="FullName" value="@Model.FullName" class="form-input" required placeholder="مثال: أحمد مصطفى" />
+                <div class="input-wrapper">
+                    <span class="material-symbols-rounded input-icon">person</span>
+                    <input type="text" name="FullName" value="@Model.FullName" class="form-input" required placeholder="مثال: أحمد مصطفى" />
+                </div>
             </div>
             <div>
                 <label class="form-label">رقم الهاتف *</label>
-                <input type="text" name="PhoneNumber" value="@Model.PhoneNumber" class="form-input" required placeholder="مثال: +966500000000" />
+                <div class="input-wrapper">
+                    <span class="material-symbols-rounded input-icon">phone</span>
+                    <input type="text" name="PhoneNumber" value="@Model.PhoneNumber" class="form-input" required placeholder="مثال: +966500000000" />
+                </div>
             </div>
             <div>
                 <label class="form-label">المواقع المعيّنة (مفصولة بفاصلة)</label>
-                <textarea name="AssignedLocations" rows="3" class="form-input" placeholder="مثال: الرياض، جدة، الدمام"></textarea>
+                <div class="input-wrapper">
+                    <span class="material-symbols-rounded input-icon" style="top:1rem;transform:none">location_on</span>
+                    <textarea name="AssignedLocations" rows="3" class="form-input" placeholder="مثال: الرياض، جدة، الدمام">@Model.AssignedLocations</textarea>
+                </div>
             </div>
         </div>
     </div>

@@ -72,7 +72,7 @@ namespace Radio.Web.Security
 
                     foreach (var permission in permissions)
                     {
-                        identity.AddClaim(new Claim("Permission", permission));
+                        identity.AddClaim(new Claim("Permission", DataAccess.Common.AppPermissions.Normalize(permission)));
                     }
                 }
                 catch (Exception ex)

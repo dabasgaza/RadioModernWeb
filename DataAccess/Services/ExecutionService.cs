@@ -20,6 +20,8 @@ public interface IExecutionService
 
     Task<ExecutionLogDto?> GetExecutionLogAsync(int episodeId, CancellationToken cancellationToken = default);
 
+    Task<ExecutionLogDto?> GetByExecutionLogIdAsync(int executionLogId, CancellationToken cancellationToken = default);
+
     Task<Result> UpdateExecutionLogAsync(ExecutionLogDto dto, UserSession session, CancellationToken cancellationToken = default);
 }
 
@@ -102,6 +104,28 @@ public class ExecutionService(IDbContextFactory<BroadcastWorkflowDBContext> cont
         if (log is null) return null;
 
         // تحويل الكيان إلى DTO
+        return new ExecutionLogDto
+        {
+            ExecutionLogId = log.ExecutionLogId,
+            EpisodeId = log.EpisodeId,
+            ExecutedByUserId = log.ExecutedByUserId,
+            ExecutionNotes = log.ExecutionNotes,
+            IssuesEncountered = log.IssuesEncountered,
+            DurationMinutes = log.DurationMinutes ?? 0
+        };
+    }
+
+    public async Task<ExecutionLogDto?> GetByExecutionLogIdAsync(int executionLogId, CancellationToken cancellationToken = default)
+    {
+        using var context = await contextFactory.CreateDbContextAsync();
+
+        var log = await context.ExecutionLogs
+            .AsNoTracking()
+            .Where(l => l.ExecutionLogId == executionLogId && l.IsActive)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (log is null) return null;
+
         return new ExecutionLogDto
         {
             ExecutionLogId = log.ExecutionLogId,

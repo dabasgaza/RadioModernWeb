@@ -19,7 +19,7 @@ namespace Radio.Tests.Services;
 /// <summary>
 /// صنف Platform Service.
 /// </summary>
-public class PlatformServiceTests : IClassFixture<DatabaseFixture>
+public class PlatformServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetime
 {
     private readonly DatabaseFixture _db;
     private readonly IPlatformService _service;
@@ -31,6 +31,9 @@ public class PlatformServiceTests : IClassFixture<DatabaseFixture>
         var lookup = Mock.Of<ICachedLookupService>();
         _service = new PlatformService(db.DbContextFactory, lookup, Mock.Of<ILogger<PlatformService>>(), ValidValidator.Create<SocialMediaPlatformDto>());
     }
+
+    public async ValueTask InitializeAsync() => await _db.ResetAsync();
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
     /// <summary>
     /// استرجاع النشط Async_ Returns الكل.

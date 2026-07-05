@@ -1,0 +1,36 @@
+@{
+    var isEdit = ViewBag.IsEdit ?? false;
+    var icon = ViewBag.Icon ?? (isEdit ? "edit" : "add");
+    var title = ViewBag.Title ?? "";
+    var description = ViewBag.Description ?? "";
+    var backUrl = ViewBag.BackUrl ?? "";
+    var backText = ViewBag.BackText ?? "العودة";
+    var entityName = ViewBag.EntityName ?? "";
+    var entityUrl = ViewBag.EntityUrl ?? "";
+}
+
+<div class="page-header-enhanced p-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+        <div>
+            <nav class="breadcrumb">
+                <span class="material-symbols-rounded">home</span>
+                <a href="/">الرئيسية</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <a href="@entityUrl">@entityName</a>
+                <span class="material-symbols-rounded">chevron_left</span>
+                <span>@(isEdit ? "تعديل" : "جديد")</span>
+            </nav>
+            <h1 class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-primary">@icon</span>
+                @title
+            </h1>
+            <p>@description</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="@backUrl" class="btn-secondary">
+                <span class="material-symbols-rounded">arrow_forward</span>
+                @backText
+            </a>
+        </div>
+    </div>
+</div>

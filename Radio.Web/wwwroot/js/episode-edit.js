@@ -32,6 +32,10 @@
             });
 
             container.appendChild(row);
+
+            if (typeof reinitDatepickers === 'function') {
+                reinitDatepickers(row);
+            }
         },
 
         removeRow(btn) {

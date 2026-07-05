@@ -1,0 +1,234 @@
+@model List<DataAccess.DTOs.UserPermissionOverrideViewModel>
+@{
+    ViewData["Title"] = "استثناءات صلاحيات المستخدم";
+    var user = (UserDto)ViewBag.User;
+    var permissionsByModule = Model.GroupBy(p => p.Module);
+    ViewBag.IsEdit = true;
+    ViewBag.Icon = "admin_panel_settings";
+    ViewBag.Title = "استثناءات صلاحيات المستخدم";
+    ViewBag.Description = $"تخصيص صلاحيات فردية استثنائية للمستخدم {user.FullName} لتتجاوز صلاحيات دوره الافتراضي ({user.RoleName})";
+    ViewBag.EntityName = "المستخدمون";
+    ViewBag.EntityUrl = "/Users";
+    ViewBag.BackUrl = "/Users";
+    ViewBag.BackText = "الرجوع للمستخدمين";
+}
+
+<partial name="_CreateEditHeader" />
+
+<div class="card-premium p-6 rounded-3xl border border-border/60 mb-8 bg-surface/50 backdrop-blur-md">
+    <div class="flex items-center gap-4">
+        <span class="material-symbols-rounded text-primary p-3 bg-primary/10 rounded-2xl text-2xl">account_circle</span>
+        <div>
+            <h3 class="font-extrabold text-ink text-base">حساب المستخدم: <span class="text-primary font-black">@user.FullName</span></h3>
+            <p class="text-xs text-ink-muted mt-1">اسم الدخول: @user.Username | الدور الأساسي الحالي: <span class="badge badge-info">@user.RoleName</span></p>
+        </div>
+    </div>
+</div>
+
+<form method="post" action="/Users/UpdatePermissions/@user.UserId">
+    @Html.AntiForgeryToken()
+
+    <div class="card-premium overflow-hidden rounded-3xl border border-border/60">
+        <div class="card-header bg-surface-2 p-6 border-b border-border/40 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h3 class="font-extrabold text-ink text-base">استثناءات الصلاحيات الفردية</h3>
+                <p class="text-xs text-ink-muted mt-1">اختر "موروث" للاستعانة بصلاحيات الدور الافتراضي، أو قم بـ "فرض السماح" أو "فرض الحظر" للمستخدم بشكل فردي</p>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <button type="button" class="btn-secondary py-2 px-4 rounded-xl text-xs font-bold transition-all" onclick="resetAllOverrides()">
+                    إعادة ضبط الاستثناءات (موروث للكل)
+                </button>
+            </div>
+        </div>
+
+        <!-- Matrix Body -->
+        <div class="card-body p-6 space-y-8 bg-surface/30">
+            @foreach (var module in permissionsByModule)
+            {
+                <div class="module-section space-y-4">
+                    <div class="flex items-center justify-between border-b border-border/40 pb-2">
+                        <h4 class="font-extrabold text-ink text-sm flex items-center gap-2">
+                            <span class="w-1.5 h-3.5 bg-primary rounded-full"></span>
+                            @module.Key
+                        </h4>
+                    </div>
+
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                        @foreach (var p in module)
+                        {
+                            <div class="perm-card p-4 bg-surface rounded-2xl border border-border/60 hover:border-primary/20 hover:shadow-md transition-all duration-200"
+                                 data-inherited-access="@(p.InheritedAccess ? "true" : "false")">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                    
+                                    <!-- Permission Info -->
+                                    <div class="flex flex-col gap-1 pr-2 max-w-sm">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs font-bold text-ink">@p.DisplayName</span>
+                                            <span class="text-[9px] font-mono text-ink-muted">@p.SystemName</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <span class="text-[10px] text-ink-muted">الحالة الموروثة:</span>
+                                            <span class="badge @(p.InheritedAccess ? "badge-success/20 text-success" : "badge-error/20 text-error") py-0.5 px-2 text-[9px] font-bold rounded-full">
+                                                @(p.InheritedAccess ? "ممنوحة للدور" : "محظورة عن الدور")
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Override Type Selection (Radio Buttons) -->
+                                    <div class="flex items-center gap-3 bg-surface-3 p-1.5 rounded-xl border border-border/40 self-end sm:self-auto">
+                                        
+                                        <!-- None / Inherited -->
+                                        <label class="cursor-pointer flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all peer-checked:bg-white
+                                                     has-[:checked]:bg-white dark:has-[:checked]:bg-surface-2 has-[:checked]:shadow-sm">
+                                            <input type="radio" name="override_@p.SystemName" value="None" 
+                                                   checked="@(p.OverrideType == "None")"
+                                                   class="sr-only" onchange="onOverrideChanged('@p.SystemName')" />
+                                            <span class="text-ink-soft select-none text-[10px]">موروث</span>
+                                        </label>
+
+                                        <!-- Direct Grant -->
+                                        <label class="cursor-pointer flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all
+                                                     has-[:checked]:bg-success/20 has-[:checked]:text-success">
+                                            <input type="radio" name="override_@p.SystemName" value="Grant" 
+                                                   checked="@(p.OverrideType == "Grant")"
+                                                   class="sr-only" onchange="onOverrideChanged('@p.SystemName')" />
+                                            <span class="text-ink-soft select-none text-[10px]">سماح فردي</span>
+                                        </label>
+
+                                        <!-- Direct Deny -->
+                                        <label class="cursor-pointer flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all
+                                                     has-[:checked]:bg-error/20 has-[:checked]:text-error">
+                                            <input type="radio" name="override_@p.SystemName" value="Deny" 
+                                                   checked="@(p.OverrideType == "Deny")"
+                                                   class="sr-only" onchange="onOverrideChanged('@p.SystemName')" />
+                                            <span class="text-ink-soft select-none text-[10px]">حظر فردي</span>
+                                        </label>
+
+                                    </div>
+
+                                    <!-- Resulting Effective Access Badge -->
+                                    <div class="flex flex-col items-center justify-center shrink-0 pr-4 border-r border-border/20 self-end sm:self-auto">
+                                        <span class="text-[9px] text-ink-muted mb-0.5">الصلاحية النهائية</span>
+                                        <span id="effective_@p.SystemName" class="badge text-xs font-black py-1 px-3 rounded-full transition-all duration-300">
+                                            جاري التقييم...
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Hidden lists for POST submission -->
+        <div id="hidden-inputs-container"></div>
+
+        <div class="px-6 py-5 bg-surface-2 border-t border-border/40 flex justify-end">
+            <button type="submit" onclick="prepareSubmit(event)" class="btn-primary py-3 px-6 rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-primary/20 transition-all duration-300">
+                <span class="material-symbols-rounded">save</span>
+                حفظ استثناءات الصلاحيات فورياً
+            </button>
+        </div>
+    </div>
+</form>
+
+<script>
+    function updateEffectiveAccess(permissionName) {
+        const radios = document.getElementsByName('override_' + permissionName);
+        let selectedValue = "None";
+        for (const radio of radios) {
+            if (radio.checked) {
+                selectedValue = radio.value;
+                break;
+            }
+        }
+
+        const card = radios[0].closest('.perm-card');
+        const inherited = card.getAttribute('data-inherited-access') === "true";
+        const badge = document.getElementById('effective_' + permissionName);
+
+        let finalAccess = inherited;
+        if (selectedValue === "Grant") finalAccess = true;
+        else if (selectedValue === "Deny") finalAccess = false;
+
+        if (badge) {
+            if (finalAccess) {
+                badge.className = "badge badge-success py-1 px-3 text-xs font-black rounded-full bg-success/10 text-success border border-success/30";
+                badge.textContent = "مـصـرّح";
+            } else {
+                badge.className = "badge badge-error py-1 px-3 text-xs font-black rounded-full bg-error/10 text-error border border-error/30";
+                badge.textContent = "مـحـظـور";
+            }
+        }
+    }
+
+    function onOverrideChanged(permissionName) {
+        updateEffectiveAccess(permissionName);
+    }
+
+    function resetAllOverrides() {
+        const radios = document.querySelectorAll('input[type="radio"][value="None"]');
+        radios.forEach(r => {
+            r.checked = true;
+            const event = new Event('change');
+            r.dispatchEvent(event);
+        });
+    }
+
+    function prepareSubmit(e) {
+        const container = document.getElementById('hidden-inputs-container');
+        container.innerHTML = ''; // تفريغ المدخلات المخفية السابقة
+
+        // العثور على جميع مجموعات الراديو في الصفحة
+        const allPermissionNames = [];
+        document.querySelectorAll('input[type="radio"]').forEach(r => {
+            const name = r.name.replace('override_', '');
+            if (!allPermissionNames.includes(name)) {
+                allPermissionNames.push(name);
+            }
+        });
+
+        allPermissionNames.forEach(name => {
+            const radios = document.getElementsByName('override_' + name);
+            let selectedValue = "None";
+            for (const r of radios) {
+                if (r.checked) {
+                    selectedValue = r.value;
+                    break;
+                }
+            }
+
+            if (selectedValue === "Grant") {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'grantedPermissions';
+                input.value = name;
+                container.appendChild(input);
+            } else if (selectedValue === "Deny") {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'deniedPermissions';
+                input.value = name;
+                container.appendChild(input);
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // تقييم حالة الصلاحية الفعلية الأولية للجميع عند تحميل الصفحة
+        const allPermissionNames = [];
+        document.querySelectorAll('input[type="radio"]').forEach(r => {
+            const name = r.name.replace('override_', '');
+            if (!allPermissionNames.includes(name)) {
+                allPermissionNames.push(name);
+            }
+        });
+
+        allPermissionNames.forEach(name => {
+            updateEffectiveAccess(name);
+        });
+    });
+</script>

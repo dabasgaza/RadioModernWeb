@@ -30,6 +30,7 @@ public class CorrespondentsController : Controller
     /// <summary>
     /// عرض قائمة المراسلين.
     /// </summary>
+    [Authorize(Policy = AppPermissions.CoordinationView)]
     public async Task<IActionResult> Index(string? search)
     {
         var list = await _correspondents.GetAllActiveAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -112,6 +113,7 @@ public class CorrespondentsController : Controller
     /// <summary>
     /// التغطية.
     /// </summary>
+    [Authorize(Policy = AppPermissions.CoordinationView)]
     public async Task<IActionResult> Coverage(int id)
     {
         var coverages = await _correspondents.GetCoverageAsync(id, cancellationToken: HttpContext?.RequestAborted ?? default);

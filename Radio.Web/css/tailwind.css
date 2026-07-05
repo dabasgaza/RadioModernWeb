@@ -62,15 +62,29 @@
 
   /* Premium Navigation Links */
   .nav-link {
-    @apply flex items-center gap-3 px-4 py-3 text-ink-muted rounded-xl transition-all duration-300 ease-out hover:bg-primary/5 hover:text-primary font-medium;
+    @apply flex items-center gap-3 px-4 py-3 text-ink-muted rounded-xl transition-all duration-300 ease-out font-medium;
+  }
+  /* ← استخدام var(--primary) بدلاً من hsl(var(--p)) المعطلة مع DaisyUI v4 */
+  .nav-link:hover {
+    background-color: rgba(37, 99, 235, 0.08);
+    color: var(--primary, #2563EB);
   }
 
   .nav-link.active {
-    @apply bg-gradient-to-l from-primary to-secondary text-white shadow-lg shadow-primary/15 hover:bg-none hover:text-white;
+    @apply text-white shadow-lg;
+    background: linear-gradient(to left, var(--color-primary, #2563EB), var(--color-secondary, #7C3AED));
+    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.15);
+  }
+  .nav-link.active:hover {
+    background: linear-gradient(to left, var(--color-primary, #2563EB), var(--color-secondary, #7C3AED));
+    color: #fff;
   }
 
   .nav-link .material-symbols-rounded {
-    @apply transition-transform duration-300 group-hover:scale-110;
+    @apply transition-transform duration-300;
+  }
+  .nav-link:hover .material-symbols-rounded {
+    transform: scale(1.1);
   }
 
   /* Skeleton Shimmer Loading Effect */
@@ -93,7 +107,10 @@
     @apply bg-surface-2 border-b border-border/80 text-ink-muted font-bold text-xs uppercase !important;
   }
   .tabulator-row {
-    @apply border-b border-border/40 hover:bg-primary/5 transition-colors duration-200 !important;
+    @apply border-b border-border/40 transition-colors duration-200 !important;
+  }
+  .tabulator-row:hover {
+    background-color: rgba(37, 99, 235, 0.06) !important;
   }
 }
 

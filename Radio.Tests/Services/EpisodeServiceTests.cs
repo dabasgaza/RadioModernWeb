@@ -36,14 +36,11 @@ public class EpisodeServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         _service = new EpisodeService(db.DbContextFactory, TestTelemetry.Client, Mock.Of<ILogger<EpisodeService>>());
     }
 
-    /// <summary>
-    /// تهيئة Async.
-    /// </summary>
-    public async Task InitializeAsync() => await _db.ResetAsync();
+    public async ValueTask InitializeAsync() => await _db.ResetAsync();
     /// <summary>
     /// تخلص من الموارد Async.
     /// </summary>
-    public Task DisposeAsync() => Task.CompletedTask;
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
     /// <summary>
     /// استرجاع النشط الحلقات Async_ Returns Only Active.

@@ -33,6 +33,7 @@ public class UsersController : Controller
     /// <summary>
     /// عرض قائمة المستخدمين.
     /// </summary>
+    [Authorize(Policy = AppPermissions.UserView)]
     public async Task<IActionResult> Index(string? search)
     {
         var list = await _users.GetAllUsersAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -150,6 +151,51 @@ public class UsersController : Controller
         else TempData["Error"] = r.ErrorMessage;
         return RedirectToAction(nameof(Index));
     }
+
+    /// <summary>
+    /// عرض تفاصيل المستخدم والصلاحيات الفعالة ومصدر كل صلاحية.
+    /// </summary>
+    [Authorize(Policy = AppPermissions.UserView)]
+    public async Task<IActionResult> Details(int id)
+    {
+        var list = await _users.GetAllUsersAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
+        var u = list.FirstOrDefault(x => x.UserId == id);
+        if (u == null) return NotFound();
+
+        var matrix = await _users.GetUserPermissionsMatrixAsync(id, cancellationToken: HttpContext?.RequestAborted ?? default);
+        ViewBag.User = u;
+        return View(matrix);
+    }
+
+    /// <summary>
+    /// عرض وإدارة استثناءات الصلاحيات الفردية للمستخدم.
+    /// </summary>
+    [Authorize(Policy = AppPermissions.UserManage)]
+    public async Task<IActionResult> Permissions(int id)
+    {
+        var list = await _users.GetAllUsersAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
+        var u = list.FirstOrDefault(x => x.UserId == id);
+        if (u == null) return NotFound();
+
+        var matrix = await _users.GetUserPermissionsMatrixAsync(id, cancellationToken: HttpContext?.RequestAborted ?? default);
+        ViewBag.User = u;
+        return View(matrix);
+    }
+
+    /// <summary>
+    /// تحديث استثناءات الصلاحيات الفردية للمستخدم.
+    /// </summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Policy = AppPermissions.UserManage)]
+    public async Task<IActionResult> UpdatePermissions(int id, List<string> grantedPermissions, List<string> deniedPermissions)
+    {
+        var session = _currentUser.ToUserSession()!;
+        var r = await _users.UpdateUserPermissionsAsync(id, grantedPermissions, deniedPermissions, session, cancellationToken: HttpContext?.RequestAborted ?? default);
+        if (r.IsSuccess) TempData["Success"] = "تم تحديث استثناءات الصلاحيات للمستخدم بنجاح";
+        else TempData["Error"] = r.ErrorMessage;
+        return RedirectToAction(nameof(Index));
+    }
 }
 
 /// <summary>
@@ -169,6 +215,7 @@ public class RolesController : Controller
     /// <summary>
     /// عرض قائمة الأدوار.
     /// </summary>
+    [Authorize(Policy = AppPermissions.UserView)]
     public async Task<IActionResult> Index()
     {
         var list = await _users.GetRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -301,6 +348,7 @@ public class PermissionsController : Controller
     /// <summary>
     /// عرض قائمة الصلاحيات.
     /// </summary>
+    [Authorize(Policy = AppPermissions.UserView)]
     public async Task<IActionResult> Index(int? roleId)
     {
         var roles = await _users.GetRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -352,6 +400,7 @@ public class AuditLogsController : Controller
     /// <summary>
     /// عرض قائمة التدقيق السجلات.
     /// </summary>
+    [Authorize(Policy = AppPermissions.ViewAuditLogs)]
     public async Task<IActionResult> Index(string? table, string? action, DateTime? fromDate, DateTime? toDate)
     {
         var r = await _auditLog.GetFilteredAuditLogsAsync(

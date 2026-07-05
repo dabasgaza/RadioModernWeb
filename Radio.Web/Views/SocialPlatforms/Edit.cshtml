@@ -2,37 +2,22 @@
 @{
     ViewData["Title"] = Model.SocialMediaPlatformId == 0 ? "منصة جديدة" : "تعديل منصة";
     var isEdit = Model.SocialMediaPlatformId != 0;
+    ViewBag.IsEdit = isEdit;
+    ViewBag.Icon = isEdit ? "edit" : "add";
+    ViewBag.Title = isEdit ? "تعديل بيانات المنصة" : "إضافة منصة جديدة";
+    ViewBag.Description = "إدخال وتحديث بيانات منصة النشر الرقمي والتكاملات المرتبطة بها";
+    ViewBag.EntityName = "منصات النشر";
+    ViewBag.EntityUrl = "/SocialPlatforms";
+    ViewBag.BackUrl = "/SocialPlatforms";
+    ViewBag.BackText = "الرجوع للمنصات";
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <a href="/SocialPlatforms">منصات النشر</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>@(isEdit ? "تعديل منصة" : "منصة جديدة")</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded text-primary">@(isEdit ? "edit" : "add")</span>
-                @(isEdit ? "تعديل منصة" : "منصة جديدة")
-            </h1>
-            <p>إدخال وتحديث بيانات منصة النشر الرقمي والتكاملات المرتبطة بها</p>
-        </div>
-        <div class="flex items-center gap-2">
-            <a href="/SocialPlatforms" class="btn-secondary">
-                <span class="material-symbols-rounded">arrow_forward</span>
-                الرجوع للمنصات
-            </a>
-        </div>
-    </div>
-</div>
+<partial name="_CreateEditHeader" />
 
 <form method="post" action="@(isEdit ? $"/SocialPlatforms/Edit/{Model.SocialMediaPlatformId}" : "/SocialPlatforms/Create")" class="max-w-2xl">
     @Html.AntiForgeryToken()
     @if (isEdit) { <input type="hidden" name="SocialMediaPlatformId" value="@Model.SocialMediaPlatformId" /> }
+
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
         <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-6 font-semibold text-sm"></div>

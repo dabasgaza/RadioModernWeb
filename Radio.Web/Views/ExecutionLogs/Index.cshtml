@@ -1,4 +1,6 @@
 @model List<PublishingRecordDto>
+@using DataAccess.Common
+@inject ICurrentUserService CurrentUser
 @{ ViewData["Title"] = "سجلات التنفيذ"; }
 
 <div class="page-header">
@@ -30,6 +32,7 @@
     }
     else
     {
+        var canEdit = CurrentUser.HasPermission(AppPermissions.ExecutionExecute) || CurrentUser.HasPermission(AppPermissions.ExecutionEdit);
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
@@ -39,6 +42,10 @@
                         <th class="px-5 py-3 text-right font-semibold">الملخص</th>
                         <th class="px-5 py-3 text-right font-semibold">بواسطة</th>
                         <th class="px-5 py-3 text-right font-semibold">التاريخ</th>
+                        @if (canEdit)
+                        {
+                            <th class="px-5 py-3 text-center font-semibold">الإجراءات</th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -54,6 +61,16 @@
                             <td class="px-5 py-3 text-ink-muted">@r.Summary</td>
                             <td class="px-5 py-3 text-ink-muted">@r.RecordedBy</td>
                             <td class="px-5 py-3 text-ink-muted whitespace-nowrap" dir="ltr">@r.RecordDate.ToString("yyyy-MM-dd HH:mm")</td>
+                            @if (canEdit)
+                            {
+                                <td class="px-5 py-3 text-center">
+                                    <a href="/ExecutionLogs/Edit/@r.RecordId"
+                                       class="icon-btn icon-btn-primary"
+                                       title="تعديل سجل التنفيذ">
+                                        <span class="material-symbols-rounded text-base">edit</span>
+                                    </a>
+                                </td>
+                            }
                         </tr>
                     }
                 </tbody>
@@ -61,3 +78,4 @@
         </div>
     }
 </div>
+

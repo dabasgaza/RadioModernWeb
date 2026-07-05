@@ -1,0 +1,170 @@
+@model List<DataAccess.DTOs.UserPermissionOverrideViewModel>
+@{
+    ViewData["Title"] = "تفاصيل وصلاحيات المستخدم الفعالة";
+    var user = (UserDto)ViewBag.User;
+    var permissionsByModule = Model.GroupBy(p => p.Module);
+    ViewBag.IsEdit = false;
+    ViewBag.Icon = "badge";
+    ViewBag.Title = "تفاصيل وصلاحيات المستخدم الفعالة";
+    ViewBag.Description = $"استعراض الملف التعريفي التفصيلي وجدول الصلاحيات الفعالة ومصدر كل منها للمستخدم {user.FullName}";
+    ViewBag.EntityName = "المستخدمون";
+    ViewBag.EntityUrl = "/Users";
+    ViewBag.BackUrl = "/Users";
+    ViewBag.BackText = "الرجوع للمستخدمين";
+}
+
+<partial name="_CreateEditHeader" />
+
+<!-- User Profile Card -->
+<div class="card-premium p-6 rounded-3xl border border-border/60 mb-8 bg-surface/50 backdrop-blur-md grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="flex items-center gap-4 col-span-2">
+        <div class="w-16 h-16 rounded-2xl bg-primary/5 text-primary flex items-center justify-center font-bold text-2xl shadow-inner">
+            @user.FullName.Substring(0, Math.Min(2, user.FullName.Length)).ToUpper()
+        </div>
+        <div>
+            <h3 class="font-extrabold text-ink text-lg">@user.FullName</h3>
+            <p class="text-xs text-ink-muted mt-1">اسم الدخول: <span class="font-mono">@user.Username</span> | البريد: @(string.IsNullOrWhiteSpace(user.EmailAddress) ? "غير محدد" : user.EmailAddress)</p>
+            <p class="text-xs text-ink-muted mt-0.5">الهاتف: @(string.IsNullOrWhiteSpace(user.PhoneNumber) ? "غير محدد" : user.PhoneNumber)</p>
+        </div>
+    </div>
+    
+    <div class="flex flex-col justify-center items-start md:items-end gap-2 border-t md:border-t-0 md:border-r border-border/20 pt-4 md:pt-0 pr-0 md:pr-6">
+        <div>
+            <span class="text-xs text-ink-muted">الدور الوظيفي:</span>
+            <span class="badge badge-info py-1 px-3 text-xs font-bold rounded-full">@user.RoleName</span>
+        </div>
+        <div>
+            <span class="text-xs text-ink-muted">حالة الحساب:</span>
+            <span class="badge @(user.IsActive ? "badge-active" : "badge-inactive")">
+                @(user.IsActive ? "نشط ومفعل" : "معطّل")
+            </span>
+        </div>
+    </div>
+</div>
+
+<!-- Effective Permissions Matrix Card -->
+<div class="card-premium overflow-hidden rounded-3xl border border-border/60">
+    <div class="card-header bg-surface-2 p-6 border-b border-border/40 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h3 class="font-extrabold text-ink text-base">الصلاحيات الفعالة (Effective Permissions)</h3>
+            <p class="text-xs text-ink-muted mt-1">جدول يوضح الصلاحيات الفعلية الممنوحة والمحجوبة بناءً على دمج صلاحيات الدور الافتراضي والاستثناءات الفردية</p>
+        </div>
+        
+        <div class="flex items-center gap-2">
+            @if (User.HasPermission(AppPermissions.UserManage))
+            {
+                <a href="/Users/Permissions/@user.UserId" class="btn-primary py-2 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all">
+                    <span class="material-symbols-rounded text-sm">admin_panel_settings</span>
+                    تعديل الاستثناءات الفردية
+                </a>
+                <a href="/Users/Edit/@user.UserId" class="btn-secondary py-2 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all">
+                    <span class="material-symbols-rounded text-sm">edit</span>
+                    تعديل الحساب
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- Quick Search -->
+    <div class="p-4 bg-surface-3 border-b border-border/20">
+        <div class="relative w-full">
+            <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-ink-muted text-sm">search</span>
+            <input type="text" id="permSearch" placeholder="بحث سريع في الصلاحيات الفعالة..." 
+                   class="form-input pr-11 pl-4 py-2 text-xs rounded-xl w-full border border-border/60 focus:border-primary/50 transition-all" />
+        </div>
+    </div>
+
+    <div class="card-body p-6 space-y-8 bg-surface/30">
+        @foreach (var module in permissionsByModule)
+        {
+            <div class="module-section space-y-4" data-module="@module.Key.ToLower()">
+                <div class="flex items-center border-b border-border/40 pb-2">
+                    <h4 class="font-extrabold text-ink text-sm flex items-center gap-2">
+                        <span class="w-1.5 h-3.5 bg-primary rounded-full"></span>
+                        @module.Key
+                    </h4>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @foreach (var p in module)
+                    {
+                        <div class="perm-item flex items-center justify-between p-4 bg-surface rounded-2xl border border-border/60 transition-all duration-200"
+                             data-text="@p.DisplayName.ToLower() @p.SystemName.ToLower()">
+                            
+                            <div class="flex flex-col gap-1 pr-2">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="text-xs font-bold text-ink">@p.DisplayName</span>
+                                    <span class="text-[9px] font-mono text-ink-muted select-all">@p.SystemName</span>
+                                </div>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <!-- Source Indicator -->
+                                    <span class="text-[9px] text-ink-muted">المصدر:</span>
+                                    @if (p.OverrideType == "Grant")
+                                    {
+                                        <span class="badge bg-success/10 text-success py-0.5 px-2 text-[8px] font-bold rounded-full border border-success/20 flex items-center gap-0.5">
+                                            <span class="material-symbols-rounded text-[9px]">add_circle</span>
+                                            استثناء (سماح فردي)
+                                        </span>
+                                    }
+                                    else if (p.OverrideType == "Deny")
+                                    {
+                                        <span class="badge bg-error/10 text-error py-0.5 px-2 text-[8px] font-bold rounded-full border border-error/20 flex items-center gap-0.5">
+                                            <span class="material-symbols-rounded text-[9px]">cancel</span>
+                                            استثناء (حظر فردي)
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-slate-100 dark:bg-slate-800 text-ink-muted py-0.5 px-2 text-[8px] font-bold rounded-full border border-border flex items-center gap-0.5">
+                                            <span class="material-symbols-rounded text-[9px]">group</span>
+                                            موروث من الدور الافتراضي
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Final Access Status -->
+                            <div class="flex flex-col items-center shrink-0 pr-4 border-r border-border/20">
+                                <span class="badge @(p.EffectiveAccess ? "bg-success/15 text-success border-success/30" : "bg-error/15 text-error border-error/30") border text-[10px] font-black py-1 px-3.5 rounded-full shadow-sm">
+                                    @(p.EffectiveAccess ? "مـصـرّح" : "مـحـظـور")
+                                </span>
+                            </div>
+
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('permSearch');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                const query = this.value.toLowerCase().trim();
+                const items = document.querySelectorAll('.perm-item');
+
+                items.forEach(item => {
+                    const text = item.getAttribute('data-text');
+                    if (text.includes(query)) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // إخفاء الأقسام الفارغة
+                document.querySelectorAll('.module-section').forEach(section => {
+                    const visibleItems = section.querySelectorAll('.perm-item:not([style*="display: none"])');
+                    if (visibleItems.length === 0) {
+                        section.style.display = 'none';
+                    } else {
+                        section.style.display = '';
+                    }
+                });
+            });
+        }
+    });
+</script>

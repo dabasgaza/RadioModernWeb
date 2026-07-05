@@ -30,6 +30,7 @@ public class EmployeesController : Controller
     /// <summary>
     /// عرض قائمة EmployeesController.
     /// </summary>
+    [Authorize(Policy = AppPermissions.StaffView)]
     public async Task<IActionResult> Index(string? search)
     {
         var list = await _employees.GetAllActiveAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -133,6 +134,7 @@ public class StaffRolesController : Controller
     /// <summary>
     /// عرض قائمة الموظفين الأدوار.
     /// </summary>
+    [Authorize(Policy = AppPermissions.StaffView)]
     public async Task<IActionResult> Index()
     {
         var list = await _employees.GetAllRolesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
@@ -223,6 +225,7 @@ public class SocialPlatformsController : Controller
     /// <summary>
     /// عرض قائمة Social Platforms.
     /// </summary>
+    [Authorize(Policy = AppPermissions.StaffView)]
     public async Task<IActionResult> Index()
     {
         var list = await _platforms.GetAllActiveAsync(cancellationToken: HttpContext?.RequestAborted ?? default);

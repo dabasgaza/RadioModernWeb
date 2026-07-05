@@ -39,6 +39,7 @@ public class ProgramsController : Controller
     /// <summary>
     /// عرض قائمة البرامج.
     /// </summary>
+    [Authorize(Policy = AppPermissions.ProgramView)]
     public async Task<IActionResult> Index(string? search)
     {
         try

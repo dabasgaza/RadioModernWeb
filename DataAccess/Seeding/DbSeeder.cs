@@ -55,6 +55,8 @@ namespace DataAccess.Seeding
             {
                 new() { Name = "Admin", NormalizedName = "ADMIN", RoleDescription = "مدير النظام كامل الصلاحيات", IsSuperAdmin = true, IsActive = true },
                 new() { Name = "Producer", NormalizedName = "PRODUCER", RoleDescription = "منتج برامج ومنسق حلقات", IsSuperAdmin = false, IsActive = true },
+                new() { Name = "Executor", NormalizedName = "EXECUTOR", RoleDescription = "منفذ بث — تسجيل التنفيذ فقط", IsSuperAdmin = false, IsActive = true },
+                new() { Name = "SocialPublisher", NormalizedName = "SOCIALPUBLISHER", RoleDescription = "ناشر رقمي — نشر على التواصل الاجتماعي", IsSuperAdmin = false, IsActive = true },
                 new() { Name = "WebPublisher", NormalizedName = "WEBPUBLISHER", RoleDescription = "ناشر محتوى على الموقع الرسمي", IsSuperAdmin = false, IsActive = true },
                 new() { Name = "Reporter", NormalizedName = "REPORTER", RoleDescription = "مراسل ميداني ومعد تقارير", IsSuperAdmin = false, IsActive = true }
             };
@@ -115,36 +117,51 @@ namespace DataAccess.Seeding
             // 1) Admin: له جميع الصلاحيات
             AssignPermissions("Admin", allPermissions);
 
-            // 2) Producer: صلاحيات الإنتاج والتنسيق
+            // 2) Producer: صلاحيات الإنتاج والتنسيق + المشاهدة
             var producerPerms = new[]
             {
-                AppPermissions.ProgramManage,
-                AppPermissions.EpisodeManage,
-                AppPermissions.EpisodeExecute,
-                AppPermissions.EpisodePublish,
-                AppPermissions.EpisodeEdit,
-                AppPermissions.EpisodeDelete,
+                AppPermissions.ProgramView, AppPermissions.ProgramManage,
+                AppPermissions.EpisodeView, AppPermissions.EpisodeManage,
+                AppPermissions.EpisodeExecute, AppPermissions.EpisodePublish,
+                AppPermissions.EpisodeEdit, AppPermissions.EpisodeDelete,
                 AppPermissions.EpisodeRevert,
-                AppPermissions.GuestManage,
-                AppPermissions.CoordinationManage,
-                AppPermissions.StaffManage,
+                AppPermissions.GuestView, AppPermissions.GuestManage,
+                AppPermissions.CoordinationView, AppPermissions.CoordinationManage,
+                AppPermissions.StaffView, AppPermissions.StaffManage,
                 AppPermissions.ViewReports
             };
             AssignPermissions("Producer", producerPerms);
 
-            // 3) WebPublisher: صلاحيات النشر والتقارير
+            // 3) Executor: مشاهدة الحلقات + تنفيذ
+            var executorPerms = new[]
+            {
+                AppPermissions.EpisodeView,
+                AppPermissions.EpisodeExecute
+            };
+            AssignPermissions("Executor", executorPerms);
+
+            // 4) SocialPublisher: مشاهدة الحلقات + نشر رقمي
+            var socialPublisherPerms = new[]
+            {
+                AppPermissions.EpisodeView,
+                AppPermissions.EpisodePublish
+            };
+            AssignPermissions("SocialPublisher", socialPublisherPerms);
+
+            // 5) WebPublisher: مشاهدة الحلقات + نشر الموقع + تقارير
             var webPublisherPerms = new[]
             {
+                AppPermissions.EpisodeView,
                 AppPermissions.EpisodeWebPublish,
                 AppPermissions.ViewReports
             };
             AssignPermissions("WebPublisher", webPublisherPerms);
 
-            // 4) Reporter: صلاحيات التنسيق والتقارير
+            // 6) Reporter: تنسيق ميداني + تقارير
             var reporterPerms = new[]
             {
-                AppPermissions.ViewReports,
-                AppPermissions.CoordinationManage
+                AppPermissions.CoordinationView, AppPermissions.CoordinationManage,
+                AppPermissions.ViewReports
             };
             AssignPermissions("Reporter", reporterPerms);
 

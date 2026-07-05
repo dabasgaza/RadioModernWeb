@@ -3,38 +3,23 @@
     ViewData["Title"] = Model.UserId == 0 ? "مستخدم جديد" : "تعديل مستخدم";
     var isEdit = Model.UserId != 0;
     var roles = ViewBag.Roles as List<RoleDto>;
+    ViewBag.IsEdit = isEdit;
+    ViewBag.Icon = isEdit ? "edit" : "add";
+    ViewBag.Title = isEdit ? "تعديل بيانات المستخدم" : "إضافة مستخدم جديد";
+    ViewBag.Description = "إدخال وتحديث بيانات حسابات المستخدمين وتحديد الأدوار والصلاحيات";
+    ViewBag.EntityName = "المستخدمون";
+    ViewBag.EntityUrl = "/Users";
+    ViewBag.BackUrl = "/Users";
+    ViewBag.BackText = "الرجوع للمستخدمين";
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <a href="/Users">المستخدمون</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>@(isEdit ? "تعديل مستخدم" : "مستخدم جديد")</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded text-primary">@(isEdit ? "edit" : "add")</span>
-                @(isEdit ? "تعديل مستخدم" : "مستخدم جديد")
-            </h1>
-            <p>إدخال وتحديث بيانات حسابات المستخدمين وتحديد الأدوار والصلاحيات</p>
-        </div>
-        <div class="flex items-center gap-2">
-            <a href="/Users" class="btn-secondary">
-                <span class="material-symbols-rounded">arrow_forward</span>
-                الرجوع للمستخدمين
-            </a>
-        </div>
-    </div>
-</div>
+<partial name="_CreateEditHeader" />
 
 <form method="post" action="@(isEdit ? $"/Users/Edit/{Model.UserId}" : "/Users/Create")" class="max-w-2xl">
     @Html.AntiForgeryToken()
     @if (isEdit) { <input type="hidden" name="UserId" value="@Model.UserId" /> }
     <input type="hidden" name="IsActive" value="@Model.IsActive.ToString().ToLower()" />
+
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
         <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-6 font-semibold text-sm"></div>
@@ -89,7 +74,7 @@
                             <option value="">— اختر —</option>
                             @foreach (var r in roles ?? new())
                             {
-                                <option value="@r.RoleId" selected="@(Model.RoleId == r.RoleId)">@r.RoleName</option>
+                                <option value="@r.RoleId" selected="@(Model.RoleId == r.RoleId)">@(string.IsNullOrWhiteSpace(r.RoleDescription) ? r.RoleName : r.RoleDescription)</option>
                             }
                         </select>
                     </div>
@@ -115,14 +100,27 @@
         </div>
     </div>
 
-    <div class="flex items-center justify-end gap-2 mt-6">
-        <a href="/Users" class="btn-secondary">
-            <span class="material-symbols-rounded">cancel</span>
-            إلغاء
-        </a>
-        <button type="submit" class="btn-primary">
-            <span class="material-symbols-rounded">save</span>
-            حفظ البيانات
-        </button>
+    <div class="flex items-center justify-between gap-2 mt-6 w-full max-w-2xl">
+        @if (isEdit)
+        {
+            <a href="/Users/Permissions/@Model.UserId" class="btn-secondary text-success flex items-center gap-1.5 py-3 px-5 rounded-2xl font-bold">
+                <span class="material-symbols-rounded">admin_panel_settings</span>
+                تعديل الصلاحيات الاستثنائية الفردية
+            </a>
+        }
+        else
+        {
+            <div></div>
+        }
+        <div class="flex items-center gap-2">
+            <a href="/Users" class="btn-secondary">
+                <span class="material-symbols-rounded">cancel</span>
+                إلغاء
+            </a>
+            <button type="submit" class="btn-primary">
+                <span class="material-symbols-rounded">save</span>
+                حفظ البيانات
+            </button>
+        </div>
     </div>
 </form>

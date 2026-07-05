@@ -27,6 +27,8 @@ namespace DataAccess.Services
         Task<Result> UpdateRolePermissionsAsync(int roleId, List<int> selectedPermissionIds, UserSession session, CancellationToken cancellationToken = default);
         Task<Result<int>> CloneRoleAsync(int sourceRoleId, string newRoleName, string newDescription, UserSession session, CancellationToken cancellationToken = default);
         Task<Result> DeleteUserAsync(int userId, UserSession session, CancellationToken cancellationToken = default);
+        Task<List<UserPermissionOverrideViewModel>> GetUserPermissionsMatrixAsync(int userId, CancellationToken cancellationToken = default);
+        Task<Result> UpdateUserPermissionsAsync(int userId, List<string> grantedPermissions, List<string> deniedPermissions, UserSession session, CancellationToken cancellationToken = default);
     }
 
     /// <summary>
@@ -41,6 +43,7 @@ namespace DataAccess.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IPermissionService _permissionService;
+        private readonly IPermissionEvaluationService _evaluationService;
 
         public UserService(
             IDbContextFactory<BroadcastWorkflowDBContext> contextFactory,
@@ -49,7 +52,8 @@ namespace DataAccess.Services
             IRolePermissionCacheService permissionCache,
             UserManager<ApplicationUser> userManager,
             RoleManager<ApplicationRole> roleManager,
-            IPermissionService permissionService)
+            IPermissionService permissionService,
+            IPermissionEvaluationService evaluationService)
         {
             _contextFactory = contextFactory;
             _sessionProvider = sessionProvider;
@@ -58,6 +62,7 @@ namespace DataAccess.Services
             _userManager = userManager;
             _roleManager = roleManager;
             _permissionService = permissionService;
+            _evaluationService = evaluationService;
         }
 
         #region إدارة المستخدمين
@@ -152,19 +157,20 @@ namespace DataAccess.Services
                 }
             }
 
-            var currentRoles = await _userManager.GetRolesAsync(user);
-            if (!currentRoles.Contains(dto.RoleName))
+            var role = await _roleManager.FindByIdAsync(dto.RoleId.ToString());
+            if (role != null)
             {
-                if (currentRoles.Count > 0)
+                var targetRoleName = role.Name;
+                var currentRoles = await _userManager.GetRolesAsync(user);
+                if (!currentRoles.Contains(targetRoleName))
                 {
-                    await _userManager.RemoveFromRolesAsync(user, currentRoles);
-                }
+                    if (currentRoles.Count > 0)
+                    {
+                        await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                    }
 
-                var role = await _roleManager.FindByNameAsync(dto.RoleName);
-                if (role != null)
-                {
                     user.RoleId = role.Id;
-                    await _userManager.AddToRoleAsync(user, dto.RoleName);
+                    await _userManager.AddToRoleAsync(user, targetRoleName);
                 }
             }
 
@@ -402,6 +408,106 @@ namespace DataAccess.Services
             }
 
             return Result<int>.Success(newRole.Id);
+        }
+
+        public async Task<List<UserPermissionOverrideViewModel>> GetUserPermissionsMatrixAsync(int userId, CancellationToken cancellationToken = default)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null) return new List<UserPermissionOverrideViewModel>();
+
+            var rolePermissions = user.RoleId > 0
+                ? await _permissionCache.GetPermissionsForRoleAsync(user.RoleId)
+                : new List<string>();
+
+            await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+
+            var userClaims = await context.UserClaims
+                .AsNoTracking()
+                .Where(uc => uc.UserId == userId && (uc.ClaimType == "Permission" || uc.ClaimType == "PermissionDeny"))
+                .ToListAsync(cancellationToken);
+
+            var grants = userClaims.Where(c => c.ClaimType == "Permission").Select(c => c.ClaimValue!).ToList();
+            var denies = userClaims.Where(c => c.ClaimType == "PermissionDeny").Select(c => c.ClaimValue!).ToList();
+
+            var allPermissions = await _permissionService.GetPermissionsListAsync();
+
+            return allPermissions.Select(p =>
+            {
+                var inherited = rolePermissions.Contains(p.SystemName, StringComparer.OrdinalIgnoreCase);
+                var isGranted = grants.Contains(p.SystemName, StringComparer.OrdinalIgnoreCase);
+                var isDenied = denies.Contains(p.SystemName, StringComparer.OrdinalIgnoreCase);
+
+                string overrideType = "None";
+                if (isGranted) overrideType = "Grant";
+                else if (isDenied) overrideType = "Deny";
+
+                bool effectiveAccess = (inherited || isGranted) && !isDenied;
+
+                return new UserPermissionOverrideViewModel
+                {
+                    PermissionId = p.PermissionId,
+                    SystemName = p.SystemName,
+                    DisplayName = p.DisplayName,
+                    Module = p.Module,
+                    IsInherited = inherited,
+                    InheritedAccess = inherited,
+                    OverrideType = overrideType,
+                    EffectiveAccess = effectiveAccess
+                };
+            }).ToList();
+        }
+
+        public async Task<Result> UpdateUserPermissionsAsync(int userId, List<string> grantedPermissions, List<string> deniedPermissions, UserSession session, CancellationToken cancellationToken = default)
+        {
+            var permCheck = session.EnsurePermission(AppPermissions.UserManage);
+            if (!permCheck.IsSuccess) return Result.Fail(permCheck.ErrorMessage!);
+
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null) return Result.Fail("المستخدم غير موجود");
+
+            await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+
+            var existingClaims = await context.UserClaims
+                .Where(uc => uc.UserId == userId && (uc.ClaimType == "Permission" || uc.ClaimType == "PermissionDeny"))
+                .ToListAsync(cancellationToken);
+
+            if (existingClaims.Count > 0)
+            {
+                context.UserClaims.RemoveRange(existingClaims);
+                await context.SaveChangesAsync(cancellationToken);
+            }
+
+            var newClaims = new List<IdentityUserClaim<int>>();
+
+            if (grantedPermissions != null && grantedPermissions.Count > 0)
+            {
+                newClaims.AddRange(grantedPermissions.Select(p => new IdentityUserClaim<int>
+                {
+                    UserId = userId,
+                    ClaimType = "Permission",
+                    ClaimValue = p
+                }));
+            }
+
+            if (deniedPermissions != null && deniedPermissions.Count > 0)
+            {
+                newClaims.AddRange(deniedPermissions.Select(p => new IdentityUserClaim<int>
+                {
+                    UserId = userId,
+                    ClaimType = "PermissionDeny",
+                    ClaimValue = p
+                }));
+            }
+
+            if (newClaims.Count > 0)
+            {
+                context.UserClaims.AddRange(newClaims);
+                await context.SaveChangesAsync(cancellationToken);
+            }
+
+            _evaluationService.InvalidateUserCache(userId);
+
+            return Result.Success();
         }
 
         #endregion

@@ -4,6 +4,7 @@
 // المسؤولية: تعريف المستخدم الحالي.
 // ============================================================
 using DataAccess.Common;
+using DataAccess.Services;
 using System.Security.Claims;
 
 namespace Radio.Web.Services;
@@ -31,10 +32,12 @@ public interface ICurrentUserService
 public class CurrentUserService : ICurrentUserService
 {
     private readonly IHttpContextAccessor _httpContext;
+    private readonly IPermissionEvaluationService? _permissionEvaluation;
 
-    public CurrentUserService(IHttpContextAccessor httpContext)
+    public CurrentUserService(IHttpContextAccessor httpContext, IPermissionEvaluationService? permissionEvaluation = null)
     {
         _httpContext = httpContext;
+        _permissionEvaluation = permissionEvaluation;
     }
 
     public ClaimsPrincipal? User => _httpContext.HttpContext?.User;
@@ -49,12 +52,20 @@ public class CurrentUserService : ICurrentUserService
         User?.FindAll("Permission").Select(c => c.Value).ToList() ?? new List<string>();
 
     /// <summary>
-    /// التحقق من الصلاحية.
+    /// التحقق من الصلاحية باستخدام محرك التقييم الديناميكي.
     /// </summary>
     public bool HasPermission(string permissionName)
     {
         if (!IsAuthenticated) return false;
         if (User?.HasClaim(c => c.Type == "SuperAdmin") == true) return true;
+
+        // استخدام محرك التقييم الديناميكي (يدعم التسوية + الاستثناءات الفردية)
+        if (_permissionEvaluation != null && User != null)
+        {
+            return _permissionEvaluation.HasPermission(User, permissionName);
+        }
+
+        // Fallback: التحقق المباشر من الـ claims
         return Permissions.Contains(permissionName);
     }
 
@@ -64,13 +75,29 @@ public class CurrentUserService : ICurrentUserService
     public UserSession? ToUserSession()
     {
         if (!IsAuthenticated) return null;
+        var permissions = new List<string>();
+        if (_permissionEvaluation != null && DomainUserId > 0 && RoleId > 0)
+        {
+            try
+            {
+                permissions = Task.Run(() => _permissionEvaluation.GetEffectivePermissionsAsync(DomainUserId, RoleId)).GetAwaiter().GetResult() ?? new();
+            }
+            catch
+            {
+                permissions = Permissions.ToList();
+            }
+        }
+        else
+        {
+            permissions = Permissions.ToList();
+        }
         return new UserSession
         {
             UserId = DomainUserId,
             Username = UserName ?? string.Empty,
             FullName = FullName ?? string.Empty,
             RoleName = PrimaryRole ?? "Unknown",
-            Permissions = Permissions.ToList()
+            Permissions = permissions
         };
     }
 }

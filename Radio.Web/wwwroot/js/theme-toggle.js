@@ -12,7 +12,7 @@
 function applyTheme(theme) {
   var html = document.documentElement;
   var isDark = theme === 'dark';
-  html.setAttribute('data-theme', theme);
+  html.setAttribute('data-theme', isDark ? 'radiomodernDark' : 'radiomodern');
   html.classList.toggle('dark', isDark);
 }
 

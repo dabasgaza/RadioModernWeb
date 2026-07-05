@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Radio.Tests.Services
 {
-    public class AuditLogServiceTests : IClassFixture<DatabaseFixture>
+    public class AuditLogServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetime
     {
         private readonly DatabaseFixture _db;
         private readonly AuditLogService _sut;
@@ -23,6 +23,9 @@ namespace Radio.Tests.Services
             _db = db;
             _sut = new AuditLogService(db.DbContextFactory, Mock.Of<ILogger<AuditLogService>>());
         }
+
+        public async ValueTask InitializeAsync() => await _db.ResetAsync();
+        public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
         [Fact]
         public async Task GetFilteredAuditLogsAsync_NoFilters_ReturnsAll()

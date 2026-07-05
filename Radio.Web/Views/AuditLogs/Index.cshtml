@@ -48,11 +48,11 @@
             </div>
             <div>
                 <label class="form-label">من تاريخ</label>
-                <input type="date" name="fromDate" value="@ViewBag.FromDate" class="form-input" />
+                <input type="text" name="fromDate" value="@ViewBag.FromDate" class="form-input datepicker" placeholder="اختر تاريخ البداية" />
             </div>
             <div>
                 <label class="form-label">إلى تاريخ</label>
-                <input type="date" name="toDate" value="@ViewBag.ToDate" class="form-input" />
+                <input type="text" name="toDate" value="@ViewBag.ToDate" class="form-input datepicker" placeholder="اختر تاريخ النهاية" />
             </div>
             <div class="md:col-span-4 flex justify-end gap-2">
                 <button type="submit" class="btn-primary"><span class="material-symbols-rounded">search</span> تطبيق</button>

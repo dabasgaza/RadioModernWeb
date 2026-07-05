@@ -28,10 +28,7 @@ public class DatabaseFixture : IAsyncLifetime
         DbContextFactory = new TestDbContextFactory(_options);
     }
 
-    /// <summary>
-    /// تهيئة Async.
-    /// </summary>
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         await using var context = await DbContextFactory.CreateDbContextAsync();
         await SeedBasicDataAsync(context);
@@ -40,7 +37,7 @@ public class DatabaseFixture : IAsyncLifetime
     /// <summary>
     /// تخلص من الموارد Async.
     /// </summary>
-    public Task DisposeAsync() => Task.CompletedTask;
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
     /// <summary>
     /// بذر البيانات Basic بيانات Async.

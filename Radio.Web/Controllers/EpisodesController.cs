@@ -53,6 +53,7 @@ public class EpisodesController : Controller
     /// <summary>
     /// عرض قائمة الحلقات.
     /// </summary>
+    [Authorize(Policy = AppPermissions.EpisodeView)]
     public async Task<IActionResult> Index(string? search, byte? status, int? programId)
     {
         try
@@ -93,6 +94,7 @@ public class EpisodesController : Controller
     /// <summary>
     /// عرض تفاصيل الحلقات.
     /// </summary>
+    [Authorize(Policy = AppPermissions.EpisodeView)]
     public async Task<IActionResult> Details(int id)
     {
         var episode = await _query.GetActiveEpisodeByIdAsync(id, cancellationToken: HttpContext?.RequestAborted ?? default);

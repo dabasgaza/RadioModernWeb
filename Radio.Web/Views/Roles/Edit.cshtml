@@ -2,79 +2,60 @@
 @{
     ViewData["Title"] = Model.RoleId == 0 ? "إضافة دور جديد" : "تعديل بيانات الدور";
     var isEdit = Model.RoleId != 0;
+    ViewBag.IsEdit = isEdit;
+    ViewBag.Icon = isEdit ? "edit" : "add";
+    ViewBag.Title = isEdit ? "تعديل بيانات الدور" : "إضافة دور جديد";
+    ViewBag.Description = "إدخال وتحديث البيانات الأساسية للدور الوظيفي";
+    ViewBag.EntityName = "الأدوار الوظيفية";
+    ViewBag.EntityUrl = "/Roles";
+    ViewBag.BackUrl = "/Roles";
+    ViewBag.BackText = "الرجوع للأدوار";
 }
 
-<div class="page-header relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-8 mb-8 border border-primary/10">
-    <div class="absolute inset-0 bg-grid-slate-900/[0.04] bg-[size:20px_20px] pointer-events-none"></div>
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 relative z-10">
-        <div>
-            <nav class="breadcrumb flex items-center gap-1.5 text-xs text-ink-muted mb-3">
-                <span class="material-symbols-rounded text-sm">home</span>
-                <a href="/" class="hover:text-primary transition-colors">الرئيسية</a>
-                <span class="material-symbols-rounded text-xs select-none">chevron_left</span>
-                <a href="/Roles" class="hover:text-primary transition-colors">الأدوار الوظيفية</a>
-                <span class="material-symbols-rounded text-xs select-none">chevron_left</span>
-                <span class="text-ink">@(isEdit ? "تعديل دور" : "دور جديد")</span>
-            </nav>
-            <h1 class="text-3xl font-black text-ink flex items-center gap-3 tracking-tight">
-                <span class="material-symbols-rounded p-2.5 bg-primary/10 text-primary rounded-2xl shadow-inner-sm">@(isEdit ? "edit" : "add")</span>
-                @(isEdit ? "تعديل بيانات الدور" : "إضافة دور جديد")
-            </h1>
-            <p class="text-sm text-ink-muted mt-2">إدخال وتحديث البيانات الأساسية للدور الوظيفي</p>
-        </div>
-        <div class="flex items-center gap-2">
-            <a href="/Roles" class="btn-secondary py-2.5 px-4 rounded-xl font-bold flex items-center gap-1.5 transition-all">
-                <span class="material-symbols-rounded">arrow_forward</span>
-                الرجوع للأدوار
-            </a>
-        </div>
-    </div>
-</div>
+<partial name="_CreateEditHeader" />
 
 <form method="post" action="@(isEdit ? $"/Roles/Edit/{Model.RoleId}" : "/Roles/Create")" class="max-w-2xl mx-auto">
     @Html.AntiForgeryToken()
     @if (isEdit) { <input type="hidden" name="RoleId" value="@Model.RoleId" /> }
-    
+
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="bg-danger/5 border border-danger/20 text-danger rounded-2xl p-5 mb-6 text-sm font-semibold flex items-start gap-3">
-            <span class="material-symbols-rounded shrink-0">error</span>
-            <div class="flex-1 space-y-1">
-                <span class="block font-bold">يرجى تصحيح الأخطاء التالية:</span>
-            </div>
-        </div>
+        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-6 font-semibold text-sm"></div>
     }
 
-    <div class="card-premium rounded-3xl border border-border/60 overflow-hidden bg-surface/50 backdrop-blur-md">
-        <div class="card-header bg-surface-2 p-6 border-b border-border/40 flex items-center gap-3">
-            <span class="material-symbols-rounded text-primary p-2 bg-primary/10 rounded-xl">badge</span>
-            <h3 class="font-extrabold text-ink text-base">البيانات الأساسية للدور</h3>
+    <div class="card-premium">
+        <div class="card-header">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-primary">badge</span>
+                <h3 class="font-bold text-ink text-base">البيانات الأساسية للدور</h3>
+            </div>
         </div>
-        
-        <div class="card-body p-6 space-y-5">
+        <div class="card-body space-y-4">
             <div>
-                <label class="form-label font-bold text-ink text-xs mb-2 block">اسم الدور الوظيفي <span class="text-danger">*</span></label>
-                <div class="input-wrapper relative">
-                    <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-ink-muted">badge</span>
-                    <input type="text" name="RoleName" value="@Model.RoleName" class="form-input pr-12 pl-4 py-3.5 rounded-2xl w-full border border-border/80 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-bold text-ink" required placeholder="مثال: منسق برامج" />
+                <label class="form-label">اسم الدور الوظيفي *</label>
+                <div class="input-wrapper">
+                    <span class="material-symbols-rounded input-icon">badge</span>
+                    <input type="text" name="RoleName" value="@Model.RoleName" class="form-input" required placeholder="مثال: منسق برامج" />
                 </div>
             </div>
-            
             <div>
-                <label class="form-label font-bold text-ink text-xs mb-2 block">الوصف الوظيفي</label>
-                <textarea name="RoleDescription" rows="5" class="form-input p-4 rounded-2xl w-full border border-border/80 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all text-ink" placeholder="اكتب هنا وصفاً لمهام هذا الدور لتوضيح وظيفته للإدارة والموظفين…">@Model.RoleDescription</textarea>
+                <label class="form-label">الوصف الوظيفي</label>
+                <div class="input-wrapper">
+                    <span class="material-symbols-rounded input-icon" style="top:1rem;transform:none">description</span>
+                    <textarea name="RoleDescription" rows="5" class="form-input" placeholder="اكتب هنا وصفاً لمهام هذا الدور لتوضيح وظيفته للإدارة والموظفين…">@Model.RoleDescription</textarea>
+                </div>
             </div>
         </div>
+    </div>
 
-        <div class="px-6 py-5 bg-surface-2 border-t border-border/40 flex items-center justify-end gap-3">
-            <a href="/Roles" class="btn-secondary py-3 px-5 rounded-2xl font-bold flex items-center gap-1.5 transition-all">
-                <span class="material-symbols-rounded">cancel</span>
-                إلغاء الأمر
-            </a>
-            <button type="submit" class="btn-primary py-3 px-6 rounded-2xl font-bold flex items-center gap-1.5 shadow-lg shadow-primary/20 transition-all duration-300">
-                <span class="material-symbols-rounded">save</span>
-                حفظ البيانات
-            </button>
-        </div>
+    <div class="flex items-center justify-end gap-2 mt-6">
+        <a href="/Roles" class="btn-secondary">
+            <span class="material-symbols-rounded">cancel</span>
+            إلغاء الأمر
+        </a>
+        <button type="submit" class="btn-primary">
+            <span class="material-symbols-rounded">save</span>
+            حفظ البيانات
+        </button>
     </div>
 </form>

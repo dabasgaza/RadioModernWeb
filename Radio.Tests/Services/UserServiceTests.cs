@@ -69,7 +69,8 @@ namespace Radio.Tests.Services
                 Mock.Of<IRolePermissionCacheService>(), 
                 userManager, 
                 roleManager, 
-                permissionService);
+                permissionService,
+                Mock.Of<IPermissionEvaluationService>());
         }
 
         [Fact]

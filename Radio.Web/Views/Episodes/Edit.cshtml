@@ -2,9 +2,17 @@
 @{
     ViewData["Title"] = Model.Episode.EpisodeId == 0 ? "حلقة جديدة" : "تعديل حلقة";
     var isEdit = Model.Episode.EpisodeId != 0;
+    ViewBag.IsEdit = isEdit;
+    ViewBag.Icon = isEdit ? "edit" : "add";
+    ViewBag.Title = isEdit ? "تعديل الحلقة" : "حلقة جديدة";
+    ViewBag.Description = "إدخال وتعديل البيانات والتفاصيل والضيوف المشاركين في الحلقة";
+    ViewBag.EntityName = "الحلقات";
+    ViewBag.EntityUrl = "/Episodes";
+    ViewBag.BackUrl = "/Episodes";
+    ViewBag.BackText = "الرجوع للحلقات";
 }
 
-<div class="page-header">
+<div class="page-header-enhanced p-6">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
         <div>
             <nav class="breadcrumb">
@@ -16,8 +24,8 @@
                 <span>@(isEdit ? "تعديل حلقة" : "حلقة جديدة")</span>
             </nav>
             <div class="flex items-center gap-3 flex-wrap">
-                <h1 class="text-2xl font-black text-ink flex items-center gap-2">
-                    <span class="material-symbols-rounded text-primary p-1 bg-primary/10 rounded-lg">podcasts</span>
+                <h1 class="flex items-center gap-2">
+                    <span class="material-symbols-rounded text-primary">podcasts</span>
                     @(isEdit ? "تعديل حلقة" : "حلقة جديدة")
                 </h1>
                 @if (isEdit)
@@ -94,11 +102,17 @@
                     </div>
                     <div class="md:col-span-2">
                         <label class="form-label">وصف الحلقة</label>
-                        <textarea name="EpisodeDescription" rows="4" class="form-input" placeholder="وصف مختصر لمحتوى الحلقة وموضوعاتها الرئيسية…">@Model.Episode.EpisodeDescription</textarea>
+                        <div class="input-wrapper">
+                            <span class="material-symbols-rounded input-icon" style="top:1rem;transform:none">description</span>
+                            <textarea name="EpisodeDescription" rows="4" class="form-input" placeholder="وصف مختصر لمحتوى الحلقة وموضوعاتها الرئيسية…">@Model.Episode.EpisodeDescription</textarea>
+                        </div>
                     </div>
                     <div class="md:col-span-2">
                         <label class="form-label">ملاحظات خاصة</label>
-                        <textarea name="SpecialNotes" rows="3" class="form-input" placeholder="ملاحظات داخلية حول التحضير والإنتاج…">@Model.Episode.SpecialNotes</textarea>
+                        <div class="input-wrapper">
+                            <span class="material-symbols-rounded input-icon" style="top:1rem;transform:none">notes</span>
+                            <textarea name="SpecialNotes" rows="3" class="form-input" placeholder="ملاحظات داخلية حول التحضير والإنتاج…">@Model.Episode.SpecialNotes</textarea>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -140,7 +154,7 @@
                                                 <input type="text" name="Guests[@i].Topic" value="@g.Topic" class="form-input" placeholder="موضوع الاستضافة" />
                                             </div>
                                             <div class="ep-field w-28">
-                                                <input type="time" name="Guests[@i].HostingTime" value="@(g.HostingTime?.ToString(@"hh\:mm"))" class="form-input" />
+                                                                <input type="text" name="Guests[@i].HostingTime" value="@(g.HostingTime?.ToString(@"hh\:mm"))" class="form-input timepicker" />
                                             </div>
                                             <input type="hidden" name="Guests[@i].ClipNotes" value="@g.ClipNotes" />
                                         </div>
@@ -155,7 +169,7 @@
                         }
                         else
                         {
-                            <div class="ep-empty flex flex-col items-center justify-center py-8 text-center bg-surface-2 rounded-xl border border-dashed border-border/70">
+                            <div class="flex flex-col items-center justify-center py-8 text-center bg-surface-2 rounded-xl border-2 border-dashed border-border/50">
                                 <span class="material-symbols-rounded text-ink-soft text-3xl mb-2">groups</span>
                                 <p class="text-sm font-bold text-ink-muted">لم تتم إضافة ضيوف بعد</p>
                                 <p class="text-xs text-ink-soft mt-1">انقر على زر الإضافة أعلاه لتسجيل ضيف في الحلقة</p>
@@ -202,7 +216,7 @@
                                                 <input type="text" name="Correspondents[@i].Topic" value="@c.Topic" class="form-input" placeholder="موضوع التغطية" />
                                             </div>
                                             <div class="ep-field w-28">
-                                                <input type="time" name="Correspondents[@i].HostingTime" value="@(c.HostingTime?.ToString(@"hh\:mm"))" class="form-input" />
+                                                                <input type="text" name="Correspondents[@i].HostingTime" value="@(c.HostingTime?.ToString(@"hh\:mm"))" class="form-input timepicker" />
                                             </div>
                                         </div>
                                         <div class="ep-row-actions">
@@ -216,7 +230,7 @@
                         }
                         else
                         {
-                            <div class="ep-empty flex flex-col items-center justify-center py-8 text-center bg-surface-2 rounded-xl border border-dashed border-border/70">
+                            <div class="flex flex-col items-center justify-center py-8 text-center bg-surface-2 rounded-xl border-2 border-dashed border-border/50">
                                 <span class="material-symbols-rounded text-ink-soft text-3xl mb-2">map</span>
                                 <p class="text-sm font-bold text-ink-muted">لم تتم إضافة مراسلين بعد</p>
                                 <p class="text-xs text-ink-soft mt-1">انقر على زر الإضافة لتسجيل مراسل ميداني للتغطية</p>
@@ -273,7 +287,7 @@
                         }
                         else
                         {
-                            <div class="ep-empty flex flex-col items-center justify-center py-8 text-center bg-surface-2 rounded-xl border border-dashed border-border/70">
+                            <div class="flex flex-col items-center justify-center py-8 text-center bg-surface-2 rounded-xl border-2 border-dashed border-border/50">
                                 <span class="material-symbols-rounded text-ink-soft text-3xl mb-2">badge</span>
                                 <p class="text-sm font-bold text-ink-muted">لم يتم إضافة أي موظف للطاقم بعد</p>
                                 <p class="text-xs text-ink-soft mt-1">انقر على زر الإضافة لتسجيل أعضاء فريق الإنتاج</p>
@@ -337,30 +351,96 @@
             }
 
             <!-- ═══ Scheduling ═══ -->
+            @{
+                var arDays = new[] { "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت" };
+                var arMonths = new[] { "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر" };
+                var dt = Model.Episode.ScheduledDate;
+                var tm = Model.Episode.BroadcastTime;
+                string dayName, dayNum, monthName, yearNum, timeStr;
+                if (dt.HasValue) { var d = dt.Value; dayName = arDays[(int)d.DayOfWeek]; dayNum = d.Day.ToString(); monthName = arMonths[d.Month - 1]; yearNum = d.Year.ToString(); }
+                else { dayName = "اليوم"; dayNum = "–"; monthName = ""; yearNum = ""; }
+                timeStr = tm?.ToString(@"hh\:mm") ?? "";
+            }
             <div class="card-premium">
                 <div class="card-header">
                     <div class="flex items-center gap-2">
                         <span class="material-symbols-rounded text-primary">schedule</span>
-                        <h3 class="font-bold text-ink text-base">الجدولة</h3>
+                        <h3 class="font-bold text-ink text-base">الموعد</h3>
                     </div>
                 </div>
-                <div class="card-body space-y-4">
-                    <div>
-                        <label class="form-label">تاريخ التنفيذ</label>
-                        <div class="input-wrapper">
-                            <span class="material-symbols-rounded input-icon">calendar_month</span>
-                            <input type="date" name="ScheduledDate" value="@(Model.Episode.ScheduledDate?.ToString("yyyy-MM-dd"))" class="form-input" />
+                <div class="card-body">
+                    <div id="date-preview" class="text-center py-5 px-4 mb-5 bg-surface-2 rounded-xl border border-border shadow-sm transition-all duration-300">
+                        <div class="text-4xl font-black text-primary leading-tight tracking-tight" id="preview-day">@dayName</div>
+                        <div class="w-10 h-px bg-primary/30 mx-auto my-3 rounded-full"></div>
+                        <div class="text-sm font-semibold text-ink-muted" id="preview-date">
+                            @if (dt.HasValue) { <text>@dayNum @monthName @yearNum</text> } else { <text>لم يُحدد</text> }
                         </div>
+                        @if (dt.HasValue || tm.HasValue)
+                        {
+                            <div class="inline-flex items-center gap-1.5 mt-3 text-xs font-bold text-ink-soft bg-surface-3 px-3 py-1.5 rounded-full border border-border/70">
+                                <span class="material-symbols-rounded text-sm text-primary/70">access_time</span>
+                                <span id="preview-time">@(tm.HasValue ? timeStr : "–")</span>
+                            </div>
+                        }
                     </div>
-                    <div>
-                        <label class="form-label">وقت البث</label>
-                        <div class="input-wrapper">
-                            <span class="material-symbols-rounded input-icon">access_time</span>
-                            <input type="time" name="BroadcastTime" value="@(Model.Episode.BroadcastTime?.ToString(@"hh\:mm"))" class="form-input" />
+
+                    <div class="space-y-3">
+                        <div>
+                            <label class="form-label">التاريخ</label>
+                            <div class="input-wrapper">
+                                <span class="material-symbols-rounded input-icon">calendar_month</span>
+                                <input type="text" name="ScheduledDate"
+                                       value="@(dt?.ToString("yyyy-MM-dd"))"
+                                       class="form-input datepicker" id="input-date" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">الوقت</label>
+                            <div class="input-wrapper">
+                                <span class="material-symbols-rounded input-icon">access_time</span>
+                                <input type="text" name="BroadcastTime"
+                                       value="@(tm?.ToString(@"hh\:mm"))"
+                                       class="form-input timepicker" id="input-time" />
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var dateInput = document.getElementById('input-date');
+                    var timeInput = document.getElementById('input-time');
+                    var previewDay = document.getElementById('preview-day');
+                    var previewDate = document.getElementById('preview-date');
+                    var previewTime = document.getElementById('preview-time');
+                    var preview = document.getElementById('date-preview');
+                    var arDays = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+                    var arMonths = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+                    function updatePreview() {
+                        var fp = dateInput ? dateInput._flatpickr : null;
+                        var d = fp ? fp.selectedDates[0] : null;
+                        if (d) {
+                            previewDay.textContent = arDays[d.getDay()];
+                            previewDate.textContent = d.getDate() + ' ' + arMonths[d.getMonth()] + ' ' + d.getFullYear();
+                            preview.classList.remove('opacity-50');
+                        } else {
+                            previewDay.textContent = 'اليوم';
+                            previewDate.textContent = 'لم يُحدد';
+                            preview.classList.add('opacity-50');
+                        }
+                        if (previewTime && timeInput && timeInput._flatpickr) {
+                            previewTime.textContent = timeInput._flatpickr.altInput.value || '–';
+                        }
+                    }
+                    if (dateInput && dateInput._flatpickr) {
+                        dateInput._flatpickr.config.onChange.push(updatePreview);
+                    }
+                    if (timeInput && timeInput._flatpickr) {
+                        timeInput._flatpickr.config.onChange.push(updatePreview);
+                    }
+                });
+            </script>
 
             @if (isEdit)
             {
@@ -438,7 +518,7 @@
                     <input type="text" name="Guests[{i}].Topic" class="form-input" placeholder="موضوع الاستضافة" />
                 </div>
                 <div class="ep-field w-28">
-                    <input type="time" name="Guests[{i}].HostingTime" class="form-input" />
+                                <input type="text" name="Guests[{i}].HostingTime" class="form-input timepicker" />
                 </div>
                 <input type="hidden" name="Guests[{i}].ClipNotes" value="" />
             </div>
@@ -470,7 +550,7 @@
                     <input type="text" name="Correspondents[{i}].Topic" class="form-input" placeholder="موضوع التغطية" />
                 </div>
                 <div class="ep-field w-28">
-                    <input type="time" name="Correspondents[{i}].HostingTime" class="form-input" />
+                                <input type="text" name="Correspondents[{i}].HostingTime" class="form-input timepicker" />
                 </div>
             </div>
             <div class="ep-row-actions">

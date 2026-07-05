@@ -3,37 +3,22 @@
     ViewData["Title"] = Model.EmployeeId == 0 ? "موظف جديد" : "تعديل موظف";
     var isEdit = Model.EmployeeId != 0;
     var staffRoles = ViewBag.StaffRoles as List<StaffRoleDto>;
+    ViewBag.IsEdit = isEdit;
+    ViewBag.Icon = isEdit ? "edit" : "add";
+    ViewBag.Title = isEdit ? "تعديل بيانات الموظف" : "إضافة موظف جديد";
+    ViewBag.Description = "إدخال وتحديث بيانات أعضاء طاقم العمل والمهام المرتبطة بهم";
+    ViewBag.EntityName = "الموظفون";
+    ViewBag.EntityUrl = "/Employees";
+    ViewBag.BackUrl = "/Employees";
+    ViewBag.BackText = "الرجوع للموظفين";
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <a href="/Employees">الموظفون</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>@(isEdit ? "تعديل موظف" : "موظف جديد")</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded text-primary">@(isEdit ? "edit" : "add")</span>
-                @(isEdit ? "تعديل موظف" : "موظف جديد")
-            </h1>
-            <p>إدخال وتحديث بيانات أعضاء طاقم العمل والمهام المرتبطة بهم</p>
-        </div>
-        <div class="flex items-center gap-2">
-            <a href="/Employees" class="btn-secondary">
-                <span class="material-symbols-rounded">arrow_forward</span>
-                الرجوع للموظفين
-            </a>
-        </div>
-    </div>
-</div>
+<partial name="_CreateEditHeader" />
 
 <form method="post" action="@(isEdit ? $"/Employees/Edit/{Model.EmployeeId}" : "/Employees/Create")" class="max-w-2xl">
     @Html.AntiForgeryToken()
     @if (isEdit) { <input type="hidden" name="EmployeeId" value="@Model.EmployeeId" /> }
+
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
         <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-6 font-semibold text-sm"></div>
@@ -69,7 +54,10 @@
             </div>
             <div>
                 <label class="form-label">ملاحظات</label>
-                <textarea name="Notes" rows="4" class="form-input" placeholder="ملاحظات إضافية حول مهام الموظف…">@Model.Notes</textarea>
+                <div class="input-wrapper">
+                    <span class="material-symbols-rounded input-icon" style="top:1rem;transform:none">notes</span>
+                    <textarea name="Notes" rows="4" class="form-input" placeholder="ملاحظات إضافية حول مهام الموظف…">@Model.Notes</textarea>
+                </div>
             </div>
         </div>
     </div>

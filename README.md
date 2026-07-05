@@ -43,10 +43,10 @@ RadioModernWeb/
 │   ├── DTOs/                        # Data Transfer Objects
 │   ├── Security/                    # ConnectionStringProtector (Data Protection)
 │   ├── Seeding/                     # DbSeeder
-│   └── Common/                      # AppPermissions, Result, UserSession, ...
+│   └── Common/                      # AppPermissions, Result, UserSession, SecurityHelper
 │
 ├── Radio.Web/                       # 🆕 ASP.NET Core MVC Project
-│   ├── Controllers/                 # 14 controller
+│   ├── Controllers/                 # 14 controllers
 │   │   ├── HomeController.cs        # Dashboard + Chart.js
 │   │   ├── AccountController.cs     # Login, Logout, Profile
 │   │   ├── EpisodesController.cs    # CRUD + Execute + Cancel + Revert
@@ -58,39 +58,75 @@ RadioModernWeb/
 │   │   ├── AdminControllers.cs      # Users + Roles + Permissions + AuditLogs
 │   │   └── SystemControllers.cs     # Publishing + ExecutionLogs + WebsitePublishing + Reports + Database + Diagnostics
 │   │
-│   ├── Views/                       # Razor Views (60+ view)
-│   │   ├── Shared/                  # _Layout, _Sidebar, _Topbar, _Toastr, _LoginLayout, Error, AccessDenied
+│   ├── Views/                       # Razor Views (70+ views)
+│   │   ├── Shared/
+│   │   │   ├── _Layout.cshtml       # Main layout (RTL, Tailwind, dark mode)
+│   │   │   ├── _Sidebar.cshtml      # Responsive sidebar drawer
+│   │   │   ├── _Topbar.cshtml       # Top bar + user menu + notifications
+│   │   │   ├── _Toastr.cshtml       # SignalR + Toastr notification partial
+│   │   │   ├── _CreateEditHeader.cshtml
+│   │   │   ├── _LoginLayout.cshtml
+│   │   │   ├── Error.cshtml
+│   │   │   └── AccessDenied.cshtml
 │   │   ├── Home/Index.cshtml        # Dashboard with Chart.js
 │   │   ├── Account/Login.cshtml
 │   │   ├── Episodes/{Index, Details, Edit}.cshtml
 │   │   ├── Programs/{Index, Edit}.cshtml
 │   │   ├── Guests/{Index, Edit}.cshtml
 │   │   ├── Correspondents/{Index, Edit}.cshtml
-│   │   ├── Coverage/Index.cshtml
+│   │   ├── Coverage/{Index, Edit}.cshtml
 │   │   ├── Employees/{Index, Edit}.cshtml
 │   │   ├── StaffRoles/{Index, Edit}.cshtml
 │   │   ├── SocialPlatforms/{Index, Edit}.cshtml
-│   │   ├── Users/{Index, Edit}.cshtml
+│   │   ├── Users/{Index, Edit, Details, Permissions}.cshtml
 │   │   ├── Roles/{Index, Edit}.cshtml
 │   │   ├── Permissions/Index.cshtml
 │   │   ├── AuditLogs/Index.cshtml
-│   │   ├── Publishing/Index.cshtml
-│   │   ├── ExecutionLogs/Index.cshtml
-│   │   ├── WebsitePublishing/Index.cshtml
-│   │   ├── Reports/Index.cshtml
+│   │   ├── Publishing/{Index, Edit}.cshtml
+│   │   ├── ExecutionLogs/{Index, Edit}.cshtml
+│   │   ├── WebsitePublishing/{Index, Edit}.cshtml
+│   │   ├── Reports/{Index, ByDateRange}.cshtml
 │   │   ├── Database/Index.cshtml
 │   │   └── Diagnostics/Index.cshtml
 │   │
-│   ├── Security/                    # ApplicationUser, ApplicationRole, BCryptPasswordHasher, ...
-│   ├── Services/                    # CurrentUserService, MvcMessageService, NotificationService, ViewDataService
+│   ├── Security/
+│   │   ├── ApplicationUser.cs
+│   │   ├── ApplicationRole.cs
+│   │   ├── ApplicationUserClaimsPrincipalFactory.cs
+│   │   ├── BCryptPasswordHasher.cs
+│   │   ├── ClaimsPrincipalExtensions.cs
+│   │   ├── CustomCookieAuthenticationEvents.cs
+│   │   ├── HasPermissionAttribute.cs   # [HasPermission("...")] action filter
+│   │   ├── PermissionCheckTagHelper.cs # <permission-check permission="..."> tag helper
+│   │   ├── PermissionRequirement.cs
+│   │   └── HttpContextHolder.cs
+│   ├── Services/
+│   │   ├── CurrentUserService.cs       # ICurrentUserService implementation
+│   │   ├── MvcMessageService.cs
+│   │   ├── NotificationService.cs
+│   │   └── ViewDataService.cs
 │   ├── Hubs/                        # NotificationHub (SignalR)
-│   ├── ViewModels/                  # View-specific DTOs
+│   ├── ViewModels/                  # EpisodeEditViewModel, etc.
 │   ├── wwwroot/
-│   │   ├── css/site.css             # Tailwind theme + custom styles
-│   │   ├── css/login.css            # Login page styles
-│   │   ├── js/app.js                # Helper functions + sidebar toggle
-│   │   └── js/notifications.js      # SignalR client + Toastr integration
-│   ├── Program.cs                   # MVC + Identity + SignalR + Serilog setup
+│   │   ├── css/
+│   │   │   ├── site.css             # Tailwind output (generated)
+│   │   │   ├── app.css              # All custom styles (consolidated)
+│   │   │   ├── flatpickr-theme.css  # Flatpickr dark theme
+│   │   │   ├── theme-dark-overrides.css
+│   │   │   └── login.css
+│   │   ├── js/
+│   │   │   ├── app.js               # Helper functions + sidebar toggle
+│   │   │   ├── notifications.js     # SignalR client + Toastr integration
+│   │   │   ├── episode-edit.js      # Guest/correspondent/employee dynamic rows
+│   │   │   ├── datepicker-init.js   # Flatpickr initialization
+│   │   │   └── theme-toggle.js      # Dark mode toggle logic
+│   │   └── lib/
+│   │       ├── flatpickr/           # Flatpickr (datepicker)
+│   │       └── preline/             # Preline UI components
+│   ├── css/tailwind.css             # Tailwind source (input)
+│   ├── tailwind.config.js
+│   ├── package.json                 # npm deps (tailwind, postcss)
+│   ├── Program.cs                   # MVC + Identity + SignalR + Serilog + permission services
 │   └── Radio.Web.csproj
 │
 └── Radio.Tests/                     # Unit tests
@@ -159,18 +195,28 @@ dotnet run --project Radio.Web
 
 ---
 
-## 🔐 المصادقة
+## 🔐 المصادقة والصلاحيات
 
 - **ASP.NET Core Identity** مع `ApplicationUser : IdentityUser<int>`
 - **BCryptPasswordHasher** مخصص (متوافق مع الـ hashes الموجودة)
-- **Claims-based Authorization** مع Policies لكل صلاحية من `AppPermissions`
+- **[HasPermission("PermissionName")]** attribute على الـ Actions (بدلاً من `[Authorize(Policy = ...)]`)
+- **IPermissionEvaluationService** — تقييم لحظي للصلاحيات مع دعم تجاوز الصلاحيات لكل مستخدم
+- **User Permission Overrides** — إضافة/إلغاء صلاحيات فردية لمستخدم معين
+- **RolePermissionCacheService** — تخزين مؤقت للصلاحيات مع إبطال تلقائي عند التغيير
+- **`<permission-check permission="...">`** Tag Helper — عرض مشروط لواجهة المستخدم حسب الصلاحية
+- **CustomCookieAuthenticationEvents** يزيل جميع Permission claims من الكوكي — التحقق يتم من الخادوم فقط
+- **CurrentUserService.ToUserSession()** تحميل الصلاحيات من `IPermissionEvaluationService` وليس من الكوكي
 - **SyncExistingUsersWithIdentityAsync** تزامن تلقائي عند بدء التشغيل
 
 ---
 
 ## 🎨 التصميم
 
-- **Tailwind CSS 4** (عبر CDN — للإنتاج: npm build)
+- **Tailwind CSS 4** (npm build عبر `tailwind.config.js`)
+- **Dark Mode** — سمة دافئة بالفحم، تبديل عبر زر في الشريط العلوي، مخزّن في `localStorage`
+- **CSS موحَّد** — ملف `app.css` واحد بعد دمج 8 ملفات tokens/sidebar سابقة
+- **Flatpickr** — منتقي التاريخ والوقت مع locale عربي
+- **Preline UI** — مكونات واجهة إضافية
 - **Material Icons** (Google)
 - **Cairo + Tajawal** (خطوط عربية)
 - **RTL** كامل
@@ -183,7 +229,8 @@ dotnet run --project Radio.Web
 - **SignalR Hub** (`/hubs/notifications`)
 - **Toastr.js** للإشعارات الفورية
 - **SweetAlert2** للحوارات التأكيدية
-- **Notification badge** في Topbar
+- **Notification badge** مع ping animation في Topbar
+- **Sidebar** متجاوب — درج على الجوال، ثابت على سطح المكتب
 
 ---
 
@@ -198,6 +245,16 @@ dotnet run --project Radio.Web
 
 ```bash
 dotnet test
+dotnet test --filter "Category=Unit"   # وحدات فقط
+dotnet test --filter "Category=Integration"  # تكامل فقط
+```
+
+## 🎨 بناء CSS
+
+```bash
+npm run build:css    # بناء Tailwind
+# أو للمتابعة المستمرة:
+npx tailwindcss -i ./css/tailwind.css -o ./wwwroot/css/site.css --watch
 ```
 
 ---
