@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Domain.Migrations
 {
     [DbContext(typeof(BroadcastWorkflowDBContext))]
-    [Migration("20260704153139_InitialCreate")]
+    [Migration("20260705111122_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -296,41 +296,6 @@ namespace Domain.Migrations
                     b.HasIndex("UpdatedByUserId");
 
                     b.ToTable("Correspondents");
-
-                    b.HasData(
-                        new
-                        {
-                            CorrespondentId = 1,
-                            AssignedLocations = "الرياض",
-                            CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 1,
-                            FullName = "محمد الحربي",
-                            IsActive = true,
-                            PhoneNumber = "0550000001",
-                            UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            CorrespondentId = 2,
-                            AssignedLocations = "جدة",
-                            CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 1,
-                            FullName = "فهد المطيري",
-                            IsActive = true,
-                            PhoneNumber = "0550000002",
-                            UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            CorrespondentId = 3,
-                            AssignedLocations = "الدمام",
-                            CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 1,
-                            FullName = "عبدالله العنزي",
-                            IsActive = true,
-                            PhoneNumber = "0550000003",
-                            UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc)
-                        });
                 });
 
             modelBuilder.Entity("Domain.Models.CorrespondentCoverage", b =>
@@ -834,43 +799,6 @@ namespace Domain.Migrations
                     b.HasKey("StatusId");
 
                     b.ToTable("EpisodeStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            StatusId = (byte)0,
-                            DisplayName = "مجدولة",
-                            SortOrder = (byte)0,
-                            StatusName = "Planned"
-                        },
-                        new
-                        {
-                            StatusId = (byte)1,
-                            DisplayName = "منفّذة",
-                            SortOrder = (byte)1,
-                            StatusName = "Executed"
-                        },
-                        new
-                        {
-                            StatusId = (byte)2,
-                            DisplayName = "منشورة",
-                            SortOrder = (byte)2,
-                            StatusName = "Published"
-                        },
-                        new
-                        {
-                            StatusId = (byte)3,
-                            DisplayName = "منشورة على الموقع",
-                            SortOrder = (byte)3,
-                            StatusName = "WebsitePublished"
-                        },
-                        new
-                        {
-                            StatusId = (byte)4,
-                            DisplayName = "ملغاة",
-                            SortOrder = (byte)4,
-                            StatusName = "Cancelled"
-                        });
                 });
 
             modelBuilder.Entity("Domain.Models.ExecutionLog", b =>
@@ -1005,44 +933,6 @@ namespace Domain.Migrations
                     b.HasIndex("UpdatedByUserId");
 
                     b.ToTable("Guests");
-
-                    b.HasData(
-                        new
-                        {
-                            GuestId = 1,
-                            CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 1,
-                            EmailAddress = "ahmed@example.com",
-                            FullName = "د. أحمد العمري",
-                            IsActive = true,
-                            Organization = "جامعة الملك سعود",
-                            PhoneNumber = "0500000001",
-                            UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            GuestId = 2,
-                            CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 1,
-                            EmailAddress = "sara@example.com",
-                            FullName = "أ. سارة القحطاني",
-                            IsActive = true,
-                            Organization = "وزارة الثقافة",
-                            PhoneNumber = "0500000002",
-                            UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            GuestId = 3,
-                            CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 1,
-                            EmailAddress = "khalid@example.com",
-                            FullName = "م. خالد الشهري",
-                            IsActive = true,
-                            Organization = "هيئة الرياضة",
-                            PhoneNumber = "0500000003",
-                            UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc)
-                        });
                 });
 
             modelBuilder.Entity("Domain.Models.Program", b =>
@@ -1103,52 +993,6 @@ namespace Domain.Migrations
                         .IsUnique();
 
                     b.ToTable("Programs");
-
-                    b.HasData(
-                        new
-                        {
-                            ProgramId = 1,
-                            Category = "أخبار",
-                            CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 1,
-                            IsActive = true,
-                            ProgramDescription = "النشرة الإخبارية اليومية",
-                            ProgramName = "نشرة الأخبار",
-                            UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            ProgramId = 2,
-                            Category = "منوعات",
-                            CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 1,
-                            IsActive = true,
-                            ProgramDescription = "برنامج صباحي منوع",
-                            ProgramName = "صباح الخير",
-                            UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            ProgramId = 3,
-                            Category = "رياضة",
-                            CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 1,
-                            IsActive = true,
-                            ProgramDescription = "تحليل ونقاش رياضي",
-                            ProgramName = "حديث الرياضة",
-                            UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            ProgramId = 4,
-                            Category = "ثقافة",
-                            CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 1,
-                            IsActive = true,
-                            ProgramDescription = "برنامج ثقافي أدبي",
-                            ProgramName = "نافذة ثقافية",
-                            UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc)
-                        });
                 });
 
             modelBuilder.Entity("Domain.Models.SocialMediaPlatform", b =>

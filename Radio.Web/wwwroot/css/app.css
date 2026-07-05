@@ -274,10 +274,12 @@ html.dark #back-to-top { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); }
     padding-right: 2.5rem;
     font-size: 0.8125rem;
 }
-.nav-group.open .submenu-arrow {
+.nav-group.open .submenu-arrow,
+.nav-group.expanded .submenu-arrow {
     transform: rotate(180deg);
 }
-.nav-group.open .submenu {
+.nav-group.open .submenu,
+.nav-group.expanded .submenu {
     display: block !important;
 }
 .submenu {

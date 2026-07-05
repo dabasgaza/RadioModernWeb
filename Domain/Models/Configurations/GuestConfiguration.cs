@@ -63,11 +63,7 @@ public class GuestConfiguration : IEntityTypeConfiguration<Guest>
                .HasDatabaseName("IX_Guests_Active_FullName")
                .HasFilter("[IsActive] = 1");
 
-        // 5. Seed Data
-        builder.HasData(
-            new Guest { GuestId = 1, FullName = "د. أحمد العمري", Organization = "جامعة الملك سعود", PhoneNumber = "0500000001", EmailAddress = "ahmed@example.com", CreatedByUserId = 1, CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, DateTimeKind.Utc), UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, DateTimeKind.Utc) },
-            new Guest { GuestId = 2, FullName = "أ. سارة القحطاني", Organization = "وزارة الثقافة", PhoneNumber = "0500000002", EmailAddress = "sara@example.com", CreatedByUserId = 1, CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, DateTimeKind.Utc), UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, DateTimeKind.Utc) },
-            new Guest { GuestId = 3, FullName = "م. خالد الشهري", Organization = "هيئة الرياضة", PhoneNumber = "0500000003", EmailAddress = "khalid@example.com", CreatedByUserId = 1, CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, DateTimeKind.Utc), UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, DateTimeKind.Utc) }
-        );
+        // 5. Seed Data — handled by DbSeeder at runtime
+
     }
 }

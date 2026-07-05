@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace Domain.Migrations
 {
     /// <inheritdoc />
@@ -867,49 +865,6 @@ namespace Domain.Migrations
                         principalTable: "SocialMediaPublishingLogs",
                         principalColumn: "SocialMediaPublishingLogId",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Correspondents",
-                columns: new[] { "CorrespondentId", "AssignedLocations", "CreatedAt", "CreatedByUserId", "FullName", "IsActive", "PhoneNumber", "UpdatedAt", "UpdatedByUserId" },
-                values: new object[,]
-                {
-                    { 1, "الرياض", new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), 1, "محمد الحربي", true, "0550000001", new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), null },
-                    { 2, "جدة", new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), 1, "فهد المطيري", true, "0550000002", new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), null },
-                    { 3, "الدمام", new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), 1, "عبدالله العنزي", true, "0550000003", new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "EpisodeStatuses",
-                columns: new[] { "StatusId", "DisplayName", "SortOrder", "StatusName" },
-                values: new object[,]
-                {
-                    { (byte)0, "مجدولة", (byte)0, "Planned" },
-                    { (byte)1, "منفّذة", (byte)1, "Executed" },
-                    { (byte)2, "منشورة", (byte)2, "Published" },
-                    { (byte)3, "منشورة على الموقع", (byte)3, "WebsitePublished" },
-                    { (byte)4, "ملغاة", (byte)4, "Cancelled" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Guests",
-                columns: new[] { "GuestId", "CreatedAt", "CreatedByUserId", "EmailAddress", "FullName", "IsActive", "Organization", "PhoneNumber", "UpdatedAt", "UpdatedByUserId" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), 1, "ahmed@example.com", "د. أحمد العمري", true, "جامعة الملك سعود", "0500000001", new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), null },
-                    { 2, new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), 1, "sara@example.com", "أ. سارة القحطاني", true, "وزارة الثقافة", "0500000002", new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), null },
-                    { 3, new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), 1, "khalid@example.com", "م. خالد الشهري", true, "هيئة الرياضة", "0500000003", new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Programs",
-                columns: new[] { "ProgramId", "Category", "CreatedAt", "CreatedByUserId", "IsActive", "ProgramDescription", "ProgramName", "UpdatedAt", "UpdatedByUserId" },
-                values: new object[,]
-                {
-                    { 1, "أخبار", new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), 1, true, "النشرة الإخبارية اليومية", "نشرة الأخبار", new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), null },
-                    { 2, "منوعات", new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), 1, true, "برنامج صباحي منوع", "صباح الخير", new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), null },
-                    { 3, "رياضة", new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), 1, true, "تحليل ونقاش رياضي", "حديث الرياضة", new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), null },
-                    { 4, "ثقافة", new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), 1, true, "برنامج ثقافي أدبي", "نافذة ثقافية", new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Utc), null }
                 });
 
             migrationBuilder.CreateIndex(

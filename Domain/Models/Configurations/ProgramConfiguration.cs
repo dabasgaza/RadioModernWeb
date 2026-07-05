@@ -57,12 +57,7 @@ public class ProgramConfiguration : IEntityTypeConfiguration<Program>
 
         // ملاحظة: علاقة البرنامج مع الحلقات (Episodes) يتم تعريفها في EpisodeConfiguration
 
-        // 5. Seed Data
-        builder.HasData(
-            new Program { ProgramId = 1, ProgramName = "نشرة الأخبار", ProgramDescription = "النشرة الإخبارية اليومية", Category = "أخبار", CreatedByUserId = 1, CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, DateTimeKind.Utc), UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, DateTimeKind.Utc) },
-            new Program { ProgramId = 2, ProgramName = "صباح الخير", ProgramDescription = "برنامج صباحي منوع", Category = "منوعات", CreatedByUserId = 1, CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, DateTimeKind.Utc), UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, DateTimeKind.Utc) },
-            new Program { ProgramId = 3, ProgramName = "حديث الرياضة", ProgramDescription = "تحليل ونقاش رياضي", Category = "رياضة", CreatedByUserId = 1, CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, DateTimeKind.Utc), UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, DateTimeKind.Utc) },
-            new Program { ProgramId = 4, ProgramName = "نافذة ثقافية", ProgramDescription = "برنامج ثقافي أدبي", Category = "ثقافة", CreatedByUserId = 1, CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, DateTimeKind.Utc), UpdatedAt = new DateTime(2026, 4, 28, 0, 0, 0, DateTimeKind.Utc) }
-        );
+        // 5. Seed Data — handled by DbSeeder at runtime
+
     }
 }

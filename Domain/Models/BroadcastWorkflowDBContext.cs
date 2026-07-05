@@ -67,14 +67,8 @@ public partial class BroadcastWorkflowDBContext : IdentityDbContext<ApplicationU
         // modelBuilder.Entity<ApplicationUser>().ToTable("AspNetUsers");
         // modelBuilder.Entity<ApplicationRole>().ToTable("AspNetRoles");
 
-        // تطبيق الـ Seed Data للـ EpisodeStatus
-        modelBuilder.Entity<EpisodeStatus>().HasData(
-            new EpisodeStatus { StatusId = 0, StatusName = "Planned", DisplayName = "مجدولة", SortOrder = 0 },
-            new EpisodeStatus { StatusId = 1, StatusName = "Executed", DisplayName = "منفّذة", SortOrder = 1 },
-            new EpisodeStatus { StatusId = 2, StatusName = "Published", DisplayName = "منشورة", SortOrder = 2 },
-            new EpisodeStatus { StatusId = 3, StatusName = "WebsitePublished", DisplayName = "منشورة على الموقع", SortOrder = 3 },
-            new EpisodeStatus { StatusId = 4, StatusName = "Cancelled", DisplayName = "ملغاة", SortOrder = 4 }
-        );
+        // EpisodeStatus seed data — handled by DbSeeder at runtime
+
 
         // إضافة فهارس لتحسين الأداء
         modelBuilder.Entity<Episode>().HasIndex(e => e.StatusId);

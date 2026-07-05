@@ -62,6 +62,18 @@
         }
     };
 
+    /* ─── Auto-open submenu on page load if a sub-link is active ─── */
+    document.addEventListener('DOMContentLoaded', function () {
+        sidebar.querySelectorAll('.sub-link.active').forEach(function (link) {
+            var group = link.closest('.nav-group');
+            if (group) {
+                group.classList.add('expanded');
+                var btn = group.querySelector('button');
+                if (btn) btn.setAttribute('aria-expanded', 'true');
+            }
+        });
+    });
+
     /* ─── Mobile Drawer ─── */
 
     var backdrop = document.createElement('div');
