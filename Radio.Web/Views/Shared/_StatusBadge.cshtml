@@ -1,0 +1,49 @@
+@model StatusBadgeViewModel
+@{
+    var (cssClass, icon) = Model.Type switch
+    {
+        "episode" => Model.Status switch
+        {
+            "planned" or "مجدولة" => ("planned", "event_note"),
+            "executed" or "منفّذة" => ("executed", "check_circle"),
+            "published" or "منشورة" or "منشورة رقمياً" => ("published", "rss_feed"),
+            "website-published" or "منشورة على الموقع" => ("website-published", "public"),
+            "cancelled" or "ملغاة" => ("cancelled", "cancel"),
+            _ => ("planned", "help_outline")
+        },
+        "execution" => Model.Status switch
+        {
+            "pending" or "بانتظار التنفيذ" => ("planned", "schedule"),
+            "in-progress" or "قيد التنفيذ" => ("executed", "pending"),
+            "completed" or "تم التنفيذ" or "منفّذة" => ("executed", "check_circle"),
+            "cancelled" or "ملغي" => ("cancelled", "cancel"),
+            _ => ("planned", "help_outline")
+        },
+        "social" => Model.Status switch
+        {
+            "pending" or "بانتظار النشر" => ("planned", "schedule"),
+            "published" or "منشور" => ("published", "rss_feed"),
+            "failed" or "فشل" => ("cancelled", "error"),
+            _ => ("planned", "help_outline")
+        },
+        "website" => Model.Status switch
+        {
+            "pending" or "بانتظار النشر" => ("planned", "schedule"),
+            "published" or "منشور" => ("website-published", "public"),
+            "failed" or "فشل" => ("cancelled", "error"),
+            _ => ("planned", "help_outline")
+        },
+        _ => ("planned", "help_outline")
+    };
+}
+<span class="status-badge @cssClass" dir="auto" role="status">
+    @if (!string.IsNullOrEmpty(Model.IconOverride))
+    {
+        <span class="material-symbols-rounded text-xs" aria-hidden="true">@Model.IconOverride</span>
+    }
+    else
+    {
+        <span class="material-symbols-rounded text-xs" aria-hidden="true">@icon</span>
+    }
+    <span>@Model.Label</span>
+</span>

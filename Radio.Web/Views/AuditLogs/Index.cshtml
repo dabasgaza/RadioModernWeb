@@ -5,100 +5,102 @@
     var actions = ViewBag.Actions as string[];
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>سجل التدقيق</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded text-primary">history</span>
-                سجل التدقيق
-            </h1>
-            <p>سجل كامل لجميع العمليات والتعديلات التي تمت في النظام</p>
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+        <div class="breadcrumbs text-sm text-base-content/60">
+            <ul>
+                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
+                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">history</span>سجل التدقيق</span></li>
+            </ul>
         </div>
+        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary">history</span>
+            سجل التدقيق
+        </h1>
+        <p class="text-sm text-base-content/60 mt-0.5">سجل كامل لجميع العمليات والتعديلات التي تمت في النظام</p>
     </div>
 </div>
 
-<div class="filter-premium">
-    <form method="get">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-            <div>
-                <label class="form-label">الجدول</label>
-                <select name="table" class="form-input">
-                    <option value="">الكل</option>
-                    @foreach (var t in tables ?? Array.Empty<string>())
-                    {
-                        <option value="@t" selected="@(ViewBag.SelectedTable == t)">@t</option>
-                    }
-                </select>
+<div class="card bg-base-100 shadow-md mb-6">
+    <div class="card-body">
+        <form method="get">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                <div>
+                    <label class="label"><span class="label-text">الجدول</span></label>
+                    <select name="table" class="select select-bordered">
+                        <option value="">الكل</option>
+                        @foreach (var t in tables ?? Array.Empty<string>())
+                        {
+                            <option value="@t" selected="@(ViewBag.SelectedTable == t)">@t</option>
+                        }
+                    </select>
+                </div>
+                <div>
+                    <label class="label"><span class="label-text">العملية</span></label>
+                    <select name="action" class="select select-bordered">
+                        <option value="">الكل</option>
+                        @foreach (var a in actions ?? Array.Empty<string>())
+                        {
+                            <option value="@a" selected="@(ViewBag.SelectedAction == a)">@a</option>
+                        }
+                    </select>
+                </div>
+                <div>
+                    <label class="label"><span class="label-text">من تاريخ</span></label>
+                    <input type="text" name="fromDate" value="@ViewBag.FromDate" class="input input-bordered datepicker" placeholder="اختر تاريخ البداية" />
+                </div>
+                <div>
+                    <label class="label"><span class="label-text">إلى تاريخ</span></label>
+                    <input type="text" name="toDate" value="@ViewBag.ToDate" class="input input-bordered datepicker" placeholder="اختر تاريخ النهاية" />
+                </div>
+                <div class="md:col-span-4 flex justify-end gap-2">
+                    <button type="submit" class="btn btn-primary"><span class="material-symbols-rounded">search</span> تطبيق</button>
+                    <a href="/AuditLogs" class="btn btn-ghost"><span class="material-symbols-rounded">refresh</span> إعادة ضبط</a>
+                </div>
             </div>
-            <div>
-                <label class="form-label">العملية</label>
-                <select name="action" class="form-input">
-                    <option value="">الكل</option>
-                    @foreach (var a in actions ?? Array.Empty<string>())
-                    {
-                        <option value="@a" selected="@(ViewBag.SelectedAction == a)">@a</option>
-                    }
-                </select>
-            </div>
-            <div>
-                <label class="form-label">من تاريخ</label>
-                <input type="text" name="fromDate" value="@ViewBag.FromDate" class="form-input datepicker" placeholder="اختر تاريخ البداية" />
-            </div>
-            <div>
-                <label class="form-label">إلى تاريخ</label>
-                <input type="text" name="toDate" value="@ViewBag.ToDate" class="form-input datepicker" placeholder="اختر تاريخ النهاية" />
-            </div>
-            <div class="md:col-span-4 flex justify-end gap-2">
-                <button type="submit" class="btn-primary"><span class="material-symbols-rounded">search</span> تطبيق</button>
-                <a href="/AuditLogs" class="btn-secondary"><span class="material-symbols-rounded">refresh</span> إعادة ضبط</a>
-            </div>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
 
-<div class="table-premium">
+<div class="overflow-x-auto">
     @if (!Model.Items.Any())
     {
-        <div class="empty-state p-12">
-            <span class="material-symbols-rounded empty-icon">history</span>
+        <div class="card bg-base-100 shadow-md"><div class="card-body text-center py-12">
+            <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">history</span>
             <h3 class="font-bold text-ink text-lg mb-2">لا سجلات</h3>
             <p class="text-ink-muted text-sm">لا توجد عمليات مطابقة للبحث.</p>
-        </div>
+        </div></div>
     }
     else
     {
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+        <div class="card bg-base-100 shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+            <table class="table table-zebra w-full text-sm">
                 <thead>
                     <tr>
-                        <th class="px-5 py-3 text-right font-semibold">التاريخ</th>
-                        <th class="px-5 py-3 text-right font-semibold">الجدول</th>
-                        <th class="px-5 py-3 text-right font-semibold">العملية</th>
-                        <th class="px-5 py-3 text-right font-semibold">المستخدم</th>
-                        <th class="px-5 py-3 text-right font-semibold">السبب</th>
+                        <th class="text-right">التاريخ</th>
+                        <th class="text-right">الجدول</th>
+                        <th class="text-right">العملية</th>
+                        <th class="text-right">المستخدم</th>
+                        <th class="text-right">السبب</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var log in Model.Items)
                     {
                         <tr>
-                            <td class="px-5 py-3 text-ink-muted whitespace-nowrap" dir="ltr">@log.ChangedAt.ToString("yyyy-MM-dd HH:mm")</td>
-                            <td class="px-5 py-3"><span class="badge badge-default">@log.TableName</span></td>
-                            <td class="px-5 py-3">
+                            <td class="whitespace-nowrap" dir="ltr">@log.ChangedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td><span class="badge badge-ghost">@log.TableName</span></td>
+                            <td>
                                 <span class="badge @GetActionBadgeClass(log.Action)">@log.Action</span>
                             </td>
-                            <td class="px-5 py-3 text-ink-muted">@log.UserFullName</td>
-                            <td class="px-5 py-3 text-ink-muted text-xs max-w-xs truncate" title="@log.Reason">@(log.Reason ?? "—")</td>
+                            <td>@log.UserFullName</td>
+                            <td class="text-xs max-w-xs truncate" title="@log.Reason">@(log.Reason ?? "—")</td>
                         </tr>
                     }
                 </tbody>
             </table>
+        </div>
         </div>
     }
 </div>

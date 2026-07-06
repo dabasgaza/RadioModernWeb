@@ -9,11 +9,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        surface: '#FFFFFF',
-        'surface-2': '#F8FAFC',
-        'surface-3': '#F1F5F9',
-        border: '#E2E8F0',
-        ink: { DEFAULT: '#0F172A', muted: '#475569', soft: '#94A3B8' }
+        surface: 'var(--surface)',
+        'surface-2': 'var(--surface-2)',
+        'surface-3': 'var(--surface-3)',
+        border: 'var(--border)',
+        ink: { DEFAULT: 'var(--ink)', muted: 'var(--ink-muted)', soft: 'var(--ink-soft)' }
       },
       fontFamily: {
         sans: ['Cairo', 'Tajawal', 'Segoe UI', 'sans-serif']

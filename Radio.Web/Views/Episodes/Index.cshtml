@@ -3,121 +3,122 @@
     ViewData["Title"] = "الحلقات";
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>الحلقات</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded">podcasts</span>
-                الحلقات
-            </h1>
-            <p>إدارة حلقات البرامج الإذاعية ومتابعة دورة حياتها</p>
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+        <div class="breadcrumbs text-sm text-base-content/60">
+            <ul>
+                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
+                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">podcasts</span>الحلقات</span></li>
+            </ul>
         </div>
-        <div class="flex items-center gap-2">
-            @if (User.HasPermission(AppPermissions.EpisodeManage))
-            {
-                <a href="/Episodes/Create" class="btn-primary">
-                    <span class="material-symbols-rounded">add</span>
-                    حلقة جديدة
-                </a>
-            }
-        </div>
+        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary">podcasts</span>
+            الحلقات
+        </h1>
+        <p class="text-sm text-base-content/60 mt-0.5">إدارة حلقات البرامج الإذاعية ومتابعة دورة حياتها</p>
     </div>
+    @if (User.HasPermission(AppPermissions.EpisodeManage))
+    {
+        <a href="/Episodes/Create" class="btn btn-primary">
+            <span class="material-symbols-rounded">add</span>
+            حلقة جديدة
+        </a>
+    }
 </div>
 
 <!-- Filters -->
-<div class="filter-premium">
-    <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="md:col-span-2">
-            <label class="form-label">بحث</label>
-            <input type="text" name="search" value="@Model.SearchTerm" placeholder="اسم الحلقة أو البرنامج أو الضيف…" class="form-input" />
-        </div>
-        <div>
-            <label class="form-label">الحالة</label>
-            <select name="status" class="form-input">
-                <option value="">الكل</option>
-                <option value="0" selected="@(Model.StatusFilter == 0)">مجدولة</option>
-                <option value="1" selected="@(Model.StatusFilter == 1)">منفّذة</option>
-                <option value="2" selected="@(Model.StatusFilter == 2)">منشورة رقمياً</option>
-                <option value="3" selected="@(Model.StatusFilter == 3)">منشورة على الموقع</option>
-                <option value="4" selected="@(Model.StatusFilter == 4)">ملغاة</option>
-            </select>
-        </div>
-        <div>
-            <label class="form-label">البرنامج</label>
-            <select name="programId" class="form-input">
-                <option value="">الكل</option>
-                @foreach (var p in Model.Programs)
-                {
-                    <option value="@p.ProgramId" selected="@(Model.ProgramFilter == p.ProgramId)">@p.ProgramName</option>
-                }
-            </select>
-        </div>
-        <div class="md:col-span-4 flex gap-2 justify-end">
-            <button type="submit" class="btn-primary">
-                <span class="material-symbols-rounded">search</span>
-                تطبيق
-            </button>
-            <a href="/Episodes" class="btn-secondary">
-                <span class="material-symbols-rounded">refresh</span>
-                إعادة ضبط
-            </a>
-        </div>
-    </form>
+<div class="card bg-base-100 shadow-md mb-6">
+    <div class="card-body">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="md:col-span-2">
+                <label class="label"><span class="label-text">بحث</span></label>
+                <input type="text" name="search" value="@Model.SearchTerm" placeholder="اسم الحلقة أو البرنامج أو الضيف…" class="input input-bordered w-full" />
+            </div>
+            <div>
+                <label class="label"><span class="label-text">الحالة</span></label>
+                <select name="status" class="select select-bordered w-full">
+                    <option value="">الكل</option>
+                    <option value="0" selected="@(Model.StatusFilter == 0)">مجدولة</option>
+                    <option value="1" selected="@(Model.StatusFilter == 1)">منفّذة</option>
+                    <option value="2" selected="@(Model.StatusFilter == 2)">منشورة رقمياً</option>
+                    <option value="3" selected="@(Model.StatusFilter == 3)">منشورة على الموقع</option>
+                    <option value="4" selected="@(Model.StatusFilter == 4)">ملغاة</option>
+                </select>
+            </div>
+            <div>
+                <label class="label"><span class="label-text">البرنامج</span></label>
+                <select name="programId" class="select select-bordered w-full">
+                    <option value="">الكل</option>
+                    @foreach (var p in Model.Programs)
+                    {
+                        <option value="@p.ProgramId" selected="@(Model.ProgramFilter == p.ProgramId)">@p.ProgramName</option>
+                    }
+                </select>
+            </div>
+            <div class="md:col-span-4 flex gap-2 justify-end">
+                <button type="submit" class="btn btn-primary">
+                    <span class="material-symbols-rounded">search</span>
+                    تطبيق
+                </button>
+                <a href="/Episodes" class="btn btn-ghost">
+                    <span class="material-symbols-rounded">refresh</span>
+                    إعادة ضبط
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
 
 <!-- Episodes Table -->
-<div class="table-premium">
+<div>
     @if (!Model.Episodes.Any())
     {
-        <div class="empty-state p-12">
-            <span class="material-symbols-rounded empty-icon">podcasts</span>
-            <h3 class="font-bold text-ink text-lg mb-2">لا توجد حلقات</h3>
-            <p class="text-ink-muted text-sm mb-4">لم تُجدول أي حلقات بعد. ابدأ بإضافة حلقة جديدة.</p>
-            @if (User.HasPermission(AppPermissions.EpisodeManage))
-            {
-                <a href="/Episodes/Create" class="btn-primary">
-                    <span class="material-symbols-rounded">add</span>
-                    حلقة جديدة
-                </a>
-            }
+        <div class="card bg-base-100 shadow-md">
+            <div class="card-body items-center text-center py-16">
+                <span class="material-symbols-rounded text-6xl text-base-content/20 mb-4">podcasts</span>
+                <h3 class="font-bold text-lg text-base-content mb-1">لا توجد حلقات</h3>
+                <p class="text-sm text-base-content/60 mb-6">لم تُجدول أي حلقات بعد. ابدأ بإضافة حلقة جديدة.</p>
+                @if (User.HasPermission(AppPermissions.EpisodeManage))
+                {
+                    <a href="/Episodes/Create" class="btn btn-primary">
+                        <span class="material-symbols-rounded">add</span>
+                        حلقة جديدة
+                    </a>
+                }
+            </div>
         </div>
     }
     else
     {
-        <div class="overflow-x-auto">
-            <table>
+        <div class="card bg-base-100 shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+            <table class="table table-zebra">
                 <thead>
                     <tr>
-                        <th class="px-5 py-3 text-right font-semibold">الحلقة</th>
-                        <th class="px-5 py-3 text-right font-semibold">البرنامج</th>
-                        <th class="px-5 py-3 text-right font-semibold">اليوم</th>
-                        <th class="px-5 py-3 text-right font-semibold">التاريخ والوقت</th>
-                        <th class="px-5 py-3 text-right font-semibold">الضيوف</th>
-                        <th class="px-5 py-3 text-right font-semibold">الحالة</th>
-                        <th class="px-5 py-3 text-right font-semibold">إجراءات</th>
+                        <th class="text-right font-semibold">الحلقة</th>
+                        <th class="text-right font-semibold">البرنامج</th>
+                        <th class="text-right font-semibold">اليوم</th>
+                        <th class="text-right font-semibold">التاريخ والوقت</th>
+                        <th class="text-right font-semibold">الضيوف</th>
+                        <th class="text-right font-semibold">الحالة</th>
+                        <th class="text-right font-semibold">إجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var ep in Model.Episodes)
                     {
                         <tr>
-                            <td class="px-5 py-3">
+                            <td>
                                 <a href="/Episodes/Details/@ep.EpisodeId" class="text-primary font-semibold hover:underline">
                                     @ep.EpisodeName
                                 </a>
                                 @if (!string.IsNullOrWhiteSpace(ep.SpecialNotes))
                                 {
-                                    <div class="text-xs text-ink-muted mt-1">@ep.SpecialNotes</div>
+                                    <div class="text-xs text-base-content/60 mt-1">@ep.SpecialNotes</div>
                                 }
                             </td>
-                            <td class="px-5 py-3 text-ink-muted">@ep.ProgramName</td>
-                            <td class="px-5 py-3">
+                            <td class="text-base-content/60">@ep.ProgramName</td>
+                            <td>
                                 @if (ep.ScheduledExecutionTime.HasValue)
                                 {
                                     <span class="badge badge-secondary inline-flex items-center gap-1.5 py-1 px-2.5 font-bold shadow-sm">
@@ -127,15 +128,15 @@
                                 }
                                 else
                                 {
-                                    <span class="text-ink-soft">—</span>
+                                    <span class="text-base-content/40">—</span>
                                 }
                             </td>
-                            <td class="px-5 py-3">
+                            <td>
                                 @if (ep.ScheduledExecutionTime.HasValue)
                                 {
                                     <div class="flex flex-col">
-                                        <span class="text-ink font-semibold">@ep.ScheduledExecutionTime.Value.ToString("yyyy-MM-dd")</span>
-                                        <span class="text-xs text-ink-muted flex items-center gap-1 mt-0.5">
+                                        <span class="text-base-content font-semibold">@ep.ScheduledExecutionTime.Value.ToString("yyyy-MM-dd")</span>
+                                        <span class="text-xs text-base-content/60 flex items-center gap-1 mt-0.5">
                                             <span class="material-symbols-rounded text-[14px] text-primary/70">schedule</span>
                                             @ep.ScheduledExecutionTime.Value.ToString("hh:mm tt", new System.Globalization.CultureInfo("ar"))
                                         </span>
@@ -143,138 +144,130 @@
                                 }
                                 else
                                 {
-                                    <span class="text-ink-soft">—</span>
+                                    <span class="text-base-content/40">—</span>
                                 }
                             </td>
-                            <td class="px-5 py-3">
+                            <td>
                                 @if (ep.GuestItems.Any())
                                 {
                                     <span class="badge badge-info">@ep.GuestItems.Count ضيف</span>
                                 }
                                 else
                                 {
-                                    <span class="text-ink-soft">—</span>
+                                    <span class="text-base-content/40">—</span>
                                 }
                             </td>
-                            <td class="px-5 py-3">
+                            <td>
                                 <span class="status-badge @GetStatusCssClass(ep.StatusId)">@ep.StatusText</span>
                             </td>
-                            <td class="px-5 py-3">
-                                <div class="action-dock">
-                                    <a href="/Episodes/Details/@ep.EpisodeId" class="action-dock-btn btn-info" title="عرض">
-                                        <span class="material-symbols-rounded">visibility</span>
-                                    </a>
-                                    <a href="/Publishing?episodeId=@ep.EpisodeId" class="action-dock-btn btn-share" title="سجل النشر والإنتاج">
-                                        <span class="material-symbols-rounded">share</span>
-                                    </a>
-                                    @if (User.HasPermission(AppPermissions.EpisodeEdit))
-                                    {
-                                        <a href="/Episodes/Edit/@ep.EpisodeId" class="action-dock-btn btn-edit" title="تعديل">
-                                            <span class="material-symbols-rounded">edit</span>
-                                        </a>
-                                    }
-                                    @if (User.HasPermission(AppPermissions.EpisodeExecute) && ep.StatusId == 0)
-                                    {
-                                        <button type="button" class="action-dock-btn btn-success" title="تسجيل تنفيذ" onclick="openExecuteModal(@ep.EpisodeId, '@ep.EpisodeName')">
-                                            <span class="material-symbols-rounded">play_circle</span>
-                                        </button>
-                                    }
-                                    @if (User.HasPermission(AppPermissions.EpisodeRevert) && ep.CanCancel)
-                                    {
-                                        <button type="button" class="action-dock-btn btn-danger" title="إلغاء" onclick="openCancelModal(@ep.EpisodeId, '@ep.EpisodeName')">
-                                            <span class="material-symbols-rounded">cancel</span>
-                                        </button>
-                                    }
-                                </div>
-                            </td>
+                            <td>
+                                 <div class="flex items-center gap-1">
+                                     <a href="/Episodes/Details/@ep.EpisodeId" class="btn btn-ghost btn-square btn-sm" title="عرض" aria-label="عرض">
+                                         <span class="material-symbols-rounded">visibility</span>
+                                     </a>
+                                     <a href="/Publishing?episodeId=@ep.EpisodeId" class="btn btn-ghost btn-square btn-sm" title="سجل النشر والإنتاج" aria-label="سجل النشر والإنتاج">
+                                         <span class="material-symbols-rounded">share</span>
+                                     </a>
+                                     @if (User.HasPermission(AppPermissions.EpisodeEdit))
+                                     {
+                                         <a href="/Episodes/Edit/@ep.EpisodeId" class="btn btn-ghost btn-square btn-sm" title="تعديل" aria-label="تعديل">
+                                             <span class="material-symbols-rounded">edit</span>
+                                         </a>
+                                     }
+                                     @if (User.HasPermission(AppPermissions.EpisodeExecute) && ep.StatusId == 0)
+                                     {
+                                         <button type="button" class="btn btn-ghost btn-square btn-sm text-success" title="تسجيل تنفيذ" aria-label="تسجيل تنفيذ" onclick="openExecuteModal(@ep.EpisodeId, '@ep.EpisodeName')">
+                                             <span class="material-symbols-rounded">play_circle</span>
+                                         </button>
+                                     }
+                                     @if (User.HasPermission(AppPermissions.EpisodeRevert) && ep.CanCancel)
+                                     {
+                                         <button type="button" class="btn btn-ghost btn-square btn-sm text-error" title="إلغاء" aria-label="إلغاء" onclick="openCancelModal(@ep.EpisodeId, '@ep.EpisodeName')">
+                                             <span class="material-symbols-rounded">cancel</span>
+                                         </button>
+                                     }
+                                 </div>
+                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
+        </div>
     }
 </div>
 
 <!-- Execute Modal -->
-<div id="executeModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
-    <div class="bg-surface rounded-xl shadow-xl max-w-md w-full p-6">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-bold text-ink">تسجيل تنفيذ الحلقة</h3>
-            <button type="button" class="text-ink-soft hover:text-ink" onclick="closeModal('executeModal')">
-                <span class="material-symbols-rounded">close</span>
-            </button>
-        </div>
+<dialog id="executeModal" class="modal">
+    <div class="modal-box">
+        <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute left-2 top-2" aria-label="إغلاق">✕</button>
+        </form>
+        <h3 class="text-lg font-bold mb-4">تسجيل تنفيذ الحلقة</h3>
         <form id="executeForm" method="post" action="">
             @Html.AntiForgeryToken()
             <div class="mb-4">
-                <label class="form-label">ملاحظات التنفيذ</label>
-                <textarea name="executionNotes" rows="3" class="form-input"></textarea>
+                <label class="label"><span class="label-text">ملاحظات التنفيذ</span></label>
+                <textarea name="executionNotes" rows="3" class="textarea textarea-bordered w-full"></textarea>
             </div>
             <div class="mb-4">
-                <label class="form-label">مشكلات واجهت التنفيذ</label>
-                <textarea name="issuesEncountered" rows="2" class="form-input"></textarea>
+                <label class="label"><span class="label-text">مشكلات واجهت التنفيذ</span></label>
+                <textarea name="issuesEncountered" rows="2" class="textarea textarea-bordered w-full"></textarea>
             </div>
             <div class="mb-4">
-                <label class="form-label">المدة (دقيقة) *</label>
-                <input type="number" name="durationMinutes" min="1" max="720" value="60" class="form-input" required />
+                <label class="label"><span class="label-text">المدة (دقيقة) *</span></label>
+                <input type="number" name="durationMinutes" min="1" max="720" value="60" class="input input-bordered w-full" required />
             </div>
-            <div class="flex gap-2 justify-end">
-                <button type="button" class="btn-secondary" onclick="closeModal('executeModal')">إلغاء</button>
-                <button type="submit" class="btn-success">تسجيل التنفيذ</button>
+            <div class="modal-action">
+                <button type="button" class="btn btn-ghost" onclick="closeModal('executeModal')">إلغاء</button>
+                <button type="submit" class="btn btn-success">تسجيل التنفيذ</button>
             </div>
         </form>
     </div>
-</div>
+    <form method="dialog" class="modal-backdrop">
+        <button onclick="closeModal('executeModal')">إغلاق</button>
+    </form>
+</dialog>
 
 <!-- Cancel Modal -->
-<div id="cancelModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
-    <div class="bg-surface rounded-xl shadow-xl max-w-md w-full p-6">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-bold text-ink">إلغاء الحلقة</h3>
-            <button type="button" class="text-ink-soft hover:text-ink" onclick="closeModal('cancelModal')">
-                <span class="material-symbols-rounded">close</span>
-            </button>
-        </div>
+<dialog id="cancelModal" class="modal">
+    <div class="modal-box">
+        <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute left-2 top-2" aria-label="إغلاق">✕</button>
+        </form>
+        <h3 class="text-lg font-bold mb-4">إلغاء الحلقة</h3>
         <form id="cancelForm" method="post" action="">
             @Html.AntiForgeryToken()
             <div class="mb-4">
-                <label class="form-label">سبب الإلغاء *</label>
-                <textarea name="reason" rows="3" class="form-input" required></textarea>
+                <label class="label"><span class="label-text">سبب الإلغاء *</span></label>
+                <textarea name="reason" rows="3" class="textarea textarea-bordered w-full" required></textarea>
             </div>
-            <div class="flex gap-2 justify-end">
-                <button type="button" class="btn-secondary" onclick="closeModal('cancelModal')">إلغاء</button>
-                <button type="submit" class="btn-danger">تأكيد الإلغاء</button>
+            <div class="modal-action">
+                <button type="button" class="btn btn-ghost" onclick="closeModal('cancelModal')">إلغاء</button>
+                <button type="submit" class="btn btn-error">تأكيد الإلغاء</button>
             </div>
         </form>
     </div>
-</div>
+    <form method="dialog" class="modal-backdrop">
+        <button onclick="closeModal('cancelModal')">إغلاق</button>
+    </form>
+</dialog>
 
 @section Scripts {
     <script>
         function openExecuteModal(id, name) {
             document.getElementById('executeForm').action = '/Episodes/Execute/' + id;
-            document.getElementById('executeModal').classList.remove('hidden');
-            document.getElementById('executeModal').classList.add('flex');
+            document.getElementById('executeModal').showModal();
         }
 
         function openCancelModal(id, name) {
             document.getElementById('cancelForm').action = '/Episodes/Cancel/' + id;
-            document.getElementById('cancelModal').classList.remove('hidden');
-            document.getElementById('cancelModal').classList.add('flex');
+            document.getElementById('cancelModal').showModal();
         }
 
         function closeModal(id) {
-            const modal = document.getElementById(id);
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
+            document.getElementById(id).close();
         }
-
-        document.addEventListener('click', function (e) {
-            if (e.target.classList.contains('bg-black/50')) {
-                closeModal('executeModal');
-                closeModal('cancelModal');
-            }
-        });
     </script>
 }
 

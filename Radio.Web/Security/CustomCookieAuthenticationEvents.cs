@@ -2,11 +2,7 @@ using DataAccess.Services;
 using Domain.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace Radio.Web.Security
 {

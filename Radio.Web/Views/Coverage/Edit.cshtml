@@ -20,23 +20,21 @@
 
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-6 font-semibold text-sm"></div>
+        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-error rounded-xl p-4 mb-6 font-semibold text-sm"></div>
     }
 
-    <div class="card-premium">
-        <div class="card-header">
+    <div class="card bg-base-100 shadow-md">
+        <div class="card-body space-y-4">
             <div class="flex items-center gap-2">
                 <span class="material-symbols-rounded text-primary">edit_location_alt</span>
-                <h3 class="font-bold text-ink text-base">بيانات التغطية</h3>
+                <h3 class="font-bold text-base-content text-base">بيانات التغطية</h3>
             </div>
-        </div>
-        <div class="card-body space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="form-label">المراسل *</label>
-                    <div class="input-wrapper">
-                        <span class="material-symbols-rounded input-icon">map</span>
-                        <select name="CorrespondentId" class="form-input" required>
+                    <label class="label">المراسل *</label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">map</span>
+                        <select name="CorrespondentId" class="select select-bordered w-full pr-10" required>
                             <option value="">— اختر —</option>
                             @foreach (var c in Model.Correspondents)
                             {
@@ -46,10 +44,10 @@
                     </div>
                 </div>
                 <div>
-                    <label class="form-label">الضيف</label>
-                    <div class="input-wrapper">
-                        <span class="material-symbols-rounded input-icon">people_alt</span>
-                        <select name="GuestId" class="form-input">
+                    <label class="label">الضيف</label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">people_alt</span>
+                        <select name="GuestId" class="select select-bordered w-full pr-10">
                             <option value="">— بدون —</option>
                             @foreach (var g in Model.Guests)
                             {
@@ -61,33 +59,33 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="form-label">الموقع</label>
-                    <div class="input-wrapper">
-                        <span class="material-symbols-rounded input-icon">location_on</span>
-                        <input type="text" name="Location" value="@coverage.Location" class="form-input" placeholder="مثال: الرياض - حي الصحافة" />
+                    <label class="label">الموقع</label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">location_on</span>
+                        <input type="text" name="Location" value="@coverage.Location" class="input input-bordered w-full pr-10" placeholder="مثال: الرياض - حي الصحافة" />
                     </div>
                 </div>
                 <div>
-                    <label class="form-label">الموضوع *</label>
-                    <div class="input-wrapper">
-                        <span class="material-symbols-rounded input-icon">topic</span>
-                        <input type="text" name="Topic" value="@coverage.Topic" class="form-input" required placeholder="موضوع التغطية" />
+                    <label class="label">الموضوع *</label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">topic</span>
+                        <input type="text" name="Topic" value="@coverage.Topic" class="input input-bordered w-full pr-10" required placeholder="موضوع التغطية" />
                     </div>
                 </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="form-label">الوقت المجدول</label>
-                    <div class="input-wrapper">
-                        <span class="material-symbols-rounded input-icon">schedule</span>
-                        <input type="text" name="ScheduledTime" value="@(coverage.ScheduledTime?.ToString("yyyy-MM-ddTHH:mm"))" class="form-input datetimepicker" />
+                    <label class="label">الوقت المجدول</label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">schedule</span>
+                        <input type="text" name="ScheduledTime" value="@(coverage.ScheduledTime?.ToString("yyyy-MM-ddTHH:mm"))" class="input input-bordered w-full pr-10 datetimepicker" />
                     </div>
                 </div>
                 <div>
-                    <label class="form-label">الوقت الفعلي</label>
-                    <div class="input-wrapper">
-                        <span class="material-symbols-rounded input-icon">access_time</span>
-                        <input type="text" name="ActualTime" value="@(coverage.ActualTime?.ToString("yyyy-MM-ddTHH:mm"))" class="form-input datetimepicker" />
+                    <label class="label">الوقت الفعلي</label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">access_time</span>
+                        <input type="text" name="ActualTime" value="@(coverage.ActualTime?.ToString("yyyy-MM-ddTHH:mm"))" class="input input-bordered w-full pr-10 datetimepicker" />
                     </div>
                 </div>
             </div>
@@ -95,11 +93,11 @@
     </div>
 
     <div class="flex items-center justify-end gap-2 mt-6">
-        <a href="/Coverage" class="btn-secondary">
+        <a href="/Coverage" class="btn btn-ghost">
             <span class="material-symbols-rounded">cancel</span>
             إلغاء
         </a>
-        <button type="submit" class="btn-primary">
+        <button type="submit" class="btn btn-primary">
             <span class="material-symbols-rounded">save</span>
             @(isEdit ? "حفظ التغييرات" : "إضافة التغطية")
         </button>

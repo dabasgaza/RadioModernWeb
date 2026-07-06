@@ -1,87 +1,86 @@
 @model List<DateRangeEpisodeDto>
 @{ ViewData["Title"] = "حلقات حسب الفترة"; }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <a href="/Reports">التقارير</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>حلقات حسب الفترة</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded text-primary">date_range</span>
-                حلقات حسب الفترة
-            </h1>
-            <p>عرض الحلقات المصفاة ضمن نطاق زمني محدد: من @ViewBag.From إلى @ViewBag.To</p>
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+        <div class="breadcrumbs text-sm text-base-content/60">
+            <ul>
+                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
+                <li><a href="/Reports" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">assessment</span>التقارير</a></li>
+                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">date_range</span>حلقات حسب الفترة</span></li>
+            </ul>
         </div>
-        <div class="flex items-center gap-2">
-            <a href="/Reports" class="btn-secondary">
-                <span class="material-symbols-rounded">arrow_forward</span>
-                الرجوع للتقارير
-            </a>
-        </div>
+        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary">date_range</span>
+            حلقات حسب الفترة
+        </h1>
+        <p class="text-sm text-base-content/60 mt-0.5">عرض الحلقات المصفاة ضمن نطاق زمني محدد: من @ViewBag.From إلى @ViewBag.To</p>
+    </div>
+    <div class="flex items-center gap-2">
+        <a href="/Reports" class="btn btn-ghost">
+            <span class="material-symbols-rounded">arrow_forward</span>
+            الرجوع للتقارير
+        </a>
     </div>
 </div>
 
-<div class="filter-premium">
-    <form method="get" class="flex gap-3">
-        <div class="relative flex-1">
-            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-ink-soft">calendar_month</span>
-            <input type="text" name="from" value="@ViewBag.From" class="form-input datepicker pr-10" placeholder="من تاريخ" />
-        </div>
-        <div class="relative flex-1">
-            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-ink-soft">calendar_month</span>
-            <input type="text" name="to" value="@ViewBag.To" class="form-input datepicker pr-10" placeholder="إلى تاريخ" />
-        </div>
-        <button type="submit" class="btn-primary">
-            <span class="material-symbols-rounded">search</span>
-            تطبيق
-        </button>
-        <a href="/Reports/ByDateRange" class="btn-secondary" title="إعادة ضبط">
-            <span class="material-symbols-rounded">refresh</span>
-        </a>
-    </form>
+<div class="card bg-base-100 shadow-md mb-6">
+    <div class="card-body">
+        <form method="get" class="flex gap-3">
+            <div class="relative flex-1">
+                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40">calendar_month</span>
+                <input type="text" name="from" value="@ViewBag.From" class="input input-bordered datepicker pr-10" placeholder="من تاريخ" />
+            </div>
+            <div class="relative flex-1">
+                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40">calendar_month</span>
+                <input type="text" name="to" value="@ViewBag.To" class="input input-bordered datepicker pr-10" placeholder="إلى تاريخ" />
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <span class="material-symbols-rounded">search</span>
+                تطبيق
+            </button>
+            <a href="/Reports/ByDateRange" class="btn btn-ghost" title="إعادة ضبط">
+                <span class="material-symbols-rounded">refresh</span>
+            </a>
+        </form>
+    </div>
 </div>
 
-<div class="table-premium">
-    @if (!Model.Any())
-    {
-        <div class="empty-state p-12">
-            <span class="material-symbols-rounded empty-icon">event_busy</span>
-            <h3 class="font-bold text-ink text-lg mb-2">لا حلقات</h3>
-            <p class="text-ink-muted text-sm">لا توجد حلقات في هذه الفترة.</p>
-        </div>
-    }
-    else
-    {
+@if (!Model.Any())
+{
+    <div class="card bg-base-100 shadow-md"><div class="card-body text-center py-12">
+        <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">event_busy</span>
+        <h3 class="font-bold text-lg mb-2">لا حلقات</h3>
+        <p class="text-sm text-base-content/60 mb-4">لا توجد حلقات في هذه الفترة.</p>
+    </div></div>
+}
+else
+{
+    <div class="card bg-base-100 shadow-md overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
+        <table class="table table-zebra w-full text-sm">
+            <thead>
+                <tr>
+                    <th class="text-right font-semibold">الحلقة</th>
+                    <th class="text-right font-semibold">البرنامج</th>
+                    <th class="text-right font-semibold">الضيوف</th>
+                    <th class="text-right font-semibold">الموعد</th>
+                    <th class="text-right font-semibold">الحالة</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ep in Model)
+                {
                     <tr>
-                        <th class="px-5 py-3 text-right font-semibold">الحلقة</th>
-                        <th class="px-5 py-3 text-right font-semibold">البرنامج</th>
-                        <th class="px-5 py-3 text-right font-semibold">الضيوف</th>
-                        <th class="px-5 py-3 text-right font-semibold">الموعد</th>
-                        <th class="px-5 py-3 text-right font-semibold">الحالة</th>
+                        <td class="font-semibold text-base-content">@ep.EpisodeName</td>
+                        <td class="text-base-content/60">@ep.ProgramName</td>
+                        <td class="text-base-content/60">@ep.GuestsDisplay</td>
+                        <td class="text-base-content/60 whitespace-nowrap" dir="ltr">@(ep.ScheduledExecutionTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                        <td><span class="badge badge-default">@ep.StatusText</span></td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var ep in Model)
-                    {
-                        <tr>
-                            <td class="px-5 py-3 font-semibold text-ink">@ep.EpisodeName</td>
-                            <td class="px-5 py-3 text-ink-muted">@ep.ProgramName</td>
-                            <td class="px-5 py-3 text-ink-muted">@ep.GuestsDisplay</td>
-                            <td class="px-5 py-3 text-ink-muted whitespace-nowrap" dir="ltr">@(ep.ScheduledExecutionTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
-                            <td class="px-5 py-3"><span class="badge badge-default">@ep.StatusText</span></td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-</div>
+                }
+            </tbody>
+        </table>
+    </div>
+    </div>
+}

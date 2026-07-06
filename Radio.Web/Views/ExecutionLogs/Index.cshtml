@@ -3,79 +3,80 @@
 @inject ICurrentUserService CurrentUser
 @{ ViewData["Title"] = "سجلات التنفيذ"; }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>سجلات التنفيذ</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded text-primary">play_circle</span>
-                سجلات التنفيذ
-            </h1>
-            <p>سجل عمليات تنفيذ الحلقات وجدولة البث</p>
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+        <div class="breadcrumbs text-sm text-base-content/60">
+            <ul>
+                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
+                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">play_circle</span>سجلات التنفيذ</span></li>
+            </ul>
         </div>
+        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary">play_circle</span>
+            سجلات التنفيذ
+        </h1>
+        <p class="text-sm text-base-content/60 mt-0.5">سجل عمليات تنفيذ الحلقات وجدولة البث</p>
     </div>
 </div>
 
-<div class="table-premium">
-    @if (!Model.Any())
-    {
-        <div class="empty-state p-12">
-            <span class="material-symbols-rounded empty-icon">play_circle</span>
-            <h3 class="font-bold text-ink text-lg mb-2">لا سجلات تنفيذ</h3>
-            <p class="text-ink-muted text-sm">لم يتم تسجيل أي عمليات تنفيذ للحلقات بعد.</p>
+@if (!Model.Any())
+{
+    <div class="card bg-base-100 shadow-md">
+        <div class="card-body text-center py-12">
+            <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">play_circle</span>
+            <h3 class="font-bold text-lg mb-2">لا سجلات تنفيذ</h3>
+            <p class="text-sm text-base-content/60">لم يتم تسجيل أي عمليات تنفيذ للحلقات بعد.</p>
         </div>
-    }
-    else
-    {
-        var canEdit = CurrentUser.HasPermission(AppPermissions.ExecutionExecute) || CurrentUser.HasPermission(AppPermissions.ExecutionEdit);
+    </div>
+}
+else
+{
+    var canEdit = CurrentUser.HasPermission(AppPermissions.ExecutionExecute) || CurrentUser.HasPermission(AppPermissions.ExecutionEdit);
+    <div class="card bg-base-100 shadow-md overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
+        <table class="table table-zebra w-full text-sm">
+            <thead>
+                <tr>
+                    <th class="text-right font-semibold">الحلقة</th>
+                    <th class="text-right font-semibold">البرنامج</th>
+                    <th class="text-right font-semibold">الملخص</th>
+                    <th class="text-right font-semibold">بواسطة</th>
+                    <th class="text-right font-semibold">التاريخ</th>
+                    @if (canEdit)
+                    {
+                        <th class="text-center font-semibold">الإجراءات</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model)
+                {
                     <tr>
-                        <th class="px-5 py-3 text-right font-semibold">الحلقة</th>
-                        <th class="px-5 py-3 text-right font-semibold">البرنامج</th>
-                        <th class="px-5 py-3 text-right font-semibold">الملخص</th>
-                        <th class="px-5 py-3 text-right font-semibold">بواسطة</th>
-                        <th class="px-5 py-3 text-right font-semibold">التاريخ</th>
+                        <td>
+                            <a href="/Episodes/Details/@r.EpisodeId" class="text-primary font-semibold hover:underline">
+                                @(r.EpisodeName ?? "—")
+                            </a>
+                        </td>
+                        <td>@r.ProgramName</td>
+                        <td>@r.Summary</td>
+                        <td>@r.RecordedBy</td>
+                        <td class="whitespace-nowrap" dir="ltr">@r.RecordDate.ToString("yyyy-MM-dd HH:mm")</td>
                         @if (canEdit)
                         {
-                            <th class="px-5 py-3 text-center font-semibold">الإجراءات</th>
+                            <td class="text-center">
+                                <div class="flex items-center justify-center gap-1 whitespace-nowrap">
+                                    <a href="/ExecutionLogs/Edit/@r.RecordId"
+                                       class="btn btn-ghost btn-square btn-sm text-primary"
+                                       title="تعديل سجل التنفيذ" aria-label="تعديل سجل التنفيذ">
+                                        <span class="material-symbols-rounded text-lg">edit</span>
+                                    </a>
+                                </div>
+                            </td>
                         }
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var r in Model)
-                    {
-                        <tr>
-                            <td class="px-5 py-3">
-                                <a href="/Episodes/Details/@r.EpisodeId" class="text-primary font-semibold hover:underline">
-                                    @(r.EpisodeName ?? "—")
-                                </a>
-                            </td>
-                            <td class="px-5 py-3 text-ink-muted">@r.ProgramName</td>
-                            <td class="px-5 py-3 text-ink-muted">@r.Summary</td>
-                            <td class="px-5 py-3 text-ink-muted">@r.RecordedBy</td>
-                            <td class="px-5 py-3 text-ink-muted whitespace-nowrap" dir="ltr">@r.RecordDate.ToString("yyyy-MM-dd HH:mm")</td>
-                            @if (canEdit)
-                            {
-                                <td class="px-5 py-3 text-center">
-                                    <a href="/ExecutionLogs/Edit/@r.RecordId"
-                                       class="icon-btn icon-btn-primary"
-                                       title="تعديل سجل التنفيذ">
-                                        <span class="material-symbols-rounded text-base">edit</span>
-                                    </a>
-                                </td>
-                            }
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-</div>
-
+                }
+            </tbody>
+        </table>
+    </div>
+    </div>
+}

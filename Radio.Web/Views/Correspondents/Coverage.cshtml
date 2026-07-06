@@ -3,63 +3,60 @@
     ViewData["Title"] = "تغطيات المراسل";
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <a href="/Correspondents">المراسلون</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>التغطيات</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded text-primary">list_alt</span>
-                تغطيات المراسل
-            </h1>
-            <p>جميع التغطيات الميدانية المسجلة لهذا المراسل</p>
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+        <div class="breadcrumbs text-sm text-base-content/60">
+            <ul>
+                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
+                <li><a href="/Correspondents" class="inline-flex items-center gap-1">المراسلون</a></li>
+                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">list_alt</span>التغطيات</span></li>
+            </ul>
         </div>
-        <div class="flex items-center gap-2">
-            <a href="/Correspondents" class="btn-secondary">
-                <span class="material-symbols-rounded">arrow_forward</span>
-                الرجوع للمراسلين
-            </a>
-        </div>
+        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary">list_alt</span>
+            تغطيات المراسل
+        </h1>
+        <p class="text-sm text-base-content/60 mt-0.5">جميع التغطيات الميدانية المسجلة لهذا المراسل</p>
+    </div>
+    <div class="flex items-center gap-2">
+        <a href="/Correspondents" class="btn btn-ghost">
+            <span class="material-symbols-rounded">arrow_forward</span>
+            الرجوع للمراسلين
+        </a>
     </div>
 </div>
 
-<div class="table-premium">
-    @if (!Model.Any())
-    {
-        <div class="empty-state p-12">
-            <span class="material-symbols-rounded empty-icon">list_alt</span>
-            <h3 class="font-bold text-ink text-lg mb-2">لا تغطيات</h3>
-            <p class="text-ink-muted text-sm">لم تتم إضافة تغطيات لهذا المراسل بعد.</p>
-        </div>
-    }
-    else
-    {
+@if (!Model.Any())
+{
+    <div class="card bg-base-100 shadow-md"><div class="card-body text-center py-12">
+        <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">list_alt</span>
+        <h3 class="font-bold text-lg mb-2">لا تغطيات</h3>
+        <p class="text-sm text-base-content/60">لم تتم إضافة تغطيات لهذا المراسل بعد.</p>
+    </div></div>
+}
+else
+{
+    <div class="card bg-base-100 shadow-md overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
+        <table class="table table-zebra w-full text-sm">
+            <thead>
+                <tr>
+                    <th class="text-right font-semibold">الموضوع</th>
+                    <th class="text-right font-semibold">الموقع</th>
+                    <th class="text-right font-semibold">الضيف</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model)
+                {
                     <tr>
-                        <th class="px-5 py-3 text-right font-semibold">الموضوع</th>
-                        <th class="px-5 py-3 text-right font-semibold">الموقع</th>
-                        <th class="px-5 py-3 text-right font-semibold">الضيف</th>
+                        <td class="font-semibold text-base-content">@c.Topic</td>
+                        <td class="text-base-content/60">@c.Location</td>
+                        <td class="text-base-content/60">@c.GuestName</td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var c in Model)
-                    {
-                        <tr>
-                            <td class="px-5 py-3 font-semibold text-ink">@c.Topic</td>
-                            <td class="px-5 py-3 text-ink-muted">@c.Location</td>
-                            <td class="px-5 py-3 text-ink-muted">@c.GuestName</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-</div>
+                }
+            </tbody>
+        </table>
+    </div>
+    </div>
+}

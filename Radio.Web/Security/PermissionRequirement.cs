@@ -1,7 +1,6 @@
+using DataAccess.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
-using DataAccess.Services;
 
 namespace Radio.Web.Security
 {

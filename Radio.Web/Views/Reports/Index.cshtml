@@ -3,78 +3,78 @@
     ViewData["Title"] = "التقارير والإحصائيات";
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>التقارير والإحصائيات</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded">assessment</span>
-                التقارير والإحصائيات
-            </h1>
-            <p>مؤشرات الأداء الرئيسية وتحليلات شاملة للبرامج والضيوف والحلقات</p>
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+        <div class="breadcrumbs text-sm text-base-content/60">
+            <ul>
+                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
+                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">assessment</span>التقارير والإحصائيات</span></li>
+            </ul>
         </div>
+        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
+            <span class="material-symbols-rounded">assessment</span>
+            التقارير والإحصائيات
+        </h1>
+        <p class="text-sm text-base-content/60 mt-0.5">مؤشرات الأداء الرئيسية وتحليلات شاملة للبرامج والضيوف والحلقات</p>
     </div>
 </div>
 
 <!-- Stats -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-    <div class="stat-card-premium text-primary">
+    <div class="card bg-base-100 shadow-md p-6"><div class="card-body p-0">
         <div class="flex items-center justify-between">
             <div>
-                <div class="text-2xl font-black text-ink">@Model.StatusStats.Values.Sum()</div>
-                <div class="text-xs font-bold text-ink-muted mt-1">إجمالي الحلقات</div>
+                <div class="text-2xl font-black text-base-content">@Model.StatusStats.Values.Sum()</div>
+                <div class="text-xs font-bold text-base-content/60 mt-1">إجمالي الحلقات</div>
             </div>
             <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                 <span class="material-symbols-rounded">podcasts</span>
             </div>
         </div>
-    </div>
+    </div></div>
 
-    <div class="stat-card-premium text-success">
+    <div class="card bg-base-100 shadow-md p-6"><div class="card-body p-0">
         <div class="flex items-center justify-between">
             <div>
-                <div class="text-2xl font-black text-ink">@Model.TopPrograms.Count</div>
-                <div class="text-xs font-bold text-ink-muted mt-1">البرامج النشطة</div>
+                <div class="text-2xl font-black text-base-content">@Model.TopPrograms.Count</div>
+                <div class="text-xs font-bold text-base-content/60 mt-1">البرامج النشطة</div>
             </div>
             <div class="w-12 h-12 rounded-xl bg-success/10 text-success flex items-center justify-center">
                 <span class="material-symbols-rounded">radio</span>
             </div>
         </div>
-    </div>
+    </div></div>
 
-    <div class="stat-card-premium text-danger">
+    <div class="card bg-base-100 shadow-md p-6"><div class="card-body p-0">
         <div class="flex items-center justify-between">
             <div>
-                <div class="text-2xl font-black text-ink">@Model.CancelledEpisodes.Count</div>
-                <div class="text-xs font-bold text-ink-muted mt-1">حلقات ملغاة</div>
+                <div class="text-2xl font-black text-base-content">@Model.CancelledEpisodes.Count</div>
+                <div class="text-xs font-bold text-base-content/60 mt-1">حلقات ملغاة</div>
             </div>
             <div class="w-12 h-12 rounded-xl bg-danger/10 text-danger flex items-center justify-center">
                 <span class="material-symbols-rounded">cancel</span>
             </div>
         </div>
-    </div>
+    </div></div>
 
-    <div class="stat-card-premium text-accent">
+    <div class="card bg-base-100 shadow-md p-6"><div class="card-body p-0">
         <div class="flex items-center justify-between">
             <div>
-                <div class="text-2xl font-black text-ink">@Model.TopGuests.Count</div>
-                <div class="text-xs font-bold text-ink-muted mt-1">أبرز الضيوف</div>
+                <div class="text-2xl font-black text-base-content">@Model.TopGuests.Count</div>
+                <div class="text-xs font-bold text-base-content/60 mt-1">أبرز الضيوف</div>
             </div>
             <div class="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
                 <span class="material-symbols-rounded">people_alt</span>
+                </div>
+            </div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Tabs Card -->
-<div class="card-premium">
-    <div class="card-header bg-surface-2">
+<div class="card bg-base-100 shadow-md">
+    <div class="bg-base-200 px-6 py-3 rounded-t-box">
         <nav class="flex flex-wrap gap-1">
             <button class="tab-btn active" onclick="switchTab('overview')">نظرة عامة</button>
             <button class="tab-btn" onclick="switchTab('today')">حلقات اليوم</button>
@@ -87,7 +87,7 @@
     <div class="card-body p-0">
         <!-- Overview Tab -->
         <div id="tab-overview" class="tab-panel p-6">
-            <h3 class="font-extrabold text-ink text-sm mb-4 flex items-center gap-1.5">
+            <h3 class="font-extrabold text-base-content text-sm mb-4 flex items-center gap-1.5">
                 <span class="w-1.5 h-3 bg-primary rounded-full"></span>
                 توزيع حالات الحلقات في النظام
             </h3>
@@ -96,8 +96,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     @foreach (var s in Model.StatusStats)
                     {
-                        <div class="flex items-center justify-between p-4 bg-surface-2 rounded-xl border border-border">
-                            <span class="text-xs font-bold text-ink-muted">@GetStatusDisplayName(s.Key)</span>
+                        <div class="flex items-center justify-between p-4 bg-base-200 rounded-xl border border-base-200">
+                            <span class="text-xs font-bold text-base-content/60">@GetStatusDisplayName(s.Key)</span>
                             <span class="badge badge-info font-black">@s.Value حلقة</span>
                         </div>
                     }
@@ -105,32 +105,37 @@
             }
             else
             {
-                <div class="empty-state p-6">لا توجد بيانات إحصائية متاحة حالياً.</div>
+                <div class="card bg-base-100 shadow-md"><div class="card-body text-center py-12">
+    <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">bar_chart</span>
+    <h3 class="font-bold text-lg mb-2">لا توجد بيانات</h3>
+    <p class="text-sm text-base-content/60">لا توجد بيانات إحصائية متاحة حالياً.</p>
+</div></div>
             }
         </div>
 
         <!-- Today Tab -->
         <div id="tab-today" class="tab-panel hidden">
-            <div class="table-premium border-0 shadow-none rounded-none">
+            <div class="card bg-base-100 shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
                 @if (Model.TodayEpisodes.Any())
                 {
-                    <table>
+                    <table class="table table-zebra w-full text-sm">
                         <thead>
                             <tr>
-                                <th class="px-5 py-3 text-right">الحلقة</th>
-                                <th class="px-5 py-3 text-right">البرنامج</th>
-                                <th class="px-5 py-3 text-right">الضيوف</th>
-                                <th class="px-5 py-3 text-right">الموعد</th>
+                                <th class="text-right">الحلقة</th>
+                                <th class="text-right">البرنامج</th>
+                                <th class="text-right">الضيوف</th>
+                                <th class="text-right">الموعد</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var ep in Model.TodayEpisodes)
                             {
                                 <tr>
-                                    <td class="px-5 py-3 font-bold text-primary">@ep.EpisodeName</td>
-                                    <td class="px-5 py-3 text-ink-muted">@ep.ProgramName</td>
-                                    <td class="px-5 py-3 text-ink-muted">@ep.GuestsDisplay</td>
-                                    <td class="px-5 py-3 text-ink font-semibold">@(ep.ScheduledExecutionTime?.ToString("HH:mm") ?? "—")</td>
+                                    <td class="font-bold text-primary">@ep.EpisodeName</td>
+                                    <td class="text-base-content/60">@ep.ProgramName</td>
+                                    <td class="text-base-content/60">@ep.GuestsDisplay</td>
+                                    <td class="text-base-content font-semibold">@(ep.ScheduledExecutionTime?.ToString("HH:mm") ?? "—")</td>
                                 </tr>
                             }
                         </tbody>
@@ -138,38 +143,41 @@
                 }
                 else
                 {
-                    <div class="empty-state p-10">
-                        <span class="material-symbols-rounded empty-icon">event_busy</span>
-                        <p class="text-ink-muted text-sm">لم يتم جدولة أي حلقات لليوم.</p>
-                    </div>
+                    <div class="card bg-base-100 shadow-md"><div class="card-body text-center py-12">
+                        <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">event_busy</span>
+                        <h3 class="font-bold text-lg mb-2">لا حلقات لليوم</h3>
+                        <p class="text-sm text-base-content/60">لم يتم جدولة أي حلقات لليوم.</p>
+                    </div></div>
                 }
+            </div>
             </div>
         </div>
 
         <!-- Programs Tab -->
         <div id="tab-programs" class="tab-panel hidden">
-            <div class="table-premium border-0 shadow-none rounded-none">
+            <div class="card bg-base-100 shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
                 @if (Model.TopPrograms.Any())
                 {
-                    <table>
+                    <table class="table table-zebra w-full text-sm">
                         <thead>
                             <tr>
-                                <th class="px-5 py-3 text-right">البرنامج</th>
-                                <th class="px-5 py-3 text-right">الفئة</th>
-                                <th class="px-5 py-3 text-right">إجمالي الحلقات</th>
-                                <th class="px-5 py-3 text-right">الحلقات المنشورة</th>
+                                <th class="text-right">البرنامج</th>
+                                <th class="text-right">الفئة</th>
+                                <th class="text-right">إجمالي الحلقات</th>
+                                <th class="text-right">الحلقات المنشورة</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var p in Model.TopPrograms)
                             {
                                 <tr>
-                                    <td class="px-5 py-3 font-bold text-ink">@p.ProgramName</td>
-                                    <td class="px-5 py-3">
+                                    <td class="font-bold text-base-content">@p.ProgramName</td>
+                                    <td>
                                         <span class="badge badge-info">@(p.Category ?? "عام")</span>
                                     </td>
-                                    <td class="px-5 py-3 text-primary font-bold">@p.TotalEpisodes</td>
-                                    <td class="px-5 py-3 text-success font-bold">@p.PublishedEpisodes</td>
+                                    <td class="text-primary font-bold">@p.TotalEpisodes</td>
+                                    <td class="text-success font-bold">@p.PublishedEpisodes</td>
                                 </tr>
                             }
                         </tbody>
@@ -177,38 +185,41 @@
                 }
                 else
                 {
-                    <div class="empty-state p-10">
-                        <span class="material-symbols-rounded empty-icon">radio</span>
-                        <p class="text-ink-muted text-sm">لا توجد بيانات برامج حالياً.</p>
-                    </div>
+                    <div class="card bg-base-100 shadow-md"><div class="card-body text-center py-12">
+                        <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">radio</span>
+                        <h3 class="font-bold text-lg mb-2">لا توجد برامج</h3>
+                        <p class="text-sm text-base-content/60">لا توجد بيانات برامج حالياً.</p>
+                    </div></div>
                 }
+            </div>
             </div>
         </div>
 
         <!-- Guests Tab -->
         <div id="tab-guests" class="tab-panel hidden">
-            <div class="table-premium border-0 shadow-none rounded-none">
+            <div class="card bg-base-100 shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
                 @if (Model.TopGuests.Any())
                 {
-                    <table>
+                    <table class="table table-zebra w-full text-sm">
                         <thead>
                             <tr>
-                                <th class="px-5 py-3 text-right">#</th>
-                                <th class="px-5 py-3 text-right">الاسم</th>
-                                <th class="px-5 py-3 text-right">الجهة / المؤسسة</th>
-                                <th class="px-5 py-3 text-right">عدد الاستضافات</th>
-                                <th class="px-5 py-3 text-right">تاريخ آخر ظهور</th>
+                                <th class="text-right">#</th>
+                                <th class="text-right">الاسم</th>
+                                <th class="text-right">الجهة / المؤسسة</th>
+                                <th class="text-right">عدد الاستضافات</th>
+                                <th class="text-right">تاريخ آخر ظهور</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var g in Model.TopGuests)
                             {
                                 <tr>
-                                    <td class="px-5 py-3 font-bold text-ink-muted">@g.Rank</td>
-                                    <td class="px-5 py-3 font-bold text-ink">@g.FullName</td>
-                                    <td class="px-5 py-3 text-ink-muted">@(g.Organization ?? "—")</td>
-                                    <td class="px-5 py-3 text-success font-black">@g.AppearanceCount</td>
-                                    <td class="px-5 py-3 text-ink font-semibold">@(g.LastAppearance?.ToString("yyyy-MM-dd") ?? "—")</td>
+                                    <td class="font-bold text-base-content/60">@g.Rank</td>
+                                    <td class="font-bold text-base-content">@g.FullName</td>
+                                    <td class="text-base-content/60">@(g.Organization ?? "—")</td>
+                                    <td class="text-success font-black">@g.AppearanceCount</td>
+                                    <td class="text-base-content font-semibold">@(g.LastAppearance?.ToString("yyyy-MM-dd") ?? "—")</td>
                                 </tr>
                             }
                         </tbody>
@@ -216,38 +227,41 @@
                 }
                 else
                 {
-                    <div class="empty-state p-10">
-                        <span class="material-symbols-rounded empty-icon">people_alt</span>
-                        <p class="text-ink-muted text-sm">لا توجد بيانات استضافة ضيوف حالياً.</p>
-                    </div>
+                    <div class="card bg-base-100 shadow-md"><div class="card-body text-center py-12">
+                        <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">people_alt</span>
+                        <h3 class="font-bold text-lg mb-2">لا يوجد ضيوف</h3>
+                        <p class="text-sm text-base-content/60">لا توجد بيانات استضافة ضيوف حالياً.</p>
+                    </div></div>
                 }
+            </div>
             </div>
         </div>
 
         <!-- Cancelled Tab -->
         <div id="tab-cancelled" class="tab-panel hidden">
-            <div class="table-premium border-0 shadow-none rounded-none">
+            <div class="card bg-base-100 shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
                 @if (Model.CancelledEpisodes.Any())
                 {
-                    <table>
+                    <table class="table table-zebra w-full text-sm">
                         <thead>
                             <tr>
-                                <th class="px-5 py-3 text-right">الحلقة</th>
-                                <th class="px-5 py-3 text-right">البرنامج</th>
-                                <th class="px-5 py-3 text-right">موعد البث الأصلي</th>
-                                <th class="px-5 py-3 text-right">سبب الإلغاء</th>
-                                <th class="px-5 py-3 text-right">بواسطة</th>
+                                <th class="text-right">الحلقة</th>
+                                <th class="text-right">البرنامج</th>
+                                <th class="text-right">موعد البث الأصلي</th>
+                                <th class="text-right">سبب الإلغاء</th>
+                                <th class="text-right">بواسطة</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var c in Model.CancelledEpisodes)
                             {
                                 <tr>
-                                    <td class="px-5 py-3 font-bold text-danger">@c.EpisodeName</td>
-                                    <td class="px-5 py-3 text-ink-muted">@c.ProgramName</td>
-                                    <td class="px-5 py-3 text-ink font-semibold">@(c.ScheduledExecutionTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
-                                    <td class="px-5 py-3 text-ink-muted max-w-xs truncate" title="@c.CancellationReason">@(c.CancellationReason ?? "—")</td>
-                                    <td class="px-5 py-3 text-ink-soft">@(c.CancelledBy ?? "—")</td>
+                                    <td class="font-bold text-danger">@c.EpisodeName</td>
+                                    <td class="text-base-content/60">@c.ProgramName</td>
+                                    <td class="text-base-content font-semibold">@(c.ScheduledExecutionTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                                    <td class="text-base-content/60 max-w-xs truncate" title="@c.CancellationReason">@(c.CancellationReason ?? "—")</td>
+                                    <td class="text-base-content/40">@(c.CancelledBy ?? "—")</td>
                                 </tr>
                             }
                         </tbody>
@@ -255,11 +269,13 @@
                 }
                 else
                 {
-                    <div class="empty-state p-10">
-                        <span class="material-symbols-rounded empty-icon">check_circle</span>
-                        <p class="text-ink-muted text-sm">لا توجد حلقات ملغاة في النظام.</p>
-                    </div>
+                    <div class="card bg-base-100 shadow-md"><div class="card-body text-center py-12">
+                        <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">check_circle</span>
+                        <h3 class="font-bold text-lg mb-2">لا حلقات ملغاة</h3>
+                        <p class="text-sm text-base-content/60">لا توجد حلقات ملغاة في النظام.</p>
+                    </div></div>
                 }
+            </div>
             </div>
         </div>
     </div>

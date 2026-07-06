@@ -1,38 +1,202 @@
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "نظام التصميم";
+    ViewData["Title"] = "دليل التصميم";
+    Layout = "_Layout";
 }
-
-<section class="p-6">
-    <div class="page-header text-right">
-        <h1 class="text-2xl font-bold">نظام التصميم — Components</h1>
-        <p class="text-ink-soft">مثال على مكونات قابلة لإعادة الاستخدام والشرح لاستخدامها داخل المشروع.</p>
+<div class="max-w-5xl mx-auto">
+    <div class="mb-6">
+        <h1 class="text-2xl font-extrabold text-base-content flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary">palette</span>
+            دليل التصميم — Design System
+        </h1>
+        <p class="text-base-content/60 text-sm mt-1">جميع مكونات واجهة المستخدم الموحدة للنظام</p>
     </div>
 
-    <div class="design-grid">
-        <div>
-            <h2 class="font-semibold mb-2 text-right">Card</h2>
-            @Html.Partial("~/Views/Shared/Components/_Card.cshtml", new { Title = "بطاقة إحصائية", Body = "هذا نص داخل البطاقة. يمكنك تمرير HTML أو نص عادي كـ model." })
-        </div>
+    <div class="grid grid-cols-1 gap-8">
 
-        <div>
-            <h2 class="font-semibold mb-2 text-right">Buttons</h2>
-            <div class="flex flex-col gap-2 items-end">
-                @Html.Partial("~/Views/Shared/Components/_Button.cshtml", new { Text = "الأساسي", Class = "" })
-                @Html.Partial("~/Views/Shared/Components/_Button.cshtml", new { Text = "ثانوي", Class = "secondary" })
-                @Html.Partial("~/Views/Shared/Components/_Button.cshtml", new { Text = "شبح", Class = "ghost" })
+        @* ── Colors ── *@
+        <section class="card bg-base-100 shadow-md p-6" aria-label="الألوان">
+            <h2 class="text-lg font-bold text-base-content mb-4 flex items-center gap-2">
+                <span class="material-symbols-rounded text-primary">circles</span>
+                الألوان — Colors
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                @foreach (var c in new[] {
+                    ("primary", "#2563EB", "primary-dark", "#1D4ED8", "primary-light", "#3B82F6"),
+                    ("secondary", "#7C3AED", "secondary-dark", "#6D28D9", "accent", "#0EA5E9"),
+                    ("success", "#10B981", "warning", "#F59E0B", "danger", "#EF4444")
+                })
+                {
+                    <div class="space-y-2">
+                        <div class="h-12 rounded-lg" style="background:var(--@c.Item1)"></div>
+                        <div class="text-xs text-base-content/60 font-mono">--@c.Item1</div>
+                        <div class="text-xs text-base-content/40 font-mono">@c.Item2</div>
+                    </div>
+                }
             </div>
-        </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                @foreach (var c in new[] {
+                    ("--surface", "var(--surface)", "السطح الأساسي"),
+                    ("--surface-2", "var(--surface-2)", "السطح الثانوي"),
+                    ("--surface-3", "var(--surface-3)", "السطح الثالث"),
+                    ("--border", "var(--border)", "الحدود"),
+                    ("--ink", "var(--ink)", "النص الأساسي"),
+                    ("--ink-muted", "var(--ink-muted)", "النص الخافت"),
+                    ("--ink-soft", "var(--ink-soft)", "النص الناعم")
+                })
+                {
+                    <div class="flex items-center gap-3 p-3 rounded-lg border border-base-200 bg-base-100">
+                        <div class="w-8 h-8 rounded" style="background:@c.Item2"></div>
+                        <div>
+                            <div class="text-xs font-mono text-base-content/60">@c.Item1</div>
+                            <div class="text-[10px] text-base-content/40">@c.Item3</div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
 
-        <div>
-            <h2 class="font-semibold mb-2 text-right">Theme & Utilities</h2>
-            <div class="ds-card">
-                <div class="ds-card-body text-right">
-                    <p>تبديل السمة يتم عبر زر أعلى الشاشة (أيقونة المصباح). يتم حفظ الإعداد في localStorage.</p>
-                    <p class="mt-2">اختصارات: <span class="kbd">Ctrl</span> + <span class="kbd">Enter</span> لإرسال النموذج.</p>
+        @* ── Status Badges ── *@
+        <section class="card bg-base-100 shadow-md p-6" aria-label="شارات الحالة">
+            <h2 class="text-lg font-bold text-base-content mb-4 flex items-center gap-2">
+                <span class="material-symbols-rounded text-primary">rounded_corner</span>
+                شارات الحالة — Status Badges
+            </h2>
+            <div class="flex flex-wrap gap-3">
+                @foreach (var s in new[] {
+                    ("planned", "مجدولة", "event_note"),
+                    ("executed", "منفّذة", "check_circle"),
+                    ("published", "منشورة", "rss_feed"),
+                    ("website-published", "منشورة على الموقع", "public"),
+                    ("cancelled", "ملغاة", "cancel")
+                })
+                {
+                    <partial name="_StatusBadge" model='new StatusBadgeViewModel { Type = "episode", Status = s.Item1, Label = s.Item2 }' />
+                }
+            </div>
+            <div class="flex flex-wrap gap-3 mt-3">
+                @foreach (var s in new[] {
+                    ("pending", "بانتظار التنفيذ", "schedule"),
+                    ("in-progress", "قيد التنفيذ", "pending"),
+                    ("completed", "تم التنفيذ", "check_circle"),
+                    ("failed", "فشل", "error")
+                })
+                {
+                    <partial name="_StatusBadge" model='new StatusBadgeViewModel { Type = "execution", Status = s.Item1, Label = s.Item2 }' />
+                }
+            </div>
+        </section>
+
+        @* ── Buttons ── *@
+        <section class="card bg-base-100 shadow-md p-6" aria-label="الأزرار">
+            <h2 class="text-lg font-bold text-base-content mb-4 flex items-center gap-2">
+                <span class="material-symbols-rounded text-primary">smart_button</span>
+                الأزرار — Buttons
+            </h2>
+            <div class="flex flex-wrap gap-3">
+                <button class="btn btn-primary">زر رئيسي</button>
+                <button class="btn btn-ghost">زر ثانوي</button>
+                <button class="btn btn-outline">زر حدودي</button>
+                <button class="btn btn-ghost">زر شفاف</button>
+                <button class="btn btn-success">نجاح</button>
+                <button class="btn btn-warning">تحذير</button>
+                <button class="btn btn-error">حذف</button>
+            </div>
+            <div class="flex flex-wrap gap-3 mt-3">
+                <button class="btn btn-primary" disabled>معطل</button>
+                <button class="btn btn-primary"><span class="loading loading-spinner loading-xs"></span>جارٍ التحميل</button>
+                <button class="btn btn-ghost flex items-center gap-1.5">
+                    <span class="material-symbols-rounded text-sm">add</span>
+                    مع أيقونة
+                </button>
+            </div>
+        </section>
+
+        @* ── Form Elements ── *@
+        <section class="card bg-base-100 shadow-md p-6" aria-label="عناصر النماذج">
+            <h2 class="text-lg font-bold text-base-content mb-4 flex items-center gap-2">
+                <span class="material-symbols-rounded text-primary">view_quilt</span>
+                عناصر النماذج — Form Elements
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="label">حقل نصي</label>
+                    <input type="text" class="input input-bordered  placeholder="نص تجريبي..." />
+                </div>
+                <div>
+                    <label class="label">قائمة منسدلة</label>
+                    <select class="select select-bordered">
+                        <option>خيار 1</option>
+                        <option>خيار 2</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="label">مفتاح تبديل</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" class="peer sr-only" />
+                        <span class="toggle-track"></span>
+                        <span class="toggle-label">مفعل</span>
+                    </label>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" class="form-checkbox" id="chk1" />
+                    <label for="chk1" class="label">خيار محدد</label>
                 </div>
             </div>
-        </div>
+        </section>
+
+        @* ── Cards ── *@
+        <section class="card bg-base-100 shadow-md p-6" aria-label="البطاقات">
+            <h2 class="text-lg font-bold text-base-content mb-4 flex items-center gap-2">
+                <span class="material-symbols-rounded text-primary">dashboard</span>
+                البطاقات — Cards
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="card bg-base-100 shadow-md p-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                            <span class="material-symbols-rounded text-primary">bar_chart</span>
+                        </div>
+                        <div>
+                            <div class="text-xs text-base-content/60">بطاقة إحصائية</div>
+                            <div class="text-xl font-bold text-base-content">1,234</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card bg-base-100 shadow-md p-6">
+                    <div class="card-body p-0">
+                        <div class="stat-icon-wrapper bg-success/10 text-success">
+                            <span class="material-symbols-rounded">check_circle</span>
+                        </div>
+                        <div>
+                            <div class="stat-value">567</div>
+                            <div class="stat-label">تم بنجاح</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card bg-base-100 shadow-md p-4 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-warning/10 text-warning flex items-center justify-center">
+                        <span class="material-symbols-rounded">warning</span>
+                    </div>
+                    <div class="text-sm font-bold text-base-content">بطاقة مدمجة</div>
+                </div>
+            </div>
+        </section>
+
+        @* ── Badges ── *@
+        <section class="card bg-base-100 shadow-md p-6" aria-label="الشارات">
+            <h2 class="text-lg font-bold text-base-content mb-4 flex items-center gap-2">
+                <span class="material-symbols-rounded text-primary">label</span>
+                الشارات — Badges
+            </h2>
+            <div class="flex flex-wrap gap-2">
+                <span class="badge badge-primary">رئيسي</span>
+                <span class="badge badge-success">نجاح</span>
+                <span class="badge badge-warning">تحذير</span>
+                <span class="badge badge-danger">خطأ</span>
+                <span class="badge badge-info">معلومات</span>
+                <span class="badge badge-accent">تمييز</span>
+            </div>
+        </section>
 
     </div>
-</section>
+</div>

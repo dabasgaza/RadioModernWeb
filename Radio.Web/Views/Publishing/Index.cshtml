@@ -8,21 +8,19 @@
     var programs = ViewBag.Programs as List<ProgramDto> ?? new();
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>سجل النشر الموحد</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded text-primary p-1 bg-primary/10 rounded-lg">share</span>
-                سجل النشر الموحد
-            </h1>
-            <p>شاشة ذكية وعصرية لمتابعة وإدارة كافة عمليات الإنتاج والنشر الرقمي والموقع الرسمي</p>
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+        <div class="breadcrumbs text-sm text-base-content/60">
+            <ul>
+                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
+                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">share</span>سجل النشر الموحد</span></li>
+            </ul>
         </div>
+        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary p-1 bg-primary/10 rounded-lg">share</span>
+            سجل النشر الموحد
+        </h1>
+        <p class="text-sm text-base-content/60 mt-0.5">شاشة ذكية وعصرية لمتابعة وإدارة كافة عمليات الإنتاج والنشر الرقمي والموقع الرسمي</p>
     </div>
 </div>
 
@@ -79,64 +77,64 @@
 </div>
 
 <!-- Modern Filter Panel -->
-<div class="filter-premium">
-    <form method="get" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div>
-            <label class="form-label">البحث العام</label>
-            <div class="relative">
-                <span class="material-symbols-rounded absolute right-3 top-2.5 text-ink-soft">search</span>
-                <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث باسم الحلقة أو ملخص التفاصيل..." class="form-input pr-10 w-full" />
+<div class="card bg-base-100 shadow-md mb-6">
+    <div class="card-body">
+        <form method="get" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+                <span class="label-text font-bold text-xs text-base-content/70 mb-1.5 block">البحث العام</span>
+                <div class="relative">
+                    <span class="material-symbols-rounded absolute right-3 top-3 text-base-content/40 text-lg">search</span>
+                    <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث باسم الحلقة أو ملخص التفاصيل..." class="input input-bordered pr-10 w-full" />
+                </div>
             </div>
-        </div>
-        <div>
-            <label class="form-label">حسب منصة النشر</label>
-            <select name="type" class="form-input w-full" onchange="this.form.submit()">
-                <option value="">كل منصات وأنواع النشر</option>
-                <option value="Execution" selected="@(ViewBag.TypeFilter == "Execution")">سجلات الإنتاج (التنفيذ)</option>
-                <option value="SocialMedia" selected="@(ViewBag.TypeFilter == "SocialMedia")">سجلات التواصل الاجتماعي (الرقمي)</option>
-                <option value="Website" selected="@(ViewBag.TypeFilter == "Website")">سجلات الموقع الرسمي</option>
-            </select>
-        </div>
-        <div>
-            <label class="form-label">فلترة حسب البرنامج</label>
-            <select name="programId" class="form-input w-full" onchange="this.form.submit()">
-                <option value="">كل البرامج الإذاعية</option>
-                @foreach (var prog in programs)
-                {
-                    <option value="@prog.ProgramId" selected="@(ViewBag.ProgramFilter == prog.ProgramId)">@prog.ProgramName</option>
-                }
-            </select>
-        </div>
-        <div class="flex gap-2 items-end">
-            <button type="submit" class="btn-primary flex-1 py-2.5 justify-center shadow-md shadow-primary/10">
-                <span class="material-symbols-rounded text-sm">filter_alt</span>
-                تطبيق التصفية
-            </button>
-            <a href="/Publishing" class="btn-secondary py-2.5 px-4 justify-center" title="إعادة تهيئة">
-                <span class="material-symbols-rounded">restart_alt</span>
-            </a>
-        </div>
-    </form>
+            <div>
+                <span class="label-text font-bold text-xs text-base-content/70 mb-1.5 block">حسب منصة النشر</span>
+                <select name="type" class="select select-bordered w-full" onchange="this.form.submit()">
+                    <option value="">كل منصات وأنواع النشر</option>
+                    <option value="Execution" selected="@(ViewBag.TypeFilter == "Execution")">سجلات الإنتاج (التنفيذ)</option>
+                    <option value="SocialMedia" selected="@(ViewBag.TypeFilter == "SocialMedia")">سجلات التواصل الاجتماعي (الرقمي)</option>
+                    <option value="Website" selected="@(ViewBag.TypeFilter == "Website")">سجلات الموقع الرسمي</option>
+                </select>
+            </div>
+            <div>
+                <span class="label-text font-bold text-xs text-base-content/70 mb-1.5 block">فلترة حسب البرنامج</span>
+                <select name="programId" class="select select-bordered w-full" onchange="this.form.submit()">
+                    <option value="">كل البرامج الإذاعية</option>
+                    @foreach (var prog in programs)
+                    {
+                        <option value="@prog.ProgramId" selected="@(ViewBag.ProgramFilter == prog.ProgramId)">@prog.ProgramName</option>
+                    }
+                </select>
+            </div>
+            <div class="flex gap-2 items-end">
+                <button type="submit" class="btn btn-primary flex-1 py-2.5 justify-center shadow-md shadow-primary/10">
+                    <span class="material-symbols-rounded text-sm">filter_alt</span>
+                    تطبيق التصفية
+                </button>
+                <a href="/Publishing" class="btn btn-ghost py-2.5 px-4 justify-center" title="إعادة تهيئة">
+                    <span class="material-symbols-rounded">restart_alt</span>
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
 
 <!-- Records Display -->
-<div class="table-premium">
+<div class="card bg-base-100 shadow-md overflow-hidden">
     @if (!Model.Any())
     {
-        <div class="empty-state py-16 px-6 text-center">
-            <div class="w-20 h-20 bg-ink-soft/5 rounded-full flex items-center justify-center mx-auto mb-4 text-ink-muted">
-                <span class="material-symbols-rounded text-5xl">folder_off</span>
-            </div>
-            <h3 class="font-bold text-ink text-xl mb-2">لا توجد سجلات نشر مطابقة</h3>
-            <p class="text-ink-muted text-sm max-w-sm mx-auto">لم يتم العثور على أي نتائج تطابق خيارات التصفية الحالية. يرجى تجربة خيارات أخرى.</p>
+        <div class="card-body text-center py-12">
+            <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">folder_off</span>
+            <h3 class="font-bold text-lg mb-2">لا توجد سجلات نشر مطابقة</h3>
+            <p class="text-sm text-base-content/60 max-w-sm mx-auto">لم يتم العثور على أي نتائج تطابق خيارات التصفية الحالية. يرجى تجربة خيارات أخرى.</p>
         </div>
     }
     else
     {
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+            <table class="table table-zebra w-full text-sm">
                 <thead>
-                    <tr class="bg-surface-3 border-b border-border text-ink-muted uppercase tracking-wider text-xs">
+                    <tr class="bg-base-200 border-b border-base-300 text-base-content/70 uppercase tracking-wider text-xs">
                         <th class="px-6 py-4 text-right font-bold">المنصة / النوع</th>
                         <th class="px-6 py-4 text-right font-bold">معلومات الحلقة</th>
                         <th class="px-6 py-4 text-right font-bold">تفاصيل النشر والمحتوى</th>
@@ -145,7 +143,7 @@
                         <th class="px-6 py-4 text-center font-bold">الخيارات</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-border">
+                <tbody class="divide-y divide-base-200">
                     @foreach (var r in Model)
                     {
                         <tr class="hover:bg-surface-2 transition duration-200">
@@ -190,28 +188,28 @@
                                 <div class="flex items-center justify-center gap-1.5">
                                     @if (r.RecordType == "SocialMedia" && User.HasPermission(AppPermissions.EpisodePublish))
                                     {
-                                        <a href="/Publishing/Edit/@r.RecordId" class="icon-btn bg-blue-50 text-blue-600 hover:bg-blue-100 p-2 rounded-lg transition" title="تعديل">
-                                            <span class="material-symbols-rounded text-sm">edit</span>
+                                        <a href="/Publishing/Edit/@r.RecordId" class="btn btn-ghost btn-square btn-sm text-primary hover:bg-primary/10" title="تعديل">
+                                            <span class="material-symbols-rounded text-lg">edit</span>
                                         </a>
-                                        <button type="button" class="icon-btn bg-red-50 text-red-600 hover:bg-red-100 p-2 rounded-lg transition" title="حذف"
+                                        <button type="button" class="btn btn-ghost btn-square btn-sm text-error hover:bg-error/10" title="حذف"
                                                 onclick="confirmDelete(@r.RecordId, '@(r.EpisodeName ?? "سجل")')">
-                                            <span class="material-symbols-rounded text-sm">delete</span>
+                                            <span class="material-symbols-rounded text-lg">delete</span>
                                         </button>
                                     }
                                     @if (r.RecordType == "Website" && User.HasPermission(AppPermissions.EpisodeWebPublish))
                                     {
-                                        <a href="/WebsitePublishing/Edit/@r.RecordId" class="icon-btn bg-blue-50 text-blue-600 hover:bg-blue-100 p-2 rounded-lg transition" title="تعديل">
-                                            <span class="material-symbols-rounded text-sm">edit</span>
+                                        <a href="/WebsitePublishing/Edit/@r.RecordId" class="btn btn-ghost btn-square btn-sm text-primary hover:bg-primary/10" title="تعديل">
+                                            <span class="material-symbols-rounded text-lg">edit</span>
                                         </a>
-                                        <button type="button" class="icon-btn bg-red-50 text-red-600 hover:bg-red-100 p-2 rounded-lg transition" title="حذف"
+                                        <button type="button" class="btn btn-ghost btn-square btn-sm text-error hover:bg-error/10" title="حذف"
                                                 onclick="confirmWebsiteDelete(@r.RecordId, '@(r.EpisodeName ?? "سجل")')">
-                                            <span class="material-symbols-rounded text-sm">delete</span>
+                                            <span class="material-symbols-rounded text-lg">delete</span>
                                         </button>
                                     }
                                     @if (r.RecordType == "Execution" && (User.HasPermission(AppPermissions.ExecutionExecute) || User.HasPermission(AppPermissions.ExecutionEdit)))
                                     {
-                                        <a href="/ExecutionLogs/Edit/@r.RecordId" class="icon-btn bg-emerald-50 text-emerald-600 hover:bg-emerald-100 p-2 rounded-lg transition" title="تعديل سجل التنفيذ">
-                                            <span class="material-symbols-rounded text-sm">edit</span>
+                                        <a href="/ExecutionLogs/Edit/@r.RecordId" class="btn btn-ghost btn-square btn-sm text-success hover:bg-success/10" title="تعديل سجل التنفيذ">
+                                            <span class="material-symbols-rounded text-lg">edit</span>
                                         </a>
                                     }
                                 </div>
@@ -236,8 +234,8 @@
             <form id="deleteForm" method="post" action="">
                 @Html.AntiForgeryToken()
                 <div class="flex gap-2 justify-center">
-                    <button type="button" class="btn-secondary px-5" onclick="closeDeleteModal()">إلغاء</button>
-                    <button type="submit" class="btn-danger px-5">
+                    <button type="button" class="btn btn-ghost px-5" onclick="closeDeleteModal()">إلغاء</button>
+                    <button type="submit" class="btn btn-error px-5">
                         <span class="material-symbols-rounded">delete</span>
                         نعم، احذف
                     </button>
@@ -259,8 +257,8 @@
             <form id="deleteWebsiteForm" method="post" action="">
                 @Html.AntiForgeryToken()
                 <div class="flex gap-2 justify-center">
-                    <button type="button" class="btn-secondary px-5" onclick="closeWebsiteDeleteModal()">إلغاء</button>
-                    <button type="submit" class="btn-danger px-5">
+                    <button type="button" class="btn btn-ghost px-5" onclick="closeWebsiteDeleteModal()">إلغاء</button>
+                    <button type="submit" class="btn btn-error px-5">
                         <span class="material-symbols-rounded">delete</span>
                         نعم، احذف
                     </button>

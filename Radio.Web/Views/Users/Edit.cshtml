@@ -22,55 +22,53 @@
 
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-6 font-semibold text-sm"></div>
+        <div asp-validation-summary="All" class="bg-error/10 border border-error/20 text-error rounded-xl p-4 mb-6 font-semibold text-sm"></div>
     }
 
-    <div class="card-premium">
-        <div class="card-header">
+    <div class="card bg-base-100 shadow-md">
+        <div class="card-body space-y-4">
             <div class="flex items-center gap-2">
                 <span class="material-symbols-rounded text-primary">person</span>
-                <h3 class="font-bold text-ink text-base">الملف التعريفي للمستخدم</h3>
+                <h3 class="font-bold text-base-content text-base">الملف التعريفي للمستخدم</h3>
             </div>
-        </div>
-        <div class="card-body space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="form-label">الاسم الكامل *</label>
-                    <div class="input-wrapper">
-                        <span class="material-symbols-rounded input-icon">person</span>
-                        <input type="text" name="FullName" value="@Model.FullName" class="form-input" required placeholder="مثال: سارة أحمد" />
+                    <label class="label">الاسم الكامل *</label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">person</span>
+                        <input type="text" name="FullName" value="@Model.FullName" class="input input-bordered w-full pr-10" required placeholder="مثال: سارة أحمد" />
                     </div>
                 </div>
                 <div>
-                    <label class="form-label">اسم الدخول *</label>
-                    <div class="input-wrapper">
-                        <span class="material-symbols-rounded input-icon">account_circle</span>
-                        <input type="text" name="Username" value="@Model.Username" class="form-input" required @(isEdit ? "readonly" : "") placeholder="example_user" />
+                    <label class="label">اسم الدخول *</label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">account_circle</span>
+                        <input type="text" name="Username" value="@Model.Username" class="input input-bordered w-full pr-10" required @(isEdit ? "readonly" : "") placeholder="example_user" />
                     </div>
                 </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="form-label">البريد الإلكتروني</label>
-                    <div class="input-wrapper">
-                        <span class="material-symbols-rounded input-icon">email</span>
-                        <input type="email" name="EmailAddress" value="@Model.EmailAddress" class="form-input" placeholder="user@example.com" />
+                    <label class="label">البريد الإلكتروني</label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">email</span>
+                        <input type="email" name="EmailAddress" value="@Model.EmailAddress" class="input input-bordered w-full pr-10" placeholder="user@example.com" />
                     </div>
                 </div>
                 <div>
-                    <label class="form-label">رقم الهاتف</label>
-                    <div class="input-wrapper">
-                        <span class="material-symbols-rounded input-icon">phone</span>
-                        <input type="text" name="PhoneNumber" value="@Model.PhoneNumber" class="form-input" placeholder="+966500000000" />
+                    <label class="label">رقم الهاتف</label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">phone</span>
+                        <input type="text" name="PhoneNumber" value="@Model.PhoneNumber" class="input input-bordered w-full pr-10" placeholder="+966500000000" />
                     </div>
                 </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="form-label">الدور *</label>
-                    <div class="input-wrapper">
-                        <span class="material-symbols-rounded input-icon">group_work</span>
-                        <select name="RoleId" class="form-input" required>
+                    <label class="label">الدور *</label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">group_work</span>
+                        <select name="RoleId" class="select select-bordered w-full pr-10" required>
                             <option value="">— اختر —</option>
                             @foreach (var r in roles ?? new())
                             {
@@ -80,10 +78,10 @@
                     </div>
                 </div>
                 <div>
-                    <label class="form-label">@if (isEdit) { <text>كلمة مرور جديدة (اتركها فارغة للإبقاء)</text> } else { <text>كلمة المرور *</text> }</label>
-                    <div class="input-wrapper">
-                        <span class="material-symbols-rounded input-icon">lock</span>
-                        <input type="password" name="Password" class="form-input" placeholder="@(isEdit ? "اترك فارغاً" : "••••••••")" />
+                    <label class="label">@if (isEdit) { <text>كلمة مرور جديدة (اتركها فارغة للإبقاء)</text> } else { <text>كلمة المرور *</text> }</label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">lock</span>
+                        <input type="password" name="Password" class="input input-bordered w-full pr-10" placeholder="@(isEdit ? "اترك فارغاً" : "••••••••")" />
                     </div>
                 </div>
             </div>
@@ -92,9 +90,9 @@
                 <div class="flex items-center gap-3 pt-2">
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" name="IsActive" value="true" id="IsActive" @(Model.IsActive ? "checked" : "") class="sr-only peer" />
-                        <div class="w-11 h-6 bg-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                        <div class="w-11 h-6 bg-base-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-base-200 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                     </label>
-                    <label for="IsActive" class="text-sm font-semibold text-ink cursor-pointer">الحساب نشط</label>
+                    <label for="IsActive" class="text-sm font-semibold text-base-content cursor-pointer">الحساب نشط</label>
                 </div>
             }
         </div>
@@ -103,7 +101,7 @@
     <div class="flex items-center justify-between gap-2 mt-6 w-full max-w-2xl">
         @if (isEdit)
         {
-            <a href="/Users/Permissions/@Model.UserId" class="btn-secondary text-success flex items-center gap-1.5 py-3 px-5 rounded-2xl font-bold">
+            <a href="/Users/Permissions/@Model.UserId" class="btn btn-ghost text-success flex items-center gap-1.5 py-3 px-5 rounded-2xl font-bold">
                 <span class="material-symbols-rounded">admin_panel_settings</span>
                 تعديل الصلاحيات الاستثنائية الفردية
             </a>
@@ -113,11 +111,11 @@
             <div></div>
         }
         <div class="flex items-center gap-2">
-            <a href="/Users" class="btn-secondary">
+            <a href="/Users" class="btn btn-ghost">
                 <span class="material-symbols-rounded">cancel</span>
                 إلغاء
             </a>
-            <button type="submit" class="btn-primary">
+            <button type="submit" class="btn btn-primary">
                 <span class="material-symbols-rounded">save</span>
                 حفظ البيانات
             </button>

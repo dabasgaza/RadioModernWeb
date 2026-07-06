@@ -21,47 +21,45 @@
 
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-6 font-semibold text-sm"></div>
+        <div asp-validation-summary="All" class="bg-error/10 border border-error/20 text-error rounded-xl p-4 mb-6 font-semibold text-sm"></div>
     }
 
-    <div class="card-premium">
-        <div class="card-header">
+    <div class="card bg-base-100 shadow-md">
+        <div class="card-body space-y-4">
             <div class="flex items-center gap-2">
                 <span class="material-symbols-rounded text-success">play_circle</span>
-                <h3 class="font-bold text-ink text-base">تفاصيل التنفيذ</h3>
+                <h3 class="font-bold text-base-content text-base">تفاصيل التنفيذ</h3>
             </div>
-        </div>
-        <div class="card-body space-y-4">
             <div>
-                <label class="form-label">مدة التنفيذ (بالدقائق)</label>
-                <div class="input-wrapper">
-                    <span class="material-symbols-rounded input-icon">schedule</span>
-                    <input type="number" name="DurationMinutes" value="@Model.DurationMinutes" min="1" max="720" class="form-input" placeholder="مثال: 60" />
+                <label class="label">مدة التنفيذ (بالدقائق)</label>
+                <div class="relative">
+                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">schedule</span>
+                    <input type="number" name="DurationMinutes" value="@Model.DurationMinutes" min="1" max="720" class="input input-bordered w-full pr-10" placeholder="مثال: 60" />
                 </div>
             </div>
             <div>
-                <label class="form-label">ملاحظات التنفيذ</label>
-                <div class="input-wrapper">
-                    <span class="material-symbols-rounded input-icon" style="top:1rem;transform:none">notes</span>
-                    <textarea name="ExecutionNotes" rows="4" class="form-input" placeholder="أي ملاحظات حول عملية التنفيذ…">@Model.ExecutionNotes</textarea>
+                <label class="label">ملاحظات التنفيذ</label>
+                <div class="relative">
+                    <span class="material-symbols-rounded absolute right-3 text-base-content/40 pointer-events-none text-lg" style="top:1rem;transform:none">notes</span>
+                    <textarea name="ExecutionNotes" rows="4" class="textarea textarea-bordered w-full pr-10" placeholder="أي ملاحظات حول عملية التنفيذ…">@Model.ExecutionNotes</textarea>
                 </div>
             </div>
             <div>
-                <label class="form-label">المشاكل التي واجهت التنفيذ</label>
-                <div class="input-wrapper">
-                    <span class="material-symbols-rounded input-icon" style="top:1rem;transform:none">warning</span>
-                    <textarea name="IssuesEncountered" rows="4" class="form-input" placeholder="أي مشاكل تقنية أو إدارية أثناء التنفيذ…">@Model.IssuesEncountered</textarea>
+                <label class="label">المشاكل التي واجهت التنفيذ</label>
+                <div class="relative">
+                    <span class="material-symbols-rounded absolute right-3 text-base-content/40 pointer-events-none text-lg" style="top:1rem;transform:none">warning</span>
+                    <textarea name="IssuesEncountered" rows="4" class="textarea textarea-bordered w-full pr-10" placeholder="أي مشاكل تقنية أو إدارية أثناء التنفيذ…">@Model.IssuesEncountered</textarea>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="flex items-center justify-end gap-2 mt-6">
-        <a href="/ExecutionLogs" class="btn-secondary">
+        <a href="/ExecutionLogs" class="btn btn-ghost">
             <span class="material-symbols-rounded">arrow_forward</span>
             رجوع
         </a>
-        <button type="submit" class="btn-primary">
+        <button type="submit" class="btn btn-primary">
             <span class="material-symbols-rounded">save</span>
             حفظ التعديلات
         </button>

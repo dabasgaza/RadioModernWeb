@@ -1,69 +1,66 @@
 @model List<CancelledEpisodeDto>
 @{ ViewData["Title"] = "الحلقات الملغاة"; }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <a href="/Reports">التقارير</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>الحلقات الملغاة</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded text-danger">cancel</span>
-                الحلقات الملغاة
-            </h1>
-            <p>قائمة بكل الحلقات الملغاة وأسباب الإلغاء وتفاصيلها</p>
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+        <div class="breadcrumbs text-sm text-base-content/60">
+            <ul>
+                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
+                <li><a href="/Reports" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">assessment</span>التقارير</a></li>
+                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">cancel</span>الحلقات الملغاة</span></li>
+            </ul>
         </div>
-        <div class="flex items-center gap-2">
-            <a href="/Reports" class="btn-secondary">
-                <span class="material-symbols-rounded">arrow_forward</span>
-                الرجوع للتقارير
-            </a>
-        </div>
+        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-danger">cancel</span>
+            الحلقات الملغاة
+        </h1>
+        <p class="text-sm text-base-content/60 mt-0.5">قائمة بكل الحلقات الملغاة وأسباب الإلغاء وتفاصيلها</p>
+    </div>
+    <div class="flex items-center gap-2">
+        <a href="/Reports" class="btn btn-ghost">
+            <span class="material-symbols-rounded">arrow_forward</span>
+            الرجوع للتقارير
+        </a>
     </div>
 </div>
 
-<div class="table-premium">
-    @if (!Model.Any())
-    {
-        <div class="empty-state p-12">
-                <span class="material-symbols-rounded empty-icon text-success" style="background: rgba(16, 185, 129, 0.1);">check_circle</span>
-            <h3 class="font-bold text-ink text-lg mb-2">لا حلقات ملغاة</h3>
-            <p class="text-ink-muted text-sm">لم تُلغَ أي حلقات بعد. هذا مؤشر ممتاز!</p>
-        </div>
-    }
-    else
-    {
+@if (!Model.Any())
+{
+    <div class="card bg-base-100 shadow-md"><div class="card-body text-center py-12">
+        <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">check_circle</span>
+        <h3 class="font-bold text-lg mb-2">لا حلقات ملغاة</h3>
+        <p class="text-sm text-base-content/60 mb-4">لم تُلغَ أي حلقات بعد. هذا مؤشر ممتاز!</p>
+    </div></div>
+}
+else
+{
+    <div class="card bg-base-100 shadow-md overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
+        <table class="table table-zebra w-full text-sm">
+            <thead>
+                <tr>
+                    <th class="text-right font-semibold">الحلقة</th>
+                    <th class="text-right font-semibold">البرنامج</th>
+                    <th class="text-right font-semibold">الموعد</th>
+                    <th class="text-right font-semibold">السبب</th>
+                    <th class="text-right font-semibold">بواسطة</th>
+                    <th class="text-right font-semibold">تاريخ الإلغاء</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model)
+                {
                     <tr>
-                        <th class="px-5 py-3 text-right font-semibold">الحلقة</th>
-                        <th class="px-5 py-3 text-right font-semibold">البرنامج</th>
-                        <th class="px-5 py-3 text-right font-semibold">الموعد</th>
-                        <th class="px-5 py-3 text-right font-semibold">السبب</th>
-                        <th class="px-5 py-3 text-right font-semibold">بواسطة</th>
-                        <th class="px-5 py-3 text-right font-semibold">تاريخ الإلغاء</th>
+                        <td class="font-semibold text-base-content">@c.EpisodeName</td>
+                        <td class="text-base-content/60">@c.ProgramName</td>
+                        <td class="text-base-content/60">@(c.ScheduledExecutionTime?.ToString("yyyy-MM-dd") ?? "—")</td>
+                        <td class="text-base-content/60">@c.CancellationReason</td>
+                        <td class="text-base-content/60">@(c.CancelledBy ?? "—")</td>
+                        <td class="text-base-content/60 whitespace-nowrap" dir="ltr">@c.CancelledAt.ToString("yyyy-MM-dd HH:mm")</td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var c in Model)
-                    {
-                        <tr>
-                            <td class="px-5 py-3 font-semibold text-ink">@c.EpisodeName</td>
-                            <td class="px-5 py-3 text-ink-muted">@c.ProgramName</td>
-                            <td class="px-5 py-3 text-ink-muted">@(c.ScheduledExecutionTime?.ToString("yyyy-MM-dd") ?? "—")</td>
-                            <td class="px-5 py-3 text-ink-muted">@c.CancellationReason</td>
-                            <td class="px-5 py-3 text-ink-muted">@(c.CancelledBy ?? "—")</td>
-                            <td class="px-5 py-3 text-ink-muted whitespace-nowrap" dir="ltr">@c.CancelledAt.ToString("yyyy-MM-dd HH:mm")</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-</div>
+                }
+            </tbody>
+        </table>
+    </div>
+    </div>
+}

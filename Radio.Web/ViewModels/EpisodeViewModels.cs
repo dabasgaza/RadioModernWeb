@@ -73,6 +73,17 @@ public class EpisodeEditFormModel
 }
 
 /// <summary>
+/// صنف Status Badge General.
+/// </summary>
+public class StatusBadgeViewModel
+{
+    public string Type { get; set; } = "episode";
+    public string Status { get; set; } = "planned";
+    public string Label { get; set; } = string.Empty;
+    public string? IconOverride { get; set; }
+}
+
+/// <summary>
 /// صنف الحلقة الضيف Form عنصر.
 /// </summary>
 public class EpisodeGuestFormItem

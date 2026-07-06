@@ -4,29 +4,26 @@
     var episode = Model.Episode;
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <a href="/Publishing">سجل النشر الموحد</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>تسجيل نشر رقمي</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded text-primary">share</span>
-                تسجيل نشر رقمي
-            </h1>
-            <p>تسجيل عملية نشر حلقة على منصات السوشيال ميديا مع إرفاق الروابط والتفاصيل</p>
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+        <div class="breadcrumbs text-sm text-base-content/60">
+            <ul>
+                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
+                <li><a href="/Publishing" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">share</span>سجل النشر الموحد</a></li>
+                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">add</span>تسجيل نشر رقمي</span></li>
+            </ul>
         </div>
-        <div class="flex items-center gap-2">
-            <a href="/Publishing" class="btn-secondary">
-                <span class="material-symbols-rounded">arrow_forward</span>
-                الرجوع للسجل الموحد
-            </a>
-        </div>
+        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary">share</span>
+            تسجيل نشر رقمي
+        </h1>
+        <p class="text-sm text-base-content/60 mt-0.5">تسجيل عملية نشر حلقة على منصات السوشيال ميديا مع إرفاق الروابط والتفاصيل</p>
+    </div>
+    <div class="flex items-center gap-2">
+        <a href="/Publishing" class="btn btn-ghost">
+            <span class="material-symbols-rounded">arrow_forward</span>
+            الرجوع للسجل الموحد
+        </a>
     </div>
 </div>
 
@@ -37,16 +34,18 @@
 }
 
 <!-- Episode Info -->
-<div class="bg-surface rounded-xl border border-border p-5 mb-4">
-    <div class="flex items-center justify-between">
-        <div>
-            <h3 class="text-lg font-bold text-ink">@episode.EpisodeName</h3>
-            <p class="text-sm text-ink-muted">@episode.ProgramName</p>
+<div class="card bg-base-100 shadow-md mb-4">
+    <div class="card-body">
+        <div class="flex items-center justify-between">
+            <div>
+                <h3 class="text-lg font-bold text-base-content">@episode.EpisodeName</h3>
+                <p class="text-sm text-base-content/60">@episode.ProgramName</p>
+            </div>
+            <a href="/Episodes/Details/@episode.EpisodeId" class="btn btn-ghost text-sm" target="_blank">
+                <span class="material-symbols-rounded">open_in_new</span>
+                عرض الحلقة
+            </a>
         </div>
-        <a href="/Episodes/Details/@episode.EpisodeId" class="btn-secondary text-sm" target="_blank">
-            <span class="material-symbols-rounded">open_in_new</span>
-            عرض الحلقة
-        </a>
     </div>
 </div>
 
@@ -59,32 +58,32 @@
             @for (int i = 0; i < Model.EpisodeGuests.Count; i++)
             {
                 var guest = Model.EpisodeGuests[i];
-                <div class="bg-surface rounded-xl border border-border mb-4 guest-card" data-index="@i">
-                    <div class="p-5 border-b border-border bg-surface-3 rounded-t-xl">
-                        <h3 class="font-bold text-ink flex items-center gap-2">
+                <div class="card bg-base-100 shadow-md mb-4 guest-card" data-index="@i">
+                    <div class="px-5 py-3 bg-base-200 rounded-t-box border-b border-base-200">
+                        <h3 class="font-bold text-base-content flex items-center gap-2">
                             <span class="material-symbols-rounded text-primary">person</span>
                             @guest.FullName
                             @if (!string.IsNullOrWhiteSpace(guest.Topic))
                             {
-                                <span class="text-sm text-ink-muted font-normal">— @guest.Topic</span>
+                                <span class="text-sm text-base-content/60 font-normal">— @guest.Topic</span>
                             }
                         </h3>
                     </div>
-                    <div class="p-5 space-y-4">
+                    <div class="card-body">
                         <input type="hidden" name="GuestLogs[@i].EpisodeGuestId" value="@guest.EpisodeGuestId" />
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <label class="form-label">عنوان المقطع</label>
-                                <input type="text" name="GuestLogs[@i].ClipTitle" class="form-input" placeholder="عنوان المقطع المنشور" />
+                                <label class="label">عنوان المقطع</label>
+                                <input type="text" name="GuestLogs[@i].ClipTitle" class="input input-bordered" placeholder="عنوان المقطع المنشور" />
                             </div>
                             <div>
-                                <label class="form-label">المدة (دقيقة)</label>
-                                <input type="number" name="GuestLogs[@i].DurationMinutes" class="form-input" placeholder="مدة المقطع بالدقائق" min="1" />
+                                <label class="label">المدة (دقيقة)</label>
+                                <input type="number" name="GuestLogs[@i].DurationMinutes" class="input input-bordered" placeholder="مدة المقطع بالدقائق" min="1" />
                             </div>
                             <div>
-                                <label class="form-label">نوع الوسائط</label>
-                                <select name="GuestLogs[@i].MediaType" class="form-input">
+                                <label class="label">نوع الوسائط</label>
+                                <select name="GuestLogs[@i].MediaType" class="select select-bordered">
                                     <option value="1">صوت</option>
                                     <option value="2">فيديو</option>
                                     <option value="3">صوت وفيديو</option>
@@ -94,18 +93,18 @@
 
                         <!-- Platforms -->
                         <div>
-                            <label class="form-label">منصات النشر</label>
+                            <label class="label">منصات النشر</label>
                             <div class="platforms-container space-y-2" id="platforms-@i">
                                 <div class="platform-row flex gap-2 items-start">
-                                    <select name="GuestLogs[@i].Platforms[0].PlatformId" class="form-input flex-1">
+                                    <select name="GuestLogs[@i].Platforms[0].PlatformId" class="select select-bordered flex-1">
                                         <option value="">— اختر المنصة —</option>
                                         @foreach (var p in Model.Platforms)
                                         {
                                             <option value="@p.SocialMediaPlatformId">@p.Name</option>
                                         }
                                     </select>
-                                    <input type="url" name="GuestLogs[@i].Platforms[0].Url" class="form-input flex-[2]" placeholder="رابط النشر" dir="ltr" />
-                                    <button type="button" class="icon-btn icon-btn-success add-platform-btn" onclick="addPlatform(@i)" title="إضافة منصة">
+                                    <input type="url" name="GuestLogs[@i].Platforms[0].Url" class="input input-bordered flex-[2]" placeholder="رابط النشر" dir="ltr" />
+                                    <button type="button" class="btn btn-ghost btn-square btn-sm text-success" onclick="addPlatform(@i)" title="إضافة منصة">
                                         <span class="material-symbols-rounded">add</span>
                                     </button>
                                 </div>
@@ -117,21 +116,23 @@
         }
         else
         {
-            <div class="bg-surface rounded-xl border border-border p-8 text-center">
-                <span class="material-symbols-rounded text-ink-soft text-4xl mb-2">people</span>
-                <p class="text-ink-muted">لا يوجد ضيوف في هذه الحلقة.</p>
+            <div class="card bg-base-100 shadow-md">
+                <div class="card-body text-center py-12">
+                    <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">people</span>
+                    <p class="text-base-content/60">لا يوجد ضيوف في هذه الحلقة.</p>
+                </div>
             </div>
         }
     </div>
 
     <div class="flex items-center justify-end gap-2">
-        <a href="/Publishing" class="btn-secondary">
+        <a href="/Publishing" class="btn btn-ghost">
             <span class="material-symbols-rounded">cancel</span>
             إلغاء
         </a>
         @if (Model.EpisodeGuests.Any())
         {
-            <button type="submit" class="btn-primary">
+            <button type="submit" class="btn btn-primary">
                 <span class="material-symbols-rounded">publish</span>
                 تسجيل النشر
             </button>
@@ -166,15 +167,15 @@
             const count = platformCounters[guestIdx] || container.querySelectorAll('.platform-row').length;
             const html = `
                 <div class="platform-row flex gap-2 items-start">
-                    <select name="GuestLogs[${guestIdx}].Platforms[${count}].PlatformId" class="form-input flex-1">
+                    <select name="GuestLogs[${guestIdx}].Platforms[${count}].PlatformId" class="select select-bordered flex-1">
                         <option value="">— اختر المنصة —</option>
                         @foreach (var p in Model.Platforms)
                         {
                             <option value="@p.SocialMediaPlatformId">@p.Name</option>
                         }
                     </select>
-                    <input type="url" name="GuestLogs[${guestIdx}].Platforms[${count}].Url" class="form-input flex-[2]" placeholder="رابط النشر" dir="ltr" />
-                    <button type="button" class="icon-btn icon-btn-danger" onclick="this.closest('.platform-row').remove()">
+                    <input type="url" name="GuestLogs[${guestIdx}].Platforms[${count}].Url" class="input input-bordered flex-[2]" placeholder="رابط النشر" dir="ltr" />
+                    <button type="button" class="btn btn-ghost btn-square btn-sm text-error" onclick="this.closest('.platform-row').remove()">
                         <span class="material-symbols-rounded">close</span>
                     </button>
                 </div>`;

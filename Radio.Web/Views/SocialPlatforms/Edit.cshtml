@@ -20,50 +20,48 @@
 
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-6 font-semibold text-sm"></div>
+        <div asp-validation-summary="All" class="bg-error/10 border border-error/20 text-error rounded-xl p-4 mb-6 font-semibold text-sm"></div>
     }
 
-    <div class="card-premium">
-        <div class="card-header">
+    <div class="card bg-base-100 shadow-md">
+        <div class="card-body space-y-4">
             <div class="flex items-center gap-2">
                 <span class="material-symbols-rounded text-primary">share</span>
-                <h3 class="font-bold text-ink text-base">بيانات المنصة</h3>
+                <h3 class="font-bold text-base-content text-base">بيانات المنصة</h3>
             </div>
-        </div>
-        <div class="card-body space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="form-label">اسم المنصة *</label>
-                    <div class="input-wrapper">
-                        <span class="material-symbols-rounded input-icon">badge</span>
-                        <input type="text" name="Name" value="@Model.Name" class="form-input" required placeholder="مثال: YouTube" />
+                    <label class="label">اسم المنصة *</label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">badge</span>
+                        <input type="text" name="Name" value="@Model.Name" class="input input-bordered w-full pr-10" required placeholder="مثال: YouTube" />
                     </div>
                 </div>
                 <div>
-                    <label class="form-label">أيقونة (Material Icon)</label>
-                    <div class="input-wrapper">
-                        <span class="material-symbols-rounded input-icon">image</span>
-                        <input type="text" name="Icon" value="@Model.Icon" class="form-input" placeholder="مثل: smart_display" />
+                    <label class="label">أيقونة (Material Icon)</label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">image</span>
+                        <input type="text" name="Icon" value="@Model.Icon" class="input input-bordered w-full pr-10" placeholder="مثل: smart_display" />
                     </div>
                 </div>
             </div>
             <div>
-                <label class="form-label">الرابط الأساسي (Base URL)</label>
-                <div class="input-wrapper">
-                    <span class="material-symbols-rounded input-icon">link</span>
-                    <input type="url" name="BaseUrl" value="@Model.BaseUrl" class="form-input" dir="ltr" placeholder="https://www.youtube.com/watch?v=" />
+                <label class="label">الرابط الأساسي (Base URL)</label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">link</span>
+                        <input type="url" name="BaseUrl" value="@Model.BaseUrl" class="input input-bordered w-full pr-10" dir="ltr" placeholder="https://www.youtube.com/watch?v=" />
                 </div>
-                <p class="text-xs text-ink-muted mt-1">يُستخدم كبادئة عند إدخال رابط النشر — المستخدم يضيف فقط الـ ID أو username</p>
+                <p class="text-xs text-base-content/60 mt-1">يُستخدم كبادئة عند إدخال رابط النشر — المستخدم يضيف فقط الـ ID أو username</p>
             </div>
         </div>
     </div>
 
     <div class="flex items-center justify-end gap-2 mt-6">
-        <a href="/SocialPlatforms" class="btn-secondary">
+        <a href="/SocialPlatforms" class="btn btn-ghost">
             <span class="material-symbols-rounded">cancel</span>
             إلغاء
         </a>
-        <button type="submit" class="btn-primary">
+        <button type="submit" class="btn btn-primary">
             <span class="material-symbols-rounded">save</span>
             حفظ البيانات
         </button>

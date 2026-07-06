@@ -3,61 +3,59 @@
     ViewData["Title"] = "البرامج الإذاعية";
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>البرامج الإذاعية</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded">radio</span>
-                البرامج الإذاعية
-            </h1>
-            <p>إدارة البرامج الإذاعية ومتابعة إحصائياتها وتصنيفاتها</p>
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+        <div class="breadcrumbs text-sm text-base-content/60">
+            <ul>
+                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
+                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">radio</span>البرامج الإذاعية</span></li>
+            </ul>
         </div>
-        <div class="flex items-center gap-2">
-            @if (User.HasPermission(AppPermissions.ProgramManage))
-            {
-                <a href="/Programs/Create" class="btn-primary">
-                    <span class="material-symbols-rounded">add</span>
-                    برنامج جديد
-                </a>
-            }
-        </div>
+        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary">radio</span>
+            البرامج الإذاعية
+        </h1>
+        <p class="text-sm text-base-content/60 mt-0.5">إدارة البرامج الإذاعية ومتابعة إحصائياتها وتصنيفاتها</p>
     </div>
+    @if (User.HasPermission(AppPermissions.ProgramManage))
+    {
+        <a href="/Programs/Create" class="btn btn-primary">
+            <span class="material-symbols-rounded">add</span>
+            برنامج جديد
+        </a>
+    }
 </div>
 
 <!-- Filters -->
-<div class="filter-premium">
-    <form method="get" class="flex gap-3">
-        <div class="relative flex-1">
-            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-ink-soft">search</span>
-            <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث باسم البرنامج أو الفئة…" class="form-input pr-10" />
-        </div>
-        <button type="submit" class="btn-primary">
-            <span class="material-symbols-rounded">search</span>
-            بحث
-        </button>
-        <a href="/Programs" class="btn-secondary" title="إعادة ضبط">
-            <span class="material-symbols-rounded">refresh</span>
-        </a>
-    </form>
+<div class="card bg-base-100 shadow-md mb-6">
+    <div class="card-body">
+        <form method="get" class="flex gap-3">
+            <div class="relative flex-1">
+                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40">search</span>
+                <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث باسم البرنامج أو الفئة…" class="input input-bordered w-full pr-10" />
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <span class="material-symbols-rounded">search</span>
+                بحث
+            </button>
+            <a href="/Programs" class="btn btn-ghost" title="إعادة ضبط">
+                <span class="material-symbols-rounded">refresh</span>
+            </a>
+        </form>
+    </div>
 </div>
 
 <!-- Programs Grid -->
 @if (!Model.Any())
 {
-    <div class="table-premium p-12 text-center">
-        <div class="empty-state">
-            <span class="material-symbols-rounded empty-icon">radio</span>
-            <h3 class="font-bold text-ink text-lg mb-2">لا توجد برامج إذاعية</h3>
-            <p class="text-ink-muted text-sm mb-4">لم تتم إضافة أي برامج إذاعية بعد مطابقة للبحث.</p>
+    <div class="card bg-base-100 shadow-md">
+        <div class="card-body items-center text-center py-16">
+            <span class="material-symbols-rounded text-6xl text-base-content/20 mb-4">radio</span>
+            <h3 class="font-bold text-lg text-base-content mb-1">لا توجد برامج إذاعية</h3>
+            <p class="text-sm text-base-content/60 mb-6">لم تتم إضافة أي برامج إذاعية بعد مطابقة للبحث.</p>
             @if (User.HasPermission(AppPermissions.ProgramManage))
             {
-                <a href="/Programs/Create" class="btn-primary">
+                <a href="/Programs/Create" class="btn btn-primary">
                     <span class="material-symbols-rounded">add</span>
                     إضافة برنامج جديد
                 </a>
@@ -71,30 +69,30 @@ else
         @foreach (var item in Model)
         {
             var p = item.Program;
-            <div class="card-premium flex flex-col justify-between h-full group hover:shadow-lg transition-all duration-300">
-                <div class="card-body flex-1 space-y-4">
+            <div class="card card-compact bg-base-100 shadow-md group hover:shadow-lg transition-shadow duration-300">
+                <div class="card-body gap-4">
                     <!-- Top Category & Icon -->
                     <div class="flex items-center justify-between">
-                        <span class="badge @(p.Category == "سياسي" ? "badge-danger" : p.Category == "ثقافي" ? "badge-accent" : p.Category == "اجتماعي" ? "badge-success" : "badge-info") text-xs font-bold px-2.5 py-1 rounded-full">
+                        <span class="badge @(p.Category == "سياسي" ? "badge-error" : p.Category == "ثقافي" ? "badge-accent" : p.Category == "اجتماعي" ? "badge-success" : "badge-info")">
                             @(p.Category ?? "عام")
                         </span>
-                        <span class="material-symbols-rounded text-ink-soft group-hover:text-primary transition-colors duration-300">radio</span>
+                        <span class="material-symbols-rounded text-base-content/40 group-hover:text-primary transition-colors duration-300">radio</span>
                     </div>
 
                     <!-- Program Title & Description -->
                     <div class="space-y-1.5">
-                        <h3 class="text-base font-extrabold text-ink group-hover:text-primary transition-colors duration-300">
+                        <h3 class="text-base font-extrabold text-base-content group-hover:text-primary transition-colors duration-300">
                             @p.ProgramName
                         </h3>
-                        <p class="text-xs text-ink-muted leading-relaxed line-clamp-3 min-h-[4.5rem]">
+                        <p class="text-xs text-base-content/60 leading-relaxed line-clamp-3 min-h-[4.5rem]">
                             @(p.ProgramDescription ?? "لا يوجد وصف متوفر للبرنامج حالياً.")
                         </p>
                     </div>
 
                     <!-- Stat branding -->
-                    <div class="pt-3 border-t border-border/60 flex items-center justify-between text-xs">
-                        <span class="text-ink-muted font-medium flex items-center gap-1">
-                            <span class="material-symbols-rounded text-ink-soft" style="font-size: 16px;">podcasts</span>
+                    <div class="pt-3 border-t border-base-300 flex items-center justify-between text-xs">
+                        <span class="text-base-content/60 font-medium flex items-center gap-1">
+                            <span class="material-symbols-rounded text-base-content/40" style="font-size: 16px;">podcasts</span>
                             الحلقات النشطة
                         </span>
                         <span class="font-black text-primary bg-primary/10 px-3 py-1 rounded-lg">
@@ -106,13 +104,13 @@ else
                 <!-- Card Actions Footer -->
                 @if (User.HasPermission(AppPermissions.ProgramManage))
                 {
-                    <div class="px-5 py-3 bg-surface-2 border-t border-border/60 flex items-center justify-end gap-1.5">
-                        <a href="/Programs/Edit/@p.ProgramId" class="icon-btn icon-btn-primary" title="تعديل">
+                    <div class="px-5 py-3 bg-base-200 border-t border-base-300 flex items-center justify-end gap-1.5">
+                        <a href="/Programs/Edit/@p.ProgramId" class="btn btn-ghost btn-square btn-sm" title="تعديل" aria-label="تعديل">
                             <span class="material-symbols-rounded">edit</span>
                         </a>
                         <form method="post" action="/Programs/Delete/@p.ProgramId" class="inline" data-confirm="هل أنت متأكد من حذف البرنامج «@p.ProgramName»؟">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="icon-btn icon-btn-danger" title="حذف">
+                            <button type="submit" class="btn btn-ghost btn-square btn-sm text-error hover:bg-error/10" title="حذف" aria-label="حذف">
                                 <span class="material-symbols-rounded">delete</span>
                             </button>
                         </form>

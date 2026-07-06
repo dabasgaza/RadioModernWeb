@@ -9,25 +9,24 @@
     var entityUrl = ViewBag.EntityUrl ?? "";
 }
 
-<div class="page-header-enhanced p-6">
+<div class="mb-6">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
         <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <a href="@entityUrl">@entityName</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>@(isEdit ? "تعديل" : "جديد")</span>
-            </nav>
-            <h1 class="flex items-center gap-2">
+            <div class="breadcrumbs text-sm text-base-content/60">
+                <ul>
+                    <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
+                    <li><a href="@entityUrl" class="inline-flex items-center gap-1">@entityName</a></li>
+                    <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">@(isEdit ? "edit" : "add")</span>@(isEdit ? "تعديل" : "جديد")</span></li>
+                </ul>
+            </div>
+            <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
                 <span class="material-symbols-rounded text-primary">@icon</span>
                 @title
             </h1>
-            <p>@description</p>
+            <p class="text-sm text-base-content/60 mt-0.5">@description</p>
         </div>
         <div class="flex items-center gap-2">
-            <a href="@backUrl" class="btn-secondary">
+            <a href="@backUrl" class="btn btn-ghost">
                 <span class="material-symbols-rounded">arrow_forward</span>
                 @backText
             </a>

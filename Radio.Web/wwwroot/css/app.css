@@ -1,20 +1,39 @@
 :root {
+    /* ── Brand tokens ── */
     --primary: #2563EB;
     --primary-dark: #1D4ED8;
     --primary-light: #3B82F6;
     --secondary: #7C3AED;
     --secondary-dark: #6D28D9;
     --accent: #0EA5E9;
+
+    /* ── State tokens ── */
     --success: #10B981;
     --warning: #F59E0B;
     --danger: #EF4444;
+
+    /* ── Surface hierarchy ── */
     --surface: #FFFFFF;
     --surface-2: #F8FAFC;
     --surface-3: #F1F5F9;
     --border: #E2E8F0;
+
+    /* ── Content tokens ── */
     --ink: #0F172A;
     --ink-muted: #475569;
     --ink-soft: #94A3B8;
+
+    /* ── Workflow status tokens (light) ── */
+    --status-planned-bg:    rgba(37, 99, 235, 0.10);
+    --status-planned-text:  #2563EB;
+    --status-executed-bg:   rgba(16, 185, 129, 0.10);
+    --status-executed-text: #059669;
+    --status-published-bg:   rgba(16, 185, 129, 0.10);
+    --status-published-text: #059669;
+    --status-website-bg:    rgba(14, 165, 233, 0.10);
+    --status-website-text:  #0284C7;
+    --status-cancelled-bg:  rgba(239, 68, 68, 0.10);
+    --status-cancelled-text: #DC2626;
 }
 
 /* ════════════════════════════════════════════════════════
@@ -24,39 +43,39 @@ html {
     transition: background-color 0.3s ease, color 0.2s ease;
 }
 html.dark {
-    /* Warm dark-gray surfaces — easier on the eye than cold black */
-    --surface:   #1C1E26;   /* page background — warm deep charcoal   */
-    --surface-2: #22252E;   /* cards / panels                          */
-    --surface-3: #2A2D38;   /* hover rows / input focus backgrounds    */
-    --border:    #353848;   /* subtle separator — warm indigo-tinted   */
-    /* Text — never pure white; warm off-white hierarchy */
-    --ink:       #E8EAEF;   /* primary text    */
-    --ink-muted: #9DA4B4;   /* secondary text  */
-    --ink-soft:  #7C8599;   /* tertiary / hint — رُفع من 636A7E لتحسين التباين */
-    /* Primary accent — softer, desaturated blue for dark bg */
+    /* ── Surface hierarchy (dark) ── */
+    --surface:   #1C1E26;
+    --surface-2: #22252E;
+    --surface-3: #2A2D38;
+    --border:    #353848;
+
+    /* ── Content tokens (dark) ── */
+    --ink:       #E8EAEF;
+    --ink-muted: #9DA4B4;
+    --ink-soft:  #7C8599;
+
+    /* ── Brand accent (dark) ── */
     --primary-light: #7EB8FF;
+
+    /* ── Workflow status tokens (dark) ── */
+    --status-planned-bg:    rgba(126, 184, 255, 0.12);
+    --status-planned-text:  #7EB8FF;
+    --status-executed-bg:   rgba(52, 211, 153, 0.12);
+    --status-executed-text: #34D399;
+    --status-published-bg:   rgba(52, 211, 153, 0.12);
+    --status-published-text: #34D399;
+    --status-website-bg:    rgba(56, 214, 236, 0.12);
+    --status-website-text:  #38D6EC;
+    --status-cancelled-bg:  rgba(248, 113, 113, 0.12);
+    --status-cancelled-text: #F87171;
+
     transition: background-color 0.3s ease, color 0.2s ease;
 }
-.card-premium, .stat-card-premium, .stat-card, .form-input, .table-premium, .filter-premium, .glass-card, .glass-topbar {
+.stat-card, .glass-topbar {
     transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* ─── Tailwind utility class overrides for dark mode ─── */
-html.dark .bg-surface { background: var(--surface); }
-html.dark .bg-surface-2 { background: var(--surface-2); }
-html.dark .bg-surface-3 { background: var(--surface-3); }
-html.dark .text-ink { color: var(--ink); }
-html.dark .text-ink-muted { color: var(--ink-muted); }
-html.dark .text-ink-soft { color: var(--ink-soft); }
-html.dark .border-border { border-color: var(--border); }
-html.dark .divide-border > :not([hidden]) ~ :not([hidden]) { border-color: var(--border); }
-html.dark .divide-border\/60 > :not([hidden]) ~ :not([hidden]) { border-color: rgba(53, 56, 72, 0.6); }
-html.dark .bg-white { background: var(--surface-2); }
-html.dark .bg-black\/50 { background: rgba(0, 0, 0, 0.5); }
-html.dark .shadow-lg { box-shadow: 0 10px 20px -4px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255,255,255,0.04); }
-html.dark .shadow-xl { box-shadow: 0 20px 30px -6px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.04); }
-html.dark .shadow-sm { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.25); }
-html.dark .gradient-to-l { background: linear-gradient(135deg, #1D3A8A, #4C1D8C); }
+/* Tailwind utility overrides removed — handled via var() in tailwind.config.js */
 
 /* ════════════════════════════════════════════════════════
    Dark Mode — Sidebar / DaisyUI .menu overrides
@@ -145,18 +164,6 @@ html.dark .menu li > details > summary:focus-visible {
 }
 
 /* ─── Dark mode component adjustments ─── */
-html.dark .table-premium tbody tr:hover { background: var(--surface-3); }
-html.dark .icon-btn { background: var(--surface-3); border-color: var(--border); }
-html.dark .icon-btn:hover { background: rgba(126, 184, 255, 0.12); border-color: rgba(126, 184, 255, 0.35); }
-html.dark .form-input { background: var(--surface-2); border-color: var(--border); color: var(--ink); }
-html.dark .form-input:focus { background: var(--surface); border-color: #7EB8FF; box-shadow: 0 0 0 3px rgba(126, 184, 255, 0.14); }
-html.dark .input-icon { color: var(--ink-soft); }
-html.dark .input-wrapper:focus-within .input-icon { color: #7EB8FF; }
-html.dark .input-wrapper .form-input { background: var(--surface-2); border-color: var(--border); color: var(--ink); }
-html.dark .input-wrapper .form-input:focus { background: var(--surface); border-color: #7EB8FF; }
-html.dark .form-label { color: var(--ink-muted); }
-html.dark .stat-card-premium:hover { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(126, 184, 255, 0.1); }
-html.dark .page-header p { color: var(--ink-soft); }
 html.dark ::selection { background: rgba(126, 184, 255, 0.22); }
 
 /* ════════════════════════════════════════════════════════
@@ -174,75 +181,11 @@ html.dark {
                          0 0 0 1px rgba(126,184,255,0.18);
 }
 
-/* ── card-premium ── */
-html.dark .card-premium {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    box-shadow: var(--card-shadow);
-}
-html.dark .card-premium:hover {
-    box-shadow: var(--card-shadow-hover);
-    border-color: rgba(126, 184, 255, 0.25);
-    transition: box-shadow 0.2s, border-color 0.2s;
-}
-html.dark .card-header {
-    background: rgba(255,255,255,0.03);
-    border-bottom: 1px solid var(--card-border);
-}
-
-/* ── stat-card-premium ── */
-html.dark .stat-card-premium {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    box-shadow: var(--card-shadow);
-    position: relative;
-    overflow: hidden;
-}
-html.dark .stat-card-premium::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(to left, rgba(126,184,255,0.6), rgba(167,139,250,0.6));
-    opacity: 0;
-    transition: opacity 0.25s;
-}
-html.dark .stat-card-premium:hover {
-    border-color: rgba(126, 184, 255, 0.3);
-    box-shadow: var(--card-shadow-hover);
-    transform: translateY(-2px);
-}
-html.dark .stat-card-premium:hover::before { opacity: 1; }
-
 /* ── stat-card ── */
 html.dark .stat-card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     box-shadow: var(--card-shadow);
-}
-
-/* ── table-premium ── */
-html.dark .table-premium {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    box-shadow: var(--card-shadow);
-}
-html.dark .table-premium th {
-    background: rgba(255,255,255,0.03);
-    color: var(--ink-muted);
-    border-bottom: 1px solid var(--card-border);
-    letter-spacing: 0.02em;
-}
-html.dark .table-premium td        { border-bottom-color: var(--border); color: var(--ink); }
-html.dark .table-premium tr:last-child td { border-bottom: none; }
-html.dark .table-premium tbody tr:hover   { background: rgba(126,184,255,0.05); }
-html.dark .table-premium .border-b       { border-color: var(--card-border); }
-
-/* ── filter-premium ── */
-html.dark .filter-premium {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 
 /* ── Tailwind border-border/* overrides ── */
@@ -273,12 +216,6 @@ html.dark .glass-topbar {
     border-bottom: 1px solid rgba(53, 56, 72, 0.5);
     backdrop-filter: blur(14px);
 }
-html.dark .glass-card {
-    background: rgba(28, 30, 38, 0.85);
-    border-color: rgba(53, 56, 72, 0.75);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255,255,255,0.03);
-}
-
 /* ─── Scrollbar dark mode ─── */
 html.dark ::-webkit-scrollbar-thumb { background: hsla(230, 15%, 40%, 0.45); border-radius: 4px; }
 html.dark ::-webkit-scrollbar-thumb:hover { background: hsla(220, 40%, 60%, 0.55); }
@@ -286,156 +223,76 @@ html.dark ::-webkit-scrollbar-thumb:hover { background: hsla(220, 40%, 60%, 0.55
 /* ─── Body background gradient dark mode ─── */
 html.dark body { background-image: radial-gradient(at 0% 0%, hsla(250, 40%, 50%, 0.05) 0px, transparent 55%), radial-gradient(at 100% 100%, hsla(215, 50%, 45%, 0.05) 0px, transparent 55%); }
 
-/* ─── Shimmer loading dark mode ─── */
-html.dark .shimmer { background: linear-gradient(90deg, rgba(28, 30, 38, 0.5) 25%, rgba(42, 45, 56, 0.8) 50%, rgba(28, 30, 38, 0.5) 75%); }
-
-/* ─── Status badges dark mode ─── */
-html.dark .status-badge.planned        { background: rgba(126, 184, 255, 0.12); color: #7EB8FF; }
-html.dark .status-badge.executed       { background: rgba(52, 211, 153, 0.12);  color: #34D399; }
-html.dark .status-badge.published      { background: rgba(52, 211, 153, 0.12);  color: #34D399; }
-html.dark .status-badge.website-published { background: rgba(56, 214, 236, 0.12); color: #38D6EC; }
-html.dark .status-badge.cancelled      { background: rgba(248, 113, 113, 0.12); color: #F87171; }
-
-/* ─── Inline badges dark mode ─── */
-html.dark .badge-info      { background: rgba(126, 184, 255, 0.12); color: #7EB8FF; }
-html.dark .badge-secondary { background: rgba(192, 162, 255, 0.12); color: #C0A2FF; }
-html.dark .badge-active    { background: rgba(52, 211, 153, 0.12);  color: #34D399; }
-html.dark .badge-inactive  { background: rgba(248, 113, 113, 0.12); color: #F87171; }
-
-/* ─── Icon buttons dark mode ─── */
-html.dark .icon-btn-primary { background: rgba(126, 184, 255, 0.1); border-color: rgba(126, 184, 255, 0.25); }
-html.dark .icon-btn-primary:hover { background: #7EB8FF; color: #1C1E26; }
-html.dark .icon-btn-danger  { background: rgba(248, 113, 113, 0.1); border-color: rgba(248, 113, 113, 0.25); }
-html.dark .icon-btn-danger:hover  { background: #F87171; color: #1C1E26; }
-html.dark .icon-btn-success { background: rgba(52, 211, 153, 0.1);  border-color: rgba(52, 211, 153, 0.25); }
-html.dark .icon-btn-success:hover { background: #34D399; color: #1C1E26; }
-html.dark .icon-btn-info    { background: rgba(56, 214, 236, 0.1);  border-color: rgba(56, 214, 236, 0.25); }
-html.dark .icon-btn-info:hover    { background: #38D6EC; color: #1C1E26; }
+/* Status badge/badge dark overrides removed — handled via CSS variables */
 
 /* ════════════════════════════════════════════════════════
    Dark Mode — Button Overrides
    تضمن ظهور النص بوضوح على جميع أنواع الأزرار
    ════════════════════════════════════════════════════════ */
 
-/* btn-primary — أزرق مع نص أبيض دائماً */
-html.dark .btn-primary {
+/* Button dark overrides — .btn.btn-* specificity matches daisyUI without !important */
+html.dark .btn.btn-primary {
     background: #3B6FD4;
-    color: #fff !important;
+    color: #fff;
     border: none;
 }
-html.dark .btn-primary:hover {
+html.dark .btn.btn-primary:hover {
     background: #2F5DB8;
-    color: #fff !important;
+    color: #fff;
 }
 
-/* btn-secondary — خلفية surface مع حدود وnص واضح */
-html.dark .btn-secondary {
+html.dark .btn.btn-secondary {
     background: var(--surface-3);
-    color: var(--ink) !important;
+    color: var(--ink);
     border-color: var(--border);
 }
-html.dark .btn-secondary:hover {
+html.dark .btn.btn-secondary:hover {
     background: var(--surface-2);
-    color: var(--ink) !important;
+    color: var(--ink);
     border-color: rgba(126, 184, 255, 0.35);
 }
 
-/* btn-danger — أحمر مع نص أبيض */
-html.dark .btn-danger {
+html.dark .btn.btn-danger {
     background: #C0392B;
-    color: #fff !important;
+    color: #fff;
 }
-html.dark .btn-danger:hover {
+html.dark .btn.btn-danger:hover {
     background: #A93226;
-    color: #fff !important;
+    color: #fff;
 }
 
-/* btn-success — أخضر داكن مع نص أبيض */
-html.dark .btn-success {
+html.dark .btn.btn-success {
     background: #0F9B6E;
-    color: #fff !important;
+    color: #fff;
 }
-html.dark .btn-success:hover {
+html.dark .btn.btn-success:hover {
     background: #0D8460;
-    color: #fff !important;
+    color: #fff;
 }
 
-/* btn-warning — برتقالي مع نص داكن مقروء */
-html.dark .btn-warning {
+html.dark .btn.btn-warning {
     background: #D97706;
-    color: #1C1E26 !important;
+    color: #1C1E26;
 }
-html.dark .btn-warning:hover {
+html.dark .btn.btn-warning:hover {
     background: #B45309;
-    color: #1C1E26 !important;
+    color: #1C1E26;
 }
 
-/* btn-info — غير معرّف، نضيفه هنا */
-html.dark .btn-info {
+html.dark .btn.btn-info {
     background: rgba(126, 184, 255, 0.2);
-    color: #7EB8FF !important;
+    color: #7EB8FF;
     border: 1px solid rgba(126, 184, 255, 0.35);
 }
-html.dark .btn-info:hover {
+html.dark .btn.btn-info:hover {
     background: #7EB8FF;
-    color: #0D1A2E !important;
-}
-
-/* ─── منع DaisyUI من طغيان --bc على النص ─── */
-html.dark .btn-primary,
-html.dark .btn-danger,
-html.dark .btn-success,
-html.dark .btn-warning {
-    --tw-text-opacity: 1;
+    color: #0D1A2E;
 }
 
 /* ─── Episode row delete dark mode ─── */
 html.dark .ep-row-del:hover { background: rgba(248, 113, 113, 0.12); }
 
-/* ════════════════════════════════════════════════════════
-   Dark Mode — Tailwind Color Utility Overrides
-   ════════════════════════════════════════════════════════ */
-/* Red family — error/delete/danger */
-html.dark .bg-red-50  { background: rgba(248, 113, 113, 0.08); }
-html.dark .bg-red-100 { background: rgba(248, 113, 113, 0.13); }
-html.dark .bg-red-600 { background: #EF4444; }
-html.dark .text-red-600,
-html.dark .text-red-700 { color: #F87171; }
-html.dark .border-red-100 { border-color: rgba(248, 113, 113, 0.15); }
-html.dark .border-red-200,
-html.dark .border-red-500 { border-color: rgba(248, 113, 113, 0.28); }
-html.dark .shadow-red-200  { box-shadow: 0 4px 6px -1px rgba(248, 113, 113, 0.1); }
-
-/* Green family — success */
-html.dark .bg-green-50     { background: rgba(52, 211, 153, 0.08); }
-html.dark .text-green-600  { color: #34D399; }
-html.dark .border-green-200 { border-color: rgba(52, 211, 153, 0.25); }
-
-/* Blue family — info */
-html.dark .bg-blue-50    { background: rgba(126, 184, 255, 0.08); }
-html.dark .bg-blue-100   { background: rgba(126, 184, 255, 0.13); }
-html.dark .text-blue-600 { color: #7EB8FF; }
-html.dark .text-blue-700 { color: #7EB8FF; }
-html.dark .border-blue-200 { border-color: rgba(126, 184, 255, 0.28); }
-
-/* Amber/Yellow family — warning */
-html.dark .bg-amber-50    { background: rgba(251, 191, 36, 0.08); }
-html.dark .text-amber-600 { color: #FBBF24; }
-html.dark .border-amber-200 { border-color: rgba(251, 191, 36, 0.25); }
-
-/* Slate/Gray family */
-html.dark .bg-slate-50    { background: var(--surface-2); }
-html.dark .text-slate-500,
-html.dark .text-slate-600 { color: var(--ink-muted); }
-html.dark .text-slate-700  { color: var(--ink-soft); }
-html.dark .border-slate-200 { border-color: var(--border); }
-
-/* Indigo family */
-html.dark .bg-indigo-50    { background: rgba(129, 140, 248, 0.1); }
-html.dark .text-indigo-600 { color: #A5B4FC; }
-
-/* Text white on colored backgrounds */
-html.dark .text-white { color: #E8EAEF; }
+/* Color utility overrides removed — all views use daisyUI semantic tokens (bg-primary/10, text-danger, etc.) */
 
 /* Shadow utilities */
 html.dark .shadow-md { box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.4); }
@@ -459,16 +316,7 @@ html.dark .shadow    { box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.3); }
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
 }
-.skeleton {
-    background: linear-gradient(90deg, var(--surface-3) 25%, var(--surface-2) 50%, var(--surface-3) 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s ease-in-out infinite;
-    border-radius: 8px;
-}
-.skeleton-text { height: 1rem; width: 60%; margin-bottom: 0.5rem; }
-.skeleton-title { height: 1.5rem; width: 40%; margin-bottom: 1rem; }
-.skeleton-avatar { width: 2.5rem; height: 2.5rem; border-radius: 50%; }
-.skeleton-card { height: 8rem; width: 100%; }
+
 
 /* ════════════════════════════════════════════════════════
    Back-to-Top Button
@@ -502,171 +350,14 @@ html.dark .shadow    { box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.3); }
 #back-to-top:hover { background: var(--primary-dark); transform: translateY(-2px); }
 /* ─── Back-to-Top Button ─── */
 html.dark #back-to-top { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); }
-
-/* ════════════════════════════════════════════════════════
-   Dark Mode — DaisyUI Semantic Color Fixes
-   DaisyUI يخزّن --su --er --wa --in --p بصيغة oklch channels
-   فقط، مما يجعل text-success / bg-danger/10 إلخ تنتج ألواناً
-   خاطئة. نُعرّف CSS vars صريحة ونُطبّقها بـ !important.
-   ════════════════════════════════════════════════════════ */
-html.dark {
-    /* ── ألوان دلالية ثابتة تُستخدم في كل الـ overrides أدناه ── */
-    --dk-primary:   #7EB8FF;
-    --dk-secondary: #A78BFA;
-    --dk-accent:    #38D6EC;
-    --dk-success:   #34D399;
-    --dk-warning:   #FBBF24;
-    --dk-danger:    #F87171;
-    --dk-info:      #7EB8FF;
-}
-
-/* ── text-{color} من DaisyUI / Tailwind ── */
-html.dark .text-primary   { color: var(--dk-primary)   !important; }
-html.dark .text-secondary { color: var(--dk-secondary) !important; }
-html.dark .text-accent    { color: var(--dk-accent)    !important; }
-html.dark .text-success   { color: var(--dk-success)   !important; }
-html.dark .text-warning   { color: var(--dk-warning)   !important; }
-html.dark .text-danger,
-html.dark .text-error     { color: var(--dk-danger)    !important; }
-html.dark .text-info      { color: var(--dk-info)      !important; }
-
-/* ── bg-{color}/N — خلفيات شفافة ملوّنة ── */
-/* primary */
-html.dark .bg-primary\/5  { background: rgba(126,184,255,0.05)  !important; }
-html.dark .bg-primary\/10 { background: rgba(126,184,255,0.12)  !important; }
-html.dark .bg-primary\/20 { background: rgba(126,184,255,0.18)  !important; }
-html.dark .bg-primary\/5  { background: rgba(126,184,255,0.05)  !important; }
-/* success */
-html.dark .bg-success\/5  { background: rgba(52,211,153,0.06)   !important; }
-html.dark .bg-success\/10 { background: rgba(52,211,153,0.13)   !important; }
-html.dark .bg-success\/20 { background: rgba(52,211,153,0.2)    !important; }
-/* danger / error */
-html.dark .bg-danger\/5   { background: rgba(248,113,113,0.06)  !important; }
-html.dark .bg-danger\/10  { background: rgba(248,113,113,0.13)  !important; }
-html.dark .bg-danger\/20  { background: rgba(248,113,113,0.2)   !important; }
-html.dark .bg-error\/5    { background: rgba(248,113,113,0.06)  !important; }
-html.dark .bg-error\/10   { background: rgba(248,113,113,0.13)  !important; }
-/* warning */
-html.dark .bg-warning\/5  { background: rgba(251,191,36,0.06)   !important; }
-html.dark .bg-warning\/10 { background: rgba(251,191,36,0.13)   !important; }
-html.dark .bg-warning\/20 { background: rgba(251,191,36,0.2)    !important; }
-/* accent / info */
-html.dark .bg-accent\/5   { background: rgba(56,214,236,0.06)   !important; }
-html.dark .bg-accent\/10  { background: rgba(56,214,236,0.13)   !important; }
-html.dark .bg-info\/5     { background: rgba(126,184,255,0.06)  !important; }
-html.dark .bg-info\/10    { background: rgba(126,184,255,0.13)  !important; }
-/* secondary */
-html.dark .bg-secondary\/10 { background: rgba(167,139,250,0.13) !important; }
-
-/* ── border-{color}/N ── */
-html.dark .border-primary\/10  { border-color: rgba(126,184,255,0.15) !important; }
-html.dark .border-primary\/20  { border-color: rgba(126,184,255,0.25) !important; }
-html.dark .border-primary\/50  { border-color: rgba(126,184,255,0.45) !important; }
-html.dark .border-success\/20  { border-color: rgba(52,211,153,0.25)  !important; }
-html.dark .border-success\/30  { border-color: rgba(52,211,153,0.35)  !important; }
-html.dark .border-danger\/20   { border-color: rgba(248,113,113,0.25) !important; }
-html.dark .border-danger\/30   { border-color: rgba(248,113,113,0.35) !important; }
-html.dark .border-warning\/20  { border-color: rgba(251,191,36,0.25)  !important; }
-html.dark .border-accent\/10   { border-color: rgba(56,214,236,0.15)  !important; }
-
-/* ── ring-{color}/N ── */
-html.dark .ring-primary\/25  { --tw-ring-color: rgba(126,184,255,0.25); }
-html.dark .ring-success\/20  { --tw-ring-color: rgba(52,211,153,0.2);  }
-html.dark .ring-accent\/20   { --tw-ring-color: rgba(56,214,236,0.2);  }
+/* daisyUI semantic color overrides removed — radiomodernDark theme handles these natively */
 
 /* ════════════════════════════════════════════════════════
    Dark Mode — Tailwind Named Colors (blue/amber/red/green/cyan)
    الفئات مباشرة كـ bg-blue-50 text-blue-700 إلخ
    ════════════════════════════════════════════════════════ */
 
-/* ── Blue ── */
-html.dark .bg-blue-50,
-html.dark .bg-blue-50\/30  { background: rgba(126,184,255,0.1)  !important; }
-html.dark .bg-blue-100     { background: rgba(126,184,255,0.15) !important; }
-html.dark .text-blue-700,
-html.dark .text-blue-600   { color: #7EB8FF !important; }
-html.dark .border-blue-100 { border-color: rgba(126,184,255,0.18) !important; }
-html.dark .border-blue-200 { border-color: rgba(126,184,255,0.28) !important; }
-html.dark .hover\:bg-blue-100\/60:hover { background: rgba(126,184,255,0.15) !important; }
-
-/* ── Emerald / Green ── */
-html.dark .bg-emerald-50   { background: rgba(52,211,153,0.1)   !important; }
-html.dark .bg-emerald-100  { background: rgba(52,211,153,0.15)  !important; }
-html.dark .text-emerald-700,
-html.dark .text-emerald-600 { color: #34D399 !important; }
-html.dark .border-emerald-100 { border-color: rgba(52,211,153,0.18) !important; }
-html.dark .border-emerald-200 { border-color: rgba(52,211,153,0.28) !important; }
-html.dark .hover\:bg-emerald-100:hover { background: rgba(52,211,153,0.15) !important; }
-
-/* ── Amber ── */
-html.dark .bg-amber-50     { background: rgba(251,191,36,0.1)   !important; }
-html.dark .bg-amber-100    { background: rgba(251,191,36,0.15)  !important; }
-html.dark .text-amber-700,
-html.dark .text-amber-600,
-html.dark .text-amber-500  { color: #FBBF24 !important; }
-html.dark .border-amber-100 { border-color: rgba(251,191,36,0.18) !important; }
-html.dark .border-amber-200,
-html.dark .border-amber-300 { border-color: rgba(251,191,36,0.28) !important; }
-html.dark .hover\:bg-amber-100:hover { background: rgba(251,191,36,0.15) !important; }
-
-/* ── Red ── */
-html.dark .bg-red-50       { background: rgba(248,113,113,0.1)  !important; }
-html.dark .bg-red-100      { background: rgba(248,113,113,0.15) !important; }
-html.dark .text-red-700,
-html.dark .text-red-600    { color: #F87171 !important; }
-html.dark .border-red-100  { border-color: rgba(248,113,113,0.18) !important; }
-html.dark .border-red-200  { border-color: rgba(248,113,113,0.28) !important; }
-html.dark .hover\:bg-red-100:hover,
-html.dark .hover\:bg-red-50:hover { background: rgba(248,113,113,0.12) !important; }
-
-/* ── Indigo ── */
-html.dark .bg-indigo-50    { background: rgba(129,140,248,0.1)  !important; }
-html.dark .bg-indigo-100   { background: rgba(129,140,248,0.15) !important; }
-html.dark .text-indigo-700,
-html.dark .text-indigo-600 { color: #A5B4FC !important; }
-html.dark .border-indigo-100 { border-color: rgba(129,140,248,0.18) !important; }
-html.dark .hover\:bg-indigo-100:hover { background: rgba(129,140,248,0.15) !important; }
-
-/* ── Cyan ── */
-html.dark .bg-cyan-50,
-html.dark .bg-cyan-100\/50 { background: rgba(56,214,236,0.1)   !important; }
-html.dark .bg-cyan-100     { background: rgba(56,214,236,0.15)  !important; }
-html.dark .text-cyan-800,
-html.dark .text-cyan-700   { color: #38D6EC !important; }
-html.dark .border-cyan-100 { border-color: rgba(56,214,236,0.18) !important; }
-html.dark .border-cyan-200 { border-color: rgba(56,214,236,0.28) !important; }
-html.dark .hover\:bg-cyan-100:hover { background: rgba(56,214,236,0.15) !important; }
-
-/* ════════════════════════════════════════════════════════
-   Dark Mode — Badges
-   ════════════════════════════════════════════════════════ */
-html.dark .badge-warning {
-    background: rgba(251,191,36,0.12);
-    color: #FBBF24;
-    border-color: rgba(251,191,36,0.25);
-}
-html.dark .badge-default,
-html.dark .badge {
-    background: var(--surface-3);
-    color: var(--ink-muted);
-    border-color: var(--border);
-}
-html.dark .badge-success {
-    background: rgba(52,211,153,0.12);
-    color: #34D399;
-    border-color: rgba(52,211,153,0.25);
-}
-html.dark .badge-danger,
-html.dark .badge-error {
-    background: rgba(248,113,113,0.12);
-    color: #F87171;
-    border-color: rgba(248,113,113,0.25);
-}
-html.dark .badge-accent {
-    background: rgba(56,214,236,0.12);
-    color: #38D6EC;
-    border-color: rgba(56,214,236,0.25);
-}
+/* daisyUI semantic fix overrides removed — all views use daisyUI tokens directly */
 
 /* ════════════════════════════════════════════════════════
    Dark Mode — Permissions Page
@@ -717,109 +408,7 @@ html.dark .bg-surface-3.border-b {
    Dark Mode — Database Page
    ════════════════════════════════════════════════════════ */
 
-/* Health Status Bar */
-html.dark .bg-success\/5.border.border-success\/20 {
-    background: rgba(52,211,153,0.08)  !important;
-    border-color: rgba(52,211,153,0.2) !important;
-}
-html.dark .bg-danger\/5.border.border-danger\/20 {
-    background: rgba(248,113,113,0.08) !important;
-    border-color: rgba(248,113,113,0.2) !important;
-}
-
-/* Timeline vertical line */
-html.dark .border-r-2.border-success\/30 { border-color: rgba(52,211,153,0.4)   !important; }
-html.dark .border-r-2.border-danger\/30  { border-color: rgba(248,113,113,0.4)  !important; }
-
-/* Timeline dots */
-html.dark .bg-success.flex.items-center.justify-center {
-    background: #34D399 !important;
-    box-shadow: 0 0 8px rgba(52,211,153,0.4);
-}
-html.dark .bg-danger.flex.items-center.justify-center {
-    background: #F87171 !important;
-    box-shadow: 0 0 8px rgba(248,113,113,0.4);
-}
-
-/* أزرار الجدول الدائرية */
-html.dark .rounded-full.bg-primary\/10 { background: rgba(126,184,255,0.12) !important; color: #7EB8FF !important; }
-html.dark .rounded-full.bg-warning\/10 { background: rgba(251,191,36,0.12)  !important; color: #FBBF24 !important; }
-html.dark .rounded-full.bg-success\/10 { background: rgba(52,211,153,0.12)  !important; color: #34D399 !important; }
-html.dark .rounded-full.bg-danger\/10  { background: rgba(248,113,113,0.12) !important; color: #F87171 !important; }
-html.dark .rounded-full.hover\:bg-primary\/20:hover { background: rgba(126,184,255,0.2) !important; }
-html.dark .rounded-full.hover\:bg-warning\/20:hover { background: rgba(251,191,36,0.2)  !important; }
-html.dark .rounded-full.hover\:bg-success\/20:hover { background: rgba(52,211,153,0.2)  !important; }
-html.dark .rounded-full.hover\:bg-danger\/20:hover  { background: rgba(248,113,113,0.2) !important; }
-
-/* file input button */
-html.dark .file\:bg-primary\/10 { --tw-file-bg: rgba(126,184,255,0.12); }
-
-/* ════════════════════════════════════════════════════════
-   Dark Mode — Episodes Details Page
-   ════════════════════════════════════════════════════════ */
-
-/* guest tags — أزرق */
-html.dark .bg-blue-50.text-blue-700,
-html.dark span.bg-blue-50 {
-    background: rgba(126,184,255,0.12) !important;
-    color: #7EB8FF !important;
-    border-color: rgba(126,184,255,0.2) !important;
-}
-
-/* correspondent tags — عنبري */
-html.dark .bg-amber-50.text-amber-700,
-html.dark span.bg-amber-50 {
-    background: rgba(251,191,36,0.12) !important;
-    color: #FBBF24 !important;
-    border-color: rgba(251,191,36,0.2) !important;
-}
-
-/* employee tags */
-html.dark .bg-surface-3.text-ink-muted.border-border\/80 {
-    background: var(--surface-3) !important;
-    border-color: var(--border) !important;
-}
-
-/* Workflow cancelled line */
-html.dark .bg-red-200 { background: rgba(248,113,113,0.3) !important; }
-
-/* Description block borders */
-html.dark .border-r-4.border-primary  { border-color: var(--dk-primary)  !important; }
-html.dark .border-r-4.border-danger   { border-color: var(--dk-danger)   !important; }
-html.dark .border-r-4.border-amber-500 { border-color: var(--dk-warning)  !important; }
-
-/* Status badge for current stage */
-html.dark .badge.bg-primary\/10  { background: rgba(126,184,255,0.12) !important; color: #7EB8FF !important; }
-html.dark .badge.bg-success\/10  { background: rgba(52,211,153,0.12)  !important; color: #34D399 !important; }
-html.dark .badge.bg-red-50       { background: rgba(248,113,113,0.12) !important; }
-html.dark .badge.bg-cyan-100\/50 { background: rgba(56,214,236,0.12)  !important; color: #38D6EC !important; }
-
-/* Action buttons في sidebar */
-html.dark a.bg-blue-50\/30,   html.dark a.bg-blue-50\/30:hover   { background: rgba(126,184,255,0.1) !important; color: #7EB8FF !important; border-color: rgba(126,184,255,0.2) !important; }
-html.dark a.bg-emerald-50,    html.dark a.bg-emerald-50:hover    { background: rgba(52,211,153,0.1)  !important; color: #34D399 !important; border-color: rgba(52,211,153,0.2)  !important; }
-html.dark a.bg-indigo-50,     html.dark a.bg-indigo-50:hover     { background: rgba(129,140,248,0.1) !important; color: #A5B4FC !important; border-color: rgba(129,140,248,0.2) !important; }
-html.dark a.bg-cyan-50,       html.dark a.bg-cyan-50:hover       { background: rgba(56,214,236,0.1)  !important; color: #38D6EC !important; border-color: rgba(56,214,236,0.2)  !important; }
-html.dark button.bg-amber-50, html.dark button.bg-amber-50:hover { background: rgba(251,191,36,0.1)  !important; color: #FBBF24 !important; border-color: rgba(251,191,36,0.2)  !important; }
-html.dark button.bg-red-50,   html.dark button.bg-red-50:hover   { background: rgba(248,113,113,0.1) !important; color: #F87171 !important; border-color: rgba(248,113,113,0.2) !important; }
-html.dark button.bg-emerald-50, html.dark button.bg-emerald-50:hover { background: rgba(52,211,153,0.1) !important; color: #34D399 !important; border-color: rgba(52,211,153,0.2) !important; }
-
-/* Description / notes highlighted blocks */
-html.dark .bg-primary\/5    { background: rgba(126,184,255,0.07) !important; }
-html.dark .bg-amber-50\/50  { background: rgba(251,191,36,0.07)  !important; }
-
-/* stat-card icon wrappers */
-html.dark .w-12.h-12.rounded-xl.bg-primary\/10  { background: rgba(126,184,255,0.12) !important; }
-html.dark .w-12.h-12.rounded-xl.bg-success\/10  { background: rgba(52,211,153,0.12)  !important; }
-html.dark .w-12.h-12.rounded-xl.bg-danger\/10   { background: rgba(248,113,113,0.12) !important; }
-html.dark .w-12.h-12.rounded-xl.bg-accent\/10   { background: rgba(56,214,236,0.12)  !important; }
-html.dark .w-12.h-12.rounded-xl.bg-warning\/10  { background: rgba(251,191,36,0.12)  !important; }
-html.dark .w-12.h-12.rounded-xl.bg-info\/10     { background: rgba(126,184,255,0.12) !important; }
-html.dark .w-10.h-10.rounded-xl.bg-primary\/10  { background: rgba(126,184,255,0.12) !important; }
-html.dark .w-10.h-10.rounded-xl.bg-success\/10  { background: rgba(52,211,153,0.12)  !important; }
-html.dark .w-10.h-10.rounded-xl.bg-danger\/10   { background: rgba(248,113,113,0.12) !important; }
-html.dark .w-10.h-10.rounded-xl.bg-accent\/10   { background: rgba(56,214,236,0.12)  !important; }
-html.dark .w-10.h-10.rounded-xl.bg-warning\/10  { background: rgba(251,191,36,0.12)  !important; }
-html.dark .w-10.h-10.rounded-xl.bg-info\/10     { background: rgba(126,184,255,0.12) !important; }
+/* daisyUI semantic overrides removed — handled natively by daisyUI dark theme */
 
 /* ════════════════════════════════════════════════════════
    Dark Mode — Reports / Tab Buttons
@@ -950,52 +539,7 @@ html.dark .role-card .bg-surface-2 {
     border-color: var(--border) !important;
 }
 
-/* icon-btn-ghost — زر محايد للـ clone/edit */
-.icon-btn-ghost {
-    background: var(--surface);
-    color: var(--ink-muted);
-    border-color: var(--border);
-}
-.icon-btn-ghost:hover {
-    background: var(--surface-3);
-    color: var(--ink);
-    border-color: var(--primary);
-}
-html.dark .icon-btn-ghost {
-    background: var(--surface-3);
-    color: var(--ink-muted);
-    border-color: var(--border);
-}
-html.dark .icon-btn-ghost:hover {
-    background: rgba(126,184,255,0.12);
-    color: #7EB8FF;
-    border-color: rgba(126,184,255,0.35);
-}
 
-/* empty state card */
-html.dark .card-premium.border-dashed {
-    border-color: var(--card-border) !important;
-    background: var(--card-bg) !important;
-}
-html.dark .card-premium .w-20.h-20.bg-primary\/5 {
-    background: rgba(126,184,255,0.1) !important;
-    color: #7EB8FF !important;
-}
-html.dark .action-dock-btn {
-    background: var(--surface-3);
-    border: 1px solid var(--border);
-    color: var(--ink-muted);
-    border-radius: 8px;
-    width: 2rem; height: 2rem;
-    display: inline-flex;
-    align-items: center; justify-content: center;
-    transition: all 0.15s;
-}
-html.dark .action-dock-btn.btn-info:hover    { background: rgba(126,184,255,0.15); color: #7EB8FF; border-color: rgba(126,184,255,0.3); }
-html.dark .action-dock-btn.btn-edit:hover    { background: rgba(251,191,36,0.15);  color: #FBBF24; border-color: rgba(251,191,36,0.3);  }
-html.dark .action-dock-btn.btn-share:hover   { background: rgba(167,139,250,0.15); color: #A78BFA; border-color: rgba(167,139,250,0.3); }
-html.dark .action-dock-btn.btn-success:hover { background: rgba(52,211,153,0.15);  color: #34D399; border-color: rgba(52,211,153,0.3);  }
-html.dark .action-dock-btn.btn-danger:hover  { background: rgba(248,113,113,0.15); color: #F87171; border-color: rgba(248,113,113,0.3); }
 
 /* ════════════════════════════════════════════════════════
    Dark Mode — Episodes Edit: empty-state dashed boxes
@@ -1083,26 +627,6 @@ html.dark header [onclick="toggleNotifications(event)"]:hover {
 }
 
 /* ════════════════════════════════════════════════════════
-   Button Loading State
-   ════════════════════════════════════════════════════════ */
-.btn-loading { position: relative; pointer-events: none; color: transparent !important; }
-.btn-loading::after {
-    content: '';
-    position: absolute;
-    width: 1rem;
-    height: 1rem;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: btnSpin 0.6s linear infinite;
-    top: 50%;
-    right: 50%;
-    margin-top: -0.5rem;
-    margin-right: -0.5rem;
-}
-@keyframes btnSpin { to { transform: rotate(360deg); } }
-
-/* ════════════════════════════════════════════════════════
    Focus Visible — Accessibility
    ════════════════════════════════════════════════════════ */
 :focus-visible {
@@ -1112,43 +636,19 @@ html.dark header [onclick="toggleNotifications(event)"]:hover {
 }
 
 /* ════════════════════════════════════════════════════════
-   Page Header
-   ════════════════════════════════════════════════════════ */
-.page-header {
-    margin-bottom: 1.5rem;
-}
-
-/* ════════════════════════════════════════════════════════
-   Cards
-   ════════════════════════════════════════════════════════ */
-.card-premium {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-}
-.card-header {
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid var(--border);
-}
+    Cards
+    ════════════════════════════════════════════════════════ */
 .card-body {
     padding: 1.5rem;
 }
 
-/* ════════════════════════════════════════════════════════
-   Stat Cards
-   ════════════════════════════════════════════════════════ */
-.stat-card-premium {
-    background: var(--surface);
+.card.bg-base-100 {
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 1.25rem;
-    transition: all 0.2s;
 }
-.stat-card-premium:hover {
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
-    transform: translateY(-1px);
-}
+
+/* ════════════════════════════════════════════════════════
+    Stat Cards
+    ════════════════════════════════════════════════════════ */
 .stat-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -1165,42 +665,7 @@ html.dark header [onclick="toggleNotifications(event)"]:hover {
 }
 
 /* ════════════════════════════════════════════════════════
-   Tables
-   ════════════════════════════════════════════════════════ */
-.table-premium {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-}
-.table-premium table {
-    width: 100%;
-    border-collapse: collapse;
-}
-.table-premium th {
-    padding: 0.75rem 1.25rem;
-    background: var(--surface-2);
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: var(--ink-muted);
-    text-align: right;
-    border-bottom: 1px solid var(--border);
-}
-.table-premium td {
-    padding: 0.75rem 1.25rem;
-    font-size: 0.875rem;
-    border-bottom: 1px solid var(--border);
-    text-align: right;
-}
-.table-premium tr:last-child td {
-    border-bottom: none;
-}
-.table-premium tbody tr:hover {
-    background: var(--surface-2);
-}
-
-/* ════════════════════════════════════════════════════════
-   Status Badges
+    Status Badges
    ════════════════════════════════════════════════════════ */
 .status-badge {
     display: inline-flex;
@@ -1211,24 +676,24 @@ html.dark header [onclick="toggleNotifications(event)"]:hover {
     font-weight: 600;
 }
 .status-badge.planned {
-    background: #EFF6FF;
-    color: #2563EB;
+    background: var(--status-planned-bg);
+    color: var(--status-planned-text);
 }
 .status-badge.executed {
-    background: #ECFDF5;
-    color: #059669;
+    background: var(--status-executed-bg);
+    color: var(--status-executed-text);
 }
 .status-badge.published {
-    background: #ECFDF5;
-    color: #059669;
+    background: var(--status-published-bg);
+    color: var(--status-published-text);
 }
 .status-badge.website-published {
-    background: #F0F9FF;
-    color: #0284C7;
+    background: var(--status-website-bg);
+    color: var(--status-website-text);
 }
 .status-badge.cancelled {
-    background: #FEF2F2;
-    color: #DC2626;
+    background: var(--status-cancelled-bg);
+    color: var(--status-cancelled-text);
 }
 
 /* ════════════════════════════════════════════════════════
@@ -1247,206 +712,24 @@ html.dark header [onclick="toggleNotifications(event)"]:hover {
     color: var(--ink-muted);
 }
 .badge-info {
-    background: #EFF6FF;
-    color: #2563EB;
+    background: var(--status-planned-bg);
+    color: var(--status-planned-text);
 }
 .badge-secondary {
-    background: #F5F3FF;
+    background: rgba(124, 58, 237, 0.10);
     color: #7C3AED;
 }
 .badge-active {
-    background: #D1FAE5;
-    color: #059669;
+    background: var(--status-executed-bg);
+    color: var(--status-executed-text);
 }
 .badge-inactive {
-    background: #FEE2E2;
-    color: #DC2626;
+    background: var(--status-cancelled-bg);
+    color: var(--status-cancelled-text);
 }
 
 /* ════════════════════════════════════════════════════════
-   Buttons
-   ════════════════════════════════════════════════════════ */
-.btn-primary,
-.btn-secondary,
-.btn-danger,
-.btn-success,
-.btn-warning,
-.btn-info {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 10px;
-    font-family: inherit;
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.15s;
-    line-height: 1.4;
-}
-.btn-primary {
-    background: var(--primary);
-    color: white;
-}
-.btn-primary:hover {
-    background: var(--primary-dark);
-}
-.btn-secondary {
-    background: var(--surface);
-    color: var(--ink-muted);
-    border: 1px solid var(--border);
-}
-.btn-secondary:hover {
-    background: var(--surface-3);
-}
-.btn-danger {
-    background: var(--danger);
-    color: white;
-}
-.btn-danger:hover {
-    background: #DC2626;
-}
-.btn-success {
-    background: var(--success);
-    color: white;
-}
-.btn-success:hover {
-    background: #059669;
-}
-.btn-warning {
-    background: var(--warning);
-    color: white;
-}
-.btn-warning:hover {
-    background: #D97706;
-}
-.btn-info {
-    background: var(--accent);
-    color: white;
-}
-.btn-info:hover {
-    background: #0284C7;
-}
-
-/* ════════════════════════════════════════════════════════
-   Icon Buttons
-   ════════════════════════════════════════════════════════ */
-.icon-btn {
-    width: 2.25rem;
-    height: 2.25rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.5rem;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--ink-muted);
-    cursor: pointer;
-    transition: all 0.15s;
-    text-decoration: none;
-    flex-shrink: 0;
-}
-.icon-btn:hover {
-    background: var(--surface-3);
-}
-.icon-btn-primary {
-    color: var(--primary);
-    border-color: var(--primary);
-    background: #EFF6FF;
-}
-.icon-btn-primary:hover {
-    background: var(--primary);
-    color: white;
-}
-.icon-btn-danger {
-    color: var(--danger);
-    border-color: var(--danger);
-    background: #FEF2F2;
-}
-.icon-btn-danger:hover {
-    background: var(--danger);
-    color: white;
-}
-.icon-btn-success,
-.add-platform-btn {
-    color: var(--success);
-    border-color: var(--success);
-    background: #ECFDF5;
-}
-.icon-btn-success:hover,
-.add-platform-btn:hover {
-    background: var(--success);
-    color: white;
-}
-.icon-btn-info {
-    color: var(--accent);
-    border-color: var(--accent);
-    background: #F0F9FF;
-}
-.icon-btn-info:hover {
-    background: var(--accent);
-    color: white;
-}
-.icon-btn-secondary {
-    color: var(--ink-muted);
-}
-.icon-btn-secondary:hover {
-    color: var(--ink);
-}
-
-/* ════════════════════════════════════════════════════════
-   Filter Premium
-   ════════════════════════════════════════════════════════ */
-.filter-premium {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-/* ════════════════════════════════════════════════════════
-   Breadcrumb
-   ════════════════════════════════════════════════════════ */
-.breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.8125rem;
-    color: var(--ink-soft);
-    margin-bottom: 1rem;
-}
-.breadcrumb a {
-    color: var(--primary);
-    text-decoration: none;
-}
-.breadcrumb a:hover {
-    text-decoration: underline;
-}
-
-/* ════════════════════════════════════════════════════════
-   Empty State
-   ════════════════════════════════════════════════════════ */
-.empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 0.5rem;
-}
-.empty-icon {
-    font-size: 2.5rem;
-    color: var(--ink-soft);
-}
-
-/* ════════════════════════════════════════════════════════
-   Tab System
+    Tab System
    ════════════════════════════════════════════════════════ */
 .tab-btn {
     padding: 0.5rem 1rem;
@@ -1467,104 +750,10 @@ html.dark header [onclick="toggleNotifications(event)"]:hover {
     color: var(--primary);
     border-bottom-color: var(--primary);
 }
-.tab-panel {
-    display: none;
-}
-.tab-panel.active {
-    display: block;
-}
+/* .tab-panel display controlled by Tailwind `hidden` class via JS */
 
 /* ════════════════════════════════════════════════════════
-   Form Label
-   ════════════════════════════════════════════════════════ */
-.form-label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #334155;
-    transition: color 0.2s ease;
-}
-
-/* ════════════════════════════════════════════════════════
-   Form Inputs — Premium
-   ════════════════════════════════════════════════════════ */
-.form-input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    font-family: inherit;
-    font-size: 0.9375rem;
-    background: var(--surface-2);
-    color: var(--ink);
-    transition: all 0.2s ease;
-    direction: rtl;
-    text-align: right;
-    line-height: 1.5;
-}
-.form-input:focus {
-    outline: none;
-    border-color: var(--primary);
-    background: var(--surface);
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-}
-.input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-.input-wrapper .form-input {
-    padding: 0.75rem 2.75rem 0.75rem 1rem;
-}
-.input-icon {
-    position: absolute;
-    right: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--ink-soft);
-    font-size: 20px;
-    pointer-events: none;
-    transition: all 0.2s ease;
-    z-index: 1;
-}
-.input-wrapper:focus-within .input-icon {
-    color: var(--primary);
-    transform: translateY(-50%) scale(1.08);
-}
-.input-wrapper textarea ~ .input-icon {
-    top: 1rem;
-    transform: none;
-}
-.input-wrapper:focus-within textarea ~ .input-icon {
-    transform: none;
-}
-
-/* ─── Form label active state ─── */
-div:has(> .input-wrapper:focus-within) > .form-label { color: var(--primary); }
-
-/* ─── Card premium focus effect ─── */
-.card-premium:focus-within {
-    border-color: var(--primary-light);
-    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.08), 0 4px 20px rgba(37, 99, 235, 0.06);
-}
-
-/* ─── Button micro-animations ─── */
-.btn-primary:hover,
-.btn-secondary:hover,
-.btn-danger:hover,
-.btn-success:hover,
-.btn-warning:hover {
-    transform: translateY(-1px);
-}
-.btn-primary:active,
-.btn-secondary:active,
-.btn-danger:active,
-.btn-success:active,
-.btn-warning:active {
-    transform: translateY(0) scale(0.97);
-}
-
-/* ════════════════════════════════════════════════════════
-    Episode Edit — Dynamic Rows
+     Episode Edit — Dynamic Rows
     ════════════════════════════════════════════════════════ */
 .ep-row {
     display: flex;
@@ -1642,7 +831,6 @@ div:has(> .input-wrapper:focus-within) > .form-label { color: var(--primary); }
     min-width: 0;
 }
 .ep-field { min-width: 0; }
-.ep-field .form-input { font-size: 0.8125rem; padding: 0.5rem 1rem; }
 .ep-row-actions {
     display: flex;
     align-items: center;
@@ -1665,24 +853,6 @@ div:has(> .input-wrapper:focus-within) > .form-label { color: var(--primary); }
 }
 .ep-row-del:hover { background: #FEE2E2; color: var(--danger); }
 .ep-row:has(.ep-row-del:hover) { border-color: var(--danger); }
-
-/* ─── Timeline (sidebar) ─── */
-.stage-dot { transition: all 0.3s; }
-.stage-line { transition: all 0.4s ease; }
-.stage-label { transition: all 0.2s; }
-
-/* ─── Avatar initials ─── */
-.avatar-initials {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 800;
-    flex-shrink: 0;
-}
 
 /* ─── Episode Status Timeline ─── */
 .status-timeline { position: relative; padding: 0; }
@@ -1781,197 +951,12 @@ html.dark .page-header-enhanced {
 }
 
 /* ════════════════════════════════════════════════════════
-   Card header icon circle
-   ════════════════════════════════════════════════════════ */
-.card-icon-circle {
-    width: 2rem;
-    height: 2rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(37,99,235,0.1);
-    color: var(--primary);
-    border-radius: 0.625rem;
-    flex-shrink: 0;
-    font-size: 1.25rem;
-}
-
-/* ════════════════════════════════════════════════════════
    Misc / Utility
    ════════════════════════════════════════════════════════ */
 .hover\:text-primary-hover:hover {
     color: var(--primary-dark);
 }
 
-/* ════════════════════════════════════════════════════════
-   Modern Form Controls & Focus Styles (Edit Views)
-   ════════════════════════════════════════════════════════ */
-body .form-input {
-    padding: 0.75rem 1rem; /* Clean standard padding for inputs without icons */
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    background: var(--surface-2);
-    color: var(--ink);
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
-}
 
-body .input-wrapper .form-input {
-    padding-right: 2.75rem; /* Dynamic padding only when icon is present */
-}
 
-body .form-input:focus {
-    outline: none;
-    border-color: var(--primary);
-    background: var(--surface);
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-}
 
-html.dark body .form-input:focus {
-    box-shadow: 0 0 0 4px rgba(112, 184, 255, 0.15);
-}
-
-/* Form label focus states */
-body .form-label {
-    display: block;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: var(--ink-muted);
-    margin-bottom: 0.5rem;
-    transition: color 0.2s ease;
-}
-
-div:focus-within > .form-label,
-.form-field:focus-within .form-label {
-    color: var(--primary);
-}
-
-/* Icon hover color shift inside wrappers */
-.input-wrapper:focus-within .input-icon {
-    color: var(--primary);
-    transform: translateY(-50%) scale(1.08);
-}
-.input-icon {
-    transition: all 0.2s ease;
-}
-
-/* Section Card Elevate */
-.card-premium {
-    transition: all 0.3s ease;
-}
-.card-premium:focus-within {
-    border-color: rgba(37, 99, 235, 0.25);
-    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.04);
-}
-
-/* Unified Action Dock (Episodes Index Table) */
-.action-dock {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 9999px;
-    padding: 0.25rem;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    transition: all 0.2s ease;
-}
-html.dark .action-dock {
-    background: rgba(34, 47, 68, 0.35);
-    border-color: rgba(42, 55, 76, 0.5);
-}
-.action-dock-btn {
-    width: 2rem;
-    height: 2rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 9999px;
-    border: none;
-    background: transparent;
-    color: var(--ink-muted);
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    text-decoration: none;
-}
-.action-dock-btn span {
-    font-size: 1.15rem;
-    transition: transform 0.2s ease;
-}
-.action-dock-btn:hover {
-    transform: scale(1.15);
-}
-.action-dock-btn:active {
-    transform: scale(0.95);
-}
-
-/* Button variants inside dock */
-.action-dock-btn.btn-info {
-    color: #0EA5E9;
-}
-.action-dock-btn.btn-info:hover {
-    background: #F0F9FF;
-    box-shadow: 0 0 8px rgba(14, 165, 233, 0.15);
-}
-html.dark .action-dock-btn.btn-info:hover {
-    background: rgba(56, 189, 248, 0.15);
-}
-
-.action-dock-btn.btn-share {
-    color: #7C3AED;
-}
-.action-dock-btn.btn-share:hover {
-    background: #F5F3FF;
-    box-shadow: 0 0 8px rgba(124, 58, 237, 0.15);
-}
-html.dark .action-dock-btn.btn-share:hover {
-    background: rgba(184, 156, 255, 0.15);
-}
-
-.action-dock-btn.btn-edit {
-    color: #2563EB;
-}
-.action-dock-btn.btn-edit:hover {
-    background: #EFF6FF;
-    box-shadow: 0 0 8px rgba(37, 99, 235, 0.15);
-}
-html.dark .action-dock-btn.btn-edit:hover {
-    background: rgba(112, 184, 255, 0.15);
-}
-
-.action-dock-btn.btn-success {
-    color: #10B981;
-}
-.action-dock-btn.btn-success:hover {
-    background: #ECFDF5;
-    box-shadow: 0 0 8px rgba(16, 185, 129, 0.15);
-}
-html.dark .action-dock-btn.btn-success:hover {
-    background: rgba(52, 211, 153, 0.15);
-}
-
-.action-dock-btn.btn-danger {
-    color: #EF4444;
-}
-.action-dock-btn.btn-danger:hover {
-    background: #FEF2F2;
-    box-shadow: 0 0 8px rgba(239, 68, 68, 0.15);
-}
-html.dark .action-dock-btn.btn-danger:hover {
-    background: rgba(239, 68, 68, 0.15);
-}
-
-/* Micro-animations for buttons on form pages */
-.btn-primary, .btn-secondary, .btn-danger, .btn-success {
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.btn-primary:hover, .btn-secondary:hover, .btn-danger:hover, .btn-success:hover {
-    transform: translateY(-1.5px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
-}
-.btn-secondary:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-.btn-primary:active, .btn-secondary:active, .btn-danger:active, .btn-success:active {
-    transform: translateY(0) scale(0.97);
-}

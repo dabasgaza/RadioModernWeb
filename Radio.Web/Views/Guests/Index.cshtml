@@ -3,61 +3,61 @@
     ViewData["Title"] = "الضيوف";
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>الضيوف</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded">people_alt</span>
-                الضيوف
-            </h1>
-            <p>إدارة بيانات الضيوف المشاركين وتفاصيل الاتصال الخاصة بهم</p>
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+        <div class="breadcrumbs text-sm text-base-content/60">
+            <ul>
+                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
+                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">people_alt</span>الضيوف</span></li>
+            </ul>
         </div>
-        <div class="flex items-center gap-2">
-            @if (User.HasPermission(AppPermissions.GuestManage))
-            {
-                <a href="/Guests/Create" class="btn-primary">
-                    <span class="material-symbols-rounded">add</span>
-                    ضيف جديد
-                </a>
-            }
-        </div>
+        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary">people_alt</span>
+            الضيوف
+        </h1>
+        <p class="text-sm text-base-content/60 mt-0.5">إدارة بيانات الضيوف المشاركين وتفاصيل الاتصال الخاصة بهم</p>
+    </div>
+    <div class="flex items-center gap-2">
+        @if (User.HasPermission(AppPermissions.GuestManage))
+        {
+            <a href="/Guests/Create" class="btn btn-primary">
+                <span class="material-symbols-rounded">add</span>
+                ضيف جديد
+            </a>
+        }
     </div>
 </div>
 
 <!-- Filters -->
-<div class="filter-premium">
-    <form method="get" class="flex gap-3">
-        <div class="relative flex-1">
-            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-ink-soft">search</span>
-            <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث باسم الضيف أو الجهة..." class="form-input pr-10" />
-        </div>
-        <button type="submit" class="btn-primary">
-            <span class="material-symbols-rounded">search</span>
-            بحث
-        </button>
-        <a href="/Guests" class="btn-secondary" title="إعادة ضبط">
-            <span class="material-symbols-rounded">refresh</span>
-        </a>
-    </form>
+<div class="card bg-base-100 shadow-md mb-6">
+    <div class="card-body">
+        <form method="get" class="flex gap-3">
+            <div class="relative flex-1">
+                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40">search</span>
+                <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث باسم الضيف أو الجهة..." class="input input-bordered w-full pr-10" />
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <span class="material-symbols-rounded">search</span>
+                بحث
+            </button>
+            <a href="/Guests" class="btn btn-ghost" title="إعادة ضبط">
+                <span class="material-symbols-rounded">refresh</span>
+            </a>
+        </form>
+    </div>
 </div>
 
 <!-- Guests Grid -->
 @if (!Model.Any())
 {
-    <div class="table-premium p-12 text-center">
-        <div class="empty-state">
-            <span class="material-symbols-rounded empty-icon">people_alt</span>
-            <h3 class="font-bold text-ink text-lg mb-2">لا يوجد ضيوف</h3>
-            <p class="text-ink-muted text-sm mb-4">لم يتم العثور على أي ضيوف تطابق البحث.</p>
+    <div class="card bg-base-100 shadow-md p-12">
+    <div class="card-body text-center py-12">
+            <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">people_alt</span>
+            <h3 class="font-bold text-base-content text-lg mb-2">لا يوجد ضيوف</h3>
+            <p class="text-base-content/60 text-sm mb-4">لم يتم العثور على أي ضيوف تطابق البحث.</p>
             @if (User.HasPermission(AppPermissions.GuestManage))
             {
-                <a href="/Guests/Create" class="btn-primary">
+                <a href="/Guests/Create" class="btn btn-primary">
                     <span class="material-symbols-rounded">add</span>
                     إضافة ضيف جديد
                 </a>
@@ -70,7 +70,7 @@ else
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @foreach (var g in Model)
         {
-            <div class="card-premium flex flex-col justify-between h-full group hover:shadow-lg transition-all duration-300">
+            <div class="card bg-base-100 shadow-md flex flex-col justify-between h-full group hover:shadow-lg transition-all duration-300">
                 <div class="card-body space-y-4">
                     <!-- Profile Header / Avatar -->
                     <div class="flex items-center gap-3">
@@ -78,19 +78,19 @@ else
                             @(g.FullName.Length > 0 ? g.FullName[0].ToString().ToUpper() : "G")
                         </div>
                         <div class="min-w-0">
-                            <h3 class="font-bold text-ink truncate group-hover:text-primary transition-colors duration-300">@g.FullName</h3>
-                            <p class="text-xs text-ink-soft truncate">@(g.Organization ?? "مستقل / غير محدد")</p>
+                            <h3 class="font-bold text-base-content truncate group-hover:text-primary transition-colors duration-300">@g.FullName</h3>
+                            <p class="text-xs text-base-content/40 truncate">@(g.Organization ?? "مستقل / غير محدد")</p>
                         </div>
                     </div>
 
                     <!-- Contact Details -->
-                    <div class="space-y-2 pt-2 border-t border-border/60 text-xs">
-                        <div class="flex items-center gap-2 text-ink-muted">
-                            <span class="material-symbols-rounded text-sm text-ink-soft">phone</span>
+                    <div class="space-y-2 pt-2 border-t border-base-200/60 text-xs">
+                        <div class="flex items-center gap-2 text-base-content/60">
+                            <span class="material-symbols-rounded text-sm text-base-content/40">phone</span>
                             <span class="font-semibold">@(g.PhoneNumber ?? "—")</span>
                         </div>
-                        <div class="flex items-center gap-2 text-ink-muted">
-                            <span class="material-symbols-rounded text-sm text-ink-soft">email</span>
+                        <div class="flex items-center gap-2 text-base-content/60">
+                            <span class="material-symbols-rounded text-sm text-base-content/40">email</span>
                             <span class="truncate">@(g.EmailAddress ?? "—")</span>
                         </div>
                     </div>
@@ -99,14 +99,14 @@ else
                 <!-- Footer Actions -->
                 @if (User.HasPermission(AppPermissions.GuestManage))
                 {
-                    <div class="px-5 py-3 bg-surface-2 border-t border-border/60 flex items-center justify-end gap-1.5">
-                        <a href="/Guests/Edit/@g.GuestId" class="icon-btn icon-btn-primary" title="تعديل">
-                            <span class="material-symbols-rounded">edit</span>
+                    <div class="px-5 py-3 bg-base-200 border-t border-base-200 flex items-center justify-end gap-1.5">
+                        <a href="/Guests/Edit/@g.GuestId" class="btn btn-ghost btn-square btn-sm text-primary" title="تعديل" aria-label="تعديل">
+                            <span class="material-symbols-rounded text-lg">edit</span>
                         </a>
                         <form method="post" action="/Guests/Delete/@g.GuestId" class="inline" data-confirm="هل أنت متأكد من حذف الضيف «@g.FullName»؟">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="icon-btn icon-btn-danger" title="حذف">
-                                <span class="material-symbols-rounded">delete</span>
+                            <button type="submit" class="btn btn-ghost btn-square btn-sm text-error" title="حذف" aria-label="حذف">
+                                <span class="material-symbols-rounded text-lg">delete</span>
                             </button>
                         </form>
                     </div>

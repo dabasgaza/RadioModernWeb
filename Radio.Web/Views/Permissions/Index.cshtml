@@ -15,14 +15,14 @@
 <partial name="_CreateEditHeader" />
 
 <!-- Role Selection Card -->
-<div class="card-premium p-6 mb-8">
+<div class="card bg-base-100 border border-base-200 dark:border-base-300/80 border-r-4 border-r-primary shadow-md shadow-primary/5 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 p-6 mb-8">
     <form method="get" class="flex flex-col md:flex-row items-center gap-6">
         <div class="flex items-center gap-3 w-full md:w-auto shrink-0">
             <span class="material-symbols-rounded text-primary p-2 bg-primary/10 rounded-xl">badge</span>
-            <span class="font-black text-ink text-sm">اختر الدور المراد تعديله:</span>
+            <span class="font-black text-base-content text-sm">اختر الدور المراد تعديله:</span>
         </div>
         <div class="w-full">
-            <select name="roleId" class="form-input py-3.5 px-4 w-full font-bold text-ink" onchange="this.form.submit()">
+            <select name="roleId" class="select select-bordered py-3.5 px-4 w-full font-bold text-base-content" onchange="this.form.submit()">
                 @foreach (var r in Model.Roles)
                 {
                     <option value="@r.RoleId" selected="@(Model.SelectedRoleId == r.RoleId)">
@@ -40,25 +40,26 @@
         @Html.AntiForgeryToken()
         <input type="hidden" name="roleId" value="@Model.SelectedRoleId" />
 
-        <div class="card-premium overflow-hidden rounded-3xl border border-border/60">
-            <div class="card-header bg-surface-2 p-6 border-b border-border/40 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="card bg-base-100 border border-base-200 dark:border-base-300/80 shadow-md shadow-primary/5 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300">
+        <div class="card-body p-0">
+            <div class="bg-base-200 p-6 border-b border-base-200/40 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-rounded text-primary p-2 bg-primary/10 rounded-xl">admin_panel_settings</span>
                     <div>
                         <div class="flex items-center gap-2 flex-wrap">
-                            <h3 class="font-extrabold text-ink text-base">تعديل صلاحيات الدور: <span class="text-primary font-black text-lg">@Model.SelectedRoleName</span></h3>
-                            <span id="permissions-counter" class="badge-secondary py-1 px-3 text-xs rounded-full font-bold transition-all duration-300">جاري الحساب...</span>
+                            <h3 class="font-extrabold text-base-content text-base">تعديل صلاحيات الدور: <span class="text-primary font-black text-lg">@Model.SelectedRoleName</span></h3>
+                            <span id="permissions-counter" class="badge badge-ghost py-1 px-3 text-xs rounded-full font-bold transition-all duration-300">جاري الحساب...</span>
                         </div>
-                        <p class="text-xs text-ink-muted mt-1">قم بتفعيل أو إلغاء تفعيل الصلاحيات ثم احفظ التعديلات لتطبق لحظياً</p>
+                        <p class="text-xs text-base-content/60 mt-1">قم بتفعيل أو إلغاء تفعيل الصلاحيات ثم احفظ التعديلات لتطبق لحظياً</p>
                     </div>
                 </div>
                 
                 <div class="flex items-center gap-2 self-end sm:self-auto">
-                    <button type="button" class="btn-secondary py-2 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all" onclick="toggleAllCheckboxes(true)">
+                    <button type="button" class="btn btn-ghost py-2 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all" onclick="toggleAllCheckboxes(true)">
                         <span class="material-symbols-rounded text-sm">check_box</span>
                         تحديد الكل
                     </button>
-                    <button type="button" class="btn-secondary py-2 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all" onclick="toggleAllCheckboxes(false)">
+                    <button type="button" class="btn btn-ghost py-2 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all" onclick="toggleAllCheckboxes(false)">
                         <span class="material-symbols-rounded text-sm">check_box_outline_blank</span>
                         إلغاء الكل
                     </button>
@@ -66,20 +67,20 @@
             </div>
 
             <!-- Quick Search for Permissions -->
-            <div class="p-4 bg-surface-3 border-b border-border/20">
+            <div class="p-4 bg-base-200 border-b border-base-200/20">
                 <div class="relative w-full">
-                    <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-ink-muted text-sm">search</span>
+                    <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-base-content/60 text-sm">search</span>
                     <input type="text" id="permSearch" placeholder="بحث سريع في الصلاحيات المعروضة..." 
-                           class="form-input pr-11 pl-4 py-2 text-xs rounded-xl w-full border border-border/60 focus:border-primary/50 transition-all" />
+                           class="input input-bordered pr-11 pl-4 py-2 text-xs rounded-xl w-full border border-base-200/60 focus:border-primary/50 transition-all" />
                 </div>
             </div>
             
-            <div class="card-body p-6 space-y-8 bg-surface/30">
+            <div class="p-6 space-y-8 bg-base-100/30">
                 @foreach (var module in permissionsByModule)
                 {
                     <div class="module-section space-y-4" data-module="@module.Key.ToLower()">
-                        <div class="flex items-center justify-between border-b border-border/40 pb-2">
-                            <h4 class="font-extrabold text-ink text-sm flex items-center gap-2">
+                        <div class="flex items-center justify-between border-b border-base-200/40 pb-2">
+                            <h4 class="font-extrabold text-base-content text-sm flex items-center gap-2">
                                 <span class="w-1.5 h-3.5 bg-primary rounded-full"></span>
                                 @module.Key
                             </h4>
@@ -88,8 +89,8 @@
                                         onclick="toggleModuleCheckboxes('@module.Key', true)">
                                     تحديد القسم
                                 </button>
-                                <span class="text-border/60 select-none">|</span>
-                                <button type="button" class="text-ink-muted hover:text-ink text-xs font-bold px-2 py-1 rounded hover:bg-ink/5 transition-all" 
+                                <span class="text-base-content/20 select-none">|</span>
+                                <button type="button" class="text-base-content/60 hover:text-base-content text-xs font-bold px-2 py-1 rounded hover:bg-base-content/5 transition-all" 
                                         onclick="toggleModuleCheckboxes('@module.Key', false)">
                                     إلغاء القسم
                                 </button>
@@ -99,17 +100,13 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             @foreach (var p in module)
                             {
-                                <label class="perm-item flex items-center justify-between p-4 bg-surface rounded-2xl border border-border/60 hover:border-primary/20 hover:shadow-md hover:shadow-primary/2 hover:bg-primary/[0.02] hover:-translate-y-0.5 cursor-pointer transition-all duration-200"
+                                <label class="perm-item flex items-center justify-between p-4 bg-surface rounded-2xl border border-base-200/60 hover:border-primary/20 hover:shadow-md hover:shadow-primary/2 hover:bg-primary/[0.02] hover:-translate-y-0.5 cursor-pointer transition-all duration-200"
                                        data-text="@p.DisplayName.ToLower() @p.SystemName.ToLower()">
                                     <div class="flex flex-col gap-1 pr-2">
-                                        <span class="text-xs font-bold text-ink">@p.DisplayName</span>
-                                        <span class="text-[9px] font-mono text-ink-muted select-all">@p.SystemName</span>
+                                        <span class="text-xs font-bold text-base-content">@p.DisplayName</span>
+                                        <span class="text-[9px] font-mono text-base-content/60 select-all">@p.SystemName</span>
                                     </div>
-                                    <div class="relative inline-flex items-center">
-                                        <input type="checkbox" name="selectedPermissionIds" data-module-name="@module.Key" value="@p.PermissionId" @(p.IsAssigned ? "checked" : "") class="sr-only peer" />
-                                        <div class="w-11 h-6 bg-border/80 peer-focus:outline-none rounded-full peer peer-checked:bg-primary transition-all duration-300
-                                                    after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:-translate-x-5"></div>
-                                    </div>
+                                    <input type="checkbox" name="selectedPermissionIds" data-module-name="@module.Key" value="@p.PermissionId" @(p.IsAssigned ? "checked" : "") class="toggle toggle-primary" />
                                 </label>
                             }
                         </div>
@@ -117,11 +114,12 @@
                 }
             </div>
             
-            <div class="px-6 py-5 bg-surface-2 border-t border-border/40 flex justify-end">
-                <button type="submit" class="btn-primary py-3 px-6 rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-primary/20 transition-all duration-300">
+            <div class="px-6 py-5 bg-base-200 border-t border-base-200/40 flex justify-end">
+                <button type="submit" class="btn btn-primary py-3 px-6 rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-primary/20 transition-all duration-300">
                     <span class="material-symbols-rounded">save</span>
                     حفظ ومزامنة الصلاحيات فورياً
                 </button>
+            </div>
             </div>
         </div>
     </form>

@@ -3,74 +3,71 @@
     ViewData["Title"] = "المراسلون";
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>المراسلون</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded">map</span>
-                المراسلون
-            </h1>
-            <p>إدارة بيانات المراسلين وتفاصيل مواقع التغطية الميدانية المخصصة لهم</p>
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+        <div class="breadcrumbs text-sm text-base-content/60">
+            <ul>
+                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
+                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">map</span>المراسلون</span></li>
+            </ul>
         </div>
-        <div class="flex items-center gap-2">
-            @if (User.HasPermission(AppPermissions.CoordinationManage))
-            {
-                <a href="/Correspondents/Create" class="btn-primary">
-                    <span class="material-symbols-rounded">add</span>
-                    مراسل جديد
-                </a>
-            }
-        </div>
+        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary">map</span>
+            المراسلون
+        </h1>
+        <p class="text-sm text-base-content/60 mt-0.5">إدارة بيانات المراسلين وتفاصيل مواقع التغطية الميدانية المخصصة لهم</p>
+    </div>
+    <div class="flex items-center gap-2">
+        @if (User.HasPermission(AppPermissions.CoordinationManage))
+        {
+            <a href="/Correspondents/Create" class="btn btn-primary">
+                <span class="material-symbols-rounded">add</span>
+                مراسل جديد
+            </a>
+        }
     </div>
 </div>
 
-<!-- Filters -->
-<div class="filter-premium">
-    <form method="get" class="flex gap-3">
-        <div class="relative flex-1">
-            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-ink-soft">search</span>
-            <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث باسم المراسل أو المواقع..." class="form-input pr-10" />
-        </div>
-        <button type="submit" class="btn-primary">
-            <span class="material-symbols-rounded">search</span>
-            بحث
-        </button>
-        <a href="/Correspondents" class="btn-secondary" title="إعادة ضبط">
-            <span class="material-symbols-rounded">refresh</span>
-        </a>
-    </form>
+<div class="card bg-base-100 shadow-md mb-6">
+    <div class="card-body">
+        <form method="get" class="flex gap-3">
+            <div class="relative flex-1">
+                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">search</span>
+                <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث باسم المراسل أو المواقع..." class="input input-bordered w-full pr-10" />
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <span class="material-symbols-rounded">search</span>
+                بحث
+            </button>
+            <a href="/Correspondents" class="btn btn-ghost" title="إعادة ضبط">
+                <span class="material-symbols-rounded">refresh</span>
+            </a>
+        </form>
+    </div>
 </div>
 
 <!-- Grid -->
 @if (!Model.Any())
 {
-    <div class="table-premium p-12 text-center">
-        <div class="empty-state">
-            <span class="material-symbols-rounded empty-icon">map</span>
-            <h3 class="font-bold text-ink text-lg mb-2">لا يوجد مراسلون</h3>
-            <p class="text-ink-muted text-sm mb-4">لم يتم العثور على أي مراسلين تطابق البحث.</p>
-            @if (User.HasPermission(AppPermissions.CoordinationManage))
-            {
-                <a href="/Correspondents/Create" class="btn-primary">
-                    <span class="material-symbols-rounded">add</span>
-                    إضافة مراسل جديد
-                </a>
-            }
-        </div>
-    </div>
+    <div class="card bg-base-100 shadow-md"><div class="card-body text-center py-12">
+        <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">map</span>
+        <h3 class="font-bold text-lg mb-2">لا يوجد مراسلون</h3>
+        <p class="text-sm text-base-content/60 mb-4">لم يتم العثور على أي مراسلين تطابق البحث.</p>
+        @if (User.HasPermission(AppPermissions.CoordinationManage))
+        {
+            <a href="/Correspondents/Create" class="btn btn-primary">
+                <span class="material-symbols-rounded">add</span>
+                إضافة مراسل جديد
+            </a>
+        }
+    </div></div>
 }
 else
 {
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @foreach (var c in Model)
         {
-            <div class="card-premium flex flex-col justify-between h-full group hover:shadow-lg transition-all duration-300">
+            <div class="card bg-base-100 shadow-md flex flex-col justify-between h-full group hover:shadow-lg transition-all duration-300">
                 <div class="card-body space-y-4">
                     <!-- Header -->
                     <div class="flex items-center gap-3">
@@ -107,20 +104,20 @@ else
 
                 <!-- Footer Actions -->
                 <div class="px-5 py-3 bg-surface-2 border-t border-border/60 flex items-center justify-between">
-                    <a href="/Correspondents/Coverage/@c.CorrespondentId" class="btn-secondary py-1 px-3 text-xs flex items-center gap-1">
+                    <a href="/Correspondents/Coverage/@c.CorrespondentId" class="btn btn-ghost py-1 px-3 text-xs flex items-center gap-1">
                         <span class="material-symbols-rounded" style="font-size: 16px;">list_alt</span>
                         تغطيات المراسل
                     </a>
                     @if (User.HasPermission(AppPermissions.CoordinationManage))
                     {
                         <div class="flex items-center gap-1">
-                            <a href="/Correspondents/Edit/@c.CorrespondentId" class="icon-btn icon-btn-primary" title="تعديل">
-                                <span class="material-symbols-rounded">edit</span>
+                            <a href="/Correspondents/Edit/@c.CorrespondentId" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-0 bg-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 text-blue-600 hover:bg-blue-50 hover:text-blue-700 focus-visible:ring-blue-500 dark:hover:bg-blue-500/10" title="تعديل" aria-label="تعديل">
+                                <span class="material-symbols-rounded text-xl leading-none">edit</span>
                             </a>
                             <form method="post" action="/Correspondents/Delete/@c.CorrespondentId" class="inline" data-confirm="هل أنت متأكد من حذف المراسل «@c.FullName»؟">
                                 @Html.AntiForgeryToken()
-                                <button type="submit" class="icon-btn icon-btn-danger" title="حذف">
-                                    <span class="material-symbols-rounded">delete</span>
+                                <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-0 bg-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 text-red-500 hover:bg-red-50 hover:text-red-700 focus-visible:ring-red-500 dark:hover:bg-red-500/10" title="حذف" aria-label="حذف">
+                                    <span class="material-symbols-rounded text-xl leading-none">delete</span>
                                 </button>
                             </form>
                         </div>

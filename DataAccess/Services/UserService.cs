@@ -82,6 +82,7 @@ namespace DataAccess.Services
                     EmailAddress = u.Email,
                     PhoneNumber = u.PhoneNumber,
                     IsActive = u.IsActive,
+                    RoleId = u.RoleId,
                     RoleName = context.UserRoles
                         .Where(ur => ur.UserId == u.Id)
                         .Join(context.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name)

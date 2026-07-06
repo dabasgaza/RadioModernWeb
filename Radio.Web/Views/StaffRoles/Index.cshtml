@@ -1,78 +1,80 @@
 @model List<StaffRoleDto>
 @{ ViewData["Title"] = "المسميات الوظيفية"; }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>المسميات الوظيفية</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded text-primary">work</span>
-                المسميات الوظيفية
-            </h1>
-            <p>إدارة أدوار ومسؤوليات طاقم العمل في النظام</p>
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+        <div class="breadcrumbs text-sm text-base-content/60">
+            <ul>
+                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
+                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">work</span>المسميات الوظيفية</span></li>
+            </ul>
         </div>
-        <div class="flex items-center gap-2">
+        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary">work</span>
+            المسميات الوظيفية
+        </h1>
+        <p class="text-sm text-base-content/60 mt-0.5">إدارة أدوار ومسؤوليات طاقم العمل في النظام</p>
+    </div>
+    <div class="flex items-center gap-2">
+        @if (User.HasPermission(AppPermissions.StaffManage))
+        {
+            <a href="/StaffRoles/Create" class="btn btn-primary">
+                <span class="material-symbols-rounded">add</span>
+                دور جديد
+            </a>
+        }
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="card bg-base-100 shadow-md">
+        <div class="card-body text-center py-12">
+            <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">work</span>
+            <h3 class="font-bold text-lg mb-2">لا أدوار</h3>
+            <p class="text-sm text-base-content/60 mb-4">لم تتم إضافة أي مسميات وظيفية بعد.</p>
             @if (User.HasPermission(AppPermissions.StaffManage))
             {
-                <a href="/StaffRoles/Create" class="btn-primary">
+                <a href="/StaffRoles/Create" class="btn btn-primary">
                     <span class="material-symbols-rounded">add</span>
                     دور جديد
                 </a>
             }
         </div>
     </div>
-</div>
-
-<div class="table-premium">
-    @if (!Model.Any())
-    {
-        <div class="empty-state p-12">
-            <span class="material-symbols-rounded empty-icon">work</span>
-            <h3 class="font-bold text-ink text-lg mb-2">لا أدوار</h3>
-            <p class="text-ink-muted text-sm mb-4">لم تتم إضافة أي مسميات وظيفية بعد.</p>
-            @if (User.HasPermission(AppPermissions.StaffManage))
-            {
-                <a href="/StaffRoles/Create" class="btn-primary">
-                    <span class="material-symbols-rounded">add</span>
-                    دور جديد
-                </a>
-            }
-        </div>
-    }
-    else
-    {
+}
+else
+{
+    <div class="card bg-base-100 shadow-md overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
+        <table class="table table-zebra w-full text-sm">
+            <thead>
+                <tr>
+                    <th class="text-right font-semibold">الدور</th>
+                    <th class="text-right font-semibold">إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model)
+                {
                     <tr>
-                        <th class="px-5 py-3 text-right font-semibold">الدور</th>
-                        <th class="px-5 py-3 text-right font-semibold">إجراءات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var r in Model)
-                    {
-                        <tr>
-                            <td class="px-5 py-3 font-semibold text-ink">@r.RoleName</td>
-                            <td class="px-5 py-3">
-                                @if (User.HasPermission(AppPermissions.StaffManage))
-                                {
-                                    <a href="/StaffRoles/Edit/@r.StaffRoleId" class="icon-btn icon-btn-primary"><span class="material-symbols-rounded">edit</span></a>
+                        <td class="font-semibold">@r.RoleName</td>
+                        <td>
+                            @if (User.HasPermission(AppPermissions.StaffManage))
+                            {
+                                <div class="flex items-center justify-center gap-1 whitespace-nowrap">
+                                    <a href="/StaffRoles/Edit/@r.StaffRoleId" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-0 bg-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 text-blue-600 hover:bg-blue-50 hover:text-blue-700 focus-visible:ring-blue-500 dark:hover:bg-blue-500/10" title="تعديل" aria-label="تعديل"><span class="material-symbols-rounded text-xl leading-none">edit</span></a>
                                     <form method="post" action="/StaffRoles/Delete/@r.StaffRoleId" class="inline" data-confirm="هل أنت متأكد من حذف الدور «@r.RoleName»؟">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="icon-btn icon-btn-danger"><span class="material-symbols-rounded">delete</span></button>
+                                        <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-0 bg-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 text-red-500 hover:bg-red-50 hover:text-red-700 focus-visible:ring-red-500 dark:hover:bg-red-500/10" title="حذف" aria-label="حذف"><span class="material-symbols-rounded text-xl leading-none">delete</span></button>
                                     </form>
-                                }
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-</div>
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    </div>
+}

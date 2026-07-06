@@ -5,161 +5,167 @@
     var thisMonth = Model.Count(r => r.RecordDate.Year == DateTime.UtcNow.Year && r.RecordDate.Month == DateTime.UtcNow.Month);
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>نشر الموقع</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded text-primary">public</span>
-                نشر الموقع
-            </h1>
-            <p>إدارة عمليات نشر الحلقات على الموقع الرسمي للإذاعة</p>
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+        <div class="breadcrumbs text-sm text-base-content/60">
+            <ul>
+                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
+                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">public</span>نشر الموقع</span></li>
+            </ul>
         </div>
-        <div class="flex items-center gap-2">
-            @if (User.HasPermission(AppPermissions.EpisodeWebPublish))
-            {
-                <a href="/Episodes" class="btn-primary">
-                    <span class="material-symbols-rounded">add</span>
-                    نشر حلقة
-                </a>
-            }
-        </div>
+        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary">public</span>
+            نشر الموقع
+        </h1>
+        <p class="text-sm text-base-content/60 mt-0.5">إدارة عمليات نشر الحلقات على الموقع الرسمي للإذاعة</p>
+    </div>
+    <div class="flex items-center gap-2">
+        @if (User.HasPermission(AppPermissions.EpisodeWebPublish))
+        {
+            <a href="/Episodes" class="btn btn-primary">
+                <span class="material-symbols-rounded">add</span>
+                نشر حلقة
+            </a>
+        }
     </div>
 </div>
 
 <!-- Stats -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-    <div class="stat-card-premium text-accent">
-        <div class="flex items-center justify-between">
-            <div>
-                <div class="text-2xl font-black text-ink">@Model.Count</div>
-                <div class="text-xs font-bold text-ink-muted mt-1">إجمالي النشر</div>
-            </div>
-            <div class="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
-                <span class="material-symbols-rounded">language</span>
-            </div>
-        </div>
-    </div>
-    <div class="stat-card-premium text-success">
-        <div class="flex items-center justify-between">
-            <div>
-                <div class="text-2xl font-black text-ink">@todayCount</div>
-                <div class="text-xs font-bold text-ink-muted mt-1">نشر اليوم</div>
-            </div>
-            <div class="w-12 h-12 rounded-xl bg-success/10 text-success flex items-center justify-center">
-                <span class="material-symbols-rounded">today</span>
+    <div class="card bg-base-100 shadow-md p-6">
+        <div class="card-body p-0">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-2xl font-black">@Model.Count</div>
+                    <div class="text-xs font-bold text-base-content/60 mt-1">إجمالي النشر</div>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
+                    <span class="material-symbols-rounded">language</span>
+                </div>
             </div>
         </div>
     </div>
-    <div class="stat-card-premium text-primary">
-        <div class="flex items-center justify-between">
-            <div>
-                <div class="text-2xl font-black text-ink">@thisMonth</div>
-                <div class="text-xs font-bold text-ink-muted mt-1">نشر هذا الشهر</div>
+    <div class="card bg-base-100 shadow-md p-6">
+        <div class="card-body p-0">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-2xl font-black">@todayCount</div>
+                    <div class="text-xs font-bold text-base-content/60 mt-1">نشر اليوم</div>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-success/10 text-success flex items-center justify-center">
+                    <span class="material-symbols-rounded">today</span>
+                </div>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                <span class="material-symbols-rounded">date_range</span>
+        </div>
+    </div>
+    <div class="card bg-base-100 shadow-md p-6">
+        <div class="card-body p-0">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-2xl font-black">@thisMonth</div>
+                    <div class="text-xs font-bold text-base-content/60 mt-1">نشر هذا الشهر</div>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                    <span class="material-symbols-rounded">date_range</span>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Records Table -->
-<div class="table-premium">
-    @if (!Model.Any())
-    {
-        <div class="empty-state p-12">
-            <span class="material-symbols-rounded empty-icon">public</span>
-            <h3 class="font-bold text-ink text-lg mb-2">لا توجد سجلات نشر موقع</h3>
-            <p class="text-ink-muted text-sm mb-4">لم يتم نشر أي حلقات على الموقع بعد.</p>
+@if (!Model.Any())
+{
+    <div class="card bg-base-100 shadow-md">
+        <div class="card-body text-center py-12">
+            <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">public</span>
+            <h3 class="font-bold text-lg mb-2">لا توجد سجلات نشر موقع</h3>
+            <p class="text-sm text-base-content/60 mb-4">لم يتم نشر أي حلقات على الموقع بعد.</p>
             @if (User.HasPermission(AppPermissions.EpisodeWebPublish))
             {
-                <a href="/Episodes" class="btn-primary">
+                <a href="/Episodes" class="btn btn-primary">
                     <span class="material-symbols-rounded">add</span>
                     نشر حلقة
                 </a>
             }
         </div>
-    }
-    else
-    {
+    </div>
+}
+else
+{
+    <div class="card bg-base-100 shadow-md overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
+        <table class="table table-zebra w-full text-sm">
+            <thead>
+                <tr>
+                    <th class="text-right font-semibold">الحلقة</th>
+                    <th class="text-right font-semibold">البرنامج</th>
+                    <th class="text-right font-semibold">العنوان</th>
+                    <th class="text-right font-semibold">نوع الوسائط</th>
+                    <th class="text-right font-semibold">بواسطة</th>
+                    <th class="text-right font-semibold">التاريخ</th>
+                    @if (User.HasPermission(AppPermissions.EpisodeWebPublish))
+                    {
+                        <th class="text-center font-semibold">إجراءات</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model)
+                {
                     <tr>
-                        <th class="px-5 py-3 text-right font-semibold">الحلقة</th>
-                        <th class="px-5 py-3 text-right font-semibold">البرنامج</th>
-                        <th class="px-5 py-3 text-right font-semibold">العنوان</th>
-                        <th class="px-5 py-3 text-right font-semibold">نوع الوسائط</th>
-                        <th class="px-5 py-3 text-right font-semibold">بواسطة</th>
-                        <th class="px-5 py-3 text-right font-semibold">التاريخ</th>
+                        <td>
+                            <a href="/Episodes/Details/@r.EpisodeId" class="text-primary font-semibold hover:underline" target="_blank">
+                                @(r.EpisodeName ?? "—")
+                            </a>
+                            <div class="text-xs text-base-content/60">@r.ProgramName</div>
+                        </td>
+                        <td>@r.ProgramName</td>
+                        <td class="max-w-xs truncate">@r.Summary</td>
+                        <td>
+                            <span class="badge badge-info">@GetMediaTypeText(r.Summary)</span>
+                        </td>
+                        <td>@r.RecordedBy</td>
+                        <td class="whitespace-nowrap" dir="ltr">
+                            <span>@r.RecordDate.ToString("yyyy-MM-dd")</span>
+                            <span class="text-base-content/40">@r.RecordDate.ToString("HH:mm")</span>
+                        </td>
                         @if (User.HasPermission(AppPermissions.EpisodeWebPublish))
                         {
-                            <th class="px-5 py-3 text-center font-semibold">إجراءات</th>
+                            <td>
+                                <div class="flex items-center justify-center gap-1 whitespace-nowrap">
+                                    <a href="/WebsitePublishing/Edit/@r.RecordId" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-0 bg-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 text-blue-600 hover:bg-blue-50 hover:text-blue-700 focus-visible:ring-blue-500 dark:hover:bg-blue-500/10" title="تعديل" aria-label="تعديل">
+                                        <span class="material-symbols-rounded text-xl leading-none">edit</span>
+                                    </a>
+                                    <button type="button" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-0 bg-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 text-red-500 hover:bg-red-50 hover:text-red-700 focus-visible:ring-red-500 dark:hover:bg-red-500/10" title="حذف" aria-label="حذف"
+                                            onclick="confirmDelete(@r.RecordId, '@(r.EpisodeName ?? "سجل")')">
+                                        <span class="material-symbols-rounded text-xl leading-none">delete</span>
+                                    </button>
+                                </div>
+                            </td>
                         }
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var r in Model)
-                    {
-                        <tr>
-                            <td class="px-5 py-3">
-                                <a href="/Episodes/Details/@r.EpisodeId" class="text-primary font-semibold hover:underline" target="_blank">
-                                    @(r.EpisodeName ?? "—")
-                                </a>
-                                <div class="text-xs text-ink-muted">@r.ProgramName</div>
-                            </td>
-                            <td class="px-5 py-3 text-ink-muted">@r.ProgramName</td>
-                            <td class="px-5 py-3 text-ink-muted max-w-xs truncate">@r.Summary</td>
-                            <td class="px-5 py-3">
-                                <span class="badge badge-info">@GetMediaTypeText(r.Summary)</span>
-                            </td>
-                            <td class="px-5 py-3 text-ink-muted">@r.RecordedBy</td>
-                            <td class="px-5 py-3 text-ink-muted whitespace-nowrap" dir="ltr">
-                                <span class="text-ink">@r.RecordDate.ToString("yyyy-MM-dd")</span>
-                                <span class="text-ink-soft">@r.RecordDate.ToString("HH:mm")</span>
-                            </td>
-                            @if (User.HasPermission(AppPermissions.EpisodeWebPublish))
-                            {
-                                <td class="px-5 py-3">
-                                    <div class="flex items-center justify-center gap-1">
-                                        <a href="/WebsitePublishing/Edit/@r.RecordId" class="icon-btn icon-btn-primary" title="تعديل">
-                                            <span class="material-symbols-rounded">edit</span>
-                                        </a>
-                                        <button type="button" class="icon-btn icon-btn-danger" title="حذف"
-                                                onclick="confirmDelete(@r.RecordId, '@(r.EpisodeName ?? "سجل")')">
-                                            <span class="material-symbols-rounded">delete</span>
-                                        </button>
-                                    </div>
-                                </td>
-                            }
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-</div>
+                }
+            </tbody>
+        </table>
+    </div>
+    </div>
+}
 
 <!-- Delete Modal -->
 <div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
-    <div class="bg-surface rounded-xl shadow-xl max-w-sm w-full p-6">
+    <div class="bg-base-100 rounded-xl shadow-xl max-w-sm w-full p-6">
         <div class="text-center">
-            <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span class="material-symbols-rounded text-danger text-3xl">delete_forever</span>
+            <div class="w-16 h-16 bg-error/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="material-symbols-rounded text-error text-3xl">delete_forever</span>
             </div>
-            <h3 class="text-lg font-bold text-ink mb-2">حذف سجل نشر الموقع</h3>
-            <p class="text-ink-muted text-sm mb-6" id="deleteMessage">هل أنت متأكد من حذف هذا السجل؟</p>
+            <h3 class="text-lg font-bold mb-2">حذف سجل نشر الموقع</h3>
+            <p class="text-sm text-base-content/60 mb-6" id="deleteMessage">هل أنت متأكد من حذف هذا السجل؟</p>
             <form id="deleteForm" method="post" action="">
                 @Html.AntiForgeryToken()
                 <div class="flex gap-2 justify-center">
-                    <button type="button" class="btn-secondary" onclick="closeDeleteModal()">إلغاء</button>
-                    <button type="submit" class="btn-danger">
+                    <button type="button" class="btn btn-ghost" onclick="closeDeleteModal()">إلغاء</button>
+                    <button type="submit" class="btn btn-error">
                         <span class="material-symbols-rounded">delete</span>
                         حذف
                     </button>

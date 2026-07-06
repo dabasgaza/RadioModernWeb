@@ -1,6 +1,3 @@
-using Microsoft.AspNetCore.Http;
-using System.Threading;
-
 namespace Radio.Web.Security
 {
     /// <summary>

@@ -3,117 +3,123 @@
     ViewData["Title"] = "تشخيص النظام";
 }
 
-<div class="page-header">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <nav class="breadcrumb">
-                <span class="material-symbols-rounded">home</span>
-                <a href="/">الرئيسية</a>
-                <span class="material-symbols-rounded">chevron_left</span>
-                <span>تشخيص النظام</span>
-            </nav>
-            <h1>
-                <span class="material-symbols-rounded">monitor_heart</span>
-                تشخيص وصحة النظام
-            </h1>
-            <p>مراقبة مؤشرات الأداء، الأخطاء، الاستعلامات البطيئة ومطالعة سجل النظام الفرعي</p>
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+        <div class="breadcrumbs text-sm text-base-content/60">
+            <ul>
+                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
+                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">monitor_heart</span>تشخيص النظام</span></li>
+            </ul>
         </div>
+        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary">monitor_heart</span>
+            تشخيص وصحة النظام
+        </h1>
+        <p class="text-sm text-base-content/60 mt-0.5">مراقبة مؤشرات الأداء، الأخطاء، الاستعلامات البطيئة ومطالعة سجل النظام الفرعي</p>
     </div>
 </div>
 
 <!-- Diagnostics Stats -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-    <div class="stat-card-premium text-primary">
-        <div class="flex items-center justify-between">
-            <div>
-                <div class="text-2xl font-black text-ink">@Model.Summary.TotalLogs</div>
-                <div class="text-xs font-bold text-ink-muted mt-1">إجمالي السجلات</div>
-            </div>
-            <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                <span class="material-symbols-rounded">list_alt</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="stat-card-premium text-danger">
-        <div class="flex items-center justify-between">
-            <div>
-                <div class="text-2xl font-black text-ink">@Model.Summary.TotalErrors</div>
-                <div class="text-xs font-bold text-ink-muted mt-1">إجمالي الأخطاء</div>
-            </div>
-            <div class="w-12 h-12 rounded-xl bg-danger/10 text-danger flex items-center justify-center">
-                <span class="material-symbols-rounded">error</span>
+    <div class="card bg-base-100 shadow-md p-6 text-primary">
+        <div class="card-body p-0">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-2xl font-black text-base-content">@Model.Summary.TotalLogs</div>
+                    <div class="text-xs font-bold text-base-content/60 mt-1">إجمالي السجلات</div>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                    <span class="material-symbols-rounded">list_alt</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="stat-card-premium text-warning">
-        <div class="flex items-center justify-between">
-            <div>
-                <div class="text-2xl font-black text-ink">@Model.Summary.TotalWarnings</div>
-                <div class="text-xs font-bold text-ink-muted mt-1">التحذيرات</div>
-            </div>
-            <div class="w-12 h-12 rounded-xl bg-warning/10 text-warning flex items-center justify-center">
-                <span class="material-symbols-rounded">warning</span>
+    <div class="card bg-base-100 shadow-md p-6 text-error">
+        <div class="card-body p-0">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-2xl font-black text-base-content">@Model.Summary.TotalErrors</div>
+                    <div class="text-xs font-bold text-base-content/60 mt-1">إجمالي الأخطاء</div>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-error/10 text-error flex items-center justify-center">
+                    <span class="material-symbols-rounded">error</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="stat-card-premium text-accent">
-        <div class="flex items-center justify-between">
-            <div>
-                <div class="text-2xl font-black text-ink">@Model.Summary.SlowQueriesCount</div>
-                <div class="text-xs font-bold text-ink-muted mt-1">استعلامات بطيئة</div>
+    <div class="card bg-base-100 shadow-md p-6 text-warning">
+        <div class="card-body p-0">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-2xl font-black text-base-content">@Model.Summary.TotalWarnings</div>
+                    <div class="text-xs font-bold text-base-content/60 mt-1">التحذيرات</div>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-warning/10 text-warning flex items-center justify-center">
+                    <span class="material-symbols-rounded">warning</span>
+                </div>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
-                <span class="material-symbols-rounded">speed</span>
+        </div>
+    </div>
+
+    <div class="card bg-base-100 shadow-md p-6 text-accent">
+        <div class="card-body p-0">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-2xl font-black text-base-content">@Model.Summary.SlowQueriesCount</div>
+                    <div class="text-xs font-bold text-base-content/60 mt-1">استعلامات بطيئة</div>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
+                    <span class="material-symbols-rounded">speed</span>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="table-premium">
-    <div class="p-5 border-b border-border flex items-center justify-between">
-        <h3 class="font-bold text-ink flex items-center gap-2 text-base">
+<div class="card bg-base-100 shadow-md overflow-hidden">
+    <div class="overflow-x-auto">
+    <div class="p-5 border-b border-base-200 flex items-center justify-between">
+        <h3 class="font-bold text-base-content flex items-center gap-2 text-base">
             <span class="material-symbols-rounded text-primary">analytics</span>
             أحدث 100 سجل مراقبة للعمليات والأخطاء
         </h3>
     </div>
-    <div class="overflow-x-auto">
-        <table>
-            <thead>
+    <table class="table table-zebra w-full text-sm">
+        <thead>
+            <tr>
+                <th class="text-right">طابع الوقت</th>
+                <th class="text-right">المستوى</th>
+                <th class="text-right">الرسالة</th>
+                <th class="text-right">السياق / المصدر</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in Model.Logs)
+            {
                 <tr>
-                    <th class="px-5 py-3 text-right">طابع الوقت</th>
-                    <th class="px-5 py-3 text-right">المستوى</th>
-                    <th class="px-5 py-3 text-right">الرسالة</th>
-                    <th class="px-5 py-3 text-right">السياق / المصدر</th>
+                    <td class="text-base-content/60 text-xs font-semibold">@log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td class="">
+                        <span class="badge @GetLevelBadgeClass(log.Level) font-bold text-[10px]">
+                            @log.Level
+                        </span>
+                    </td>
+                    <td class="text-base-content/60 font-medium text-xs">@log.Message</td>
+                    <td class="text-[11px] text-base-content/40 max-w-xs truncate" title="@log.SourceContext">@log.SourceContext</td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (var log in Model.Logs)
-                {
-                    <tr>
-                        <td class="px-5 py-3 text-ink-muted text-xs font-semibold">@log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                        <td class="px-5 py-3">
-                            <span class="badge @GetLevelBadgeClass(log.Level) font-bold text-[10px]">
-                                @log.Level
-                            </span>
-                        </td>
-                        <td class="px-5 py-3 text-ink-muted font-medium text-xs">@log.Message</td>
-                        <td class="px-5 py-3 text-[11px] text-ink-soft max-w-xs truncate" title="@log.SourceContext">@log.SourceContext</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+            }
+        </tbody>
+    </table>
+</div>
 </div>
 
 @functions {
     string GetLevelBadgeClass(string level) => level switch
     {
-        "Error" or "Fatal" => "badge-danger",
+        "Error" or "Fatal" => "badge-error",
         "Warning" => "badge-warning",
         "Information" => "badge-info",
-        _ => "badge-default"
+        _ => "badge-ghost"
     };
 }

@@ -20,33 +20,31 @@
 
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-6 font-semibold text-sm"></div>
+        <div asp-validation-summary="All" class="bg-error/10 border border-error/20 text-error rounded-xl p-4 mb-6 font-semibold text-sm"></div>
     }
 
-    <div class="card-premium">
-        <div class="card-header">
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-rounded text-primary">badge</span>
-                <h3 class="font-bold text-ink text-base">بيانات الدور</h3>
-            </div>
-        </div>
+    <div class="card bg-base-100 shadow-md">
         <div class="card-body">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="material-symbols-rounded text-primary">badge</span>
+                <h3 class="font-bold text-base-content text-base">بيانات الدور</h3>
+            </div>
             <div>
-                <label class="form-label">اسم الدور *</label>
-                <div class="input-wrapper">
-                    <span class="material-symbols-rounded input-icon">badge</span>
-                    <input type="text" name="RoleName" value="@Model.RoleName" class="form-input" required placeholder="مثال: مخرج" />
+                <label class="label">اسم الدور *</label>
+                <div class="relative">
+                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">badge</span>
+                    <input type="text" name="RoleName" value="@Model.RoleName" class="input input-bordered w-full pr-10" required placeholder="مثال: مخرج" />
                 </div>
             </div>
         </div>
     </div>
 
     <div class="flex items-center justify-center gap-2 mt-6">
-        <a href="/StaffRoles" class="btn-secondary">
+        <a href="/StaffRoles" class="btn btn-ghost">
             <span class="material-symbols-rounded">cancel</span>
             إلغاء
         </a>
-        <button type="submit" class="btn-primary">
+        <button type="submit" class="btn btn-primary">
             <span class="material-symbols-rounded">save</span>
             حفظ
         </button>

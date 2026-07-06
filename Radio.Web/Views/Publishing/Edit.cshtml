@@ -17,12 +17,12 @@
 
 @if (log == null)
 {
-    <div class="bg-red-50 border border-red-200 text-danger rounded-lg p-4">سجل النشر غير موجود.</div>
+    <div class="bg-red-50 border border-red-200 text-error rounded-lg p-4">سجل النشر غير موجود.</div>
     return;
 }
 
 <!-- Episode Info -->
-<div class="card-premium mb-4">
+<div class="card bg-base-100 shadow-md mb-4">
     <div class="card-body">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
@@ -30,11 +30,11 @@
                     <span class="material-symbols-rounded text-primary">podcasts</span>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold text-ink">@(episode?.EpisodeName ?? "—")</h3>
-                    <p class="text-sm text-ink-muted">@(episode?.ProgramName ?? "")</p>
+                    <h3 class="text-lg font-bold text-base-content">@(episode?.EpisodeName ?? "—")</h3>
+                    <p class="text-sm text-base-content/60">@(episode?.ProgramName ?? "")</p>
                 </div>
             </div>
-            <a href="/Episodes/Details/@log.EpisodeId" class="btn-secondary text-sm" target="_blank">
+            <a href="/Episodes/Details/@log.EpisodeId" class="btn btn-ghost text-sm" target="_blank">
                 <span class="material-symbols-rounded">open_in_new</span>
                 عرض الحلقة
             </a>
@@ -51,9 +51,9 @@
             @for (int i = 0; i < Model.GuestLogs.Count; i++)
             {
                 var item = Model.GuestLogs[i];
-                <div class="bg-surface rounded-xl border border-border mb-4 guest-card" data-index="@i">
-                    <div class="p-5 border-b border-border bg-surface-3 rounded-t-xl">
-                        <h3 class="font-bold text-ink flex items-center gap-2">
+                <div class="bg-base-100 rounded-xl border border-base-200 mb-4 guest-card" data-index="@i">
+                    <div class="p-5 border-b border-base-200 rounded-t-xl">
+                        <h3 class="font-bold text-base-content flex items-center gap-2">
                             <span class="material-symbols-rounded text-primary">person</span>
                             @item.GuestName
                         </h3>
@@ -65,24 +65,24 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <label class="form-label">عنوان المقطع</label>
-                                <div class="input-wrapper">
-                                    <span class="material-symbols-rounded input-icon">title</span>
-                                    <input type="text" name="GuestLogs[@i].ClipTitle" value="@item.ClipTitle" class="form-input" placeholder="عنوان المقطع المنشور" />
+                                <label class="label">عنوان المقطع</label>
+                                <div class="relative">
+                                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">title</span>
+                                    <input type="text" name="GuestLogs[@i].ClipTitle" value="@item.ClipTitle" class="input input-bordered w-full pr-10" placeholder="عنوان المقطع المنشور" />
                                 </div>
                             </div>
                             <div>
-                                <label class="form-label">المدة (دقيقة)</label>
-                                <div class="input-wrapper">
-                                    <span class="material-symbols-rounded input-icon">timer</span>
-                                    <input type="number" name="GuestLogs[@i].DurationMinutes" value="@item.DurationMinutes" class="form-input" placeholder="مدة المقطع بالدقائق" min="1" />
+                                <label class="label">المدة (دقيقة)</label>
+                                <div class="relative">
+                                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">timer</span>
+                                    <input type="number" name="GuestLogs[@i].DurationMinutes" value="@item.DurationMinutes" class="input input-bordered w-full pr-10" placeholder="مدة المقطع بالدقائق" min="1" />
                                 </div>
                             </div>
                             <div>
-                                <label class="form-label">نوع الوسائط</label>
-                                <div class="input-wrapper">
-                                    <span class="material-symbols-rounded input-icon">category</span>
-                                    <select name="GuestLogs[@i].MediaType" class="form-input">
+                                <label class="label">نوع الوسائط</label>
+                                <div class="relative">
+                                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">category</span>
+                                    <select name="GuestLogs[@i].MediaType" class="select select-bordered w-full pr-10">
                                         <option value="1" selected="@(item.MediaType == MediaType.Audio)">صوت</option>
                                         <option value="2" selected="@(item.MediaType == MediaType.Video)">فيديو</option>
                                         <option value="3" selected="@(item.MediaType == MediaType.Both)">صوت وفيديو</option>
@@ -93,7 +93,7 @@
 
                         <!-- Platforms -->
                         <div>
-                            <label class="form-label">منصات النشر</label>
+                            <label class="label">منصات النشر</label>
                             <div class="platforms-container space-y-2" id="platforms-@i">
                                 @if (item.Platforms.Any())
                                 {
@@ -101,15 +101,15 @@
                                     {
                                         var pf = item.Platforms[j];
                                         <div class="platform-row flex gap-2 items-start">
-                                            <select name="GuestLogs[@i].Platforms[@j].PlatformId" class="form-input flex-1">
+                                            <select name="GuestLogs[@i].Platforms[@j].PlatformId" class="select select-bordered flex-1">
                                                 <option value="">— اختر المنصة —</option>
                                                 @foreach (var p in Model.Platforms)
                                                 {
                                                     <option value="@p.SocialMediaPlatformId" selected="@(pf.PlatformId == p.SocialMediaPlatformId)">@p.Name</option>
                                                 }
                                             </select>
-                                            <input type="url" name="GuestLogs[@i].Platforms[@j].Url" value="@pf.Url" class="form-input flex-[2]" placeholder="رابط النشر" dir="ltr" />
-                                            <button type="button" class="icon-btn icon-btn-danger" onclick="this.closest('.platform-row').remove()" title="حذف المنصة">
+                                            <input type="url" name="GuestLogs[@i].Platforms[@j].Url" value="@pf.Url" class="input input-bordered flex-[2]" placeholder="رابط النشر" dir="ltr" />
+                                            <button type="button" class="btn btn-ghost btn-square btn-sm text-error" onclick="this.closest('.platform-row').remove()" title="حذف المنصة">
                                                 <span class="material-symbols-rounded">close</span>
                                             </button>
                                         </div>
@@ -118,21 +118,21 @@
                                 else
                                 {
                                     <div class="platform-row flex gap-2 items-start">
-                                        <select name="GuestLogs[@i].Platforms[0].PlatformId" class="form-input flex-1">
+                                        <select name="GuestLogs[@i].Platforms[0].PlatformId" class="select select-bordered flex-1">
                                             <option value="">— اختر المنصة —</option>
                                             @foreach (var p in Model.Platforms)
                                             {
                                                 <option value="@p.SocialMediaPlatformId">@p.Name</option>
                                             }
                                         </select>
-                                        <input type="url" name="GuestLogs[@i].Platforms[0].Url" class="form-input flex-[2]" placeholder="رابط النشر" dir="ltr" />
-                                        <button type="button" class="icon-btn icon-btn-success add-platform-btn" onclick="addPlatform(@i)" title="إضافة منصة">
+                                        <input type="url" name="GuestLogs[@i].Platforms[0].Url" class="input input-bordered flex-[2]" placeholder="رابط النشر" dir="ltr" />
+                                        <button type="button" class="btn btn-ghost btn-square btn-sm text-success add-platform-btn" onclick="addPlatform(@i)" title="إضافة منصة">
                                             <span class="material-symbols-rounded">add</span>
                                         </button>
                                     </div>
                                 }
                             </div>
-                            <button type="button" class="btn-secondary text-sm mt-2" onclick="addPlatform(@i)">
+                            <button type="button" class="btn btn-ghost text-sm mt-2" onclick="addPlatform(@i)">
                                 <span class="material-symbols-rounded">add</span>
                                 إضافة منصة
                             </button>
@@ -143,21 +143,21 @@
         }
         else
         {
-            <div class="bg-surface rounded-xl border border-border p-8 text-center">
-                <span class="material-symbols-rounded text-ink-soft text-4xl mb-2">people</span>
-                <p class="text-ink-muted">لا يوجد سجلات نشر لهذه الحلقة.</p>
+            <div class="bg-base-100 rounded-xl border border-base-200 p-8 text-center">
+                <span class="material-symbols-rounded text-base-content/40 text-4xl mb-2">people</span>
+                <p class="text-base-content/60">لا يوجد سجلات نشر لهذه الحلقة.</p>
             </div>
         }
     </div>
 
     <div class="flex items-center justify-end gap-2">
-        <a href="/Publishing" class="btn-secondary">
+        <a href="/Publishing" class="btn btn-ghost">
             <span class="material-symbols-rounded">cancel</span>
             إلغاء
         </a>
         @if (Model.GuestLogs.Any())
         {
-            <button type="submit" class="btn-primary">
+            <button type="submit" class="btn btn-primary">
                 <span class="material-symbols-rounded">save</span>
                 حفظ التعديلات
             </button>
@@ -166,24 +166,23 @@
 </form>
 
 <!-- All Publishing Records for this Episode -->
-<div class="card-premium mt-8">
-    <div class="card-header">
-        <div class="flex items-center gap-2">
-            <span class="material-symbols-rounded text-primary">history</span>
-            <h3 class="font-bold text-ink text-base">كافة سجلات النشر والإنتاج الخاصة بهذه الحلقة (@(Model.EpisodePublishingRecords?.Count ?? 0))</h3>
-        </div>
-    </div>
+<div class="card bg-base-100 shadow-md mt-8">
     <div class="card-body">
+        <div class="flex items-center gap-2 mb-4">
+            <span class="material-symbols-rounded text-primary">history</span>
+            <h3 class="font-bold text-base-content text-base">كافة سجلات النشر والإنتاج الخاصة بهذه الحلقة (@(Model.EpisodePublishingRecords?.Count ?? 0))</h3>
+        </div>
         @if (Model.EpisodePublishingRecords == null || !Model.EpisodePublishingRecords.Any())
         {
-            <p class="text-sm text-ink-muted">لا توجد سجلات أخرى لهذه الحلقة.</p>
+            <p class="text-sm text-base-content/60">لا توجد سجلات أخرى لهذه الحلقة.</p>
         }
         else
         {
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
+            <div class="card bg-base-100 shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                <table class="table table-zebra w-full text-sm">
                     <thead>
-                        <tr class="text-ink-muted border-b border-border text-right text-xs">
+                        <tr class="text-base-content/60 border-b border-base-200 text-right text-xs">
                             <th class="pb-3 font-bold">النوع</th>
                             <th class="pb-3 font-bold">التفاصيل / الملخص</th>
                             <th class="pb-3 font-bold">بواسطة</th>
@@ -191,18 +190,18 @@
                             <th class="pb-3 font-bold text-center">الإجراء</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-border">
+                    <tbody class="divide-y divide-base-200">
                         @foreach (var r in Model.EpisodePublishingRecords)
                         {
-                            <tr class="hover:bg-surface-2 transition duration-200">
+                            <tr class="hover:bg-base-200 transition duration-200">
                                 <td class="py-3">
                                     <span class="badge font-bold text-xs" style="background-color: @(r.RecordColor)15; color: @r.RecordColor">
                                         @GetRecordTypeName(r.RecordType)
                                     </span>
                                 </td>
-                                <td class="py-3 text-ink-muted">@r.Summary</td>
-                                <td class="py-3 text-ink-muted font-medium">@(r.RecordedBy ?? "تلقائي")</td>
-                                <td class="py-3 text-ink-soft text-xs" dir="ltr">@r.RecordDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td class="py-3 text-base-content/60">@r.Summary</td>
+                                <td class="py-3 text-base-content/60 font-medium">@(r.RecordedBy ?? "تلقائي")</td>
+                                <td class="py-3 text-base-content/40 text-xs" dir="ltr">@r.RecordDate.ToString("yyyy-MM-dd HH:mm")</td>
                                 <td class="py-3 text-center">
                                     @if (r.RecordType == "SocialMedia")
                                     {
@@ -214,13 +213,14 @@
                                     }
                                     else
                                     {
-                                        <span class="text-xs text-ink-soft">—</span>
+                                        <span class="text-xs text-base-content/40">—</span>
                                     }
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
+            </div>
             </div>
         }
     </div>
@@ -263,15 +263,15 @@
             const count = platformCounters[guestIdx] || container.querySelectorAll('.platform-row').length;
             const html = `
                 <div class="platform-row flex gap-2 items-start">
-                    <select name="GuestLogs[${guestIdx}].Platforms[${count}].PlatformId" class="form-input flex-1">
+                    <select name="GuestLogs[${guestIdx}].Platforms[${count}].PlatformId" class="select select-bordered flex-1">
                         <option value="">— اختر المنصة —</option>
                         @foreach (var p in Model.Platforms)
                         {
                             <option value="@p.SocialMediaPlatformId">@p.Name</option>
                         }
                     </select>
-                    <input type="url" name="GuestLogs[${guestIdx}].Platforms[${count}].Url" class="form-input flex-[2]" placeholder="رابط النشر" dir="ltr" />
-                    <button type="button" class="icon-btn icon-btn-danger" onclick="this.closest('.platform-row').remove()">
+                    <input type="url" name="GuestLogs[${guestIdx}].Platforms[${count}].Url" class="input input-bordered flex-[2]" placeholder="رابط النشر" dir="ltr" />
+                    <button type="button" class="btn btn-ghost btn-square btn-sm text-error" onclick="this.closest('.platform-row').remove()">
                         <span class="material-symbols-rounded">close</span>
                     </button>
                 </div>`;

@@ -20,47 +20,44 @@
 
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-danger rounded-xl p-4 mb-6 font-semibold text-sm"></div>
+        <div asp-validation-summary="All" class="bg-danger/10 border border-danger/20 text-danger rounded-xl p-4 mb-6 font-semibold text-sm"></div>
     }
 
-    <div class="card-premium">
-        <div class="card-header">
-            <div class="flex items-center gap-2">
+    <div class="card bg-base-100 shadow-md">
+        <div class="card-body gap-6">
+            <h3 class="card-title">
                 <span class="material-symbols-rounded text-primary">radio</span>
-                <h3 class="font-bold text-ink text-base">بيانات البرنامج</h3>
-            </div>
-        </div>
-        <div class="card-body space-y-4">
-            <div>
-                <label class="form-label">اسم البرنامج *</label>
-                <div class="input-wrapper">
-                    <span class="material-symbols-rounded input-icon">edit_note</span>
-                    <input type="text" name="ProgramName" value="@Model.ProgramName" class="form-input" required placeholder="مثال: نبض الشارع" />
+                بيانات البرنامج
+            </h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="label"><span class="label-text">اسم البرنامج <span class="text-error">*</span></span></label>
+                    <label class="input input-bordered flex items-center gap-2">
+                        <span class="material-symbols-rounded text-base-content/40">edit_note</span>
+                        <input type="text" name="ProgramName" value="@Model.ProgramName" class="grow" required placeholder="مثال: نبض الشارع" />
+                    </label>
                 </div>
-            </div>
-            <div>
-                <label class="form-label">الفئة</label>
-                <div class="input-wrapper">
-                    <span class="material-symbols-rounded input-icon">category</span>
-                    <input type="text" name="Category" value="@Model.Category" class="form-input" placeholder="مثال: سياسي، ثقافي، اجتماعي" />
+                <div>
+                    <label class="label"><span class="label-text">الفئة</span></label>
+                    <label class="input input-bordered flex items-center gap-2">
+                        <span class="material-symbols-rounded text-base-content/40">category</span>
+                        <input type="text" name="Category" value="@Model.Category" class="grow" placeholder="مثال: سياسي، ثقافي، اجتماعي" />
+                    </label>
                 </div>
-            </div>
-            <div>
-                <label class="form-label">الوصف</label>
-                <div class="input-wrapper">
-                    <span class="material-symbols-rounded input-icon" style="top:1rem;transform:none">description</span>
-                    <textarea name="ProgramDescription" rows="5" class="form-input" placeholder="أدخل ملخصاً أو تفاصيل موجزة عن البرنامج الإذاعي ومواعيد بثه المقترحة...">@Model.ProgramDescription</textarea>
+                <div>
+                    <label class="label"><span class="label-text">الوصف</span></label>
+                    <textarea name="ProgramDescription" rows="5" class="textarea textarea-bordered w-full" placeholder="أدخل ملخصاً أو تفاصيل موجزة عن البرنامج الإذاعي ومواعيد بثه المقترحة...">@Model.ProgramDescription</textarea>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="flex items-center justify-end gap-2 mt-6">
-        <a href="/Programs" class="btn-secondary">
+        <a href="/Programs" class="btn btn-ghost">
             <span class="material-symbols-rounded">cancel</span>
             إلغاء
         </a>
-        <button type="submit" class="btn-primary">
+        <button type="submit" class="btn btn-primary">
             <span class="material-symbols-rounded">save</span>
             حفظ البيانات
         </button>

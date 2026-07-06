@@ -22,13 +22,11 @@
         </p>
     </div>
     <div class="flex items-center gap-2 relative z-10">
-        <a href="/Episodes" class="btn-secondary px-4 py-2 text-xs flex items-center gap-1 rounded-xl">
+        <a href="/Episodes" class="btn btn-ghost px-4 py-2 text-xs flex items-center gap-1 rounded-xl">
             <span class="material-symbols-rounded text-sm">arrow_forward</span>
             الرجوع لقائمة الحلقات
         </a>
-        <span class="status-badge px-3 py-1.5 text-xs font-bold rounded-xl shadow-sm border @GetStatusCssClass(ep.StatusId)">
-            @ep.StatusText
-        </span>
+        <partial name="_StatusBadge" model='new StatusBadgeViewModel { Type = "episode", Status = ep.StatusText, Label = ep.StatusText }' />
     </div>
 </div>
 
@@ -42,7 +40,7 @@
         </div>
         @if (ep.StatusId == 4)
         {
-            <span class="badge bg-red-50 text-red-600 border border-red-200 flex items-center gap-1 font-bold text-xs py-1 px-3 rounded-full">
+            <span class="badge bg-danger/10 text-danger border border-danger/20 flex items-center gap-1 font-bold text-xs py-1 px-3 rounded-full">
                 <span class="material-symbols-rounded text-xs">cancel</span>
                 ملغاة
             </span>
@@ -118,13 +116,13 @@
         @if (isCancelled)
         {
             <div class="flex-1 flex flex-col items-center relative">
-                <div class="absolute top-[20px] -right-[50%] w-[100%] h-1 z-0 bg-red-200"></div>
-                <div class="w-10 h-10 rounded-full flex items-center justify-center bg-red-600 text-white border-2 border-red-600 shadow-md shadow-red-200 z-10 shrink-0 hover:scale-105 transition-all">
+                <div class="absolute top-[20px] -right-[50%] w-[100%] h-1 z-0 bg-danger/30"></div>
+                <div class="w-10 h-10 rounded-full flex items-center justify-center bg-danger text-white border-2 border-danger shadow-md shadow-danger/20 z-10 shrink-0 hover:scale-105 transition-all">
                     <span class="material-symbols-rounded text-base">cancel</span>
                 </div>
                 <div class="mt-3 text-center px-1 z-10">
-                    <div class="text-xs font-bold leading-tight text-red-600">ملغاة</div>
-                    <span class="text-[9px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-full mt-1 inline-block">نهائية</span>
+                    <div class="text-xs font-bold leading-tight text-danger">ملغاة</div>
+                    <span class="text-[9px] font-bold text-danger bg-danger/10 px-2 py-0.5 rounded-full mt-1 inline-block">نهائية</span>
                 </div>
             </div>
         }
@@ -152,9 +150,7 @@
                     </div>
                     <div class="bg-surface-3 p-3 rounded-xl border border-border/50">
                         <div class="text-[10px] font-bold text-ink-muted mb-1">حالة الحلقة الحالية</div>
-                        <span class="status-badge text-xs font-bold inline-block @GetStatusCssClass(ep.StatusId)">
-                            @ep.StatusText
-                        </span>
+                        <partial name="_StatusBadge" model='new StatusBadgeViewModel { Type = "episode", Status = ep.StatusText, Label = ep.StatusText }' />
                     </div>
                 </div>
 
@@ -168,15 +164,15 @@
 
                 @if (!string.IsNullOrWhiteSpace(ep.SpecialNotes))
                 {
-                    <div class="border-r-4 border-amber-500 bg-amber-50/50 rounded-l-xl p-4">
-                        <div class="text-[10px] font-bold text-amber-700 mb-1">ملاحظات وتوجيهات خاصة</div>
+                    <div class="border-r-4 border-warning bg-warning/10 rounded-l-xl p-4">
+                        <div class="text-[10px] font-bold text-warning mb-1">ملاحظات وتوجيهات خاصة</div>
                         <div class="text-ink text-sm font-medium">@ep.SpecialNotes</div>
                     </div>
                 }
 
                 @if (!string.IsNullOrWhiteSpace(ep.CancellationReason))
                 {
-                    <div class="border-r-4 border-danger bg-red-50 rounded-l-xl p-4">
+                    <div class="border-r-4 border-danger bg-danger/10 rounded-l-xl p-4">
                         <div class="text-[10px] font-bold text-danger mb-1 flex items-center gap-1">
                             <span class="material-symbols-rounded text-xs">warning</span>
                             سبب إلغاء وجدولة الحلقة
@@ -226,12 +222,12 @@
                         <div class="flex flex-wrap gap-2">
                             @foreach (var g in ep.GuestItems)
                             {
-                                <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-100 text-xs font-bold shadow-sm">
+                                <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-primary/10 text-primary border border-primary/20 text-xs font-bold shadow-sm">
                                     <span class="material-symbols-rounded text-xs">person</span>
                                     @g.Name
                                     @if (!string.IsNullOrWhiteSpace(g.Topic))
                                     {
-                                        <span class="opacity-75 font-medium border-r border-blue-200 pr-1.5 mr-1.5">- @g.Topic</span>
+                                        <span class="opacity-75 font-medium border-r border-primary/20 pr-1.5 mr-1.5">- @g.Topic</span>
                                     }
                                 </span>
                             }
@@ -243,13 +239,13 @@
                 {
                     <div>
                         <div class="text-xs font-bold text-ink mb-2 flex items-center gap-1">
-                            <span class="material-symbols-rounded text-sm text-amber-500">map</span>
+                            <span class="material-symbols-rounded text-sm text-warning">map</span>
                             المراسلون الميدانيون (@ep.CorrespondentItems.Count)
                         </div>
                         <div class="flex flex-wrap gap-2">
                             @foreach (var c in ep.CorrespondentItems)
                             {
-                                <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-amber-50 text-amber-700 border border-amber-100 text-xs font-bold shadow-sm">
+                                <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-warning/10 text-warning border border-warning/20 text-xs font-bold shadow-sm">
                                     <span class="material-symbols-rounded text-xs">my_location</span>
                                     @c.FullName
                                 </span>
@@ -320,14 +316,14 @@
                             </div>
                         </div>
                     }
+                        </div>
                     @if (User.HasPermission(AppPermissions.EpisodeExecute) && execLog != null)
                     {
-                        <a href="/ExecutionLogs/Edit/@execLog.RecordId" class="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl border border-success/30 bg-success/5 hover:bg-success/10 text-success hover:text-success/80 transition font-semibold text-xs text-center mt-4">
+                        <a href="/ExecutionLogs/Edit/@execLog.RecordId" class="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl border border-success/30 bg-success/5 hover:bg-success/10 text-success hover:text-success/80 hover:shadow-sm transition-all duration-200 font-semibold text-xs w-full text-center">
                             <span class="material-symbols-rounded text-sm">edit</span>
                             تعديل بيانات التنفيذ
                         </a>
                     }
-                        </div>
                     }
                     else
                     {
@@ -377,6 +373,13 @@
                                         <span class="material-symbols-rounded text-xs text-ink-soft">account_circle</span>
                                         المسؤول عن النشر: @(sr.RecordedBy ?? "تلقائي")
                                     </div>
+                                    @if (User.HasPermission(AppPermissions.EpisodePublish))
+                                    {
+                                        <a href="/Publishing/Edit/@sr.RecordId" class="flex items-center justify-center gap-1.5 w-full mt-3 py-2 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary hover:text-primary/80 transition font-semibold text-xs text-center">
+                                            <span class="material-symbols-rounded text-sm">edit</span>
+                                            تعديل النشر الرقمي
+                                        </a>
+                                    }
                                 </div>
                             }
                         </div>
@@ -401,7 +404,7 @@
                     <h3 class="font-bold text-ink text-base flex-1">تفاصيل النشر على الموقع الرسمي</h3>
                     @if (ep.StatusId == 3)
                     {
-                        <span class="badge bg-cyan-100/50 text-cyan-800 border border-cyan-200 text-xs font-bold py-0.5 px-2.5 rounded-full">المرحلة الحالية</span>
+                        <span class="badge bg-accent/10 text-accent border border-accent/20 text-xs font-bold py-0.5 px-2.5 rounded-full">المرحلة الحالية</span>
                     }
                 </div>
                 
@@ -429,6 +432,13 @@
                                         <span class="material-symbols-rounded text-xs text-ink-soft">account_circle</span>
                                         المسؤول عن النشر: @(wr.RecordedBy ?? "تلقائي")
                                     </div>
+                                    @if (User.HasPermission(AppPermissions.EpisodeWebPublish))
+                                    {
+                                        <a href="/WebsitePublishing/Edit/@wr.RecordId" class="flex items-center justify-center gap-1.5 w-full mt-3 py-2 rounded-xl border border-accent/30 bg-accent/5 hover:bg-accent/10 text-accent hover:text-accent/80 transition font-semibold text-xs text-center">
+                                            <span class="material-symbols-rounded text-sm">edit</span>
+                                            تعديل النشر على الموقع
+                                        </a>
+                                    }
                                 </div>
                             }
                         </div>
@@ -457,42 +467,42 @@
             <div class="space-y-3">
                 @if (User.HasPermission(AppPermissions.EpisodeEdit) && ep.StatusId != 4)
                 {
-                    <a href="/Episodes/Edit/@ep.EpisodeId" class="flex items-center gap-3 px-4 py-3 rounded-xl border border-blue-100 bg-blue-50/30 text-blue-700 hover:bg-blue-100/60 hover:shadow-sm transition-all duration-200 font-semibold text-sm w-full">
+                    <a href="/Episodes/Edit/@ep.EpisodeId" class="flex items-center gap-3 px-4 py-3 rounded-xl border border-primary/20 bg-primary/10 text-primary hover:bg-primary/20 hover:shadow-sm transition-all duration-200 font-semibold text-sm w-full">
                         <span class="material-symbols-rounded text-lg">edit</span>
                         تعديل خصائص الحلقة
                     </a>
                 }
                 @if (User.HasPermission(AppPermissions.EpisodeExecute) && ep.StatusId == 0)
                 {
-                    <button type="button" class="flex items-center gap-3 px-4 py-3 rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:shadow-sm transition-all duration-200 font-semibold text-sm w-full" onclick="openExecuteModal(@ep.EpisodeId, '@ep.EpisodeName')">
+                    <button type="button" class="flex items-center gap-3 px-4 py-3 rounded-xl border border-success/20 bg-success/10 text-success hover:bg-success/20 hover:shadow-sm transition-all duration-200 font-semibold text-sm w-full" onclick="openExecuteModal(@ep.EpisodeId, '@ep.EpisodeName')">
                         <span class="material-symbols-rounded text-lg">play_circle</span>
                         تسجيل وتوثيق التنفيذ
                     </button>
                 }
                 @if (User.HasPermission(AppPermissions.EpisodePublish) && ep.StatusId == 1)
                 {
-                    <a href="/Publishing/LogSocial/@ep.EpisodeId" class="flex items-center gap-3 px-4 py-3 rounded-xl border border-indigo-100 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:shadow-sm transition-all duration-200 font-semibold text-sm w-full">
+                    <a href="/Publishing/LogSocial/@ep.EpisodeId" class="flex items-center gap-3 px-4 py-3 rounded-xl border border-info/20 bg-info/10 text-info hover:bg-info/20 hover:shadow-sm transition-all duration-200 font-semibold text-sm w-full">
                         <span class="material-symbols-rounded text-lg">share</span>
                         البدء بالنشر الرقمي (سوشال)
                     </a>
                 }
                 @if (User.HasPermission(AppPermissions.EpisodeWebPublish) && (ep.StatusId == 1 || ep.StatusId == 2))
                 {
-                    <a href="/WebsitePublishing/Publish/@ep.EpisodeId" class="flex items-center gap-3 px-4 py-3 rounded-xl border border-cyan-100 bg-cyan-50 text-cyan-700 hover:bg-cyan-100 hover:shadow-sm transition-all duration-200 font-semibold text-sm w-full">
+                    <a href="/WebsitePublishing/Publish/@ep.EpisodeId" class="flex items-center gap-3 px-4 py-3 rounded-xl border border-accent/20 bg-accent/10 text-accent hover:bg-accent/20 hover:shadow-sm transition-all duration-200 font-semibold text-sm w-full">
                         <span class="material-symbols-rounded text-lg">public</span>
                         النشر على الموقع الرسمي
                     </a>
                 }
                 @if (User.HasPermission(AppPermissions.EpisodeRevert) && ep.StatusId is 1 or 2 or 3)
                 {
-                    <button type="button" class="flex items-center gap-3 px-4 py-3 rounded-xl border border-amber-100 bg-amber-50 text-amber-700 hover:bg-amber-100 hover:shadow-sm transition-all duration-200 font-semibold text-sm w-full" onclick="openRevertModal(@ep.EpisodeId, '@ep.EpisodeName')">
+                    <button type="button" class="flex items-center gap-3 px-4 py-3 rounded-xl border border-warning/20 bg-warning/10 text-warning hover:bg-warning/20 hover:shadow-sm transition-all duration-200 font-semibold text-sm w-full" onclick="openRevertModal(@ep.EpisodeId, '@ep.EpisodeName')">
                         <span class="material-symbols-rounded text-lg">undo</span>
                         التراجع عن الحالة السابقة
                     </button>
                 }
                 @if (User.HasPermission(AppPermissions.EpisodeDelete) && ep.StatusId != 4)
                 {
-                    <button type="button" class="flex items-center gap-3 px-4 py-3 rounded-xl border border-red-100 bg-red-50 text-red-700 hover:bg-red-100 hover:shadow-sm transition-all duration-200 font-semibold text-sm w-full" onclick="openCancelModal(@ep.EpisodeId, '@ep.EpisodeName')">
+                    <button type="button" class="flex items-center gap-3 px-4 py-3 rounded-xl border border-danger/20 bg-danger/10 text-danger hover:bg-danger/20 hover:shadow-sm transition-all duration-200 font-semibold text-sm w-full" onclick="openCancelModal(@ep.EpisodeId, '@ep.EpisodeName')">
                         <span class="material-symbols-rounded text-lg">cancel</span>
                         إلغاء الحلقة
                     </button>
@@ -560,20 +570,20 @@
         <form id="executeForm" method="post" action="">
             @Html.AntiForgeryToken()
             <div class="mb-4">
-                <label class="form-label">ملاحظات التنفيذ</label>
-                <textarea name="executionNotes" rows="3" class="form-input"></textarea>
+                <label class="label">ملاحظات التنفيذ</label>
+                <textarea name="executionNotes" rows="3" class="textarea textarea-bordered"></textarea>
             </div>
             <div class="mb-4">
-                <label class="form-label">مشكلات واجهت التنفيذ</label>
-                <textarea name="issuesEncountered" rows="2" class="form-input"></textarea>
+                <label class="label">مشكلات واجهت التنفيذ</label>
+                <textarea name="issuesEncountered" rows="2" class="textarea textarea-bordered"></textarea>
             </div>
             <div class="mb-4">
-                <label class="form-label">المدة (دقيقة) *</label>
-                <input type="number" name="durationMinutes" min="1" max="720" value="60" class="form-input" required />
+                <label class="label">المدة (دقيقة) *</label>
+                <input type="number" name="durationMinutes" min="1" max="720" value="60" class="input input-bordered  required />
             </div>
             <div class="flex gap-2 justify-end">
-                <button type="button" class="btn-secondary" onclick="closeModal('executeModal')">إلغاء</button>
-                <button type="submit" class="btn-success">تسجيل التنفيذ</button>
+                <button type="button" class="btn btn-ghost" onclick="closeModal('executeModal')">إلغاء</button>
+                <button type="submit" class="btn btn-success">تسجيل التنفيذ</button>
             </div>
         </form>
     </div>
@@ -591,12 +601,12 @@
         <form id="cancelForm" method="post" action="">
             @Html.AntiForgeryToken()
             <div class="mb-4">
-                <label class="form-label">سبب الإلغاء *</label>
-                <textarea name="reason" rows="3" class="form-input" required></textarea>
+                <label class="label">سبب الإلغاء *</label>
+                <textarea name="reason" rows="3" class="textarea textarea-bordered" required></textarea>
             </div>
             <div class="flex gap-2 justify-end">
-                <button type="button" class="btn-secondary" onclick="closeModal('cancelModal')">إلغاء</button>
-                <button type="submit" class="btn-danger">تأكيد الإلغاء</button>
+                <button type="button" class="btn btn-ghost" onclick="closeModal('cancelModal')">إلغاء</button>
+                <button type="submit" class="btn btn-error">تأكيد الإلغاء</button>
             </div>
         </form>
     </div>
@@ -614,12 +624,12 @@
         <form id="revertForm" method="post" action="">
             @Html.AntiForgeryToken()
             <div class="mb-4">
-                <label class="form-label">سبب التراجع *</label>
-                <textarea name="reason" rows="3" class="form-input" required placeholder="سبب التراجع عن الحالة"></textarea>
+                <label class="label">سبب التراجع *</label>
+                <textarea name="reason" rows="3" class="textarea textarea-bordered" required placeholder="سبب التراجع عن الحالة"></textarea>
             </div>
             <div class="flex gap-2 justify-end">
-                <button type="button" class="btn-secondary" onclick="closeModal('revertModal')">إلغاء</button>
-                <button type="submit" class="btn-warning">تأكيد التراجع</button>
+                <button type="button" class="btn btn-ghost" onclick="closeModal('revertModal')">إلغاء</button>
+                <button type="submit" class="btn btn-warning">تأكيد التراجع</button>
             </div>
         </form>
     </div>
@@ -657,10 +667,3 @@
     </script>
 }
 
-@functions {
-    string GetStatusCssClass(byte statusId) => statusId switch
-    {
-        0 => "planned", 1 => "executed", 2 => "published",
-        3 => "website-published", 4 => "cancelled", _ => "planned"
-    };
-}
