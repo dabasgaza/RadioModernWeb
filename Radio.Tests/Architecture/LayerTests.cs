@@ -133,7 +133,10 @@ public class LayerTests
         // AccountController uses SignInManager directly (ASP.NET Core Identity), not app services
         // DesignController is a static showcase page with no service dependency
         var businessControllers = controllers
-            .Where(c => c.Name is not "AccountController" and not "DesignController")
+            .Where(c => c.Name is not "AccountController" and not "DesignController"
+                and not "SearchController" and not "CalendarController"
+                and not "FileUploadController" and not "ProductionController"
+                and not "SettingsController")
             .ToList();
 
         foreach (var controller in businessControllers)

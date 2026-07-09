@@ -83,6 +83,7 @@
                         <th class="text-right">العملية</th>
                         <th class="text-right">المستخدم</th>
                         <th class="text-right">السبب</th>
+                        <th class="text-right">تفاصيل</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -96,6 +97,11 @@
                             </td>
                             <td>@log.UserFullName</td>
                             <td class="text-xs max-w-xs truncate" title="@log.Reason">@(log.Reason ?? "—")</td>
+                            <td>
+                                <button class="btn btn-ghost btn-xs" onclick="showDiff(@log.AuditLogId, '@log.Action')">
+                                    <span class="material-symbols-rounded text-sm">visibility</span>
+                                </button>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -104,6 +110,51 @@
         </div>
     }
 </div>
+
+<div id="diffModal" class="modal">
+    <div class="modal-box max-w-3xl">
+        <h3 class="font-bold text-lg mb-4" id="diffTitle">تفاصيل التغيير</h3>
+        <div id="diffContent" class="space-y-4">
+            <div>
+                <h4 class="font-bold text-sm text-base-content/60 mb-1">القيم القديمة</h4>
+                <pre id="diffOld" class="text-xs bg-base-200 p-3 rounded-box overflow-x-auto max-h-48" dir="ltr"></pre>
+            </div>
+            <div>
+                <h4 class="font-bold text-sm text-base-content/60 mb-1">القيم الجديدة</h4>
+                <pre id="diffNew" class="text-xs bg-base-200 p-3 rounded-box overflow-x-auto max-h-48" dir="ltr"></pre>
+            </div>
+        </div>
+        <div class="modal-action"><button class="btn" onclick="document.getElementById('diffModal').close()">إغلاق</button></div>
+    </div>
+</div>
+
+<script>
+    const auditData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Items.Select(l => new {
+        id = l.AuditLogId,
+        oldValues = l.OldValues,
+        newValues = l.NewValues
+    })));
+
+    function showDiff(id, action) {
+        const item = auditData.find(d => d.id === id);
+        if (!item) return;
+        document.getElementById('diffTitle').textContent = 'تفاصيل التغيير — ' + action;
+
+        const oldEl = document.getElementById('diffOld');
+        const newEl = document.getElementById('diffNew');
+
+        try {
+            const oldObj = item.oldValues ? JSON.parse(item.oldValues) : null;
+            newEl.textContent = item.newValues ? JSON.stringify(JSON.parse(item.newValues), null, 2) : '(لا توجد قيم جديدة)';
+            oldEl.textContent = oldObj ? JSON.stringify(oldObj, null, 2) : '(لا توجد قيم قديمة)';
+        } catch {
+            oldEl.textContent = item.oldValues || '(لا توجد قيم قديمة)';
+            newEl.textContent = item.newValues || '(لا توجد قيم جديدة)';
+        }
+
+        document.getElementById('diffModal').showModal();
+    }
+</script>
 
 @functions {
     string GetActionBadgeClass(string action) => action switch

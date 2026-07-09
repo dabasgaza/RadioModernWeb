@@ -30,6 +30,7 @@
     font-size: 36px;
     box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
 }
+html.dark .login-logo { box-shadow: 0 10px 30px rgba(96, 165, 250, 0.25); }
 
 .login-brand h1 { font-size: 1.5rem; font-weight: 700; color: var(--ink); margin: 0 0 0.5rem 0; }
 .login-brand p { color: var(--ink-muted); font-size: 0.875rem; margin: 0; }
@@ -44,7 +45,7 @@
 
 .form-input {
     width: 100%;
-    padding: 0.875rem 3rem 0.875rem 1rem;
+    padding: 0.875rem 3rem 0.875rem 2.5rem;
     border: 1.5px solid var(--border);
     border-radius: 10px;
     font-family: inherit;
@@ -57,6 +58,7 @@
 }
 
 .form-input:focus { outline: none; border-color: var(--primary); background: var(--surface); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+html.dark .form-input:focus { box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.15); }
 
 .toggle-password { position: absolute; left: 14px; background: none; border: none; cursor: pointer; color: var(--ink-soft); padding: 0; display: flex; }
 .toggle-password:hover { color: var(--ink-muted); }
@@ -82,10 +84,13 @@
     transition: all 0.2s;
     box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
 }
+html.dark .login-btn { box-shadow: 0 4px 14px rgba(96, 165, 250, 0.25); }
 
 .login-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); }
+html.dark .login-btn:hover { box-shadow: 0 6px 20px rgba(96, 165, 250, 0.35); }
 
-.login-error { background: var(--danger, #fef2f2); color: var(--danger, #b91c1c); padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.8125rem; border: 1px solid var(--danger, #fecaca); }
+.login-error { background: rgba(239, 68, 68, 0.1); color: #DC2626; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.8125rem; border: 1px solid rgba(239, 68, 68, 0.2); }
+html.dark .login-error { background: rgba(248, 113, 113, 0.12); color: #F87171; border-color: rgba(248, 113, 113, 0.25); }
 .field-error { color: var(--danger); font-size: 0.75rem; }
 .login-footer { text-align: center; margin-top: 2rem; color: var(--ink-soft); font-size: 0.75rem; }
 
@@ -252,6 +257,7 @@ html.dark .login-form .toggle-password:hover { color: var(--ink-muted); }
 html.dark .form-options { color: var(--ink-muted); }
 html.dark .login-footer { color: var(--ink-soft); }
 html.dark .login-wrapper { background: var(--surface-2); }
+html.dark .login-error { background: rgba(248, 113, 113, 0.12); color: #F87171; border-color: rgba(248, 113, 113, 0.2); }
 
 @media (max-width: 960px) {
     .login-wrapper { grid-template-columns: 1fr; }

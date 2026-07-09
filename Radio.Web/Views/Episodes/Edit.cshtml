@@ -29,15 +29,15 @@
                 </h1>
                 @if (isEdit)
                 {
-                    var statusColors = new Dictionary<byte, string>
+                    var statusClasses = new Dictionary<byte, string>
                     {
-                        { 0, "bg-blue-50 text-blue-700 border-blue-200" },
-                        { 1, "bg-emerald-50 text-emerald-700 border-emerald-200" },
-                        { 2, "bg-indigo-50 text-indigo-700 border-indigo-200" },
-                        { 3, "bg-cyan-50 text-cyan-700 border-cyan-200" },
-                        { 4, "bg-red-50 text-red-700 border-red-200" },
+                        { 0, "planned" },
+                        { 1, "executed" },
+                        { 2, "published" },
+                        { 3, "website-published" },
+                        { 4, "cancelled" },
                     };
-                    var sc = statusColors.GetValueOrDefault(Model.StatusId, "bg-base-300 text-base-content/60 border-base-200");
+                    var sc = statusClasses.GetValueOrDefault(Model.StatusId, "");
                     <span class="status-badge @sc border text-sm px-3 py-1">@(Model.StatusText ?? "—")</span>
                     <span class="text-xs text-base-content/40 font-semibold flex items-center gap-1">
                         <span class="material-symbols-rounded text-xs">tag</span>
@@ -62,7 +62,7 @@
 
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-error rounded-xl p-4 mb-6 font-semibold text-sm"></div>
+        <div asp-validation-summary="All" class="bg-error/10 border border-error/20 text-error rounded-xl p-4 mb-6 font-semibold text-sm"></div>
     }
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">

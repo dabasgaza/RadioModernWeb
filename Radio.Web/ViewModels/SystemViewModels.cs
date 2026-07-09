@@ -155,3 +155,27 @@ public class DatabaseDashboardViewModel
     };
 }
 
+/// <summary>
+/// لوحة الإنتاج — ViewModels
+/// </summary>
+public class ProductionBoardViewModel
+{
+    public Dictionary<string, BoardColumn> Columns { get; set; } = new();
+}
+
+public class BoardColumn
+{
+    public string Title { get; set; } = "";
+    public List<ProductionCard> Cards { get; set; } = new();
+}
+
+public class ProductionCard
+{
+    public int EpisodeId { get; set; }
+    public string EpisodeName { get; set; } = "";
+    public string ProgramName { get; set; } = "";
+    public string StatusDisplay { get; set; } = "";
+    public DateTime? ScheduledTime { get; set; }
+    public string GuestNames { get; set; } = "";
+}
+

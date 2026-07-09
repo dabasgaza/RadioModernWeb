@@ -68,7 +68,7 @@ else
                             @if (User.HasPermission(AppPermissions.CoordinationManage))
                             {
                                 <div class="flex items-center justify-center gap-1 whitespace-nowrap">
-                                    <a href="/Coverage/Edit/@c.CoverageId" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-0 bg-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 text-blue-600 hover:bg-blue-50 hover:text-blue-700 focus-visible:ring-blue-500 dark:hover:bg-blue-500/10" title="تعديل" aria-label="تعديل">
+                                    <a href="/Coverage/Edit/@c.CoverageId" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-0 bg-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 text-primary hover:bg-primary/10" title="تعديل" aria-label="تعديل">
                                         <span class="material-symbols-rounded text-xl leading-none">edit</span>
                                     </a>
                                     <form method="post" action="/Coverage/Delete/@c.CoverageId" class="inline" data-confirm="هل أنت متأكد من حذف هذه التغطية؟">

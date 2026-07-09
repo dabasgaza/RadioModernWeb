@@ -1,35 +1,35 @@
 /* ═══════════════════════════════════════════════════════════════
    Dark Theme Overrides — [data-theme="radiomodernDark"]
-   Warm dark-gray palette — easy on the eye, professional feel.
+   Deep studio dimness — charcoal with blue-violet undertone.
    These fallback variables cover browsers without oklch() support.
    ═══════════════════════════════════════════════════════════════ */
 [data-theme="radiomodernDark"] {
 
     /* ── Surfaces ──────────────────────────────────────────────
-       Warm charcoal-gray tones; no cold/greenish black          */
-    --fallback-b1: #1C1E26;   /* page background                */
-    --fallback-b2: #22252E;   /* cards / panels                 */
-    --fallback-b3: #2A2D38;   /* elevated / hover elements      */
-    --fallback-bc: #E8EAEF;   /* primary text — warm off-white  */
+       Comfortable slate-blue base with clear layer separation    */
+    --fallback-b1: #212533;   /* card background                */
+    --fallback-b2: #1A1D26;   /* page background                */
+    --fallback-b3: #2E3347;   /* elevated / hover elements      */
+    --fallback-bc: #E2E8F0;   /* primary text                   */
 
-    /* ── Primary — soft sky-blue, not eye-straining ─────────── */
-    --fallback-p:  #7EB8FF;   /* primary                        */
-    --fallback-pc: #0D1A2E;   /* primary-content (dark on blue) */
+    /* ── Primary — soft cornflower blue ─────────────────────── */
+    --fallback-p:  #60A5FA;   /* primary                        */
+    --fallback-pc: #0F172A;   /* primary-content                */
 
-    /* ── Secondary — muted lavender ─────────────────────────── */
-    --fallback-s:  #A78BFA;   /* secondary                      */
-    --fallback-sc: #1A0E33;   /* secondary-content              */
+    /* ── Secondary — soft lavender ──────────────────────────── */
+    --fallback-s:  #C084FC;   /* secondary                      */
+    --fallback-sc: #1E1B4B;   /* secondary-content              */
 
-    /* ── Accent — calm teal/cyan ─────────────────────────────  */
-    --fallback-a:  #38D6EC;   /* accent                         */
-    --fallback-ac: #062830;   /* accent-content                 */
+    /* ── Accent — soft sky blue ──────────────────────────────  */
+    --fallback-a:  #38BDF8;   /* accent                         */
+    --fallback-ac: #073347;   /* accent-content                 */
 
     /* ── Neutral / sidebar ──────────────────────────────────── */
-    --fallback-n:  #22252E;   /* neutral background             */
-    --fallback-nc: #9DA4B4;   /* neutral content (muted text)   */
+    --fallback-n:  #212533;   /* neutral background             */
+    --fallback-nc: #94A3B8;   /* neutral content (muted text)   */
 
     /* ── Semantic intent colors ─────────────────────────────── */
-    --fallback-in:  #7EB8FF;  --fallback-inc: #0D1A2E;  /* info    */
+    --fallback-in:  #60A5FA;  --fallback-inc: #0F172A;  /* info    */
     --fallback-su:  #34D399;  --fallback-suc: #022B18;  /* success */
     --fallback-wa:  #FBBF24;  --fallback-wac: #291900;  /* warning */
     --fallback-er:  #F87171;  --fallback-erc: #2A0808;  /* error   */
@@ -39,6 +39,6 @@
     --tab-border: 1px;
 
     /* ── Navigation gradient helpers (nav-link.active) ──────── */
-    --color-primary:   #3B6FD4;  /* active link gradient start  */
-    --color-secondary: #6D3FC8;  /* active link gradient end    */
+    --color-primary:   #60A5FA;  /* active link gradient start  */
+    --color-secondary: #C084FC;  /* active link gradient end    */
 }

@@ -510,6 +510,29 @@
             </div>
         </div>
 
+        <!-- Attachments -->
+        <div class="bg-surface rounded-2xl border border-border/80 shadow-md p-6 relative overflow-hidden group">
+            <div class="flex items-center gap-2 mb-4 border-b border-border/60 pb-3">
+                <span class="material-symbols-rounded text-primary p-1.5 bg-primary/10 rounded-lg text-lg">attach_file</span>
+                <h3 class="font-bold text-ink text-base">المرفقات</h3>
+            </div>
+            <form method="post" action="/Upload/Episode/@Model.Episode.EpisodeId" enctype="multipart/form-data" class="mb-3">
+                <div class="flex gap-2">
+                    <input type="file" name="files" multiple class="file-input file-input-bordered file-input-sm flex-1" />
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <span class="material-symbols-rounded text-sm">upload</span>
+                        رفع
+                    </button>
+                </div>
+            </form>
+            <div id="attachmentList" class="space-y-1">
+                <div class="text-center py-4 text-ink-muted text-xs">
+                    <span class="material-symbols-rounded text-lg block mb-1 text-ink-soft">cloud_upload</span>
+                    جاري تحميل المرفقات…
+                </div>
+            </div>
+        </div>
+
         <!-- Activity Timeline -->
         <div class="bg-surface rounded-2xl border border-border/80 shadow-md p-6 relative overflow-hidden group">
             <div class="flex items-center gap-2 mb-4 border-b border-border/60 pb-3">
@@ -664,6 +687,36 @@
                 closeModal('revertModal');
             }
         });
+
+        function loadAttachments() {
+            fetch('/Upload/Episode/@Model.Episode.EpisodeId')
+                .then(r => r.json())
+                .then(files => {
+                    const container = document.getElementById('attachmentList');
+                    if (!files || files.length === 0) {
+                        container.innerHTML = '<div class="text-center py-4 text-ink-muted text-xs"><span class="material-symbols-rounded text-lg block mb-1 text-ink-soft">cloud_off</span>لا توجد مرفقات</div>';
+                        return;
+                    }
+                    container.innerHTML = files.map(f =>
+                        '<div class="flex items-center gap-2 p-2 rounded-lg hover:bg-base-200/50 transition-colors">' +
+                            '<span class="material-symbols-rounded text-sm text-primary">description</span>' +
+                            '<a href="/uploads/' + @Model.Episode.EpisodeId + '/' + f.storedName + '" target="_blank" class="flex-1 text-sm text-primary hover:underline truncate">' + f.fileName + '</a>' +
+                            '<span class="text-xs text-ink-muted" dir="ltr">' + formatSize(f.sizeBytes) + '</span>' +
+                            '<form method="post" action="/Upload/Delete/' + @Model.Episode.EpisodeId + '/' + f.storedName + '" class="inline" onsubmit="return confirm(\'حذف الملف؟\')">' +
+                                '<button class="btn btn-ghost btn-xs text-danger"><span class="material-symbols-rounded text-sm">delete</span></button>' +
+                            '</form>' +
+                        '</div>'
+                    ).join('');
+                });
+        }
+
+        function formatSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+
+        document.addEventListener('DOMContentLoaded', loadAttachments);
     </script>
 }
 

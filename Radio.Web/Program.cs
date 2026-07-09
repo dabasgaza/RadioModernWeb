@@ -178,6 +178,10 @@ builder.Services.AddScoped<IPublishingService, PublishingService>();
 builder.Services.AddScoped<IPublishingQueryService, PublishingService>();
 builder.Services.AddScoped<IPublishingCommandService, PublishingService>();
 builder.Services.AddScoped<IReportsService, ReportsService>();
+builder.Services.AddScoped<IReportExportService, ReportExportService>();
+builder.Services.AddScoped<ISearchService, SearchService>();
+builder.Services.AddScoped<IEpisodeAttachmentService, EpisodeAttachmentService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICoverageService, CoverageService>();
 builder.Services.AddScoped<ICachedLookupService, CachedLookupService>();
@@ -343,11 +347,11 @@ app.UseSession();
 app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
 app.UseExceptionHandler("/Home/Error/500"); // fallback for views (non-API routes)
 
+app.UseStaticFiles();
+
 app.UseResponseCompression();
 
 app.UseRateLimiter();
-
-app.UseStaticFiles();
 
 var locOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value;
 app.UseRequestLocalization(locOptions);

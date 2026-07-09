@@ -22,17 +22,17 @@
 
             <div class="form-field">
                 <label for="Username">اسم المستخدم</label>
-                <div class="relative">
-                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">person</span>
-                    <input id="Username" name="Username" class="input input-bordered w-full pr-10" placeholder="أدخل اسم المستخدم" autocomplete="username" autofocus required />
+                <div class="input-wrapper">
+                    <span class="input-icon material-symbols-rounded">person</span>
+                    <input id="Username" name="Username" class="form-input" placeholder="أدخل اسم المستخدم" autocomplete="username" autofocus required />
                 </div>
             </div>
 
             <div class="form-field">
                 <label for="Password">كلمة المرور</label>
-                <div class="relative">
-                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">lock</span>
-                    <input id="Password" name="Password" type="password" class="input input-bordered w-full pr-10" placeholder="أدخل كلمة المرور" autocomplete="current-password" required />
+                <div class="input-wrapper">
+                    <span class="input-icon material-symbols-rounded">lock</span>
+                    <input id="Password" name="Password" type="password" class="form-input" placeholder="أدخل كلمة المرور" autocomplete="current-password" required />
                     <button type="button" class="toggle-password" onclick="togglePassword(this)">
                         <span class="material-symbols-rounded">visibility</span>
                     </button>

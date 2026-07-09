@@ -333,6 +333,32 @@ public class EpisodesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    // GET: /Episodes/LiveBoard
+    /// <summary>
+    /// شاشة العرض المباشر للحلقات (TV Dashboard).
+    /// </summary>
+    [Authorize(Policy = AppPermissions.EpisodeView)]
+    public async Task<IActionResult> LiveBoard()
+    {
+        try
+        {
+            var episodes = await _query.GetActiveEpisodesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
+            
+            var today = DateTime.Today;
+            var todayEpisodes = episodes
+                .Where(e => e.ScheduledExecutionTime.HasValue && e.ScheduledExecutionTime.Value.Date == today)
+                .OrderBy(e => e.ScheduledExecutionTime)
+                .ToList();
+
+            return View(todayEpisodes);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "فشل في تحميل شاشة العرض المباشر");
+            return View("Error", new ErrorViewModel { ErrorMessage = ex.Message });
+        }
+    }
+
     /// <summary>
     /// بناء Edit View نموذج Async.
     /// </summary>

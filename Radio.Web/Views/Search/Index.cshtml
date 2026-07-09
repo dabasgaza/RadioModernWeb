@@ -1,0 +1,131 @@
+@model SearchViewModel
+@{ ViewData["Title"] = "نتائج البحث"; }
+
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+        <div class="breadcrumbs text-sm text-base-content/60">
+            <ul>
+                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
+                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">search</span>بحث</span></li>
+            </ul>
+        </div>
+        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary">search</span>
+            نتائج البحث
+        </h1>
+        <p class="text-sm text-base-content/60 mt-0.5">
+            @if (Model.TotalResults > 0)
+            {
+                <text>تم العثور على <strong>@Model.TotalResults</strong> نتيجة لـ "<strong>@Model.Query</strong>"</text>
+            }
+            else
+            {
+                <text>لا توجد نتائج لـ "<strong>@Model.Query</strong>"</text>
+            }
+        </p>
+    </div>
+</div>
+
+<form method="get" action="/Search" class="mb-6">
+    <div class="join w-full">
+        <input type="text" name="q" value="@Model.Query" class="input input-bordered join-item flex-1" placeholder="ابحث عن حلقات، برامج، ضيوف…" autofocus />
+        <button type="submit" class="btn btn-primary join-item">
+            <span class="material-symbols-rounded">search</span>
+            بحث
+        </button>
+    </div>
+</form>
+
+@if (Model.TotalResults == 0 && !string.IsNullOrWhiteSpace(Model.Query))
+{
+    <div class="card bg-base-100 shadow-md"><div class="card-body text-center py-12">
+        <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">search_off</span>
+        <h3 class="font-bold text-lg mb-2">لا توجد نتائج</h3>
+        <p class="text-sm text-base-content/60 mb-4">لم نعثر على أي نتائج تطابق بحثك. حاول استخدام كلمات مختلفة.</p>
+    </div></div>
+}
+else
+{
+    @if (Model.Episodes.Any())
+    {
+        <div class="card bg-base-100 shadow-md mb-4">
+            <div class="card-body">
+                <h2 class="font-bold text-base-content flex items-center gap-2 mb-3">
+                    <span class="material-symbols-rounded text-primary">podcasts</span>
+                    الحلقات (@Model.Episodes.Count)
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra w-full text-sm">
+                        <thead><tr><th class="text-right">الحلقة</th><th class="text-right">البرنامج</th><th class="text-right">الموعد</th><th class="text-right">الحالة</th></tr></thead>
+                        <tbody>
+                            @foreach (var e in Model.Episodes)
+                            {
+                                <tr>
+                                    <td class="font-semibold"><a href="/Episodes/Details/@e.EpisodeId" class="text-primary hover:underline">@e.EpisodeName</a></td>
+                                    <td class="text-base-content/60">@(e.ProgramName ?? "—")</td>
+                                    <td class="text-base-content/60 whitespace-nowrap" dir="ltr">@(e.ScheduledTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                                    <td><span class="badge badge-ghost">@e.StatusText</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Model.Programs.Any())
+    {
+        <div class="card bg-base-100 shadow-md mb-4">
+            <div class="card-body">
+                <h2 class="font-bold text-base-content flex items-center gap-2 mb-3">
+                    <span class="material-symbols-rounded text-success">radio</span>
+                    البرامج (@Model.Programs.Count)
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra w-full text-sm">
+                        <thead><tr><th class="text-right">البرنامج</th><th class="text-right">الفئة</th><th class="text-right">عدد الحلقات</th></tr></thead>
+                        <tbody>
+                            @foreach (var p in Model.Programs)
+                            {
+                                <tr>
+                                    <td class="font-semibold"><a href="/Programs/Details/@p.ProgramId" class="text-primary hover:underline">@p.ProgramName</a></td>
+                                    <td><span class="badge badge-info">@(p.Category ?? "عام")</span></td>
+                                    <td class="text-base-content/60">@p.EpisodeCount</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Model.Guests.Any())
+    {
+        <div class="card bg-base-100 shadow-md mb-4">
+            <div class="card-body">
+                <h2 class="font-bold text-base-content flex items-center gap-2 mb-3">
+                    <span class="material-symbols-rounded text-accent">people_alt</span>
+                    الضيوف (@Model.Guests.Count)
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra w-full text-sm">
+                        <thead><tr><th class="text-right">الاسم</th><th class="text-right">الجهة</th><th class="text-right">الهاتف</th><th class="text-right">البريد</th></tr></thead>
+                        <tbody>
+                            @foreach (var g in Model.Guests)
+                            {
+                                <tr>
+                                    <td class="font-semibold"><a href="/Guests/Details/@g.GuestId" class="text-primary hover:underline">@g.FullName</a></td>
+                                    <td class="text-base-content/60">@(g.Organization ?? "—")</td>
+                                    <td class="text-base-content/60" dir="ltr">@(g.Phone ?? "—")</td>
+                                    <td class="text-base-content/60">@(g.Email ?? "—")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+}

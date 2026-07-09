@@ -1,0 +1,168 @@
+@{
+    ViewData["Title"] = "التقويم الشهري";
+    var year = ViewBag.Year;
+    var month = ViewBag.Month;
+}
+
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+        <div class="breadcrumbs text-sm text-base-content/60">
+            <ul>
+                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
+                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">calendar_month</span>التقويم الشهري</span></li>
+            </ul>
+        </div>
+        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-primary">calendar_month</span>
+            التقويم الشهري
+        </h1>
+        <p class="text-sm text-base-content/60 mt-0.5">عرض الحلقات المجدولة على تقويم شهري</p>
+    </div>
+    <div class="flex items-center gap-2">
+        <button onclick="goMonth(-1)" class="btn btn-ghost btn-sm">
+            <span class="material-symbols-rounded">chevron_right</span>
+        </button>
+        <span id="monthLabel" class="font-bold text-base-content text-lg"></span>
+        <button onclick="goMonth(1)" class="btn btn-ghost btn-sm">
+            <span class="material-symbols-rounded">chevron_left</span>
+        </button>
+        <button onclick="goToday()" class="btn btn-primary btn-sm">اليوم</button>
+    </div>
+</div>
+
+<div class="card bg-base-100 shadow-md">
+    <div class="card-body p-4">
+        <div id="calendarGrid" class="grid grid-cols-7 gap-px bg-border rounded-box overflow-hidden"></div>
+    </div>
+</div>
+ 
+<div id="episodeModal" class="modal">
+    <div class="modal-box">
+        <h3 class="font-bold text-lg mb-4" id="modalDate"></h3>
+        <div id="modalEvents" class="space-y-2"></div>
+        <div class="modal-action"><button onclick="document.getElementById('episodeModal').close()" class="btn">إغلاق</button></div>
+    </div>
+</div>
+ 
+@section Scripts {
+    <script>
+        const monthNames = [
+            'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+            'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+        ];
+        const dayNames = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+        let currentYear = @year, currentMonth = @month;
+        let allEvents = [];
+ 
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+            document.getElementById('monthLabel').textContent = monthNames[currentMonth - 1] + ' ' + currentYear;
+ 
+            dayNames.forEach(d => {
+                const h = document.createElement('div');
+                h.className = 'bg-base-100 text-center py-2 text-sm font-bold text-base-content/60';
+                h.textContent = d;
+                grid.appendChild(h);
+            });
+ 
+            const firstDay = new Date(currentYear, currentMonth - 1, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+            const today = new Date();
+            const isCurrentMonth = today.getFullYear() === currentYear && today.getMonth() === currentMonth - 1;
+            const todayDate = today.getDate();
+ 
+            for (let i = 0; i < firstDay; i++) {
+                const e = document.createElement('div');
+                e.className = 'bg-base-100/50 min-h-[80px] p-1';
+                grid.appendChild(e);
+            }
+ 
+            for (let d = 1; d <= daysInMonth; d++) {
+                const cell = document.createElement('div');
+                cell.className = 'bg-base-100 min-h-[80px] p-1 cursor-pointer hover:bg-base-200/40 transition-colors';
+                if (isCurrentMonth && d === todayDate) cell.className += ' ring-2 ring-primary ring-inset';
+ 
+                const num = document.createElement('div');
+                num.className = 'text-xs font-bold text-base-content/60 mb-0.5';
+                num.textContent = d;
+                cell.appendChild(num);
+ 
+                const dateStr = currentYear + '-' + String(currentMonth).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+                const dayEvents = allEvents.filter(e => e.start && e.start.startsWith(dateStr));
+ 
+                dayEvents.forEach(ev => {
+                    const el = document.createElement('a');
+                    el.href = ev.url;
+                    el.className = `block text-[10px] md:text-xs rounded-md px-1 py-0.5 mb-0.5 font-semibold truncate hover:opacity-80 status-badge ${ev.statusCss}`;
+                    el.style.borderRadius = '4px';
+                    el.textContent = ev.title;
+                    cell.appendChild(el);
+                });
+
+                if (dayEvents.length > 3) {
+                    const more = document.createElement('button');
+                    more.className = 'text-xs text-primary font-bold';
+                    more.textContent = '+' + (dayEvents.length - 3);
+                    more.onclick = (e) => { e.stopPropagation(); showDayEvents(dateStr); };
+                    cell.addEventListener('click', () => showDayEvents(dateStr));
+                } else if (dayEvents.length > 0) {
+                    cell.addEventListener('click', () => showDayEvents(dateStr));
+                }
+
+                grid.appendChild(cell);
+            }
+        }
+
+        function showDayEvents(dateStr) {
+            const dayEvents = allEvents.filter(e => e.start && e.start.startsWith(dateStr));
+            const parts = dateStr.split('-');
+            const d = new Date(parts[0], parts[1] - 1, parts[2]);
+            document.getElementById('modalDate').textContent = dayNames[d.getDay()] + '، ' + parts[2] + ' ' + monthNames[parts[1] - 1] + ' ' + parts[0];
+
+            const container = document.getElementById('modalEvents');
+            container.innerHTML = '';
+            if (dayEvents.length === 0) {
+                container.innerHTML = '<p class="text-base-content/60 text-sm">لا توجد حلقات في هذا اليوم</p>';
+            } else {
+                dayEvents.forEach(ev => {
+                    const time = ev.start ? ev.start.split('T')[1]?.substring(0, 5) : '';
+                    const el = document.createElement('a');
+                    el.href = ev.url;
+                    el.className = 'flex items-center gap-3 p-2 rounded-lg hover:bg-base-200 transition-colors';
+                    el.innerHTML = '<span class="w-2.5 h-2.5 rounded-full shrink-0 status-badge ' + ev.statusCss + '"></span>' +
+                        '<span class="font-semibold text-sm flex-1">' + ev.title + '</span>' +
+                        '<span class="text-xs text-base-content/60" dir="ltr">' + time + '</span>' +
+                        '<span class="status-badge ' + ev.statusCss + ' text-[10px] py-0.5 px-2">' + (ev.status || '') + '</span>';
+                    container.appendChild(el);
+                });
+            }
+            document.getElementById('episodeModal').showModal();
+        }
+
+        function goMonth(delta) {
+            currentMonth += delta;
+            if (currentMonth > 12) { currentMonth = 1; currentYear++; }
+            if (currentMonth < 1) { currentMonth = 12; currentYear--; }
+            loadEvents();
+        }
+
+        function goToday() {
+            const t = new Date();
+            currentYear = t.getFullYear();
+            currentMonth = t.getMonth() + 1;
+            loadEvents();
+        }
+
+        function loadEvents() {
+            fetch('/Calendar/GetEvents?year=' + currentYear + '&month=' + currentMonth)
+                .then(r => r.json())
+                .then(data => {
+                    allEvents = data.events || [];
+                    renderCalendar();
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadEvents);
+    </script>
+}

@@ -59,31 +59,31 @@ module.exports = {
       },
       {
         radiomodernDark: {
-          // Surfaces — warm charcoal-gray, not cold black
-          "base-100": "#1C1E26",   // page background
-          "base-200": "#22252E",   // cards / panels
-          "base-300": "#2A2D38",   // hover / elevated
-          "base-content": "#E8EAEF", // primary text — warm off-white
+          // Surfaces — comfortable studio dimness with soft slate-blue undertone
+          "base-100": "#212533",   // card background (lighter)
+          "base-200": "#1A1D26",   // page background (darker)
+          "base-300": "#2E3347",   // hover / elevated
+          "base-content": "#E2E8F0", // primary text
 
-          // Primary — soft sky-blue, easy on dark backgrounds
-          "primary": "#7EB8FF",
-          "primary-content": "#0D1A2E",
+          // Primary — soft cornflower blue
+          "primary": "#60A5FA",
+          "primary-content": "#0F172A",
 
-          // Secondary — muted lavender
-          "secondary": "#A78BFA",
-          "secondary-content": "#1A0E33",
+          // Secondary — soft lavender
+          "secondary": "#C084FC",
+          "secondary-content": "#1E1B4B",
 
-          // Accent — calm teal
-          "accent": "#38D6EC",
-          "accent-content": "#062830",
+          // Accent — soft sky blue
+          "accent": "#38BDF8",
+          "accent-content": "#073347",
 
           // Neutral — matches surface-2 for sidebar/menus
-          "neutral": "#22252E",
-          "neutral-content": "#9DA4B4",
+          "neutral": "#212533",
+          "neutral-content": "#94A3B8",
 
           // Semantic intent colors — desaturated for dark UI
-          "info": "#7EB8FF",
-          "info-content": "#0D1A2E",
+          "info": "#60A5FA",
+          "info-content": "#0F172A",
           "success": "#34D399",
           "success-content": "#022B18",
           "warning": "#FBBF24",

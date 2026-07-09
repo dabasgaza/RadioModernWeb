@@ -34,6 +34,101 @@ dotnet run --project Radio.Web      # Run locally (https://localhost:5001)
 - All services in `DataAccess/Services/`, DTOs in `DataAccess/DTOs/`
 - Arabic RTL UI throughout
 
+## UI/UX Workflow
+
+For every task involving UI, UX, styling, layout, responsive design,
+themes, Razor Views, Tailwind CSS, or daisyUI:
+
+1. Inspect the existing implementation before editing.
+2. Use the daisyUI MCP tools to verify appropriate components,
+   theme tokens, semantic colors, and recommended patterns.
+3. Implement the changes using the project's existing design system.
+4. Start or connect to the local ASP.NET Core application.
+5. Use Playwright MCP to inspect the actual rendered result.
+6. Test relevant pages at desktop and mobile viewport sizes.
+7. Check:
+   - visual hierarchy
+   - spacing consistency
+   - responsive behavior
+   - horizontal overflow
+   - contrast
+   - accessibility
+   - hover, focus, active, and disabled states
+8. Fix discovered issues.
+9. Re-run Playwright verification after the fixes.
+
+Do not consider a UI task complete until the rendered result has been
+verified with Playwright.
+
+## Recent Changes (Sprint 8 — 10 New Features)
+
+### 1. 📊 Report Export (PDF/Excel)
+- **`IReportExportService` + `ReportExportService`** (`Radio.Web/Services/`) — generates Excel via ClosedXML and PDF via QuestPDF for all 3 report views (Index, ByDateRange, Cancelled)
+- **Export buttons** added to `Views/Reports/Index.cshtml`, `ByDateRange.cshtml`, `Cancelled.cshtml` — Excel (btn-success) + PDF (btn-error) per page
+- **Controller actions**: `ExportIndexExcel`, `ExportIndexPdf`, `ExportDateRangeExcel`, `ExportDateRangePdf`, `ExportCancelledExcel`, `ExportCancelledPdf`
+- Dependencies added: `ClosedXML` v0.104.2, `QuestPDF` v2024.12.0
+
+### 2. 🖨️ Print CSS + Buttons
+- **`@media print`** styles in `app.css` — hides nav/sidebar/footer/buttons, shows all tab panels, prints tables with borders
+- **Print buttons** (`onclick="window.print()"` + `btn btn-ghost`) on all 3 report views
+
+### 3. 🔍 Unified Search
+- **`SearchController`** (`/Search?q=...`) — searches Episodes (name/program), Programs (name/category), Guests (name/organization) via `LIKE %query%`
+- **`ISearchService` + `SearchService`** in `Radio.Web/Services/` — uses `IDbContextFactory` for data access
+- **`SearchViewModels.cs`** — `SearchViewModel` with grouped results
+- **`Views/Search/Index.cshtml`** — results grouped by entity type with links to details pages
+- **Sidebar** — "بحث عام" link added; topbar search form (`/Search`) now works
+
+### 4. 📅 Monthly Calendar
+- **`CalendarController`** — `GET /Calendar` (view) + `GET /Calendar/GetEvents?year=&month=` (JSON endpoint)
+- **`Views/Calendar/Index.cshtml`** — pure HTML/JS calendar grid (no external lib), month navigation, day click to show episode list in modal
+- **Color-coded episodes** by status (blue=planned, green=executed, red=cancelled, etc.)
+- **Sidebar** — "التقويم الشهري" link
+
+### 5. 📎 File Upload (Episode Attachments)
+- **`EpisodeAttachmentService`** — stores files in `wwwroot/uploads/{episodeId}/`, metadata in `App_Data/attachments/episode-{episodeId}.json`
+- **`FileUploadController`** — `POST /Upload/Episode/{id}` (upload), `GET /Upload/Episode/{id}` (list JSON), `POST /Upload/Delete/{id}/{storedName}`
+- **Upload UI** in `Views/Episodes/Details.cshtml` sidebar — file input + upload button, dynamic attachment list with download/delete
+- **`wwwroot/uploads/`** directory already existing with `.gitkeep`
+
+### 6. 📧 Email Settings
+- **`IEmailService` + `EmailService`** — logs emails to `App_Data/emails/` (MailKit-ready stub); sends when SMTP configured in `appsettings.json`
+- **`SettingsController`** — `GET /Settings` shows email config status
+- **`Views/Settings/Index.cshtml`** — displays SMTP status + json config template
+- **Sidebar** — "الإعدادات" link
+
+### 7. 📋 Production Board (Kanban)
+- **`ProductionController`** — groups episodes by StatusId into 5 columns: مجدولة, منفّذة, منشورة, ملغاة, على الموقع
+- **`Views/Production/Index.cshtml`** — card-based Kanban layout, click card to go to episode details
+- **ViewModels**: `ProductionBoardViewModel`, `BoardColumn`, `ProductionCard` in `SystemViewModels.cs`
+- **Sidebar** — "لوحة الإنتاج" link
+
+### 8. 📝 Improved Audit Log
+- **Detail column** added to `Views/AuditLogs/Index.cshtml` — eye icon button per row
+- **Modal dialog** showing OldValues/NewValues as formatted JSON (syntax highlighted in `<pre>`)
+- **JavaScript** parses JSON for pretty-printing; handles null/malformed values
+
+### 9. 📱 Mobile Responsive Tweaks
+- **`@media (max-width: 640px)`** in `app.css` — smaller fonts, scrollable tables, compact buttons/cards, full-width modals
+- **Utility classes**: `.hide-mobile`, `.stat-card-grid`, `.table-wrapper`
+
+### 10. 💾 Quick Backup Button
+- **"نسخ احتياطي سريع"** button in `Views/Database/Index.cshtml` header — posts to `/Database/Backup`
+- **"النسخ الاحتياطي"** link added to sidebar under "إدارة النظام" dropdown
+
+### Fix: 503 Static Files (RateLimiter)
+- `Program.cs`: Moved `app.UseStaticFiles()` before `app.UseRateLimiter()` — all JS/CSS were returning 503 due to middleware ordering
+
+### New files created:
+- `Controllers/SearchController.cs`, `Controllers/CalendarController.cs`, `Controllers/FileUploadController.cs`, `Controllers/ProductionController.cs`, `Controllers/SettingsController.cs`
+- `Services/IReportExportService.cs`, `Services/ReportExportService.cs`, `Services/ISearchService.cs`, `Services/SearchService.cs`, `Services/IEpisodeAttachmentService.cs`, `Services/EpisodeAttachmentService.cs`, `Services/IEmailService.cs`, `Services/EmailService.cs`
+- `ViewModels/SearchViewModels.cs`
+- `Views/Search/Index.cshtml`, `Views/Calendar/Index.cshtml`, `Views/Production/Index.cshtml`, `Views/Settings/Index.cshtml`
+
+### Build & Test
+- `dotnet build Radio.Web` — 0 errors
+- `dotnet test` — 311/312 passing (1 pre-existing `PublishingControllerTests.Index_SearchFilter_ReturnsFiltered`)
+
 ## Recent Changes (Sprint 7 — Design System Overhaul)
 
 ### Theme & Color Architecture

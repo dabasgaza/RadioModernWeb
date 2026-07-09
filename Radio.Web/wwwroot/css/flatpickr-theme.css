@@ -161,17 +161,17 @@ span.flatpickr-weekday {
 }
 
 [data-theme="radiomodernDark"] .flatpickr-calendar {
-  background: #1C1E26;
-  border-color: #353848;
+  background: #0D0F17;
+  border-color: #282E52;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 [data-theme="radiomodernDark"] .flatpickr-current-month {
-  color: #E8EAEF;
+  color: #E8ECF2;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-current-month input.cur-year {
-  color: #E8EAEF;
+  color: #E8ECF2;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-months .flatpickr-prev-month,
@@ -181,7 +181,7 @@ span.flatpickr-weekday {
 
 [data-theme="radiomodernDark"] .flatpickr-months .flatpickr-prev-month:hover,
 [data-theme="radiomodernDark"] .flatpickr-months .flatpickr-next-month:hover {
-  background: #22252E;
+  background: #151827;
   fill: #7EB8FF;
 }
 
@@ -190,7 +190,7 @@ span.flatpickr-weekday {
 }
 
 [data-theme="radiomodernDark"] .flatpickr-day {
-  color: #E8EAEF;
+  color: #E8ECF2;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-day.today {
@@ -222,7 +222,7 @@ span.flatpickr-weekday {
 }
 
 [data-theme="radiomodernDark"] .flatpickr-day:hover {
-  background: #22252E;
+  background: #151827;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-day.flatpickr-disabled {
@@ -235,16 +235,16 @@ span.flatpickr-weekday {
 }
 
 [data-theme="radiomodernDark"] .flatpickr-time {
-  border-top-color: #353848;
+  border-top-color: #282E52;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-time input {
-  color: #E8EAEF;
+  color: #E8ECF2;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-time input:hover,
 [data-theme="radiomodernDark"] .flatpickr-time .flatpickr-am-pm:hover {
-  background: #22252E;
+  background: #151827;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-time .flatpickr-am-pm {

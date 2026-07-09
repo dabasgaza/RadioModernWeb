@@ -2,7 +2,8 @@
 @inject ICurrentUserService CurrentUser
 @{
     var controller = ViewContext.RouteData.Values["Controller"]?.ToString();
-    bool IsActive(string c) => controller == c;
+    var action = ViewContext.RouteData.Values["Action"]?.ToString();
+    bool IsActive(string c, string? a = null) => controller == c && (a == null || action == a);
     bool HasAny(params string[] perms) => perms.Any(p => CurrentUser.HasPermission(p));
 }
 <div class="flex items-center gap-2 h-16 px-4 border-b border-base-200 bg-gradient-to-l from-primary to-secondary shrink-0">
@@ -15,11 +16,23 @@
     <li><a href="/" class="@(IsActive("Home") ? "active" : "")">
         <span class="material-symbols-rounded">dashboard</span>لوحة التحكم
     </a></li>
+    <li><a href="/Search" class="@(IsActive("Search") ? "active" : "")">
+        <span class="material-symbols-rounded">search</span>بحث عام
+    </a></li>
+    <li><a href="/Calendar" class="@(IsActive("Calendar") ? "active" : "")">
+        <span class="material-symbols-rounded">calendar_month</span>التقويم الشهري
+    </a></li>
 
     @if (HasAny(AppPermissions.EpisodesView, AppPermissions.EpisodesCreate, AppPermissions.EpisodesEdit, AppPermissions.ExecutionExecute))
     {
-        <li><a href="/Episodes" class="@(IsActive("Episodes") ? "active" : "")">
+        <li><a href="/Episodes" class="@(IsActive("Episodes", "Index") ? "active" : "")">
             <span class="material-symbols-rounded">podcasts</span>الحلقات
+        </a></li>
+        <li><a href="/Episodes/LiveBoard" class="@(IsActive("Episodes", "LiveBoard") ? "active" : "")">
+            <span class="material-symbols-rounded">tv</span>شاشة العرض المباشر
+        </a></li>
+        <li><a href="/Production" class="@(IsActive("Production") ? "active" : "")">
+            <span class="material-symbols-rounded">view_column</span>لوحة الإنتاج
         </a></li>
     }
 
@@ -96,7 +109,7 @@
     @if (HasAny(AppPermissions.AdminUsersManage, AppPermissions.AdminRolesManage))
     {
         <li>
-            <details @(IsActive("Users") || IsActive("Roles") || IsActive("Permissions") || IsActive("AuditLogs") || IsActive("Database") || IsActive("Diagnostics") ? "open" : "")>
+            <details @(IsActive("Users") || IsActive("Roles") || IsActive("Permissions") || IsActive("AuditLogs") || IsActive("Database") || IsActive("Diagnostics") || IsActive("Settings") ? "open" : "")>
                 <summary><span class="material-symbols-rounded">admin_panel_settings</span>إدارة النظام</summary>
                 <ul>
                     <li><a href="/Users" class="@(IsActive("Users") ? "active" : "")">المستخدمون</a></li>
@@ -108,9 +121,16 @@
                     }
                     @if (CurrentUser.HasPermission(AppPermissions.SystemDatabaseManage))
                     {
-                        <li><a href="/Database" class="@(IsActive("Database") ? "active" : "")">قاعدة البيانات</a></li>
-                        <li><a href="/Diagnostics" class="@(IsActive("Diagnostics") ? "active" : "")">تشخيص النظام</a></li>
+                        <li><a href="/Database" class="@(IsActive("Database") ? "active" : "")">
+                            <span class="material-symbols-rounded text-sm">storage</span>قاعدة البيانات
+                        </a></li>
+                        <li><a href="/Diagnostics" class="@(IsActive("Diagnostics") ? "active" : "")">
+                            <span class="material-symbols-rounded text-sm">monitor_heart</span>تشخيص النظام
+                        </a></li>
                     }
+                    <li><a href="/Settings" class="@(IsActive("Settings") ? "active" : "")">
+                        <span class="material-symbols-rounded text-sm">settings</span>الإعدادات
+                    </a></li>
                 </ul>
             </details>
         </li>

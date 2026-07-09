@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Radio.Web.Services;
 using Radio.Web.ViewModels;
+using Radio.Web.ViewModels;
 
 namespace Radio.Web.Controllers;
 
@@ -382,11 +383,12 @@ public class WebsitePublishingController : Controller
 public class ReportsController : Controller
 {
     private readonly IReportsService _reports;
+    private readonly IReportExportService _export;
     private readonly ILogger<ReportsController> _logger;
 
-    public ReportsController(IReportsService reports, ILogger<ReportsController> logger)
+    public ReportsController(IReportsService reports, IReportExportService export, ILogger<ReportsController> logger)
     {
-        _reports = reports; _logger = logger;
+        _reports = reports; _export = export; _logger = logger;
     }
 
     /// <summary>
@@ -431,6 +433,76 @@ public class ReportsController : Controller
     {
         var list = await _reports.GetCancelledEpisodesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
         return View(list);
+    }
+
+    [HttpGet("Reports/ExportIndexExcel")]
+    public async Task<IActionResult> ExportIndexExcel()
+    {
+        var vm = await BuildReportsViewModel();
+        var bytes = await _export.ExportIndexToExcelAsync(vm, CancellationToken.None);
+        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "التقارير.xlsx");
+    }
+
+    [HttpGet("Reports/ExportIndexPdf")]
+    public async Task<IActionResult> ExportIndexPdf()
+    {
+        var vm = await BuildReportsViewModel();
+        var bytes = await _export.ExportIndexToPdfAsync(vm, CancellationToken.None);
+        return File(bytes, "application/pdf", "التقارير.pdf");
+    }
+
+    [HttpGet("Reports/ExportDateRangeExcel")]
+    public async Task<IActionResult> ExportDateRangeExcel(DateTime? from, DateTime? to)
+    {
+        from ??= DateTime.UtcNow.AddDays(-30);
+        to ??= DateTime.UtcNow;
+        var list = await _reports.GetEpisodesByDateRangeAsync(from.Value, to.Value, cancellationToken: CancellationToken.None);
+        var bytes = await _export.ExportDateRangeToExcelAsync(list, from.Value, to.Value, CancellationToken.None);
+        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "حلقات_حسب_الفترة.xlsx");
+    }
+
+    [HttpGet("Reports/ExportDateRangePdf")]
+    public async Task<IActionResult> ExportDateRangePdf(DateTime? from, DateTime? to)
+    {
+        from ??= DateTime.UtcNow.AddDays(-30);
+        to ??= DateTime.UtcNow;
+        var list = await _reports.GetEpisodesByDateRangeAsync(from.Value, to.Value, cancellationToken: CancellationToken.None);
+        var bytes = await _export.ExportDateRangeToPdfAsync(list, from.Value, to.Value, CancellationToken.None);
+        return File(bytes, "application/pdf", "حلقات_حسب_الفترة.pdf");
+    }
+
+    [HttpGet("Reports/ExportCancelledExcel")]
+    public async Task<IActionResult> ExportCancelledExcel()
+    {
+        var list = await _reports.GetCancelledEpisodesAsync(cancellationToken: CancellationToken.None);
+        var bytes = await _export.ExportCancelledToExcelAsync(list, CancellationToken.None);
+        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "الحلقات_الملغاة.xlsx");
+    }
+
+    [HttpGet("Reports/ExportCancelledPdf")]
+    public async Task<IActionResult> ExportCancelledPdf()
+    {
+        var list = await _reports.GetCancelledEpisodesAsync(cancellationToken: CancellationToken.None);
+        var bytes = await _export.ExportCancelledToPdfAsync(list, CancellationToken.None);
+        return File(bytes, "application/pdf", "الحلقات_الملغاة.xlsx");
+    }
+
+    private async Task<ReportsViewModel> BuildReportsViewModel()
+    {
+        var today = await _reports.GetTodayEpisodesAsync(cancellationToken: CancellationToken.None);
+        var stats = await _reports.GetEpisodeStatusStatsAsync(cancellationToken: CancellationToken.None);
+        var programs = await _reports.GetMostActiveProgramsAsync(cancellationToken: CancellationToken.None);
+        var guests = await _reports.GetTopGuestsAsync(20, cancellationToken: CancellationToken.None);
+        var cancelled = await _reports.GetCancelledEpisodesAsync(cancellationToken: CancellationToken.None);
+
+        return new ReportsViewModel
+        {
+            TodayEpisodes = today,
+            StatusStats = stats,
+            TopPrograms = programs,
+            TopGuests = guests,
+            CancelledEpisodes = cancelled
+        };
     }
 }
 

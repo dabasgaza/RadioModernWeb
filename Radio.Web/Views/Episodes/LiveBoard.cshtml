@@ -1,0 +1,613 @@
+@model List<DataAccess.DTOs.ActiveEpisodeDto>
+@using DataAccess.Services
+@{
+    ViewData["Title"] = "شاشة عرض الحلقات المباشرة";
+
+    // Find the next upcoming planned episode to highlight it as "Next Up" (الحلقة التالية)
+    var nowTime = DateTime.Now;
+    var nextEpisode = Model
+        .Where(e => e.StatusId == EpisodeStatusValues.Planned && e.ScheduledExecutionTime.HasValue && e.ScheduledExecutionTime.Value >= nowTime)
+        .OrderBy(e => e.ScheduledExecutionTime)
+        .FirstOrDefault();
+}
+
+<style>
+    /* Premium Animations & Keyframes */
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes pulseGlow {
+        0%, 100% {
+            box-shadow: 0 0 15px -3px rgba(var(--p), 0.25), 0 0 6px -2px rgba(var(--p), 0.25);
+            border-color: rgba(var(--p), 0.4);
+        }
+        50% {
+            box-shadow: 0 0 25px 2px rgba(var(--p), 0.6), 0 0 12px 0px rgba(var(--p), 0.6);
+            border-color: rgba(var(--p), 0.9);
+        }
+    }
+
+    .animate-card-in {
+        animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .active-pulse-glow {
+        animation: pulseGlow 2.5s infinite ease-in-out;
+    }
+
+    /* Kiosk / Fullscreen Mode Styles */
+    body.kiosk-active {
+        background-color: var(--surface-3) !important;
+        overflow: hidden !important;
+        font-size: clamp(1rem, 0.6vw + 0.75rem, 1.75rem) !important;
+    }
+    body.kiosk-active .drawer-side,
+    body.kiosk-active footer,
+    body.kiosk-active header,
+    body.kiosk-active .navbar,
+    body.kiosk-active #back-to-top {
+        display: none !important;
+    }
+    body.kiosk-active .drawer {
+        display: block !important;
+    }
+    body.kiosk-active .drawer-content {
+        min-height: 100vh !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background-color: var(--surface-3) !important;
+    }
+    body.kiosk-active main {
+        padding: 1.5rem !important;
+        height: 100vh !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    body.kiosk-active #liveboard-scroll-area {
+        flex: 1 !important;
+        overflow-y: auto !important;
+        scrollbar-width: none; /* Firefox */
+    }
+    body.kiosk-active #liveboard-scroll-area::-webkit-scrollbar {
+        display: none; /* Safari and Chrome */
+    }
+
+    /* Fluid typography responsive scaling based on viewport width */
+    body.kiosk-active h1 {
+        font-size: clamp(1.5rem, 1.2vw + 1rem, 3rem) !important;
+    }
+    body.kiosk-active h2 {
+        font-size: clamp(1.25rem, 1vw + 0.85rem, 2.5rem) !important;
+    }
+    body.kiosk-active .text-sm {
+        font-size: clamp(0.875rem, 0.5vw + 0.65rem, 1.5rem) !important;
+    }
+    body.kiosk-active .text-xs {
+        font-size: clamp(0.75rem, 0.4vw + 0.55rem, 1.25rem) !important;
+    }
+    body.kiosk-active .badge {
+        font-size: clamp(0.75rem, 0.4vw + 0.55rem, 1.25rem) !important;
+        height: auto !important;
+        padding-top: 0.5em !important;
+        padding-bottom: 0.5em !important;
+        padding-left: 0.75em !important;
+        padding-right: 0.75em !important;
+    }
+    body.kiosk-active .alert {
+        font-size: clamp(0.75rem, 0.4vw + 0.55rem, 1.25rem) !important;
+    }
+
+    /* Glassmorphism Card Style */
+    .glass-card-premium {
+        background-color: var(--surface);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(12px);
+    }
+    
+    .dark .glass-card-premium {
+        background-color: rgba(30, 41, 59, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+</style>
+
+<div id="liveboard-content-wrapper" class="flex flex-col h-full gap-4">
+    <!-- Top Control Bar / Dashboard Header -->
+    <div class="card bg-base-100 shadow-xl p-4 border border-base-200/50 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="flex items-center gap-4">
+            <div class="p-3 rounded-2xl bg-gradient-to-br from-primary to-secondary text-white shadow-md">
+                <span class="material-symbols-rounded text-3xl">tv</span>
+            </div>
+            <div>
+                <h1 class="text-2xl font-black text-base-content flex items-center gap-2">
+                    شاشة عرض الحلقات المجدولة
+                </h1>
+                <p class="text-sm text-base-content/60 mt-0.5">متابعة فورية ومباشرة لحلقات اليوم وتفاصيل البث</p>
+            </div>
+        </div>
+
+        <!-- Live Clock and Actions -->
+        <div class="flex flex-wrap items-center gap-4 justify-end">
+            <!-- SignalR Status Indicator -->
+            <div id="connection-indicator" class="badge badge-success gap-2 py-3 px-4 font-semibold text-sm shadow-sm transition-all duration-300">
+                <span class="w-2.5 h-2.5 rounded-full bg-white animate-ping"></span>
+                <span id="connection-status-text">متصل بالبث الفوري</span>
+            </div>
+
+            <!-- Digital Clock -->
+            <div class="bg-neutral text-neutral-content rounded-2xl px-6 py-2.5 font-mono text-xl font-bold flex items-center gap-3 shadow-lg">
+                <span class="material-symbols-rounded text-warning animate-spin-slow">schedule</span>
+                <span id="live-clock">00:00:00</span>
+                <span class="text-xs text-neutral-content/60 border-r border-neutral-content/20 pr-3 mr-1" id="live-date">--/--/----</span>
+            </div>
+
+            <!-- Dashboard Controls -->
+            <div class="join shadow-md">
+                <button onclick="toggleAutoScroll()" id="btn-autoscroll" class="btn btn-neutral join-item gap-1">
+                    <span class="material-symbols-rounded" id="icon-autoscroll">play_arrow</span>
+                    <span>تمرير تلقائي</span>
+                </button>
+                <button onclick="toggleKioskMode()" id="btn-kiosk" class="btn btn-primary join-item gap-1">
+                    <span class="material-symbols-rounded" id="icon-kiosk">fullscreen</span>
+                    <span>ملء الشاشة</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overview Statistics Row -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Total -->
+        <div class="card bg-base-100 shadow-md border-r-8 border-primary hover:-translate-y-1 transition-all duration-300">
+            <div class="card-body p-4 flex flex-row items-center gap-4">
+                <div class="p-3 bg-primary/10 text-primary rounded-2xl shadow-inner">
+                    <span class="material-symbols-rounded text-3xl">view_list</span>
+                </div>
+                <div>
+                    <div class="text-base-content/60 text-sm font-semibold">إجمالي حلقات اليوم</div>
+                    <div class="text-3xl font-black text-base-content mt-1">@Model.Count</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Planned -->
+        <div class="card bg-base-100 shadow-md border-r-8 border-warning hover:-translate-y-1 transition-all duration-300">
+            <div class="card-body p-4 flex flex-row items-center gap-4">
+                <div class="p-3 bg-warning/10 text-warning rounded-2xl shadow-inner">
+                    <span class="material-symbols-rounded text-3xl">pending_actions</span>
+                </div>
+                <div>
+                    <div class="text-base-content/60 text-sm font-semibold">مجدولة / بانتظار البث</div>
+                    <div class="text-3xl font-black text-base-content mt-1">@Model.Count(e => e.StatusId == EpisodeStatusValues.Planned)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Executed / Published -->
+        <div class="card bg-base-100 shadow-md border-r-8 border-success hover:-translate-y-1 transition-all duration-300">
+            <div class="card-body p-4 flex flex-row items-center gap-4">
+                <div class="p-3 bg-success/10 text-success rounded-2xl shadow-inner">
+                    <span class="material-symbols-rounded text-3xl">check_circle</span>
+                </div>
+                <div>
+                    <div class="text-base-content/60 text-sm font-semibold">تم التنفيذ والبث</div>
+                    <div class="text-3xl font-black text-base-content mt-1">@Model.Count(e => e.StatusId == EpisodeStatusValues.Executed || e.StatusId == EpisodeStatusValues.Published || e.StatusId == EpisodeStatusValues.WebsitePublished)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cancelled -->
+        <div class="card bg-base-100 shadow-md border-r-8 border-error hover:-translate-y-1 transition-all duration-300">
+            <div class="card-body p-4 flex flex-row items-center gap-4">
+                <div class="p-3 bg-error/10 text-error rounded-2xl shadow-inner">
+                    <span class="material-symbols-rounded text-3xl">cancel</span>
+                </div>
+                <div>
+                    <div class="text-base-content/60 text-sm font-semibold">حلقات ملغاة</div>
+                    <div class="text-3xl font-black text-base-content mt-1">@Model.Count(e => e.StatusId == EpisodeStatusValues.Cancelled)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Schedule Display Area -->
+    <div id="liveboard-scroll-area" class="w-full flex-1 overflow-y-auto pr-1">
+        @if (!Model.Any())
+        {
+            <div class="card bg-base-100 shadow-xl p-20 text-center flex flex-col items-center justify-center gap-6 border border-base-200/50">
+                <div class="w-24 h-24 rounded-full bg-base-200 flex items-center justify-center text-base-content/20 animate-pulse">
+                    <span class="material-symbols-rounded text-6xl">event_busy</span>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-black text-base-content">لا توجد حلقات مجدولة لليوم</h3>
+                    <p class="text-base-content/60 max-w-md mt-2 leading-relaxed">سيتم عرض الحلقات وتفاصيل الطاقم والضيوف هنا فور جدولتها في النظام لليوم الحالي.</p>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-6">
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    var episode = Model[i];
+                    var isCancelled = episode.StatusId == EpisodeStatusValues.Cancelled;
+                    var isNext = nextEpisode != null && episode.EpisodeId == nextEpisode.EpisodeId;
+                    
+                    var statusColorClass = episode.StatusId switch
+                    {
+                        EpisodeStatusValues.Planned => "border-t-warning",
+                        EpisodeStatusValues.Executed => "border-t-info",
+                        EpisodeStatusValues.Published => "border-t-success",
+                        EpisodeStatusValues.WebsitePublished => "border-t-primary",
+                        EpisodeStatusValues.Cancelled => "border-t-error",
+                        _ => "border-t-neutral"
+                    };
+
+                    var displayTime = "--:--";
+                    if (episode.ScheduledExecutionTime.HasValue)
+                    {
+                        var timeVal = episode.ScheduledExecutionTime.Value;
+                        var hour12 = timeVal.Hour % 12;
+                        if (hour12 == 0) hour12 = 12;
+                        var ampm = timeVal.Hour >= 12 ? "مساءً" : "صباحاً";
+                        displayTime = $"{hour12:D2}:{timeVal.Minute:D2} {ampm}";
+                    }
+
+                    <div class="card glass-card-premium shadow-xl border-t-8 @statusColorClass transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl animate-card-in @(isNext ? "active-pulse-glow border-l border-r border-b" : "") @(isCancelled ? "opacity-60" : "")" 
+                         style="animation-delay: @(i * 70)ms">
+                        <div class="card-body p-6 flex flex-col justify-between gap-4">
+                            <!-- Card Header: Time and Status -->
+                            <div class="flex items-start justify-between gap-2 border-b border-base-200/50 pb-4">
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="badge badge-neutral font-mono font-bold text-md py-3 px-3 shadow-md flex items-center gap-1">
+                                            <span class="material-symbols-rounded text-sm">alarm</span>
+                                            @displayTime
+                                        </span>
+                                        @if (isNext)
+                                        {
+                                            <span class="badge badge-primary gap-1 py-3 px-3 font-extrabold text-xs shadow-sm animate-pulse">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                                                الحلقة التالية
+                                            </span>
+                                        }
+                                    </div>
+                                    <div class="text-xs text-primary font-extrabold tracking-wide mt-2">
+                                        @episode.ProgramName
+                                    </div>
+                                </div>
+
+                                <!-- Custom Status Badge using Shared CSS Variables -->
+                                <div>
+                                    @await Html.PartialAsync("_StatusBadge", new StatusBadgeViewModel
+                                    {
+                                        Type = "episode",
+                                        Status = episode.StatusId switch
+                                        {
+                                            EpisodeStatusValues.Planned => "planned",
+                                            EpisodeStatusValues.Executed => "executed",
+                                            EpisodeStatusValues.Published => "published",
+                                            EpisodeStatusValues.WebsitePublished => "website-published",
+                                            EpisodeStatusValues.Cancelled => "cancelled",
+                                            _ => "planned"
+                                        },
+                                        Label = EpisodeStatusValues.GetDisplayName(episode.StatusId)
+                                    })
+                                </div>
+                            </div>
+
+                            <!-- Card Title & Description -->
+                            <div class="flex-1">
+                                <h2 class="text-xl font-extrabold text-base-content flex items-center gap-2 leading-snug">
+                                    @episode.EpisodeName
+                                </h2>
+                                @if (!string.IsNullOrWhiteSpace(episode.EpisodeDescription))
+                                {
+                                    <p class="text-sm text-base-content/70 mt-2 line-clamp-3 leading-relaxed">
+                                        @episode.EpisodeDescription
+                                    </p>
+                                }
+                            </div>
+
+                            <!-- Team / Staff Members -->
+                            @if (episode.EmployeeItems.Any())
+                            {
+                                <div class="mt-2">
+                                    <div class="text-xs text-base-content/50 font-bold mb-2.5 flex items-center gap-1">
+                                        <span class="material-symbols-rounded text-sm text-primary">groups</span>
+                                        طاقم العمل:
+                                    </div>
+                                    <div class="flex flex-wrap gap-2">
+                                        @foreach (var emp in episode.EmployeeItems)
+                                        {
+                                            var iconName = emp.StaffRoleName switch
+                                            {
+                                                var r when r.Contains("مذيع") || r.Contains("مقدم") => "mic",
+                                                var r when r.Contains("مخرج") => "movie",
+                                                var r when r.Contains("صوت") || r.Contains("مهندس") || r.Contains("فني") => "equalizer",
+                                                _ => "person"
+                                            };
+                                            <span class="badge badge-outline border-base-content/10 badge-md gap-1.5 py-2.5 px-3 text-xs font-semibold text-base-content/80 shadow-sm bg-base-100/50">
+                                                <span class="material-symbols-rounded text-xs text-primary">@iconName</span>
+                                                <span class="opacity-70">@emp.StaffRoleName:</span>
+                                                <span class="font-bold">@emp.FullName</span>
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Guests & Correspondents -->
+                            @if (episode.GuestItems.Any() || episode.CorrespondentItems.Any())
+                            {
+                                <div class="mt-2 pt-4 border-t border-base-200/50">
+                                    <div class="flex flex-col gap-2.5">
+                                        @if (episode.GuestItems.Any())
+                                        {
+                                            <div class="flex items-center gap-2 flex-wrap">
+                                                <span class="text-xs text-base-content/50 font-bold">الضيوف:</span>
+                                                @foreach (var guest in episode.GuestItems)
+                                                {
+                                                    <span class="badge badge-secondary gap-1 py-2 px-2.5 shadow-sm font-semibold text-xs text-secondary-content">
+                                                        <span class="material-symbols-rounded text-xs">person</span>
+                                                        @guest.Name
+                                                    </span>
+                                                }
+                                            </div>
+                                        }
+
+                                        @if (episode.CorrespondentItems.Any())
+                                        {
+                                            <div class="flex items-center gap-2 flex-wrap">
+                                                <span class="text-xs text-base-content/50 font-bold">المراسلون:</span>
+                                                @foreach (var corr in episode.CorrespondentItems)
+                                                {
+                                                    <span class="badge badge-accent gap-1 py-2 px-2.5 shadow-sm font-semibold text-xs text-accent-content">
+                                                        <span class="material-symbols-rounded text-xs">record_voice_over</span>
+                                                        @corr.FullName
+                                                        @if (corr.HostingTime.HasValue)
+                                                        {
+                                                            <span class="opacity-80 text-[10px] font-mono">(@corr.HostingTime.Value.ToString(@"hh\:mm"))</span>
+                                                        }
+                                                    </span>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Special Notes & Cancellation reasons -->
+                            @if (!string.IsNullOrWhiteSpace(episode.SpecialNotes) || (isCancelled && !string.IsNullOrWhiteSpace(episode.CancellationReason)))
+                            {
+                                <div class="mt-2 pt-4 border-t border-base-200/50">
+                                    @if (!string.IsNullOrWhiteSpace(episode.SpecialNotes))
+                                    {
+                                        <div class="alert alert-info py-2.5 px-4 text-xs rounded-xl gap-2 mt-1 shadow-sm">
+                                            <span class="material-symbols-rounded text-sm">info</span>
+                                            <span><strong>ملاحظات:</strong> @episode.SpecialNotes</span>
+                                        </div>
+                                    }
+                                    @if (isCancelled && !string.IsNullOrWhiteSpace(episode.CancellationReason))
+                                    {
+                                        <div class="alert alert-error py-2.5 px-4 text-xs rounded-xl gap-2 mt-1 shadow-sm text-error-content">
+                                            <span class="material-symbols-rounded text-sm">warning</span>
+                                            <span><strong>سبب الإلغاء:</strong> @episode.CancellationReason</span>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let autoScrollInterval = null;
+        let isAutoScrolling = false;
+
+        // Digital Clock & Date Update
+        function updateClock() {
+            const now = new Date();
+            
+            // Format time in 12-hour system with Arabic Fusha AM/PM
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'مساءً' : 'صباحاً';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            const strHours = String(hours).padStart(2, '0');
+            
+            const clockEl = document.getElementById('live-clock');
+            if (clockEl) clockEl.textContent = `${strHours}:${minutes}:${seconds} ${ampm}`;
+
+            // Format date in Arabic Fusha using Gregorian calendar
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateEl = document.getElementById('live-date');
+            if (dateEl) dateEl.textContent = now.toLocaleDateString('ar-EG', options);
+        }
+
+        // Kiosk/Fullscreen Mode Toggling
+        function toggleKioskMode() {
+            const body = document.body;
+            const icon = document.getElementById('icon-kiosk');
+            const btnText = document.querySelector('#btn-kiosk span:not(.material-symbols-rounded)');
+            
+            body.classList.toggle('kiosk-active');
+
+            if (body.classList.contains('kiosk-active')) {
+                // Try browser native fullscreen
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen().catch(err => console.log('Fullscreen failed:', err));
+                }
+                if (icon) icon.textContent = 'fullscreen_exit';
+                if (btnText) btnText.textContent = 'خروج من الوضع الكامل';
+            } else {
+                if (document.exitFullscreen && document.fullscreenElement) {
+                    document.exitFullscreen().catch(err => console.log('Exit fullscreen failed:', err));
+                }
+                if (icon) icon.textContent = 'fullscreen';
+                if (btnText) btnText.textContent = 'ملء الشاشة';
+            }
+        }
+
+        // Auto Scroll mechanism
+        function toggleAutoScroll() {
+            const scrollArea = document.getElementById('liveboard-scroll-area');
+            const icon = document.getElementById('icon-autoscroll');
+            const btnText = document.querySelector('#btn-autoscroll span:not(.material-symbols-rounded)');
+            
+            if (!scrollArea) return;
+
+            isAutoScrolling = !isAutoScrolling;
+
+            if (isAutoScrolling) {
+                if (icon) icon.textContent = 'pause';
+                if (btnText) btnText.textContent = 'إيقاف التمرير';
+                
+                let scrollDirection = 1; // 1 = down, -1 = up
+                const scrollSpeed = 1; // pixels per step
+                
+                autoScrollInterval = setInterval(() => {
+                    const currentScroll = scrollArea.scrollTop;
+                    const maxScroll = scrollArea.scrollHeight - scrollArea.clientHeight;
+
+                    if (maxScroll <= 0) return; // No scroll needed
+
+                    if (currentScroll >= maxScroll - 5 && scrollDirection === 1) {
+                        scrollDirection = -1;
+                    } else if (currentScroll <= 5 && scrollDirection === -1) {
+                        scrollDirection = 1;
+                    }
+
+                    scrollArea.scrollBy({
+                        top: scrollSpeed * scrollDirection,
+                        behavior: 'auto'
+                    });
+                }, 40); // Smooth 25fps scroll steps
+            } else {
+                if (icon) icon.textContent = 'play_arrow';
+                if (btnText) btnText.textContent = 'تمرير تلقائي';
+                clearInterval(autoScrollInterval);
+                autoScrollInterval = null;
+            }
+        }
+
+        // Live refresh using DOMParser to avoid complete screen flicker
+        async function refreshDashboard() {
+            try {
+                const response = await fetch(window.location.href);
+                if (response.ok) {
+                    const html = await response.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    
+                    const currentWrapper = document.getElementById('liveboard-content-wrapper');
+                    const newWrapper = doc.getElementById('liveboard-content-wrapper');
+                    
+                    if (currentWrapper && newWrapper) {
+                        const currentKioskState = document.body.classList.contains('kiosk-active');
+                        const currentScrollTop = document.getElementById('liveboard-scroll-area')?.scrollTop || 0;
+
+                        currentWrapper.innerHTML = newWrapper.innerHTML;
+                        
+                        if (currentKioskState) {
+                            document.body.classList.add('kiosk-active');
+                        }
+                        
+                        const newScrollArea = document.getElementById('liveboard-scroll-area');
+                        if (newScrollArea) {
+                            newScrollArea.scrollTop = currentScrollTop;
+                        }
+                        
+                        if (isAutoScrolling) {
+                            isAutoScrolling = false;
+                            toggleAutoScroll();
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error('Error refreshing dashboard:', err);
+            }
+        }
+
+        // Initialize connection status & SignalR binding
+        function initSignalR() {
+            const ind = document.getElementById('connection-indicator');
+            const txt = document.getElementById('connection-status-text');
+
+            if (typeof signalR === 'undefined') {
+                if (ind) {
+                    ind.className = 'badge badge-warning gap-1.5 py-3 px-4 font-semibold text-sm';
+                    if (txt) txt.textContent = 'التحديث التلقائي (غير مفعل)';
+                }
+                return;
+            }
+
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl('/hubs/notifications')
+                .withAutomaticReconnect([0, 1000, 3000, 5000, 10000, 30000])
+                .build();
+
+            connection.on('NotificationReceived', function (notification) {
+                if (notification.type === 'EpisodeStatusChanged' || notification.type === 'AuditLogCreated') {
+                    console.log('Liveboard: SignalR event received. Refreshing...', notification);
+                    refreshDashboard();
+                }
+            });
+
+            connection.start()
+                .then(() => {
+                    console.log('Liveboard: SignalR connected');
+                    if (ind) ind.className = 'badge badge-success gap-1.5 py-3 px-4 font-semibold text-sm';
+                    if (txt) txt.textContent = 'متصل بالبث الفوري';
+                })
+                .catch(err => {
+                    console.error('Liveboard: SignalR connection error:', err);
+                    if (ind) ind.className = 'badge badge-error gap-1.5 py-3 px-4 font-semibold text-sm';
+                    if (txt) txt.textContent = 'فشل الاتصال بالبث المباشر';
+                });
+
+            connection.onreconnecting(() => {
+                if (ind) ind.className = 'badge badge-warning gap-1.5 py-3 px-4 font-semibold text-sm';
+                if (txt) txt.textContent = 'إعادة الاتصال بالبث...';
+            });
+
+            connection.onreconnected(() => {
+                if (ind) ind.className = 'badge badge-success gap-1.5 py-3 px-4 font-semibold text-sm';
+                if (txt) txt.textContent = 'تمت إعادة الاتصال';
+                refreshDashboard();
+            });
+
+            connection.onclose(() => {
+                if (ind) ind.className = 'badge badge-error gap-1.5 py-3 px-4 font-semibold text-sm';
+                if (txt) txt.textContent = 'انقطع الاتصال بالخادم';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Clock
+            setInterval(updateClock, 1000);
+            updateClock();
+            
+            // SignalR
+            initSignalR();
+
+            // Fallback polling (every 60 seconds) in case of SignalR dropouts
+            setInterval(refreshDashboard, 60000);
+        });
+    </script>
+}

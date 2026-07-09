@@ -16,9 +16,9 @@
     <script>
         (function() {
             var theme = localStorage.getItem('theme');
-            document.documentElement.setAttribute('data-theme',
-                theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)
-                    ? 'radiomodernDark' : 'radiomodern');
+            var isDark = theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            document.documentElement.setAttribute('data-theme', isDark ? 'radiomodernDark' : 'radiomodern');
+            document.documentElement.classList.toggle('dark', isDark);
         })();
     </script>
 </head>

@@ -17,6 +17,17 @@
         <p class="text-sm text-base-content/60 mt-0.5">عرض الحلقات المصفاة ضمن نطاق زمني محدد: من @ViewBag.From إلى @ViewBag.To</p>
     </div>
     <div class="flex items-center gap-2">
+        <a href="/Reports/ExportDateRangeExcel?from=@ViewBag.From&to=@ViewBag.To" class="btn btn-success btn-sm">
+            <span class="material-symbols-rounded text-lg">file_download</span>
+            Excel
+        </a>
+        <a href="/Reports/ExportDateRangePdf?from=@ViewBag.From&to=@ViewBag.To" class="btn btn-error btn-sm">
+            <span class="material-symbols-rounded text-lg">file_download</span>
+            PDF
+        </a>
+        <button onclick="window.print()" class="btn btn-ghost btn-sm no-print">
+            <span class="material-symbols-rounded text-lg">print</span>
+        </button>
         <a href="/Reports" class="btn btn-ghost">
             <span class="material-symbols-rounded">arrow_forward</span>
             الرجوع للتقارير
@@ -76,11 +87,23 @@ else
                         <td class="text-base-content/60">@ep.ProgramName</td>
                         <td class="text-base-content/60">@ep.GuestsDisplay</td>
                         <td class="text-base-content/60 whitespace-nowrap" dir="ltr">@(ep.ScheduledExecutionTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
-                        <td><span class="badge badge-default">@ep.StatusText</span></td>
+                        <td><span class="badge @GetStatusBadgeClass(ep.StatusText)">@ep.StatusText</span></td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
     </div>
+}
+
+@functions {
+    string GetStatusBadgeClass(string s) => s switch
+    {
+        "Planned" => "badge-info",
+        "Executed" => "badge-success",
+        "Published" => "badge-success",
+        "WebsitePublished" => "badge-info",
+        "Cancelled" => "badge-error",
+        _ => "badge-ghost"
+    };
 }
