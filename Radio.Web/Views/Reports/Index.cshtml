@@ -409,11 +409,11 @@
 
     string GetStatusColor(string s) => s switch
     {
-        "Planned" => "#2563EB",
-        "Executed" => "#10B981",
-        "Published" => "#059669",
-        "WebsitePublished" => "#0EA5E9",
-        "Cancelled" => "#EF4444",
-        _ => "#94A3B8"
+        "Planned" => "var(--status-planned-text)",
+        "Executed" => "var(--status-executed-text)",
+        "Published" => "var(--status-published-text)",
+        "WebsitePublished" => "var(--status-website-text)",
+        "Cancelled" => "var(--status-cancelled-text)",
+        _ => "var(--ink-muted)"
     };
 }

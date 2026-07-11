@@ -110,7 +110,7 @@ else
                     <div class="flex items-center gap-1">
                         @if (User.HasPermission(AppPermissions.UserManage))
                         {
-                            <a href="/Roles/Clone/@r.RoleId" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-0 bg-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 text-slate-500 hover:bg-slate-100 hover:text-slate-700 focus-visible:ring-slate-400 dark:hover:bg-slate-500/10" title="نسخ الدور وصلاحياته" aria-label="نسخ الدور وصلاحياته">
+                            <a href="/Roles/Clone/@r.RoleId" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-0 bg-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 text-ink-muted hover:bg-surface-3 hover:text-ink focus-visible:ring-ink-soft" title="نسخ الدور وصلاحياته" aria-label="نسخ الدور وصلاحياته">
                                 <span class="material-symbols-rounded text-xl leading-none">content_copy</span>
                             </a>
                             @if (!isAdmin)
@@ -125,7 +125,7 @@ else
                     {
                         <form method="post" action="/Roles/Delete/@r.RoleId" class="inline" data-confirm="هل أنت متأكد من حذف هذا الدور «@r.RoleName» نهائياً؟ لا يمكن التراجع عن هذا الإجراء وسيتم سحب صلاحيات جميع الموظفين المرتبطين به.">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-0 bg-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 text-red-500 hover:bg-red-50 hover:text-red-700 focus-visible:ring-red-500 dark:hover:bg-red-500/10" title="حذف الدور" aria-label="حذف الدور">
+                            <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-0 bg-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 text-danger hover:bg-danger/10 hover:text-danger focus-visible:ring-danger" title="حذف الدور" aria-label="حذف الدور">
                                 <span class="material-symbols-rounded text-xl leading-none">delete</span>
                             </button>
                         </form>

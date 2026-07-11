@@ -36,3 +36,20 @@ package-lock.json
 
 # Test coverage output
 coverage/
+
+# Local tooling / environment / agent artifacts
+.agents/
+.claude/
+.mcp.json
+.playwright-mcp/
+.repowise/
+.vscode/
+skills-lock.json
+app_css_diff.txt
+dashboard.yml
+dashboard-snapshot.yml
+episodes-mobile-dark.yml
+login-error.yml
+login-error2.yml
+login-page-desktop.yml
+sidebar-layout.png

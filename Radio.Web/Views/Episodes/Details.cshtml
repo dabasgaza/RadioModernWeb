@@ -190,7 +190,7 @@
                 <h3 class="font-bold text-ink text-base flex-1">تفاصيل مرحلة التخطيط</h3>
                 @if (ep.StatusId == 0)
                 {
-                    <span class="badge bg-primary/10 text-primary border border-primary/20 text-xs font-bold py-0.5 px-2.5 rounded-full">المرحلة الحالية</span>
+                    <span class="badge badge-outline badge-primary text-xs font-bold py-0.5 px-2.5 rounded-full">المرحلة الحالية</span>
                 }
             </div>
             
@@ -222,7 +222,7 @@
                         <div class="flex flex-wrap gap-2">
                             @foreach (var g in ep.GuestItems)
                             {
-                                <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-primary/10 text-primary border border-primary/20 text-xs font-bold shadow-sm">
+                                <span class="badge badge-outline badge-primary gap-1 py-1.5 px-3 rounded-xl h-auto text-xs font-bold shadow-sm">
                                     <span class="material-symbols-rounded text-xs">person</span>
                                     @g.Name
                                     @if (!string.IsNullOrWhiteSpace(g.Topic))
@@ -245,7 +245,7 @@
                         <div class="flex flex-wrap gap-2">
                             @foreach (var c in ep.CorrespondentItems)
                             {
-                                <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-warning/10 text-warning border border-warning/20 text-xs font-bold shadow-sm">
+                                <span class="badge badge-outline badge-warning gap-1 py-1.5 px-3 rounded-xl h-auto text-xs font-bold shadow-sm">
                                     <span class="material-symbols-rounded text-xs">my_location</span>
                                     @c.FullName
                                 </span>
@@ -264,7 +264,7 @@
                         <div class="flex flex-wrap gap-2">
                             @foreach (var e in ep.EmployeeItems)
                             {
-                                <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-surface-3 text-ink-muted border border-border/80 text-xs font-bold shadow-sm">
+                                <span class="badge badge-outline gap-1 py-1.5 px-3 rounded-xl h-auto text-xs font-bold shadow-sm">
                                     <span class="material-symbols-rounded text-xs">engineering</span>
                                     @e.FullName
                                     @if (!string.IsNullOrWhiteSpace(e.StaffRoleName))
@@ -288,7 +288,7 @@
                     <h3 class="font-bold text-ink text-base flex-1">تفاصيل مرحلة التنفيذ (الإنتاج)</h3>
                     @if (ep.StatusId == 1)
                     {
-                        <span class="badge bg-success/10 text-success border border-success/20 text-xs font-bold py-0.5 px-2.5 rounded-full">المرحلة الحالية</span>
+                        <span class="badge badge-outline badge-success text-xs font-bold py-0.5 px-2.5 rounded-full">المرحلة الحالية</span>
                     }
                 </div>
                 
@@ -319,7 +319,7 @@
                         </div>
                     @if (User.HasPermission(AppPermissions.EpisodeExecute) && execLog != null)
                     {
-                        <a href="/ExecutionLogs/Edit/@execLog.RecordId" class="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl border border-success/30 bg-success/5 hover:bg-success/10 text-success hover:text-success/80 hover:shadow-sm transition-all duration-200 font-semibold text-xs w-full text-center">
+                        <a href="/ExecutionLogs/Edit/@execLog.RecordId" class="btn btn-outline btn-success w-full justify-center gap-1.5 text-xs">
                             <span class="material-symbols-rounded text-sm">edit</span>
                             تعديل بيانات التنفيذ
                         </a>
@@ -345,7 +345,7 @@
                     <h3 class="font-bold text-ink text-base flex-1">تفاصيل النشر الرقمي (سوشال)</h3>
                     @if (ep.StatusId == 2)
                     {
-                        <span class="badge bg-success/10 text-success border border-success/20 text-xs font-bold py-0.5 px-2.5 rounded-full">المرحلة الحالية</span>
+                        <span class="badge badge-outline badge-success text-xs font-bold py-0.5 px-2.5 rounded-full">المرحلة الحالية</span>
                     }
                 </div>
                 
@@ -375,7 +375,7 @@
                                     </div>
                                     @if (User.HasPermission(AppPermissions.EpisodePublish))
                                     {
-                                        <a href="/Publishing/Edit/@sr.RecordId" class="flex items-center justify-center gap-1.5 w-full mt-3 py-2 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary hover:text-primary/80 transition font-semibold text-xs text-center">
+                                        <a href="/Publishing/Edit/@sr.RecordId" class="btn btn-outline btn-primary w-full justify-center gap-1.5 text-xs mt-3">
                                             <span class="material-symbols-rounded text-sm">edit</span>
                                             تعديل النشر الرقمي
                                         </a>
@@ -404,7 +404,7 @@
                     <h3 class="font-bold text-ink text-base flex-1">تفاصيل النشر على الموقع الرسمي</h3>
                     @if (ep.StatusId == 3)
                     {
-                        <span class="badge bg-accent/10 text-accent border border-accent/20 text-xs font-bold py-0.5 px-2.5 rounded-full">المرحلة الحالية</span>
+                        <span class="badge badge-outline badge-accent text-xs font-bold py-0.5 px-2.5 rounded-full">المرحلة الحالية</span>
                     }
                 </div>
                 
@@ -434,7 +434,7 @@
                                     </div>
                                     @if (User.HasPermission(AppPermissions.EpisodeWebPublish))
                                     {
-                                        <a href="/WebsitePublishing/Edit/@wr.RecordId" class="flex items-center justify-center gap-1.5 w-full mt-3 py-2 rounded-xl border border-accent/30 bg-accent/5 hover:bg-accent/10 text-accent hover:text-accent/80 transition font-semibold text-xs text-center">
+                                        <a href="/WebsitePublishing/Edit/@wr.RecordId" class="btn btn-outline btn-accent w-full justify-center gap-1.5 text-xs mt-3">
                                             <span class="material-symbols-rounded text-sm">edit</span>
                                             تعديل النشر على الموقع
                                         </a>
@@ -467,42 +467,42 @@
             <div class="space-y-3">
                 @if (User.HasPermission(AppPermissions.EpisodeEdit) && ep.StatusId != 4)
                 {
-                    <a href="/Episodes/Edit/@ep.EpisodeId" class="flex items-center gap-3 px-4 py-3 rounded-xl border border-primary/20 bg-primary/10 text-primary hover:bg-primary/20 hover:shadow-sm transition-all duration-200 font-semibold text-sm w-full">
+                    <a href="/Episodes/Edit/@ep.EpisodeId" class="btn btn-outline btn-primary w-full justify-start gap-3">
                         <span class="material-symbols-rounded text-lg">edit</span>
                         تعديل خصائص الحلقة
                     </a>
                 }
                 @if (User.HasPermission(AppPermissions.EpisodeExecute) && ep.StatusId == 0)
                 {
-                    <button type="button" class="flex items-center gap-3 px-4 py-3 rounded-xl border border-success/20 bg-success/10 text-success hover:bg-success/20 hover:shadow-sm transition-all duration-200 font-semibold text-sm w-full" onclick="openExecuteModal(@ep.EpisodeId, '@ep.EpisodeName')">
+                    <button type="button" class="btn btn-outline btn-success w-full justify-start gap-3" onclick="openExecuteModal(@ep.EpisodeId, '@ep.EpisodeName')">
                         <span class="material-symbols-rounded text-lg">play_circle</span>
                         تسجيل وتوثيق التنفيذ
                     </button>
                 }
                 @if (User.HasPermission(AppPermissions.EpisodePublish) && ep.StatusId == 1)
                 {
-                    <a href="/Publishing/LogSocial/@ep.EpisodeId" class="flex items-center gap-3 px-4 py-3 rounded-xl border border-info/20 bg-info/10 text-info hover:bg-info/20 hover:shadow-sm transition-all duration-200 font-semibold text-sm w-full">
+                    <a href="/Publishing/LogSocial/@ep.EpisodeId" class="btn btn-outline btn-info w-full justify-start gap-3">
                         <span class="material-symbols-rounded text-lg">share</span>
                         البدء بالنشر الرقمي (سوشال)
                     </a>
                 }
                 @if (User.HasPermission(AppPermissions.EpisodeWebPublish) && (ep.StatusId == 1 || ep.StatusId == 2))
                 {
-                    <a href="/WebsitePublishing/Publish/@ep.EpisodeId" class="flex items-center gap-3 px-4 py-3 rounded-xl border border-accent/20 bg-accent/10 text-accent hover:bg-accent/20 hover:shadow-sm transition-all duration-200 font-semibold text-sm w-full">
+                    <a href="/WebsitePublishing/Publish/@ep.EpisodeId" class="btn btn-outline btn-accent w-full justify-start gap-3">
                         <span class="material-symbols-rounded text-lg">public</span>
                         النشر على الموقع الرسمي
                     </a>
                 }
                 @if (User.HasPermission(AppPermissions.EpisodeRevert) && ep.StatusId is 1 or 2 or 3)
                 {
-                    <button type="button" class="flex items-center gap-3 px-4 py-3 rounded-xl border border-warning/20 bg-warning/10 text-warning hover:bg-warning/20 hover:shadow-sm transition-all duration-200 font-semibold text-sm w-full" onclick="openRevertModal(@ep.EpisodeId, '@ep.EpisodeName')">
+                    <button type="button" class="btn btn-outline btn-warning w-full justify-start gap-3" onclick="openRevertModal(@ep.EpisodeId, '@ep.EpisodeName')">
                         <span class="material-symbols-rounded text-lg">undo</span>
                         التراجع عن الحالة السابقة
                     </button>
                 }
                 @if (User.HasPermission(AppPermissions.EpisodeDelete) && ep.StatusId != 4)
                 {
-                    <button type="button" class="flex items-center gap-3 px-4 py-3 rounded-xl border border-danger/20 bg-danger/10 text-danger hover:bg-danger/20 hover:shadow-sm transition-all duration-200 font-semibold text-sm w-full" onclick="openCancelModal(@ep.EpisodeId, '@ep.EpisodeName')">
+                    <button type="button" class="btn btn-outline btn-error w-full justify-start gap-3" onclick="openCancelModal(@ep.EpisodeId, '@ep.EpisodeName')">
                         <span class="material-symbols-rounded text-lg">cancel</span>
                         إلغاء الحلقة
                     </button>
@@ -517,9 +517,9 @@
                 <h3 class="font-bold text-ink text-base">المرفقات</h3>
             </div>
             <form method="post" action="/Upload/Episode/@Model.Episode.EpisodeId" enctype="multipart/form-data" class="mb-3">
-                <div class="flex gap-2">
-                    <input type="file" name="files" multiple class="file-input file-input-bordered file-input-sm flex-1" />
-                    <button type="submit" class="btn btn-primary btn-sm">
+                <div class="flex items-center gap-2">
+                    <input type="file" name="files" multiple class="file-input file-input-bordered file-input-sm flex-1 min-w-0" />
+                    <button type="submit" class="btn btn-primary btn-sm whitespace-nowrap">
                         <span class="material-symbols-rounded text-sm">upload</span>
                         رفع
                     </button>
@@ -698,7 +698,7 @@
                         return;
                     }
                     container.innerHTML = files.map(f =>
-                        '<div class="flex items-center gap-2 p-2 rounded-lg hover:bg-base-200/50 transition-colors">' +
+                        '<div class="flex items-center gap-2 p-2 rounded-lg hover:bg-surface-3/50 transition-colors">' +
                             '<span class="material-symbols-rounded text-sm text-primary">description</span>' +
                             '<a href="/uploads/' + @Model.Episode.EpisodeId + '/' + f.storedName + '" target="_blank" class="flex-1 text-sm text-primary hover:underline truncate">' + f.fileName + '</a>' +
                             '<span class="text-xs text-ink-muted" dir="ltr">' + formatSize(f.sizeBytes) + '</span>' +

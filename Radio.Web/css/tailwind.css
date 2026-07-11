@@ -4,22 +4,22 @@
 
 @layer base {
   :root {
-    --primary-hsl: 221 83% 53%; /* #2563EB - Elegant Blue */
-    --secondary-hsl: 262 83% 58%; /* #7C3AED - Premium Indigo */
-    --accent-hsl: 199 89% 48%; /* #0EA5E9 - Sky Blue */
-    --surface-hsl: 0 0% 100%;
-    --surface-2-hsl: 210 40% 98%; /* Slate 50 */
-    --surface-3-hsl: 213 27% 84% / 0.2; /* Glass-like Slate */
+    --primary-hsl: 210 100% 50%;   /* #007BFF */
+    --secondary-hsl: 135 60% 41%;  /* #28A745 */
+    --accent-hsl: 179 78% 41%;     /* #17BEBB */
+    --purple-hsl: 262 47% 51%;     /* #6F42C1 */
+    --surface-hsl: 210 17% 96%;
+    --surface-2-hsl: 210 20% 93%;
+    --surface-3-hsl: 210 20% 88% / 0.2;
   }
 
   body {
     background-attachment: fixed;
-    background-image: 
-      radial-gradient(at 0% 0%, hsla(262, 80%, 60%, 0.03) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, hsla(221, 80%, 60%, 0.03) 0px, transparent 50%);
+    background-image:
+      radial-gradient(at 0% 0%, hsla(210, 100%, 40%, 0.03) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, hsla(135, 60%, 41%, 0.03) 0px, transparent 50%);
   }
 
-  /* Custom Scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -28,55 +28,52 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: hsla(221, 20%, 70%, 0.4);
+    background: hsla(210, 20%, 70%, 0.4);
     border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: hsla(221, 80%, 60%, 0.6);
+    background: hsla(210, 100%, 50%, 0.6);
   }
 }
 
 @layer components {
-  /* Glassmorphism Styles */
   .glass-card {
-    background: rgba(255, 255, 255, 0.75);
+    background: color-mix(in srgb, var(--color-neutral-50) 75%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(226, 232, 240, 0.8);
+    border: 1px solid color-mix(in srgb, var(--color-neutral-300) 80%, transparent);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04);
   }
 
   .glass-sidebar {
-    background: rgba(255, 255, 255, 0.85);
+    background: color-mix(in srgb, var(--color-neutral-50) 85%, transparent);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-left: 1px solid rgba(226, 232, 240, 0.8);
+    border-left: 1px solid color-mix(in srgb, var(--color-neutral-300) 80%, transparent);
   }
 
   .glass-topbar {
-    background: rgba(255, 255, 255, 0.7);
+    background: color-mix(in srgb, var(--color-neutral-50) 70%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-neutral-300) 50%, transparent);
   }
 
-  /* Premium Navigation Links */
   .nav-link {
     @apply flex items-center gap-3 px-4 py-3 text-ink-muted rounded-xl transition-all duration-300 ease-out font-medium;
   }
-  /* ← استخدام var(--primary) بدلاً من hsl(var(--p)) المعطلة مع DaisyUI v4 */
   .nav-link:hover {
-    background-color: rgba(37, 99, 235, 0.08);
-    color: var(--primary, #2563EB);
+    background-color: color-mix(in srgb, var(--primary) 8%, transparent);
+    color: var(--primary);
   }
 
   .nav-link.active {
     @apply text-white shadow-lg;
-    background: linear-gradient(to left, var(--color-primary, #2563EB), var(--color-secondary, #7C3AED));
-    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.15);
+    background: linear-gradient(to left, var(--color-primary, var(--color-primary-500)), var(--color-secondary, var(--color-secondary-500)));
+    box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--primary) 15%, transparent);
   }
   .nav-link.active:hover {
-    background: linear-gradient(to left, var(--color-primary, #2563EB), var(--color-secondary, #7C3AED));
+    background: linear-gradient(to left, var(--color-primary, var(--color-primary-500)), var(--color-secondary, var(--color-secondary-500)));
     color: #fff;
   }
 
@@ -87,19 +84,17 @@
     transform: scale(1.1);
   }
 
-  /* Skeleton Shimmer Loading Effect */
   .shimmer {
     background: linear-gradient(
       90deg,
-      rgba(241, 245, 249, 0.6) 25%,
-      rgba(226, 232, 240, 0.9) 50%,
-      rgba(241, 245, 249, 0.6) 75%
+      color-mix(in srgb, var(--color-neutral-200) 60%, transparent) 25%,
+      color-mix(in srgb, var(--color-neutral-300) 90%, transparent) 50%,
+      color-mix(in srgb, var(--color-neutral-200) 60%, transparent) 75%
     );
     background-size: 200% 100%;
     animation: shimmer-anim 1.6s infinite linear;
   }
 
-  /* Custom Tabulator Theme adjustments */
   .tabulator {
     @apply border-0 bg-transparent text-ink !important;
   }
@@ -110,7 +105,7 @@
     @apply border-b border-border/40 transition-colors duration-200 !important;
   }
   .tabulator-row:hover {
-    background-color: rgba(37, 99, 235, 0.06) !important;
+    background-color: color-mix(in srgb, var(--primary) 6%, transparent) !important;
   }
 }
 
@@ -123,7 +118,6 @@
   }
 }
 
-/* Pulsing notifications indicator */
 .ping-notification {
   animation: ping-custom 2s cubic-bezier(0, 0, 0.2, 1) infinite;
 }

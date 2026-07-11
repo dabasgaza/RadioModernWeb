@@ -6,39 +6,39 @@
 [data-theme="radiomodernDark"] {
 
     /* ── Surfaces ──────────────────────────────────────────────
-       Comfortable slate-blue base with clear layer separation    */
-    --fallback-b1: #212533;   /* card background                */
-    --fallback-b2: #1A1D26;   /* page background                */
-    --fallback-b3: #2E3347;   /* elevated / hover elements      */
-    --fallback-bc: #E2E8F0;   /* primary text                   */
+       Comfortable charcoal base with clear layer separation     */
+    --fallback-b1: #2C3136;   /* card background                */
+    --fallback-b2: #212529;   /* page background                */
+    --fallback-b3: #343A40;   /* elevated / hover elements      */
+    --fallback-bc: #E9EBEC;   /* primary text                   */
 
-    /* ── Primary — soft cornflower blue ─────────────────────── */
-    --fallback-p:  #60A5FA;   /* primary                        */
-    --fallback-pc: #0F172A;   /* primary-content                */
+    /* ── Primary — soft blue ────────────────────────────────── */
+    --fallback-p:  #4D9CFF;   /* primary                        */
+    --fallback-pc: #002C5C;   /* primary-content                */
 
-    /* ── Secondary — soft lavender ──────────────────────────── */
-    --fallback-s:  #C084FC;   /* secondary                      */
-    --fallback-sc: #1E1B4B;   /* secondary-content              */
+    /* ── Secondary — soft green ─────────────────────────────── */
+    --fallback-s:  #6FD8A2;   /* secondary                      */
+    --fallback-sc: #08230F;   /* secondary-content              */
 
-    /* ── Accent — soft sky blue ──────────────────────────────  */
-    --fallback-a:  #38BDF8;   /* accent                         */
-    --fallback-ac: #073347;   /* accent-content                 */
+    /* ── Accent — teal ──────────────────────────────────────  */
+    --fallback-a:  #17BEBB;   /* accent                         */
+    --fallback-ac: #052C2C;   /* accent-content                 */
 
     /* ── Neutral / sidebar ──────────────────────────────────── */
-    --fallback-n:  #212533;   /* neutral background             */
-    --fallback-nc: #94A3B8;   /* neutral content (muted text)   */
+    --fallback-n:  #2C3136;   /* neutral background             */
+    --fallback-nc: #ADB5BD;   /* neutral content (muted text)   */
 
     /* ── Semantic intent colors ─────────────────────────────── */
-    --fallback-in:  #60A5FA;  --fallback-inc: #0F172A;  /* info    */
-    --fallback-su:  #34D399;  --fallback-suc: #022B18;  /* success */
-    --fallback-wa:  #FBBF24;  --fallback-wac: #291900;  /* warning */
-    --fallback-er:  #F87171;  --fallback-erc: #2A0808;  /* error   */
+    --fallback-in:  #4D9CFF;  --fallback-inc: #002C5C;  /* info    */
+    --fallback-su:  #28A745;  --fallback-suc: #08230F;  /* success */
+    --fallback-wa:  #FFC107;  --fallback-wac: #634A00;  /* warning */
+    --fallback-er:  #DC3545;  --fallback-erc: #5E1018;  /* error   */
 
     /* ── Border / UI metrics ─────────────────────────────────  */
     --border-btn: 1px;
     --tab-border: 1px;
 
     /* ── Navigation gradient helpers (nav-link.active) ──────── */
-    --color-primary:   #60A5FA;  /* active link gradient start  */
-    --color-secondary: #C084FC;  /* active link gradient end    */
+    --color-primary:   #4D9CFF;  /* active link gradient start  */
+    --color-secondary: #6FD8A2;  /* active link gradient end    */
 }

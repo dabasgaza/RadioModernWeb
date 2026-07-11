@@ -1,90 +1,246 @@
+/* ════════════════════════════════════════════════════════
+   LAYER 1 — Primitive Tokens (mode-independent palette)
+   مُولّدة اعتمادًا على خريطة ألوان 2025 (Light & Dark Mode)
+   ════════════════════════════════════════════════════════ */
 :root {
-    /* ── Brand tokens ── */
-    --primary: #2563EB;
-    --primary-dark: #1D4ED8;
-    --primary-light: #3B82F6;
-    --secondary: #7C3AED;
-    --secondary-dark: #6D28D9;
-    --accent: #0EA5E9;
+    /* ── Neutral (Light Mode) ── */
+    --color-neutral-50:  #F8F9FA;
+    --color-neutral-100: #EEF1F4;
+    --color-neutral-200: #E4E7EB;
+    --color-neutral-300: #CED4DA;
+    --color-neutral-400: #9BA2A9;
+    --color-neutral-500: #6C757D;
+    --color-neutral-600: #5A6168;
+    --color-neutral-700: #474D52;
+    --color-neutral-800: #35393D;
+    --color-neutral-900: #212529;
 
-    /* ── State tokens ── */
-    --success: #10B981;
-    --warning: #F59E0B;
-    --danger: #EF4444;
+    /* ── Neutral (Dark Mode) ── */
+    --color-neutral-dark-50:  #F7F7F8;
+    --color-neutral-dark-100: #E9EBEC;
+    --color-neutral-dark-200: #D0D4D7;
+    --color-neutral-dark-300: #ADB5BD;
+    --color-neutral-dark-400: #8A939A;
+    --color-neutral-dark-500: #6C757D;
+    --color-neutral-dark-600: #51585E;
+    --color-neutral-dark-700: #343A40;
+    --color-neutral-dark-800: #2C3136;
+    --color-neutral-dark-900: #212529;
+    --color-neutral-dark-950: #1A1A1A;
 
-    /* ── Surface hierarchy ── */
-    --surface: #FFFFFF;
-    --surface-2: #F8FAFC;
-    --surface-3: #F1F5F9;
-    --border: #E2E8F0;
+    /* ── Primary (Blue) ── */
+    --color-primary-50:  #D2E7FF;
+    --color-primary-100: #B8DAFF;
+    --color-primary-200: #8AC3FF;
+    --color-primary-300: #4D9CFF;
+    --color-primary-400: #218CFF;
+    --color-primary-500: #007BFF;
+    --color-primary-600: #0067D6;
+    --color-primary-700: #0054AD;
+    --color-primary-800: #004085;
+    --color-primary-900: #002C5C;
 
-    /* ── Content tokens ── */
-    --ink: #0F172A;
-    --ink-muted: #475569;
-    --ink-soft: #94A3B8;
+    /* ── Secondary (Green) ── */
+    --color-secondary-50:  #D6F5DD;
+    --color-secondary-100: #C2F0CC;
+    --color-secondary-200: #9DE7AE;
+    --color-secondary-300: #6FD8A2;
+    --color-secondary-400: #37CF5A;
+    --color-secondary-500: #28A745;
+    --color-secondary-600: #208637;
+    --color-secondary-700: #18652A;
+    --color-secondary-800: #10441C;
+    --color-secondary-900: #08230F;
 
-    /* ── Workflow status tokens (light) ── */
-    --status-planned-bg:    rgba(37, 99, 235, 0.10);
-    --status-planned-text:  #2563EB;
-    --status-executed-bg:   rgba(16, 185, 129, 0.10);
-    --status-executed-text: #059669;
-    --status-published-bg:   rgba(16, 185, 129, 0.10);
-    --status-published-text: #059669;
-    --status-website-bg:    rgba(14, 165, 233, 0.10);
-    --status-website-text:  #0284C7;
-    --status-cancelled-bg:  rgba(239, 68, 68, 0.10);
-    --status-cancelled-text: #DC2626;
+    /* ── Accent Teal ── */
+    --color-accent-teal-50:  #D0F9F9;
+    --color-accent-teal-100: #BAF7F6;
+    --color-accent-teal-200: #91F2F0;
+    --color-accent-teal-300: #5AEBE8;
+    --color-accent-teal-400: #24E4E1;
+    --color-accent-teal-500: #17BEBB;
+    --color-accent-teal-600: #139A97;
+    --color-accent-teal-700: #0E7573;
+    --color-accent-teal-800: #0A5150;
+    --color-accent-teal-900: #052C2C;
+
+    /* ── Accent Purple ── */
+    --color-accent-purple-50:  #F9F7FC;
+    --color-accent-purple-100: #EDE7F7;
+    --color-accent-purple-200: #D2C5EC;
+    --color-accent-purple-300: #AF96DD;
+    --color-accent-purple-400: #8C68CE;
+    --color-accent-purple-500: #6F42C1;
+    --color-accent-purple-600: #5D36A4;
+    --color-accent-purple-700: #4C2C86;
+    --color-accent-purple-800: #3A2267;
+    --color-accent-purple-900: #291848;
+
+    /* ── Warning (Amber) ── */
+    --color-warning-50:  #FFFCF5;
+    --color-warning-100: #FFF8E2;
+    --color-warning-200: #FFECB4;
+    --color-warning-300: #FFDD77;
+    --color-warning-400: #FFCE3A;
+    --color-warning-500: #FFC107;
+    --color-warning-600: #DDA600;
+    --color-warning-700: #B48700;
+    --color-warning-800: #8C6900;
+    --color-warning-900: #634A00;
+
+    /* ── Orange (تنبيه متوسط) ── */
+    --color-orange-50:  #FFF9F5;
+    --color-orange-100: #FFF5ED;
+    --color-orange-200: #FEDCC0;
+    --color-orange-300: #FEBB83;
+    --color-orange-400: #FD9A47;
+    --color-orange-500: #FD7E14;
+    --color-orange-600: #E66A02;
+    --color-orange-700: #BE5702;
+    --color-orange-800: #954501;
+    --color-orange-900: #6D3201;
+
+    /* ── Danger (Red) ── */
+    --color-danger-50:  #FDF6F7;
+    --color-danger-100: #FCF0F1;
+    --color-danger-200: #F6C9CD;
+    --color-danger-300: #ED959D;
+    --color-danger-400: #E4606D;
+    --color-danger-500: #DC3545;
+    --color-danger-600: #C62232;
+    --color-danger-700: #A31C29;
+    --color-danger-800: #801620;
+    --color-danger-900: #5E1018;
 }
 
 /* ════════════════════════════════════════════════════════
-   Dark Mode — CSS Variable Overrides
+   LAYER 2 — Semantic Tokens (mode-aware)
+   ════════════════════════════════════════════════════════ */
+
+/* Light mode semantic tokens */
+:root {
+    --sem-surface:     var(--color-neutral-50);
+    --sem-surface-2:   var(--color-neutral-100);
+    --sem-surface-3:   var(--color-neutral-200);
+    --sem-border:      var(--color-neutral-300);
+    --sem-ink:         var(--color-neutral-900);
+    --sem-ink-muted:   var(--color-neutral-500);
+    --sem-ink-soft:    var(--color-neutral-400);
+
+    --sem-primary:          var(--color-primary-500);
+    --sem-primary-dark:     var(--color-primary-700);
+    --sem-primary-light:    var(--color-primary-300);
+
+    --sem-secondary:        var(--color-secondary-500);
+    --sem-secondary-dark:   var(--color-secondary-700);
+
+    --sem-accent:      var(--color-accent-teal-500);
+    --sem-accent-alt:  var(--color-accent-purple-500);
+
+    --sem-success:     var(--color-secondary-500);
+    --sem-warning:     var(--color-warning-500);
+    --sem-danger:      var(--color-danger-500);
+    --sem-danger-alt:  var(--color-orange-500);
+
+    /* ── Status tokens (light) ── */
+    --sem-status-planned-bg:    color-mix(in srgb, var(--color-primary-500) 10%, transparent);
+    --sem-status-planned-text:  var(--color-primary-700);
+    --sem-status-executed-bg:   color-mix(in srgb, var(--color-secondary-500) 10%, transparent);
+    --sem-status-executed-text: var(--color-secondary-700);
+    --sem-status-published-bg:   color-mix(in srgb, var(--color-secondary-500) 10%, transparent);
+    --sem-status-published-text: var(--color-secondary-700);
+    --sem-status-website-bg:    color-mix(in srgb, var(--color-accent-teal-500) 10%, transparent);
+    --sem-status-website-text:  var(--color-accent-teal-600);
+    --sem-status-cancelled-bg:  color-mix(in srgb, var(--color-danger-500) 10%, transparent);
+    --sem-status-cancelled-text: var(--color-danger-500);
+}
+
+/* Dark mode semantic tokens */
+html.dark {
+    --sem-surface:     var(--color-neutral-dark-800);
+    --sem-surface-2:   var(--color-neutral-dark-900);
+    --sem-surface-3:   var(--color-neutral-dark-700);
+    --sem-border:      var(--color-neutral-dark-700);
+    --sem-ink:         var(--color-neutral-dark-100);
+    --sem-ink-muted:   var(--color-neutral-dark-300);
+    --sem-ink-soft:    var(--color-neutral-dark-500);
+
+    --sem-primary:          var(--color-primary-300);
+    --sem-primary-dark:     var(--color-primary-500);
+    --sem-primary-light:    var(--color-primary-100);
+
+    --sem-secondary:        var(--color-secondary-300);
+    --sem-secondary-dark:   var(--color-secondary-500);
+
+    --sem-accent:      var(--color-accent-teal-500);
+    --sem-accent-alt:  var(--color-accent-purple-300);
+
+    --sem-success:     var(--color-secondary-500);
+    --sem-warning:     var(--color-warning-500);
+    --sem-danger:      var(--color-danger-500);
+    --sem-danger-alt:  var(--color-orange-500);
+
+    /* ── Status tokens (dark) ── */
+    --sem-status-planned-bg:    color-mix(in srgb, var(--color-primary-300) 12%, transparent);
+    --sem-status-planned-text:  var(--color-primary-300);
+    --sem-status-executed-bg:   color-mix(in srgb, var(--color-secondary-300) 12%, transparent);
+    --sem-status-executed-text: var(--color-secondary-300);
+    --sem-status-published-bg:   color-mix(in srgb, var(--color-secondary-300) 12%, transparent);
+    --sem-status-published-text: var(--color-secondary-300);
+    --sem-status-website-bg:    color-mix(in srgb, var(--color-accent-teal-500) 12%, transparent);
+    --sem-status-website-text:  var(--color-accent-teal-500);
+    --sem-status-cancelled-bg:  color-mix(in srgb, var(--color-danger-500) 12%, transparent);
+    --sem-status-cancelled-text: var(--color-danger-500);
+}
+
+/* ════════════════════════════════════════════════════════
+   LAYER 3 — Component Tokens (backward-compatible aliases)
+   ════════════════════════════════════════════════════════ */
+:root {
+    --primary:          var(--sem-primary);
+    --primary-dark:     var(--sem-primary-dark);
+    --primary-light:    var(--sem-primary-light);
+    --secondary:        var(--sem-secondary);
+    --secondary-dark:   var(--sem-secondary-dark);
+    --accent:           var(--sem-accent);
+    --accent-alt:       var(--sem-accent-alt);
+    --success:          var(--sem-success);
+    --warning:          var(--sem-warning);
+    --danger:           var(--sem-danger);
+    --danger-alt:       var(--sem-danger-alt);
+
+    --surface:          var(--sem-surface);
+    --surface-2:        var(--sem-surface-2);
+    --surface-3:        var(--sem-surface-3);
+    --border:           var(--sem-border);
+    --ink:              var(--sem-ink);
+    --ink-muted:        var(--sem-ink-muted);
+    --ink-soft:         var(--sem-ink-soft);
+
+    --status-planned-bg:    var(--sem-status-planned-bg);
+    --status-planned-text:  var(--sem-status-planned-text);
+    --status-executed-bg:   var(--sem-status-executed-bg);
+    --status-executed-text: var(--sem-status-executed-text);
+    --status-published-bg:   var(--sem-status-published-bg);
+    --status-published-text: var(--sem-status-published-text);
+    --status-website-bg:    var(--sem-status-website-bg);
+    --status-website-text:  var(--sem-status-website-text);
+    --status-cancelled-bg:  var(--sem-status-cancelled-bg);
+    --status-cancelled-text: var(--sem-status-cancelled-text);
+}
+
+/* ════════════════════════════════════════════════════════
+   Page Transition — Light / Dark
    ════════════════════════════════════════════════════════ */
 html {
     transition: background-color 0.3s ease, color 0.2s ease;
 }
 html.dark {
-    /* ── Surface hierarchy (dark) — comfortable studio dimness ── */
-    --surface:   #212533;
-    --surface-2: #1A1D26;
-    --surface-3: #2E3347;
-    --border:    #31374F;
-
-    /* ── Content tokens (dark) ── */
-    --ink:       #E2E8F0;
-    --ink-muted: #94A3B8;
-    --ink-soft:  #64748B;
-
-    /* ── Brand tokens (dark) — soft cornflower blue ── */
-    --primary:       #60A5FA;
-    --primary-dark:  #3B82F6;
-    --primary-light: #93C5FD;
-    --secondary:     #C084FC;
-    --secondary-dark: #A855F7;
-    --accent:        #38BDF8;
-
-    /* ── State tokens (dark) ── */
-    --success: #34D399;
-    --warning: #FBBF24;
-    --danger:  #F87171;
-
-    /* ── Button hover states (dark) ── */
-    --primary-hover:  #4B93E6;
-    --danger-hover:   #D15B5B;
-    --success-hover:  #2DB88A;
-    --warning-hover:  #E0A020;
-
-    /* ── Workflow status tokens (dark) ── */
-    --status-planned-bg:    rgba(96, 165, 250, 0.12);
-    --status-planned-text:  #60A5FA;
-    --status-executed-bg:   rgba(52, 211, 153, 0.12);
-    --status-executed-text: #34D399;
-    --status-published-bg:   rgba(52, 211, 153, 0.12);
-    --status-published-text: #34D399;
-    --status-website-bg:    rgba(56, 189, 248, 0.12);
-    --status-website-text:  #38BDF8;
-    --status-cancelled-bg:  rgba(248, 113, 113, 0.12);
-    --status-cancelled-text: #F87171;
-
+    /* Hover states from palette scale (dark mode only) */
+    --primary-hover:  var(--color-primary-600);
+    --danger-hover:   var(--color-danger-600);
+    --success-hover:  var(--color-secondary-600);
+    --warning-hover:  var(--color-warning-600);
     transition: background-color 0.3s ease, color 0.2s ease;
 }
 .stat-card, .glass-topbar {
@@ -342,9 +498,9 @@ html.dark .ep-row-del:hover { background: color-mix(in srgb, var(--danger) 12%, 
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 30%, transparent);
 }
-html.dark #back-to-top { box-shadow: 0 4px 12px rgba(96, 165, 250, 0.25); }
+html.dark #back-to-top { box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 25%, transparent); }
 #back-to-top {
     transition: all 0.2s;
     opacity: 0;
@@ -468,8 +624,8 @@ html.dark .fixed .bg-surface {
 
 /* Page header — gradient متناسق في الوضعين */
 .roles-page-header {
-    background: linear-gradient(to left, rgba(37,99,235,0.08), rgba(37,99,235,0.04), transparent);
-    border: 1px solid rgba(37,99,235,0.12);
+    background: linear-gradient(to left, color-mix(in srgb, var(--primary) 8%, transparent), color-mix(in srgb, var(--primary) 4%, transparent), transparent);
+    border: 1px solid color-mix(in srgb, var(--primary) 12%, transparent);
 }
 html.dark .roles-page-header {
     background: linear-gradient(to left, color-mix(in srgb, var(--primary) 8%, transparent), color-mix(in srgb, var(--primary) 4%, transparent), transparent);
@@ -478,8 +634,8 @@ html.dark .roles-page-header {
 
 /* أيقونة العنوان */
 .role-header-icon {
-    background: rgba(37,99,235,0.1);
-    color: #2563EB;
+    background: color-mix(in srgb, var(--primary) 10%, transparent);
+    color: var(--primary);
 }
 html.dark .role-header-icon {
     background: color-mix(in srgb, var(--primary) 12%, transparent);
@@ -709,12 +865,12 @@ html.dark header [onclick="toggleNotifications(event)"]:hover {
     color: var(--status-planned-text);
 }
 .badge-secondary {
-    background: rgba(124, 58, 237, 0.10);
-    color: #7C3AED;
+    background: color-mix(in srgb, var(--secondary) 10%, transparent);
+    color: var(--secondary);
 }
 html.dark .badge-secondary {
-    background: rgba(192, 132, 252, 0.12);
-    color: #C084FC;
+    background: color-mix(in srgb, var(--secondary) 12%, transparent);
+    color: var(--secondary);
 }
 .badge-active {
     background: var(--status-executed-bg);
@@ -766,9 +922,9 @@ html.dark .badge-secondary {
 }
 .ep-row:hover {
     border-color: var(--primary-light);
-    box-shadow: 0 2px 12px rgba(37, 99, 235, 0.06);
+    box-shadow: 0 2px 12px color-mix(in srgb, var(--primary) 6%, transparent);
 }
-html.dark .ep-row:hover { box-shadow: 0 2px 12px rgba(96, 165, 250, 0.1); }
+html.dark .ep-row:hover { box-shadow: 0 2px 12px color-mix(in srgb, var(--primary) 10%, transparent); }
 .ep-row-enter {
     opacity: 0;
     transform: translateY(10px);
@@ -788,10 +944,10 @@ html.dark .ep-row:hover { box-shadow: 0 2px 12px rgba(96, 165, 250, 0.1); }
 }
 .ep-row-over {
     border-color: var(--primary) !important;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 15%, transparent);
     transform: scale(1.01);
 }
-html.dark .ep-row-over { box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2); }
+html.dark .ep-row-over { box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 20%, transparent); }
 @keyframes epFadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -850,7 +1006,7 @@ html.dark .ep-row-over { box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2); }
     transition: all 0.15s;
     font-size: 1.25rem;
 }
-.ep-row-del:hover { background: #FEE2E2; color: var(--danger); }
+.ep-row-del:hover { background: color-mix(in srgb, var(--danger) 12%, transparent); color: var(--danger); }
 .ep-row:has(.ep-row-del:hover) { border-color: var(--danger); }
 
 /* ─── Episode Status Timeline ─── */
@@ -882,9 +1038,9 @@ html.dark .ep-row-over { box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2); }
 .status-timeline-item.active .status-timeline-dot {
     border-color: var(--primary);
     background: var(--primary);
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 15%, transparent);
 }
-html.dark .status-timeline-item.active .status-timeline-dot { box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.2); }
+html.dark .status-timeline-item.active .status-timeline-dot { box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 20%, transparent); }
 .status-timeline-item.done .status-timeline-dot {
     border-color: var(--success);
     background: var(--success);
@@ -941,8 +1097,8 @@ html.dark .status-timeline-item.active .status-timeline-dot { box-shadow: 0 0 0 
     position: relative;
     overflow: hidden;
     border-radius: 1rem;
-    background: linear-gradient(135deg, rgba(37,99,235,0.06) 0%, rgba(37,99,235,0.02) 50%, transparent 100%);
-    border: 1px solid rgba(37,99,235,0.06);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 6%, transparent) 0%, color-mix(in srgb, var(--primary) 2%, transparent) 50%, transparent 100%);
+    border: 1px solid color-mix(in srgb, var(--primary) 6%, transparent);
     margin-bottom: 1.5rem;
 }
 html.dark .page-header-enhanced {

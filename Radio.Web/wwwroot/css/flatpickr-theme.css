@@ -1,6 +1,6 @@
 .flatpickr-calendar {
   background: #FFFFFF;
-  border: 1px solid #E2E8F0;
+  border: 1px solid #CED4DA;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
   font-family: 'Cairo', 'Tajawal', sans-serif;
   border-radius: 14px;
@@ -24,12 +24,12 @@
 .flatpickr-current-month {
   font-size: 15px;
   font-weight: 700;
-  color: #1C2630;
+  color: #212529;
 }
 
 .flatpickr-current-month input.cur-year {
   font-weight: 700;
-  color: #1C2630;
+  color: #212529;
 }
 
 .flatpickr-months .flatpickr-prev-month,
@@ -37,17 +37,17 @@
   padding: 8px;
   border-radius: 8px;
   transition: background 0.15s;
-  fill: #64748B;
+  fill: #6C757D;
 }
 
 .flatpickr-months .flatpickr-prev-month:hover,
 .flatpickr-months .flatpickr-next-month:hover {
-  background: #F1F3F7;
-  fill: #2563EB;
+  background: #EEF1F4;
+  fill: #007BFF;
 }
 
 span.flatpickr-weekday {
-  color: #64748B;
+  color: #6C757D;
   font-weight: 700;
   font-size: 11px;
 }
@@ -62,7 +62,7 @@ span.flatpickr-weekday {
 }
 
 .flatpickr-day {
-  color: #1C2630;
+  color: #212529;
   border-radius: 10px;
   font-weight: 500;
   font-size: 13px;
@@ -75,8 +75,8 @@ span.flatpickr-weekday {
 }
 
 .flatpickr-day.today {
-  border-color: #2563EB;
-  background: rgba(37, 99, 235, 0.06);
+  border-color: #007BFF;
+  background: rgba(0, 123, 255, 0.06);
   font-weight: 700;
 }
 
@@ -87,8 +87,8 @@ span.flatpickr-weekday {
 .flatpickr-day.selected.inRange,
 .flatpickr-day.startRange.inRange,
 .flatpickr-day.endRange.inRange {
-  background: #2563EB;
-  border-color: #2563EB;
+  background: #007BFF;
+  border-color: #007BFF;
   color: #FFFFFF;
   font-weight: 700;
   box-shadow: none;
@@ -97,39 +97,39 @@ span.flatpickr-weekday {
 .flatpickr-day.selected:hover,
 .flatpickr-day.startRange:hover,
 .flatpickr-day.endRange:hover {
-  background: #1D4ED8;
-  border-color: #1D4ED8;
+  background: #0062CC;
+  border-color: #0062CC;
   color: #FFFFFF;
 }
 
 .flatpickr-day.inRange {
-  background: rgba(37, 99, 235, 0.08);
+  background: rgba(0, 123, 255, 0.08);
   border-color: transparent;
   box-shadow: none;
   border-radius: 0;
 }
 
 .flatpickr-day.inRange:hover {
-  background: rgba(37, 99, 235, 0.12);
+  background: rgba(0, 123, 255, 0.12);
 }
 
 .flatpickr-day:hover {
-  background: #F1F3F7;
+  background: #EEF1F4;
   border-color: transparent;
 }
 
 .flatpickr-day.flatpickr-disabled {
-  color: #94A3B8;
+  color: #6C757D;
 }
 
 .flatpickr-day.prevMonthDay,
 .flatpickr-day.nextMonthDay {
-  color: #94A3B8;
+  color: #6C757D;
   opacity: 0.5;
 }
 
 .flatpickr-time {
-  border-top: 1px solid #E2E8F0;
+  border-top: 1px solid #CED4DA;
   padding: 4px;
   max-height: 50px;
 }
@@ -139,120 +139,120 @@ span.flatpickr-weekday {
 }
 
 .flatpickr-time input {
-  color: #1C2630;
+  color: #212529;
   font-size: 14px;
   font-weight: 600;
   font-family: 'Cairo', 'Tajawal', sans-serif;
 }
 
 .flatpickr-time .flatpickr-time-separator {
-  color: #64748B;
+  color: #6C757D;
   font-weight: 700;
 }
 
 .flatpickr-time .flatpickr-am-pm {
-  color: #64748B;
+  color: #6C757D;
   font-weight: 600;
 }
 
 .flatpickr-time input:hover,
 .flatpickr-time .flatpickr-am-pm:hover {
-  background: #F1F3F7;
+  background: #EEF1F4;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-calendar {
-  background: #0D0F17;
-  border-color: #282E52;
+  background: #1A1A1A;
+  border-color: #343A40;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 [data-theme="radiomodernDark"] .flatpickr-current-month {
-  color: #E8ECF2;
+  color: #DEE2E6;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-current-month input.cur-year {
-  color: #E8ECF2;
+  color: #DEE2E6;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-months .flatpickr-prev-month,
 [data-theme="radiomodernDark"] .flatpickr-months .flatpickr-next-month {
-  fill: #7C8599;
+  fill: #6C757D;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-months .flatpickr-prev-month:hover,
 [data-theme="radiomodernDark"] .flatpickr-months .flatpickr-next-month:hover {
-  background: #151827;
-  fill: #7EB8FF;
+  background: #212529;
+  fill: #4D9CFF;
 }
 
 [data-theme="radiomodernDark"] span.flatpickr-weekday {
-  color: #7C8599;
+  color: #6C757D;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-day {
-  color: #E8ECF2;
+  color: #DEE2E6;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-day.today {
-  border-color: #7EB8FF;
-  background: rgba(126, 184, 255, 0.1);
+  border-color: #4D9CFF;
+  background: rgba(77, 156, 255, 0.1);
 }
 
 [data-theme="radiomodernDark"] .flatpickr-day.selected,
 [data-theme="radiomodernDark"] .flatpickr-day.startRange,
 [data-theme="radiomodernDark"] .flatpickr-day.endRange {
-  background: #7EB8FF;
-  border-color: #7EB8FF;
-  color: #0D1A2E;
+  background: #4D9CFF;
+  border-color: #4D9CFF;
+  color: #0A0D14;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-day.selected:hover,
 [data-theme="radiomodernDark"] .flatpickr-day.startRange:hover,
 [data-theme="radiomodernDark"] .flatpickr-day.endRange:hover {
-  background: #5A9CE8;
-  border-color: #5A9CE8;
+  background: #3B8CFF;
+  border-color: #3B8CFF;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-day.inRange {
-  background: rgba(126, 184, 255, 0.12);
+  background: rgba(77, 156, 255, 0.12);
 }
 
 [data-theme="radiomodernDark"] .flatpickr-day.inRange:hover {
-  background: rgba(126, 184, 255, 0.18);
+  background: rgba(77, 156, 255, 0.18);
 }
 
 [data-theme="radiomodernDark"] .flatpickr-day:hover {
-  background: #151827;
+  background: #212529;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-day.flatpickr-disabled {
-  color: #7C8599;
+  color: #6C757D;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-day.prevMonthDay,
 [data-theme="radiomodernDark"] .flatpickr-day.nextMonthDay {
-  color: #7C8599;
+  color: #6C757D;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-time {
-  border-top-color: #282E52;
+  border-top-color: #343A40;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-time input {
-  color: #E8ECF2;
+  color: #DEE2E6;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-time input:hover,
 [data-theme="radiomodernDark"] .flatpickr-time .flatpickr-am-pm:hover {
-  background: #151827;
+  background: #212529;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-time .flatpickr-am-pm {
-  color: #7C8599;
+  color: #6C757D;
 }
 
 [data-theme="radiomodernDark"] .flatpickr-time .flatpickr-time-separator {
-  color: #7C8599;
+  color: #6C757D;
 }
 
 .flatpickr-calendar.rtl .flatpickr-prev-month svg,

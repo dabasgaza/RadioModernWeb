@@ -28,7 +28,7 @@ window.RadioWeb = {
             <style>
                 body { font-family: 'Cairo', sans-serif; padding: 20px; }
                 table { width: 100%; border-collapse: collapse; }
-                th, td { padding: 8px; border: 1px solid #e2e8f0; text-align: right; }
+                th, td { padding: 8px; border: 1px solid #CED4DA; text-align: right; }
             </style>
             </head>
             <body>${el.innerHTML}</body>

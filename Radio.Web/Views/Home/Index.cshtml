@@ -260,17 +260,17 @@
         }
 
         const doughnutGradients = isDark ? [
-            createGrad(ctxStatus, '#1E3A5F', '#1D4ED8'),
-            createGrad(ctxStatus, '#1A3A5C', '#1E40AF'),
-            createGrad(ctxStatus, '#1A3D2E', '#047857'),
-            createGrad(ctxStatus, '#1A3D4A', '#0369A1'),
-            createGrad(ctxStatus, '#3D1A1A', '#B91C1C')
+            createGrad(ctxStatus, '#1A3055', '#0062CC'),
+            createGrad(ctxStatus, '#1A2E4A', '#4D9CFF'),
+            createGrad(ctxStatus, '#1A2E1A', '#1E8A37'),
+            createGrad(ctxStatus, '#0A2E2E', '#17BEBB'),
+            createGrad(ctxStatus, '#3D1A1A', '#DC3545')
         ] : [
-            createGrad(ctxStatus, '#60A5FA', '#2563EB'),
-            createGrad(ctxStatus, '#3B82F6', '#1D4ED8'),
-            createGrad(ctxStatus, '#34D399', '#059669'),
-            createGrad(ctxStatus, '#38BDF8', '#0284C7'),
-            createGrad(ctxStatus, '#F87171', '#DC2626')
+            createGrad(ctxStatus, '#4D9CFF', '#007BFF'),
+            createGrad(ctxStatus, '#B3D9FF', '#4D9CFF'),
+            createGrad(ctxStatus, '#6FD8A2', '#28A745'),
+            createGrad(ctxStatus, '#5DE5E2', '#17BEBB'),
+            createGrad(ctxStatus, '#F06A6A', '#DC3545')
         ];
 
         new Chart(statusCanvas, {
@@ -281,7 +281,7 @@
                     data: statusValues,
                     backgroundColor: doughnutGradients,
                     borderWidth: 3,
-                    borderColor: isDark ? '#1E293B' : '#FFFFFF',
+                    borderColor: isDark ? '#212529' : '#FFFFFF',
                     hoverOffset: 8
                 }]
             },
@@ -297,7 +297,7 @@
                             padding: 20,
                             usePointStyle: true,
                             pointStyle: 'circle',
-                            color: isDark ? '#CBD5E1' : '#475569',
+                            color: isDark ? '#ADB5BD' : '#6C757D',
                             font: { family: 'Cairo', weight: '600', size: 11 } 
                         } 
                     }
@@ -317,11 +317,11 @@
 
         const barGradient = ctxPrograms.createLinearGradient(0, 0, 400, 0);
         if (isDark) {
-            barGradient.addColorStop(0, '#4C1D95');
-            barGradient.addColorStop(1, '#1D4ED8');
+            barGradient.addColorStop(0, '#6F42C1');
+            barGradient.addColorStop(1, '#4D9CFF');
         } else {
-            barGradient.addColorStop(0, '#7C3AED');
-            barGradient.addColorStop(1, '#2563EB');
+            barGradient.addColorStop(0, '#9B72D0');
+            barGradient.addColorStop(1, '#007BFF');
         }
 
         new Chart(programsCanvas, {
@@ -332,7 +332,7 @@
                     label: 'عدد الحلقات',
                     data: programsData.map(p => p.total),
                     backgroundColor: barGradient,
-                    hoverBackgroundColor: isDark ? '#1D4ED8' : '#1D4ED8',
+                    hoverBackgroundColor: isDark ? '#0062CC' : '#4D9CFF',
                     borderRadius: 12,
                     borderSkipped: false,
                     barThickness: 16
@@ -347,12 +347,12 @@
                 },
                 scales: {
                     x: { 
-                        grid: { color: isDark ? 'rgba(51, 65, 85, 0.5)' : 'rgba(226, 232, 240, 0.5)' },
-                        ticks: { font: { family: 'Cairo', weight: 'bold' }, color: isDark ? '#CBD5E1' : '#475569' } 
+                        grid: { color: isDark ? 'rgba(52, 52, 64, 0.5)' : 'rgba(206, 212, 218, 0.5)' },
+                        ticks: { font: { family: 'Cairo', weight: 'bold' }, color: isDark ? '#ADB5BD' : '#6C757D' } 
                     },
                     y: { 
                         grid: { display: false },
-                        ticks: { font: { family: 'Cairo', weight: 'bold' }, color: isDark ? '#CBD5E1' : '#475569' } 
+                        ticks: { font: { family: 'Cairo', weight: 'bold' }, color: isDark ? '#ADB5BD' : '#6C757D' } 
                     }
                 }
             }
