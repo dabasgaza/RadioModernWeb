@@ -23,7 +23,7 @@ else
 {
 
 <!-- Episode Info -->
-<div class="card bg-base-100 shadow-md mb-4">
+<div class="wf-card mb-4">
     <div class="card-body">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
@@ -46,7 +46,7 @@ else
 <form method="post" action="/WebsitePublishing/Edit/@log.Id">
     @Html.AntiForgeryToken()
 
-    <div class="card bg-base-100 shadow-md mb-4">
+    <div class="wf-card mb-4">
         <div class="card-body space-y-4">
             <div class="flex items-center gap-2">
                 <span class="material-symbols-rounded text-primary">article</span>
@@ -96,7 +96,7 @@ else
 </form>
 
 <!-- All Publishing Records for this Episode -->
-<div class="card bg-base-100 shadow-md mt-8">
+<div class="wf-card mt-8">
     <div class="card-body">
         <div class="flex items-center gap-2 mb-4">
             <span class="material-symbols-rounded text-primary">history</span>
@@ -108,7 +108,7 @@ else
         }
         else
         {
-            <div class="card bg-base-100 shadow-md overflow-hidden">
+            <div class="wf-card overflow-hidden">
                 <div class="overflow-x-auto">
                 <table class="table table-zebra w-full text-sm">
                     <thead>

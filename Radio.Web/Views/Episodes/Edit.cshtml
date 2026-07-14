@@ -71,7 +71,7 @@
         <div class="lg:col-span-8 space-y-6">
 
             <!-- ═══ Basic Info ═══ -->
-            <div class="card bg-base-100 shadow-md">
+            <div class="wf-card">
                 <div class="card-body">
                     <div class="flex items-center gap-2 mb-4">
                         <span class="material-symbols-rounded text-primary">info</span>
@@ -116,7 +116,7 @@
             </div>
 
             <!-- ═══ Guests ═══ -->
-            <div class="card bg-base-100 shadow-md">
+            <div class="wf-card">
                 <div class="card-body">
                     <div class="flex items-center justify-between gap-2 mb-4">
                         <div class="flex items-center gap-2">
@@ -178,7 +178,7 @@
             </div>
 
             <!-- ═══ Correspondents ═══ -->
-            <div class="card bg-base-100 shadow-md">
+            <div class="wf-card">
                 <div class="card-body">
                     <div class="flex items-center justify-between gap-2 mb-4">
                         <div class="flex items-center gap-2">
@@ -239,7 +239,7 @@
             </div>
 
             <!-- ═══ Employees ═══ -->
-            <div class="card bg-base-100 shadow-md">
+            <div class="wf-card">
                 <div class="card-body">
                     <div class="flex items-center justify-between gap-2 mb-4">
                         <div class="flex items-center gap-2">
@@ -303,7 +303,7 @@
             @if (isEdit)
             {
                 <!-- ═══ Status Timeline ═══ -->
-                <div class="card bg-base-100 shadow-md">
+                <div class="wf-card">
                     <div class="card-body">
                         <div class="flex items-center gap-2 mb-4">
                             <span class="material-symbols-rounded text-primary">timeline</span>
@@ -357,7 +357,7 @@
                 else { dayName = "اليوم"; dayNum = "–"; monthName = ""; yearNum = ""; }
                 timeStr = tm?.ToString(@"hh\:mm") ?? "";
             }
-            <div class="card bg-base-100 shadow-md">
+            <div class="wf-card">
                 <div class="card-body">
                     <div class="flex items-center gap-2 mb-4">
                         <span class="material-symbols-rounded text-primary">schedule</span>
@@ -439,7 +439,7 @@
             @if (isEdit)
             {
                 <!-- ═══ Metadata ═══ -->
-                <div class="card bg-base-100 shadow-md">
+                <div class="wf-card">
                     <div class="card-body">
                         <div class="flex items-center gap-2 mb-4">
                             <span class="material-symbols-rounded text-primary">info</span>
@@ -467,7 +467,7 @@
             }
 
             <!-- ═══ Save Actions ═══ -->
-            <div class="card bg-base-100 shadow-md">
+            <div class="wf-card">
                 <div class="card-body">
                     <div class="flex items-center gap-2 mb-4">
                         <span class="material-symbols-rounded text-primary">save</span>

@@ -38,7 +38,7 @@
 
 @if (Model.TotalResults == 0 && !string.IsNullOrWhiteSpace(Model.Query))
 {
-    <div class="card bg-base-100 shadow-md"><div class="card-body text-center py-12">
+    <div class="wf-card"><div class="card-body text-center py-12">
         <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">search_off</span>
         <h3 class="font-bold text-lg mb-2">لا توجد نتائج</h3>
         <p class="text-sm text-base-content/60 mb-4">لم نعثر على أي نتائج تطابق بحثك. حاول استخدام كلمات مختلفة.</p>
@@ -48,7 +48,7 @@ else
 {
     @if (Model.Episodes.Any())
     {
-        <div class="card bg-base-100 shadow-md mb-4">
+        <div class="wf-card mb-4">
             <div class="card-body">
                 <h2 class="font-bold text-base-content flex items-center gap-2 mb-3">
                     <span class="material-symbols-rounded text-primary">podcasts</span>
@@ -76,7 +76,7 @@ else
 
     @if (Model.Programs.Any())
     {
-        <div class="card bg-base-100 shadow-md mb-4">
+        <div class="wf-card mb-4">
             <div class="card-body">
                 <h2 class="font-bold text-base-content flex items-center gap-2 mb-3">
                     <span class="material-symbols-rounded text-success">radio</span>
@@ -103,7 +103,7 @@ else
 
     @if (Model.Guests.Any())
     {
-        <div class="card bg-base-100 shadow-md mb-4">
+        <div class="wf-card mb-4">
             <div class="card-body">
                 <h2 class="font-bold text-base-content flex items-center gap-2 mb-3">
                     <span class="material-symbols-rounded text-accent">people_alt</span>

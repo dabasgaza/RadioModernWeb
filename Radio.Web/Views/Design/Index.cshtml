@@ -14,16 +14,16 @@
     <div class="grid grid-cols-1 gap-8">
 
         @* ── Colors ── *@
-        <section class="card bg-base-100 shadow-md p-6" aria-label="الألوان">
+        <section class="wf-card p-6" aria-label="الألوان">
             <h2 class="text-lg font-bold text-base-content mb-4 flex items-center gap-2">
                 <span class="material-symbols-rounded text-primary">circles</span>
                 الألوان — Colors
             </h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 @foreach (var c in new[] {
-                    ("primary", "#007BFF", "primary-dark", "#0062CC", "primary-light", "#4D9CFF"),
-                    ("secondary", "#28A745", "secondary-dark", "#1E8A37", "accent", "#17BEBB"),
-                    ("success", "#28A745", "warning", "#FFC107", "danger", "#DC3545")
+                    ("primary", "إجراء/تنقل", "primary-dark", "حالة نشطة", "primary-light", "تمييز"),
+                    ("secondary", "اكتمال", "secondary-dark", "اكتمال نشط", "accent", "معلومة مساندة"),
+                    ("success", "نجاح", "warning", "تحذير", "danger", "خطأ")
                 })
                 {
                     <div class="space-y-2">
@@ -56,7 +56,7 @@
         </section>
 
         @* ── Status Badges ── *@
-        <section class="card bg-base-100 shadow-md p-6" aria-label="شارات الحالة">
+        <section class="wf-card p-6" aria-label="شارات الحالة">
             <h2 class="text-lg font-bold text-base-content mb-4 flex items-center gap-2">
                 <span class="material-symbols-rounded text-primary">rounded_corner</span>
                 شارات الحالة — Status Badges
@@ -87,7 +87,7 @@
         </section>
 
         @* ── Buttons ── *@
-        <section class="card bg-base-100 shadow-md p-6" aria-label="الأزرار">
+        <section class="wf-card p-6" aria-label="الأزرار">
             <h2 class="text-lg font-bold text-base-content mb-4 flex items-center gap-2">
                 <span class="material-symbols-rounded text-primary">smart_button</span>
                 الأزرار — Buttons
@@ -112,7 +112,7 @@
         </section>
 
         @* ── Form Elements ── *@
-        <section class="card bg-base-100 shadow-md p-6" aria-label="عناصر النماذج">
+        <section class="wf-card p-6" aria-label="عناصر النماذج">
             <h2 class="text-lg font-bold text-base-content mb-4 flex items-center gap-2">
                 <span class="material-symbols-rounded text-primary">view_quilt</span>
                 عناصر النماذج — Form Elements
@@ -120,7 +120,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="label">حقل نصي</label>
-                    <input type="text" class="input input-bordered  placeholder="نص تجريبي..." />
+                    <input type="text" class="input input-bordered" placeholder="نص تجريبي..." />
                 </div>
                 <div>
                     <label class="label">قائمة منسدلة</label>
@@ -145,13 +145,13 @@
         </section>
 
         @* ── Cards ── *@
-        <section class="card bg-base-100 shadow-md p-6" aria-label="البطاقات">
+        <section class="wf-card p-6" aria-label="البطاقات">
             <h2 class="text-lg font-bold text-base-content mb-4 flex items-center gap-2">
                 <span class="material-symbols-rounded text-primary">dashboard</span>
                 البطاقات — Cards
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="card bg-base-100 shadow-md p-4">
+                <div class="wf-card p-4">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                             <span class="material-symbols-rounded text-primary">bar_chart</span>
@@ -162,18 +162,18 @@
                         </div>
                     </div>
                 </div>
-                <div class="card bg-base-100 shadow-md p-6">
-                    <div class="card-body p-0">
-                        <div class="stat-icon-wrapper bg-success/10 text-success">
-                            <span class="material-symbols-rounded">check_circle</span>
-                        </div>
+                <div class="wf-card p-6">
+                    <div class="card-body p-0 flex flex-row items-center justify-between">
                         <div>
-                            <div class="stat-value">567</div>
-                            <div class="stat-label">تم بنجاح</div>
+                            <div class="wf-stat-value">567</div>
+                            <div class="wf-stat-label">تم بنجاح</div>
+                        </div>
+                        <div class="wf-stat-ico bg-success/10 text-success">
+                            <span class="material-symbols-rounded">check_circle</span>
                         </div>
                     </div>
                 </div>
-                <div class="card bg-base-100 shadow-md p-4 flex items-center gap-3">
+                <div class="wf-card p-4 flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full bg-warning/10 text-warning flex items-center justify-center">
                         <span class="material-symbols-rounded">warning</span>
                     </div>
@@ -183,7 +183,7 @@
         </section>
 
         @* ── Badges ── *@
-        <section class="card bg-base-100 shadow-md p-6" aria-label="الشارات">
+        <section class="wf-card p-6" aria-label="الشارات">
             <h2 class="text-lg font-bold text-base-content mb-4 flex items-center gap-2">
                 <span class="material-symbols-rounded text-primary">label</span>
                 الشارات — Badges

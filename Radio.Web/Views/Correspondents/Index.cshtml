@@ -28,7 +28,7 @@
     </div>
 </div>
 
-<div class="card bg-base-100 shadow-md mb-6">
+<div class="wf-card mb-6">
     <div class="card-body">
         <form method="get" class="flex gap-3">
             <div class="relative flex-1">
@@ -49,7 +49,7 @@
 <!-- Grid -->
 @if (!Model.Any())
 {
-    <div class="card bg-base-100 shadow-md"><div class="card-body text-center py-12">
+    <div class="wf-card"><div class="card-body text-center py-12">
         <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">map</span>
         <h3 class="font-bold text-lg mb-2">لا يوجد مراسلون</h3>
         <p class="text-sm text-base-content/60 mb-4">لم يتم العثور على أي مراسلين تطابق البحث.</p>
@@ -67,7 +67,7 @@ else
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @foreach (var c in Model)
         {
-            <div class="card bg-base-100 shadow-md flex flex-col justify-between h-full group hover:shadow-lg transition-all duration-300">
+            <div class="wf-card flex flex-col justify-between h-full group hover:shadow-lg transition-all duration-300">
                 <div class="card-body space-y-4">
                     <!-- Header -->
                     <div class="flex items-center gap-3">

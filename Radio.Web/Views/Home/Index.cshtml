@@ -5,73 +5,71 @@
 
 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
     <div>
-        <div class="breadcrumbs text-sm text-base-content/60">
+        <div class="breadcrumbs text-sm text-ink-muted">
             <ul>
                 <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">space_dashboard</span>لوحة التحكم</span></li>
             </ul>
         </div>
-        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
-            <span class="material-symbols-rounded text-primary p-1 bg-primary/10 rounded-lg">space_dashboard</span>
+        <h1 class="text-2xl font-extrabold text-ink mt-1 flex items-center gap-2">
+            <span class="material-symbols-rounded text-signal p-1 bg-signal/10 rounded-lg">space_dashboard</span>
             لوحة التحكم
         </h1>
-        <p class="text-sm text-base-content/60 mt-0.5">مرحباً بك! إليك ملخصاً فورياً وإحصائيات سريعة حول نشاط البث والإنتاج اليوم.</p>
+        <p class="text-sm text-ink-muted mt-0.5">مرحباً بك! إليك ملخصاً فورياً وإحصائيات سريعة حول نشاط البث والإنتاج اليوم.</p>
     </div>
+    <span class="wf-eq" aria-hidden="true"><span></span><span></span><span></span></span>
+</div>
+
+<!-- Signature waveform hero -->
+<div class="wf-card wf-card-signal p-4 mb-6">
+    <canvas class="wf-waveform" aria-hidden="true"></canvas>
 </div>
 
 <!-- Stat Cards -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-    <div class="card bg-base-100 shadow-md p-6 text-primary">
-        <div class="card-body p-0">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-2xl font-black text-base-content">@Model.TodayEpisodes.Count</div>
-                    <div class="text-xs font-bold text-base-content/60 mt-1">حلقات اليوم</div>
-                </div>
-                <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                    <span class="material-symbols-rounded">podcasts</span>
-                </div>
+    <div class="wf-stat">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="wf-stat-value">@Model.TodayEpisodes.Count</div>
+                <div class="wf-stat-label">حلقات اليوم</div>
+            </div>
+            <div class="wf-stat-ico bg-signal/10 text-signal">
+                <span class="material-symbols-rounded">podcasts</span>
             </div>
         </div>
     </div>
 
-    <div class="card bg-base-100 shadow-md p-6 text-accent">
-        <div class="card-body p-0">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-2xl font-black text-base-content">@Model.TotalEpisodes</div>
-                    <div class="text-xs font-bold text-base-content/60 mt-1">إجمالي الحلقات</div>
-                </div>
-                <div class="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
-                    <span class="material-symbols-rounded">analytics</span>
-                </div>
+    <div class="wf-stat">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="wf-stat-value">@Model.TotalEpisodes</div>
+                <div class="wf-stat-label">إجمالي الحلقات</div>
+            </div>
+            <div class="wf-stat-ico bg-accent/10 text-accent">
+                <span class="material-symbols-rounded">analytics</span>
             </div>
         </div>
     </div>
 
-    <div class="card bg-base-100 shadow-md p-6 text-success">
-        <div class="card-body p-0">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-2xl font-black text-base-content">@Model.TotalPrograms</div>
-                    <div class="text-xs font-bold text-base-content/60 mt-1">البرامج النشطة</div>
-                </div>
-                <div class="w-12 h-12 rounded-xl bg-success/10 text-success flex items-center justify-center">
-                    <span class="material-symbols-rounded">radio</span>
-                </div>
+    <div class="wf-stat">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="wf-stat-value">@Model.TotalPrograms</div>
+                <div class="wf-stat-label">البرامج النشطة</div>
+            </div>
+            <div class="wf-stat-ico bg-go/10 text-go">
+                <span class="material-symbols-rounded">radio</span>
             </div>
         </div>
     </div>
 
-    <div class="card bg-base-100 shadow-md p-6 text-error">
-        <div class="card-body p-0">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-2xl font-black text-base-content">@Model.CancelledEpisodes.Count</div>
-                    <div class="text-xs font-bold text-base-content/60 mt-1">حلقات ملغاة</div>
-                </div>
-                <div class="w-12 h-12 rounded-xl bg-error/10 text-error flex items-center justify-center">
-                    <span class="material-symbols-rounded">cancel</span>
-                </div>
+    <div class="wf-stat">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="wf-stat-value">@Model.CancelledEpisodes.Count</div>
+                <div class="wf-stat-label">حلقات ملغاة</div>
+            </div>
+            <div class="wf-stat-ico bg-live/10 text-live">
+                <span class="material-symbols-rounded">cancel</span>
             </div>
         </div>
     </div>
@@ -79,154 +77,146 @@
 
 <!-- Charts Row -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-    <div class="card bg-base-100 shadow-md">
-        <div class="card-body">
-            <div class="flex items-center gap-2 mb-4">
-                <span class="material-symbols-rounded text-primary">donut_large</span>
-                <h3 class="font-bold text-base-content text-base">توزيع حالات الحلقات</h3>
-            </div>
-            <div class="relative h-64">
-                <canvas id="statusChart"></canvas>
-            </div>
+    <div class="wf-card p-6">
+        <div class="wf-section-head">
+            <span class="wf-icon"><span class="material-symbols-rounded">donut_large</span></span>
+            <h3>توزيع حالات الحلقات</h3>
+        </div>
+        <div class="relative h-64">
+            <canvas id="statusChart"></canvas>
         </div>
     </div>
 
-    <div class="card bg-base-100 shadow-md">
-        <div class="card-body">
-            <div class="flex items-center gap-2 mb-4">
-                <span class="material-symbols-rounded text-primary">bar_chart</span>
-                <h3 class="font-bold text-base-content text-base">أكثر البرامج نشاطاً</h3>
-            </div>
-            <div class="relative h-64">
-                <canvas id="programsChart"></canvas>
-            </div>
+    <div class="wf-card p-6">
+        <div class="wf-section-head">
+            <span class="wf-icon"><span class="material-symbols-rounded">bar_chart</span></span>
+            <h3>أكثر البرامج نشاطاً</h3>
+        </div>
+        <div class="relative h-64">
+            <canvas id="programsChart"></canvas>
         </div>
     </div>
 </div>
 
 <!-- Today Episodes Table -->
-<div class="card bg-base-100 shadow-md overflow-hidden mb-6">
+<div class="wf-card overflow-hidden mb-6">
     <div class="overflow-x-auto">
-    <div class="p-5 border-b border-base-200 flex items-center justify-between">
-        <h3 class="font-bold text-base-content flex items-center gap-2 text-base">
-            <span class="material-symbols-rounded text-primary">today</span>
-            حلقات البث لليوم
-        </h3>
-        <a href="/Episodes" class="text-xs text-primary font-bold hover:underline flex items-center gap-0.5">
-            عرض كافة الحلقات
-            <span class="material-symbols-rounded text-xs">arrow_left</span>
-        </a>
-    </div>
-    @if (Model.TodayEpisodes.Any())
-    {
-        <table class="table table-zebra w-full text-sm">
-            <thead>
-                <tr>
-                    <th class="text-right font-semibold">الحلقة</th>
-                    <th class="text-right font-semibold">البرنامج</th>
-                    <th class="text-right font-semibold">الضيوف</th>
-                    <th class="text-right font-semibold">الوقت</th>
-                    <th class="text-right font-semibold">الحالة</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var ep in Model.TodayEpisodes)
-                {
+        <div class="p-5 border-b border-border flex items-center justify-between">
+            <h3 class="font-bold text-ink flex items-center gap-2 text-base">
+                <span class="material-symbols-rounded text-signal">today</span>
+                حلقات البث لليوم
+            </h3>
+            <a href="/Episodes" class="text-xs text-signal font-bold hover:underline flex items-center gap-0.5">
+                عرض كافة الحلقات
+                <span class="material-symbols-rounded text-xs">arrow_left</span>
+            </a>
+        </div>
+        @if (Model.TodayEpisodes.Any())
+        {
+            <table class="table table-zebra w-full text-sm">
+                <thead>
                     <tr>
-                        <td class="">
-                            <a href="/Episodes/Details/@ep.EpisodeId" class="text-primary font-bold hover:underline">@ep.EpisodeName</a>
-                        </td>
-                        <td class="text-base-content/60">@ep.ProgramName</td>
-                        <td class="text-base-content/60">@ep.GuestsDisplay</td>
-                        <td class="text-base-content font-semibold">@(ep.ScheduledExecutionTime?.ToString("HH:mm") ?? "—")</td>
-                        <td class="">
-                            <partial name="_StatusBadge" model='new StatusBadgeViewModel { Type = "episode", Status = ep.StatusText, Label = ep.StatusText }' />
-                        </td>
+                        <th class="text-right font-semibold">الحلقة</th>
+                        <th class="text-right font-semibold">البرنامج</th>
+                        <th class="text-right font-semibold">الضيوف</th>
+                        <th class="text-right font-semibold">الوقت</th>
+                        <th class="text-right font-semibold">الحالة</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <div class="card bg-base-100 shadow-md"><div class="card-body text-center py-12">
-            <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">event_busy</span>
-            <h3 class="font-bold text-lg mb-2">لا توجد حلقات بث لليوم</h3>
-            <p class="text-sm text-base-content/60">لم يتم جدولة أي حلقات إذاعية ليتم بثها اليوم.</p>
-        </div></div>
-    }
-</div>
+                </thead>
+                <tbody>
+                    @foreach (var ep in Model.TodayEpisodes)
+                    {
+                        <tr>
+                            <td>
+                                <a href="/Episodes/Details/@ep.EpisodeId" class="text-signal font-bold hover:underline">@ep.EpisodeName</a>
+                            </td>
+                            <td class="text-ink-muted">@ep.ProgramName</td>
+                            <td class="text-ink-muted">@ep.GuestsDisplay</td>
+                            <td class="text-ink font-semibold">@(ep.ScheduledExecutionTime?.ToString("HH:mm") ?? "—")</td>
+                            <td>
+                                <partial name="_StatusBadge" model='new StatusBadgeViewModel { Type = "episode", Status = ep.StatusText, Label = ep.StatusText }' />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="text-center py-12">
+                <span class="material-symbols-rounded text-4xl text-ink-soft mb-2">event_busy</span>
+                <h3 class="font-bold text-lg mb-2 text-ink">لا توجد حلقات بث لليوم</h3>
+                <p class="text-sm text-ink-muted">لم يتم جدولة أي حلقات إذاعية ليتم بثها اليوم.</p>
+            </div>
+        }
+    </div>
 </div>
 
 <!-- Top Guests + Top Programs -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <div class="card bg-base-100 shadow-md">
-        <div class="card-body">
-            <div class="flex items-center gap-2 mb-4">
-                <span class="material-symbols-rounded text-primary">trending_up</span>
-                <h3 class="font-bold text-base-content text-base">قائمة البرامج الأكثر نشاطاً</h3>
-            </div>
-            <div class="divide-y divide-base-200/60">
+    <div class="wf-card p-6">
+        <div class="wf-section-head">
+            <span class="wf-icon"><span class="material-symbols-rounded">trending_up</span></span>
+            <h3>قائمة البرامج الأكثر نشاطاً</h3>
+        </div>
+        <div class="divide-y divide-border">
             @if (Model.TopPrograms.Any())
             {
                 @foreach (var p in Model.TopPrograms.Take(5))
                 {
                     <div class="flex items-center justify-between py-3.5 first:pt-0 last:pb-0">
                         <div>
-                            <div class="font-bold text-base-content text-sm">@p.ProgramName</div>
-                            <div class="text-xs text-base-content/40 mt-0.5">@(p.Category ?? "عام")</div>
+                            <div class="font-bold text-ink text-sm">@p.ProgramName</div>
+                            <div class="text-xs text-ink-soft mt-0.5">@(p.Category ?? "عام")</div>
                         </div>
                         <div class="text-left">
-                            <div class="text-base font-black text-primary">@p.TotalEpisodes</div>
-                            <div class="text-[10px] text-base-content/40 font-bold">حلقة</div>
+                            <div class="text-base font-black text-signal tabular-nums">@p.TotalEpisodes</div>
+                            <div class="text-[10px] text-ink-soft font-bold">حلقة</div>
                         </div>
                     </div>
                 }
             }
             else
             {
-                <div class="card bg-base-100 shadow-md"><div class="card-body text-center py-6">
-                    <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">radio</span>
-                    <p class="text-sm text-base-content/60">لا تتوفر برامج كافية حالياً</p>
-                </div></div>
+                <div class="text-center py-6">
+                    <span class="material-symbols-rounded text-4xl text-ink-soft mb-2">radio</span>
+                    <p class="text-sm text-ink-muted">لا تتوفر برامج كافية حالياً</p>
+                </div>
             }
         </div>
     </div>
 
-    <div class="card bg-base-100 shadow-md">
-        <div class="card-body">
-            <div class="flex items-center gap-2 mb-4">
-                <span class="material-symbols-rounded text-primary">people_alt</span>
-                <h3 class="font-bold text-base-content text-base">الضيوف الأكثر استضافة</h3>
-            </div>
-            <div class="divide-y divide-base-200/60">
+    <div class="wf-card p-6">
+        <div class="wf-section-head">
+            <span class="wf-icon"><span class="material-symbols-rounded">people_alt</span></span>
+            <h3>الضيوف الأكثر استضافة</h3>
+        </div>
+        <div class="divide-y divide-border">
             @if (Model.TopGuests.Any())
             {
                 @foreach (var g in Model.TopGuests.Take(5))
                 {
                     <div class="flex items-center justify-between py-3.5 first:pt-0 last:pb-0">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-primary/10 text-primary text-xs font-black flex items-center justify-center">
-                                @g.Rank
-                            </div>
+                            <div class="w-8 h-8 rounded-lg bg-signal/10 text-signal text-xs font-black flex items-center justify-center">@g.Rank</div>
                             <div>
-                                <div class="font-bold text-base-content text-sm">@g.FullName</div>
-                                <div class="text-xs text-base-content/40 mt-0.5">@(g.Organization ?? "مستقل")</div>
+                                <div class="font-bold text-ink text-sm">@g.FullName</div>
+                                <div class="text-xs text-ink-soft mt-0.5">@(g.Organization ?? "مستقل")</div>
                             </div>
                         </div>
                         <div class="text-left">
-                            <div class="text-base font-black text-success">@g.AppearanceCount</div>
-                            <div class="text-[10px] text-base-content/40 font-bold">مرات ظهور</div>
+                            <div class="text-base font-black text-go tabular-nums">@g.AppearanceCount</div>
+                            <div class="text-[10px] text-ink-soft font-bold">مرات ظهور</div>
                         </div>
                     </div>
                 }
             }
             else
             {
-                <div class="card bg-base-100 shadow-md"><div class="card-body text-center py-6">
-                    <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">people_alt</span>
-                    <p class="text-sm text-base-content/60">لا توجد بيانات استضافة ضيوف بعد</p>
-                </div></div>
+                <div class="text-center py-6">
+                    <span class="material-symbols-rounded text-4xl text-ink-soft mb-2">people_alt</span>
+                    <p class="text-sm text-ink-muted">لا توجد بيانات استضافة ضيوف بعد</p>
+                </div>
             }
         </div>
     </div>
@@ -234,7 +224,8 @@
 
 @section Scripts {
     <script>
-        const isDark = document.documentElement.classList.contains('dark');
+        const css = getComputedStyle(document.documentElement);
+        const token = name => css.getPropertyValue(name).trim();
 
         // Chart.js: Status Distribution
         const statusCanvas = document.getElementById('statusChart');
@@ -259,19 +250,8 @@
             return g;
         }
 
-        const doughnutGradients = isDark ? [
-            createGrad(ctxStatus, '#1A3055', '#0062CC'),
-            createGrad(ctxStatus, '#1A2E4A', '#4D9CFF'),
-            createGrad(ctxStatus, '#1A2E1A', '#1E8A37'),
-            createGrad(ctxStatus, '#0A2E2E', '#17BEBB'),
-            createGrad(ctxStatus, '#3D1A1A', '#DC3545')
-        ] : [
-            createGrad(ctxStatus, '#4D9CFF', '#007BFF'),
-            createGrad(ctxStatus, '#B3D9FF', '#4D9CFF'),
-            createGrad(ctxStatus, '#6FD8A2', '#28A745'),
-            createGrad(ctxStatus, '#5DE5E2', '#17BEBB'),
-            createGrad(ctxStatus, '#F06A6A', '#DC3545')
-        ];
+        const doughnutGradients = ['--chart-1', '--chart-2', '--chart-2', '--chart-3', '--chart-5']
+            .map(name => createGrad(ctxStatus, token(name), token(name)));
 
         new Chart(statusCanvas, {
             type: 'doughnut',
@@ -281,7 +261,7 @@
                     data: statusValues,
                     backgroundColor: doughnutGradients,
                     borderWidth: 3,
-                    borderColor: isDark ? '#212529' : '#FFFFFF',
+                    borderColor: token('--surface'),
                     hoverOffset: 8
                 }]
             },
@@ -290,22 +270,19 @@
                 maintainAspectRatio: false,
                 cutout: '70%',
                 plugins: {
-                    legend: { 
-                        position: 'bottom', 
-                        rtl: true, 
-                        labels: { 
+                    legend: {
+                        position: 'bottom',
+                        rtl: true,
+                        labels: {
                             padding: 20,
                             usePointStyle: true,
                             pointStyle: 'circle',
-                            color: isDark ? '#ADB5BD' : '#6C757D',
-                            font: { family: 'Cairo', weight: '600', size: 11 } 
-                        } 
+                            color: token('--ink-muted'),
+                            font: { family: 'Cairo', weight: '600', size: 11 }
+                        }
                     }
                 },
-                animation: {
-                    animateScale: true,
-                    animateRotate: true
-                }
+                animation: { animateScale: true, animateRotate: true }
             }
         });
 
@@ -316,13 +293,8 @@
             Model.TopPrograms.Take(5).Select(p => new { name = p.ProgramName, total = p.TotalEpisodes }).ToList()));
 
         const barGradient = ctxPrograms.createLinearGradient(0, 0, 400, 0);
-        if (isDark) {
-            barGradient.addColorStop(0, '#6F42C1');
-            barGradient.addColorStop(1, '#4D9CFF');
-        } else {
-            barGradient.addColorStop(0, '#9B72D0');
-            barGradient.addColorStop(1, '#007BFF');
-        }
+        barGradient.addColorStop(0, token('--chart-4'));
+        barGradient.addColorStop(1, token('--chart-1'));
 
         new Chart(programsCanvas, {
             type: 'bar',
@@ -332,7 +304,7 @@
                     label: 'عدد الحلقات',
                     data: programsData.map(p => p.total),
                     backgroundColor: barGradient,
-                    hoverBackgroundColor: isDark ? '#0062CC' : '#4D9CFF',
+                    hoverBackgroundColor: token('--primary'),
                     borderRadius: 12,
                     borderSkipped: false,
                     barThickness: 16
@@ -342,21 +314,18 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 indexAxis: 'y',
-                plugins: { 
-                    legend: { display: false }
-                },
+                plugins: { legend: { display: false } },
                 scales: {
-                    x: { 
-                        grid: { color: isDark ? 'rgba(52, 52, 64, 0.5)' : 'rgba(206, 212, 218, 0.5)' },
-                        ticks: { font: { family: 'Cairo', weight: 'bold' }, color: isDark ? '#ADB5BD' : '#6C757D' } 
+                    x: {
+                        grid: { color: token('--chart-grid') },
+                        ticks: { font: { family: 'Cairo', weight: 'bold' }, color: token('--ink-muted') }
                     },
-                    y: { 
+                    y: {
                         grid: { display: false },
-                        ticks: { font: { family: 'Cairo', weight: 'bold' }, color: isDark ? '#ADB5BD' : '#6C757D' } 
+                        ticks: { font: { family: 'Cairo', weight: 'bold' }, color: token('--ink-muted') }
                     }
                 }
             }
         });
     </script>
 }
-

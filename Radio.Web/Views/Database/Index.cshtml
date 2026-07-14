@@ -33,7 +33,7 @@
 
 <!-- Stats Cards -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
-    <div class="card bg-base-100 shadow-md p-6 text-primary">
+    <div class="wf-card p-6 text-primary">
         <div class="card-body p-0">
             <div class="flex items-center justify-between">
                 <div>
@@ -46,7 +46,7 @@
             </div>
         </div>
     </div>
-    <div class="card bg-base-100 shadow-md p-6 text-success">
+    <div class="wf-card p-6 text-success">
         <div class="card-body p-0">
             <div class="flex items-center justify-between">
                 <div>
@@ -59,7 +59,7 @@
             </div>
         </div>
     </div>
-    <div class="card bg-base-100 shadow-md p-6 text-accent">
+    <div class="wf-card p-6 text-accent">
         <div class="card-body p-0">
             <div class="flex items-center justify-between">
                 <div>
@@ -72,7 +72,7 @@
             </div>
         </div>
     </div>
-    <div class="card bg-base-100 shadow-md p-6 text-info">
+    <div class="wf-card p-6 text-info">
         <div class="card-body p-0">
             <div class="flex items-center justify-between">
                 <div>
@@ -85,7 +85,7 @@
             </div>
         </div>
     </div>
-    <div class="card bg-base-100 shadow-md p-6 text-warning">
+    <div class="wf-card p-6 text-warning">
         <div class="card-body p-0">
             <div class="flex items-center justify-between">
                 <div>
@@ -98,7 +98,7 @@
             </div>
         </div>
     </div>
-    <div class="card bg-base-100 shadow-md p-6 text-error">
+    <div class="wf-card p-6 text-error">
         <div class="card-body p-0">
             <div class="flex items-center justify-between">
                 <div>
@@ -114,7 +114,7 @@
 </div>
 
 <!-- Health Status Bar -->
-<div class="flex flex-wrap gap-2 mb-6 p-3 @(Model.IsHealthy ? "bg-success/5 border border-success/20" : "bg-danger/5 border border-danger/20") rounded-2xl">
+<div class="flex flex-wrap gap-2 mb-6 p-3 @(Model.IsHealthy ? "bg-brand-success/5 border border-brand-success/20" : "bg-brand-error/5 border border-brand-error/20") rounded-2xl">
     <div class="flex items-center gap-1.5 text-[11px] font-bold @(Model.IsHealthy ? "text-success" : "text-error")">
         <span class="material-symbols-rounded text-sm">@(Model.IsHealthy ? "check_circle" : "error")</span>
         @(Model.IsHealthy ? "قاعدة البيانات بحالة جيدة" : "قاعدة البيانات تحتاج مراجعة")
@@ -146,7 +146,7 @@
 
 <!-- Action Cards -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-6">
-    <div class="card bg-base-100 shadow-md">
+    <div class="wf-card">
         <div class="card-body">
             <div class="flex items-center gap-2 mb-4">
                 <span class="material-symbols-rounded text-primary">backup</span>
@@ -172,7 +172,7 @@
         </div>
     </div>
 
-    <div class="card bg-base-100 shadow-md">
+    <div class="wf-card">
         <div class="card-body">
             <div class="flex items-center gap-2 mb-4">
                 <span class="material-symbols-rounded text-error">restore_page</span>
@@ -200,7 +200,7 @@
 
     @if (Model.TotalBackups > 0)
     {
-    <div class="card bg-base-100 shadow-md">
+    <div class="wf-card">
         <div class="card-body">
             <div class="flex items-center gap-2 mb-4">
                 <span class="material-symbols-rounded text-info">cloud_upload</span>
@@ -221,7 +221,7 @@
         </div>
     }
 
-    <div class="card bg-base-100 shadow-md">
+    <div class="wf-card">
         <div class="card-body">
             <div class="flex items-center gap-2 mb-4">
                 <span class="material-symbols-rounded text-warning">cleaning_services</span>
@@ -241,7 +241,7 @@
         </div>
     </div>
 
-    <div class="card bg-base-100 shadow-md">
+    <div class="wf-card">
         <div class="card-body">
             <div class="flex items-center gap-2 mb-4">
                 <span class="material-symbols-rounded text-error">delete_forever</span>
@@ -261,7 +261,7 @@
         </div>
     </div>
 
-    <div class="card bg-base-100 shadow-md">
+    <div class="wf-card">
         <div class="card-body">
             <div class="flex items-center gap-2 mb-4">
                 <span class="material-symbols-rounded text-accent">auto_delete</span>
@@ -286,7 +286,7 @@
 </div>
 
 <!-- Backup Log Table -->
-<div class="card bg-base-100 shadow-md mb-6">
+<div class="wf-card mb-6">
     <div class="card-body">
         <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
             <h3 class="font-bold text-base-content flex items-center gap-2 text-base">
@@ -319,7 +319,7 @@
         <div class="overflow-x-auto" id="backupTableContainer">
             @if (!Model.BackupLogs.Any())
             {
-                <div class="card bg-base-100 shadow-md"><div class="card-body text-center py-12">
+                <div class="wf-card"><div class="card-body text-center py-12">
                     <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">history</span>
                     <h3 class="font-bold text-lg mb-2">لا نسخ احتياطية</h3>
                     <p class="text-sm text-base-content/60">لم يتم تسجيل أي عمليات نسخ احتياطي تاريخية بعد.</p>
@@ -435,7 +435,7 @@
 </div>
 
 <!-- Timeline Section -->
-<div class="card bg-base-100 shadow-md">
+<div class="wf-card">
     <div class="card-body">
         <div class="flex items-center gap-2 mb-4">
             <span class="material-symbols-rounded text-accent">timeline</span>
@@ -446,7 +446,7 @@
         }
         @if (!timeline.Any())
         {
-            <div class="card bg-base-100 shadow-md"><div class="card-body text-center py-6">
+            <div class="wf-card"><div class="card-body text-center py-6">
                 <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">timeline</span>
                 <p class="text-sm text-base-content/60">لا توجد أنشطة مسجلة بعد.</p>
             </div></div>

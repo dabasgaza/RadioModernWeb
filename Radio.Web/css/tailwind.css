@@ -4,20 +4,20 @@
 
 @layer base {
   :root {
-    --primary-hsl: 210 100% 50%;   /* #007BFF */
-    --secondary-hsl: 135 60% 41%;  /* #28A745 */
-    --accent-hsl: 179 78% 41%;     /* #17BEBB */
+    --primary-hsl: 222 100% 59%;
+    --secondary-hsl: 149 77% 40%;
+    --accent-hsl: 189 95% 43%;
     --purple-hsl: 262 47% 51%;     /* #6F42C1 */
-    --surface-hsl: 210 17% 96%;
-    --surface-2-hsl: 210 20% 93%;
-    --surface-3-hsl: 210 20% 88% / 0.2;
+    --surface-hsl: 210 17% 97%;
+    --surface-2-hsl: 210 20% 94%;
+    --surface-3-hsl: 210 20% 89% / 0.2;
   }
 
   body {
     background-attachment: fixed;
     background-image:
-      radial-gradient(at 0% 0%, hsla(210, 100%, 40%, 0.03) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, hsla(135, 60%, 41%, 0.03) 0px, transparent 50%);
+      radial-gradient(at 0% 0%, color-mix(in srgb, var(--primary) 4%, transparent) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, color-mix(in srgb, var(--secondary) 3%, transparent) 0px, transparent 50%);
   }
 
   ::-webkit-scrollbar {
@@ -28,52 +28,52 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: hsla(210, 20%, 70%, 0.4);
+    background: color-mix(in srgb, var(--border) 70%, transparent);
     border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: hsla(210, 100%, 50%, 0.6);
+    background: color-mix(in srgb, var(--primary) 60%, transparent);
   }
 }
 
 @layer components {
   .glass-card {
-    background: color-mix(in srgb, var(--color-neutral-50) 75%, transparent);
+    background: color-mix(in srgb, var(--surface) 75%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid color-mix(in srgb, var(--color-neutral-300) 80%, transparent);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04);
+    border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+    box-shadow: var(--shadow-card);
   }
 
   .glass-sidebar {
-    background: color-mix(in srgb, var(--color-neutral-50) 85%, transparent);
+    background: color-mix(in srgb, var(--surface) 85%, transparent);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-left: 1px solid color-mix(in srgb, var(--color-neutral-300) 80%, transparent);
+    border-left: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
   }
 
   .glass-topbar {
-    background: color-mix(in srgb, var(--color-neutral-50) 70%, transparent);
+    background: color-mix(in srgb, var(--surface) 70%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid color-mix(in srgb, var(--color-neutral-300) 50%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
   }
 
   .nav-link {
     @apply flex items-center gap-3 px-4 py-3 text-ink-muted rounded-xl transition-all duration-300 ease-out font-medium;
   }
   .nav-link:hover {
-    background-color: color-mix(in srgb, var(--primary) 8%, transparent);
+    background-color: var(--hover);
     color: var(--primary);
   }
 
   .nav-link.active {
     @apply text-white shadow-lg;
-    background: linear-gradient(to left, var(--color-primary, var(--color-primary-500)), var(--color-secondary, var(--color-secondary-500)));
+    background: var(--primary);
     box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--primary) 15%, transparent);
   }
   .nav-link.active:hover {
-    background: linear-gradient(to left, var(--color-primary, var(--color-primary-500)), var(--color-secondary, var(--color-secondary-500)));
+    background: var(--primary);
     color: #fff;
   }
 

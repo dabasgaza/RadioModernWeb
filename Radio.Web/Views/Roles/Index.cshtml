@@ -28,7 +28,7 @@
     </div>
 </div>
 
-<div class="card bg-base-100 shadow-md mb-6">
+<div class="wf-card mb-6">
     <div class="card-body">
         <div class="flex flex-col md:flex-row gap-4 items-center">
             <div class="relative w-full">
@@ -44,7 +44,7 @@
 
 @if (!Model.Any())
 {
-    <div class="card bg-base-100 shadow-md"><div class="card-body text-center py-16">
+    <div class="wf-card"><div class="card-body text-center py-16">
         <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">group_work</span>
         <h3 class="font-bold text-lg mb-2">لا توجد أدوار وظيفية</h3>
         <p class="text-sm text-base-content/60 max-w-sm mx-auto">لم يتم إنشاء أي أدوار وظيفية في النظام بعد. ابدأ بإضافة أول دور لتخصيص الصلاحيات.</p>
@@ -65,7 +65,7 @@ else
         @foreach (var r in Model)
         {
             var isAdmin = string.Equals(r.RoleName, "Admin", StringComparison.OrdinalIgnoreCase);
-            <div class="role-card card bg-base-100 shadow-md hover:border-primary/30 rounded-3xl hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 group flex flex-col justify-between" 
+            <div class="role-card wf-card hover:border-primary/30 rounded-3xl hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 group flex flex-col justify-between" 
                  data-name="@r.RoleName" data-desc="@r.RoleDescription">
                 
                 <div class="p-6">

@@ -27,7 +27,7 @@
 </div>
 
 <!-- Filters -->
-<div class="card bg-base-100 shadow-md mb-6">
+<div class="wf-card mb-6">
     <div class="card-body">
         <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="md:col-span-2">
@@ -73,7 +73,7 @@
 <div>
     @if (!Model.Episodes.Any())
     {
-        <div class="card bg-base-100 shadow-md">
+        <div class="wf-card">
             <div class="card-body items-center text-center py-16">
                 <span class="material-symbols-rounded text-6xl text-base-content/20 mb-4">podcasts</span>
                 <h3 class="font-bold text-lg text-base-content mb-1">لا توجد حلقات</h3>
@@ -90,7 +90,7 @@
     }
     else
     {
-        <div class="card bg-base-100 shadow-md overflow-hidden">
+        <div class="wf-card overflow-hidden">
             <div class="overflow-x-auto">
             <table class="table table-zebra">
                 <thead>

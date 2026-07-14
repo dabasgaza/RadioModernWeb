@@ -9,18 +9,48 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        surface: 'var(--surface)',
+        surface: 'rgb(var(--surface-rgb) / <alpha-value>)',
         'surface-2': 'var(--surface-2)',
         'surface-3': 'var(--surface-3)',
-        border: 'var(--border)',
-        ink: { DEFAULT: 'var(--ink)', muted: 'var(--ink-muted)', soft: 'var(--ink-soft)' }
+        border: 'rgb(var(--border-rgb) / <alpha-value>)',
+        ink: { DEFAULT: 'rgb(var(--ink-rgb) / <alpha-value>)', muted: 'var(--ink-muted)', soft: 'var(--ink-soft)' },
+        signal: 'rgb(var(--signal-rgb) / <alpha-value>)',
+        live: 'rgb(var(--live-rgb) / <alpha-value>)',
+        go: 'rgb(var(--go-rgb) / <alpha-value>)',
+        warn: 'rgb(var(--warn-rgb) / <alpha-value>)',
+        accent: 'rgb(var(--accent-rgb) / <alpha-value>)',
+        'brand-success': 'rgb(var(--success-rgb) / <alpha-value>)',
+        'brand-info': 'rgb(var(--info-rgb) / <alpha-value>)',
+        'brand-warning': 'rgb(var(--warning-rgb) / <alpha-value>)',
+        'brand-error': 'rgb(var(--error-rgb) / <alpha-value>)',
+        'brand-purple': 'rgb(var(--purple-rgb) / <alpha-value>)',
+        'brand-primary': 'rgb(var(--primary-rgb) / <alpha-value>)',
       },
       fontFamily: {
         sans: ['Cairo', 'Tajawal', 'Segoe UI', 'sans-serif']
       },
       borderRadius: {
-        xl: '14px'
-      }
+        xl: '14px',
+        '2xl': '18px',
+      },
+      boxShadow: {
+        card: 'var(--shadow-card)',
+        'card-hover': 'var(--shadow-card-hover)',
+      },
+      keyframes: {
+        'eq-bar': {
+          '0%, 100%': { transform: 'scaleY(0.35)' },
+          '50%': { transform: 'scaleY(1)' },
+        },
+        'onair-pulse': {
+          '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+          '50%': { opacity: '0.45', transform: 'scale(0.82)' },
+        },
+      },
+      animation: {
+        'eq-bar': 'eq-bar 1s ease-in-out infinite',
+        'onair-pulse': 'onair-pulse 1.6s ease-in-out infinite',
+      },
     }
   },
   plugins: [require('daisyui')],
@@ -28,25 +58,25 @@ module.exports = {
     themes: [
       {
         radiomodern: {
-          "primary": "#007BFF",
+          "primary": "#2F6BFF",
           "primary-content": "#FFFFFF",
-          "secondary": "#28A745",
+          "secondary": "#18B66B",
           "secondary-content": "#FFFFFF",
-          "accent": "#17BEBB",
-          "accent-content": "#052C2C",
-          "neutral": "#35393D",
-          "neutral-content": "#F8F9FA",
+          "accent": "#06B6D4",
+          "accent-content": "#04222B",
+          "neutral": "#5A6678",
+          "neutral-content": "#FFFFFF",
           "base-100": "#F8F9FA",
           "base-200": "#EEF1F4",
           "base-300": "#E4E7EB",
           "base-content": "#212529",
-          "info": "#007BFF",
+          "info": "#2F6BFF",
           "info-content": "#FFFFFF",
-          "success": "#28A745",
+          "success": "#18B66B",
           "success-content": "#FFFFFF",
-          "warning": "#FFC107",
-          "warning-content": "#634A00",
-          "error": "#DC3545",
+          "warning": "#F4A623",
+          "warning-content": "#3A2A00",
+          "error": "#FF3B5C",
           "error-content": "#FFFFFF",
           "--rounded-box": "1rem",
           "--rounded-btn": "0.75rem",
@@ -59,31 +89,31 @@ module.exports = {
       },
       {
         radiomodernDark: {
-          "base-100": "#2C3136",
-          "base-200": "#212529",
-          "base-300": "#343A40",
-          "base-content": "#E9EBEC",
+          "base-100": "#161D28",
+          "base-200": "#111721",
+          "base-300": "#202A38",
+          "base-content": "#EAF0F7",
 
-          "primary": "#4D9CFF",
-          "primary-content": "#002C5C",
+          "primary": "#5B8CFF",
+          "primary-content": "#07122E",
 
-          "secondary": "#6FD8A2",
-          "secondary-content": "#08230F",
+          "secondary": "#2FD47E",
+          "secondary-content": "#052E1C",
 
-          "accent": "#17BEBB",
-          "accent-content": "#052C2C",
+          "accent": "#22D3EE",
+          "accent-content": "#04222B",
 
-          "neutral": "#2C3136",
-          "neutral-content": "#ADB5BD",
+          "neutral": "#9AA7B8",
+          "neutral-content": "#11161F",
 
-          "info": "#4D9CFF",
-          "info-content": "#002C5C",
-          "success": "#28A745",
-          "success-content": "#08230F",
-          "warning": "#FFC107",
-          "warning-content": "#634A00",
-          "error": "#DC3545",
-          "error-content": "#5E1018",
+          "info": "#5B8CFF",
+          "info-content": "#07122E",
+          "success": "#2FD47E",
+          "success-content": "#052E1C",
+          "warning": "#FFC24B",
+          "warning-content": "#3A2A00",
+          "error": "#FF5C77",
+          "error-content": "#2A0008",
 
           "--rounded-box": "1rem",
           "--rounded-btn": "0.75rem",

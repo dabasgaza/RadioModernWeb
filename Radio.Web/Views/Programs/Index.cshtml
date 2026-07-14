@@ -27,7 +27,7 @@
 </div>
 
 <!-- Filters -->
-<div class="card bg-base-100 shadow-md mb-6">
+<div class="wf-card mb-6">
     <div class="card-body">
         <form method="get" class="flex gap-3">
             <div class="relative flex-1">
@@ -48,7 +48,7 @@
 <!-- Programs Grid -->
 @if (!Model.Any())
 {
-    <div class="card bg-base-100 shadow-md">
+    <div class="wf-card">
         <div class="card-body items-center text-center py-16">
             <span class="material-symbols-rounded text-6xl text-base-content/20 mb-4">radio</span>
             <h3 class="font-bold text-lg text-base-content mb-1">لا توجد برامج إذاعية</h3>
@@ -69,7 +69,7 @@ else
         @foreach (var item in Model)
         {
             var p = item.Program;
-            <div class="card card-compact bg-base-100 shadow-md group hover:shadow-lg transition-shadow duration-300">
+            <div class="wf-card group hover:shadow-lg transition-shadow duration-300">
                 <div class="card-body gap-4">
                     <!-- Top Category & Icon -->
                     <div class="flex items-center justify-between">

@@ -27,7 +27,7 @@
     </div>
 </div>
 
-<div class="card bg-base-100 shadow-md mb-6">
+<div class="wf-card mb-6">
     <div class="card-body">
         <div class="relative w-full">
             <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40">search</span>
@@ -53,7 +53,7 @@
                     <div class="p-2 space-y-2 overflow-y-auto production-column" style="max-height: 68vh;">
                         @foreach (var card in col.Value.Cards)
                         {
-                            <div class="card bg-base-100 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer production-card"
+                            <div class="wf-card hover:shadow-md transition-all duration-200 cursor-pointer production-card"
                                  data-search="@card.EpisodeName @card.ProgramName @card.GuestNames"
                                  onclick="window.location='/Episodes/Details/@card.EpisodeId'">
                                 <div class="card-body p-2.5 gap-1">

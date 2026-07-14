@@ -33,79 +33,124 @@
     return;
 }
 
-<!-- Episode Info -->
-<div class="card bg-base-100 shadow-md mb-4">
-    <div class="card-body">
-        <div class="flex items-center justify-between">
-            <div>
-                <h3 class="text-lg font-bold text-base-content">@episode.EpisodeName</h3>
-                <p class="text-sm text-base-content/60">@episode.ProgramName</p>
+<!-- Episode Info Header -->
+<div class="wf-card p-6 mb-6 relative overflow-hidden bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/20">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+        <div class="flex items-start gap-4">
+            <div class="p-3 bg-primary/10 text-primary rounded-2xl flex items-center justify-center">
+                <span class="material-symbols-rounded text-3xl">radio</span>
             </div>
-            <a href="/Episodes/Details/@episode.EpisodeId" class="btn btn-ghost text-sm" target="_blank">
-                <span class="material-symbols-rounded">open_in_new</span>
-                عرض الحلقة
-            </a>
+            <div>
+                <span class="text-xs font-bold text-primary bg-primary/10 px-2.5 py-0.5 rounded-full inline-block mb-1.5">الحلقة الحالية</span>
+                <h3 class="text-xl font-black text-ink">@episode.EpisodeName</h3>
+                <p class="text-sm text-ink-muted flex items-center gap-1.5 mt-0.5">
+                    <span class="material-symbols-rounded text-sm text-ink-soft">folder</span>
+                    البرنامج: @episode.ProgramName
+                </p>
+            </div>
         </div>
+        <a href="/Episodes/Details/@episode.EpisodeId" class="btn btn-outline btn-primary gap-2" target="_blank">
+            <span class="material-symbols-rounded">open_in_new</span>
+            تفاصيل الحلقة الكاملة
+        </a>
     </div>
 </div>
 
-<form method="post" action="/Publishing/LogSocial/@episode.EpisodeId">
+<form method="post" action="/Publishing/LogSocial/@episode.EpisodeId" class="space-y-6">
     @Html.AntiForgeryToken()
 
-    <div id="guests-container">
+    <div id="guests-container" class="space-y-6">
         @if (Model.EpisodeGuests.Any())
         {
             @for (int i = 0; i < Model.EpisodeGuests.Count; i++)
             {
                 var guest = Model.EpisodeGuests[i];
-                <div class="card bg-base-100 shadow-md mb-4 guest-card" data-index="@i">
-                    <div class="px-5 py-3 bg-base-200 rounded-t-box border-b border-base-200">
-                        <h3 class="font-bold text-base-content flex items-center gap-2">
-                            <span class="material-symbols-rounded text-primary">person</span>
-                            @guest.FullName
+                <div class="wf-card p-6 guest-card relative overflow-hidden group transition-all duration-300" data-index="@i">
+                    <!-- Guest Card Header -->
+                    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-border/60">
+                        <div class="p-2.5 bg-primary/10 rounded-xl text-primary flex items-center justify-center">
+                            <span class="material-symbols-rounded">person</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-ink text-lg flex items-center gap-2">
+                                @guest.FullName
+                            </h3>
                             @if (!string.IsNullOrWhiteSpace(guest.Topic))
                             {
-                                <span class="text-sm text-base-content/60 font-normal">— @guest.Topic</span>
+                                <p class="text-xs text-ink-muted mt-0.5">الموضوع: @guest.Topic</p>
                             }
-                        </h3>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <input type="hidden" name="GuestLogs[@i].EpisodeGuestId" value="@guest.EpisodeGuestId" />
 
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label class="label">عنوان المقطع</label>
-                                <input type="text" name="GuestLogs[@i].ClipTitle" class="input input-bordered" placeholder="عنوان المقطع المنشور" />
+                    <input type="hidden" name="GuestLogs[@i].EpisodeGuestId" value="@guest.EpisodeGuestId" />
+
+                    <!-- Form Inputs Row -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="form-control">
+                            <label class="label font-bold text-xs text-ink-muted mb-1.5">عنوان المقطع المنشور</label>
+                            <div class="relative">
+                                <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft text-sm">title</span>
+                                <input type="text" name="GuestLogs[@i].ClipTitle" class="input input-bordered w-full pr-12" placeholder="عنوان المقطع المنشور للضيف" />
                             </div>
-                            <div>
-                                <label class="label">المدة (دقيقة)</label>
-                                <input type="number" name="GuestLogs[@i].DurationMinutes" class="input input-bordered" placeholder="مدة المقطع بالدقائق" min="1" />
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label font-bold text-xs text-ink-muted mb-1.5">المدة (بالدقائق)</label>
+                            <div class="relative">
+                                <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft text-sm">hourglass_empty</span>
+                                <input type="number" name="GuestLogs[@i].DurationMinutes" class="input input-bordered w-full pr-12" placeholder="مدة المقطع" min="1" />
                             </div>
-                            <div>
-                                <label class="label">نوع الوسائط</label>
-                                <select name="GuestLogs[@i].MediaType" class="select select-bordered">
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label font-bold text-xs text-ink-muted mb-1.5">نوع الوسائط</label>
+                            <div class="relative">
+                                <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft text-sm">video_library</span>
+                                <select name="GuestLogs[@i].MediaType" class="select select-bordered w-full pr-12">
                                     <option value="1">صوت</option>
                                     <option value="2">فيديو</option>
                                     <option value="3">صوت وفيديو</option>
                                 </select>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Platforms -->
-                        <div>
-                            <label class="label">منصات النشر</label>
-                            <div class="platforms-container space-y-2" id="platforms-@i">
-                                <div class="platform-row flex gap-2 items-start">
-                                    <select name="GuestLogs[@i].Platforms[0].PlatformId" class="select select-bordered flex-1">
-                                        <option value="">— اختر المنصة —</option>
-                                        @foreach (var p in Model.Platforms)
-                                        {
-                                            <option value="@p.SocialMediaPlatformId">@p.Name</option>
-                                        }
-                                    </select>
-                                    <input type="url" name="GuestLogs[@i].Platforms[0].Url" class="input input-bordered flex-[2]" placeholder="رابط النشر" dir="ltr" />
-                                    <button type="button" class="btn btn-ghost btn-square btn-sm text-success" onclick="addPlatform(@i)" title="إضافة منصة">
-                                        <span class="material-symbols-rounded">add</span>
+                    <!-- Platforms Section -->
+                    <div class="mt-6 pt-6 border-t border-border/60 pb-2">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-bold text-sm text-ink flex items-center gap-2">
+                                <span class="material-symbols-rounded text-base text-primary">link</span>
+                                روابط ومنصات النشر للمقطع
+                            </h4>
+                            <button type="button" class="btn btn-outline btn-primary btn-sm gap-1.5 rounded-xl" onclick="addPlatform(@i)">
+                                <span class="material-symbols-rounded text-sm">add</span>
+                                إضافة رابط منصة
+                            </button>
+                        </div>
+                        
+                        <div class="platforms-container space-y-3" id="platforms-@i">
+                            <div class="platform-row grid grid-cols-1 sm:grid-cols-12 gap-3 items-center bg-base-200/40 p-4 rounded-2xl border border-border/50 transition-all hover:border-primary/20">
+                                <div class="sm:col-span-4">
+                                    <div class="relative">
+                                        <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft text-sm">social_leaderboard</span>
+                                        <select name="GuestLogs[@i].Platforms[0].PlatformId" class="select select-bordered w-full pr-12">
+                                            <option value="">— اختر المنصة —</option>
+                                            @foreach (var p in Model.Platforms)
+                                            {
+                                                <option value="@p.SocialMediaPlatformId">@p.Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="sm:col-span-7">
+                                    <div class="relative">
+                                        <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft text-sm">link</span>
+                                        <input type="url" name="GuestLogs[@i].Platforms[0].Url" class="input input-bordered w-full pr-12" placeholder="رابط النشر (مثال: https://...)" dir="ltr" />
+                                    </div>
+                                </div>
+                                <div class="sm:col-span-1 flex justify-end">
+                                    <button type="button" class="btn btn-ghost text-error btn-square btn-sm hover:bg-error/10" onclick="this.closest('.platform-row').remove()" title="حذف الرابط">
+                                        <span class="material-symbols-rounded text-lg">delete</span>
                                     </button>
                                 </div>
                             </div>
@@ -116,23 +161,21 @@
         }
         else
         {
-            <div class="card bg-base-100 shadow-md">
-                <div class="card-body text-center py-12">
-                    <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">people</span>
-                    <p class="text-base-content/60">لا يوجد ضيوف في هذه الحلقة.</p>
-                </div>
+            <div class="wf-card p-12 text-center">
+                <span class="material-symbols-rounded text-5xl text-base-content/30 mb-2">people</span>
+                <p class="text-base-content/60 font-semibold">لا يوجد ضيوف مسجلين في هذه الحلقة.</p>
             </div>
         }
     </div>
 
-    <div class="flex items-center justify-end gap-2">
+    <div class="flex items-center justify-end gap-3 mt-6">
         <a href="/Publishing" class="btn btn-ghost">
             <span class="material-symbols-rounded">cancel</span>
             إلغاء
         </a>
         @if (Model.EpisodeGuests.Any())
         {
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn btn-primary px-6 gap-2">
                 <span class="material-symbols-rounded">publish</span>
                 تسجيل النشر
             </button>
@@ -166,18 +209,30 @@
             const container = document.getElementById('platforms-' + guestIdx);
             const count = platformCounters[guestIdx] || container.querySelectorAll('.platform-row').length;
             const html = `
-                <div class="platform-row flex gap-2 items-start">
-                    <select name="GuestLogs[${guestIdx}].Platforms[${count}].PlatformId" class="select select-bordered flex-1">
-                        <option value="">— اختر المنصة —</option>
-                        @foreach (var p in Model.Platforms)
-                        {
-                            <option value="@p.SocialMediaPlatformId">@p.Name</option>
-                        }
-                    </select>
-                    <input type="url" name="GuestLogs[${guestIdx}].Platforms[${count}].Url" class="input input-bordered flex-[2]" placeholder="رابط النشر" dir="ltr" />
-                    <button type="button" class="btn btn-ghost btn-square btn-sm text-error" onclick="this.closest('.platform-row').remove()">
-                        <span class="material-symbols-rounded">close</span>
-                    </button>
+                <div class="platform-row grid grid-cols-1 sm:grid-cols-12 gap-3 items-center bg-base-200/40 p-4 rounded-2xl border border-border/50 transition-all hover:border-primary/20 mt-3 animate-fadeIn">
+                    <div class="sm:col-span-4">
+                        <div class="relative">
+                            <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft text-sm">social_leaderboard</span>
+                            <select name="GuestLogs[${guestIdx}].Platforms[${count}].PlatformId" class="select select-bordered w-full pr-12">
+                                <option value="">— اختر المنصة —</option>
+                                @foreach (var p in Model.Platforms)
+                                {
+                                    <option value="@p.SocialMediaPlatformId">@p.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="sm:col-span-7">
+                        <div class="relative">
+                            <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft text-sm">link</span>
+                            <input type="url" name="GuestLogs[${guestIdx}].Platforms[${count}].Url" class="input input-bordered w-full pr-12" placeholder="رابط النشر (مثال: https://...)" dir="ltr" />
+                        </div>
+                    </div>
+                    <div class="sm:col-span-1 flex justify-end">
+                        <button type="button" class="btn btn-ghost text-error btn-square btn-sm hover:bg-error/10" onclick="this.closest('.platform-row').remove()" title="حذف الرابط">
+                            <span class="material-symbols-rounded text-lg">delete</span>
+                        </button>
+                    </div>
                 </div>`;
             container.insertAdjacentHTML('beforeend', html);
             platformCounters[guestIdx] = count + 1;

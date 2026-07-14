@@ -28,7 +28,7 @@
 
 @if (!Model.Any())
 {
-    <div class="card bg-base-100 shadow-md">
+    <div class="wf-card">
         <div class="card-body text-center py-12">
             <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">share</span>
             <h3 class="font-bold text-lg mb-2">لا منصات</h3>
@@ -48,7 +48,7 @@ else
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         @foreach (var p in Model)
         {
-            <div class="card bg-base-100 shadow-md flex items-center gap-3 p-4">
+            <div class="wf-card flex items-center gap-3 p-4">
                 <div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
                     <span class="material-symbols-rounded">@GetPlatformIcon(p.Name)</span>
                 </div>

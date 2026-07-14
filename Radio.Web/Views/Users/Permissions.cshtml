@@ -15,7 +15,7 @@
 
 <partial name="_CreateEditHeader" />
 
-<div class="card bg-base-100 shadow-md p-6 mb-8">
+<div class="wf-card p-6 mb-8">
     <div class="flex items-center gap-4">
         <span class="material-symbols-rounded text-primary p-3 bg-primary/10 rounded-2xl text-2xl">account_circle</span>
         <div>
@@ -28,7 +28,7 @@
 <form method="post" action="/Users/UpdatePermissions/@user.UserId">
     @Html.AntiForgeryToken()
 
-    <div class="card bg-base-100 shadow-md">
+    <div class="wf-card">
         <div class="card-body p-0">
             <div class="bg-base-200 p-6 border-b border-base-200/40 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
@@ -58,7 +58,7 @@
                     <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
                         @foreach (var p in module)
                         {
-                            <div class="perm-card p-4 bg-base-100 rounded-2xl border border-base-200/60 hover:border-primary/20 hover:shadow-md transition-all duration-200"
+                            <div class="perm-card wf-card p-4 hover:border-primary/20 hover:shadow-md transition-all duration-200"
                                  data-inherited-access="@(p.InheritedAccess ? "true" : "false")">
                                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                                     

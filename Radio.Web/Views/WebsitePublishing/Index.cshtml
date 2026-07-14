@@ -32,7 +32,7 @@
 
 <!-- Stats -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-    <div class="card bg-base-100 shadow-md p-6">
+    <div class="wf-card p-6">
         <div class="card-body p-0">
             <div class="flex items-center justify-between">
                 <div>
@@ -45,7 +45,7 @@
             </div>
         </div>
     </div>
-    <div class="card bg-base-100 shadow-md p-6">
+    <div class="wf-card p-6">
         <div class="card-body p-0">
             <div class="flex items-center justify-between">
                 <div>
@@ -58,7 +58,7 @@
             </div>
         </div>
     </div>
-    <div class="card bg-base-100 shadow-md p-6">
+    <div class="wf-card p-6">
         <div class="card-body p-0">
             <div class="flex items-center justify-between">
                 <div>
@@ -76,7 +76,7 @@
 <!-- Records Table -->
 @if (!Model.Any())
 {
-    <div class="card bg-base-100 shadow-md">
+    <div class="wf-card">
         <div class="card-body text-center py-12">
             <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">public</span>
             <h3 class="font-bold text-lg mb-2">لا توجد سجلات نشر موقع</h3>
@@ -93,7 +93,7 @@
 }
 else
 {
-    <div class="card bg-base-100 shadow-md overflow-hidden">
+    <div class="wf-card overflow-hidden">
         <div class="overflow-x-auto">
         <table class="table table-zebra w-full text-sm">
             <thead>
@@ -154,7 +154,7 @@ else
 
 <!-- Delete Modal -->
 <div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
-    <div class="bg-base-100 rounded-xl shadow-xl max-w-sm w-full p-6">
+    <div class="wf-card max-w-sm w-full p-6">
         <div class="text-center">
             <div class="w-16 h-16 bg-error/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span class="material-symbols-rounded text-error text-3xl">delete_forever</span>

@@ -22,7 +22,7 @@
 }
 
 <!-- Episode Info -->
-<div class="card bg-base-100 shadow-md mb-4">
+<div class="wf-card mb-4">
     <div class="card-body">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
@@ -51,14 +51,14 @@
             @for (int i = 0; i < Model.GuestLogs.Count; i++)
             {
                 var item = Model.GuestLogs[i];
-                <div class="bg-base-100 rounded-xl border border-base-200 mb-4 guest-card" data-index="@i">
-                    <div class="p-5 border-b border-base-200 rounded-t-xl">
+                <div class="wf-card mb-4 guest-card" data-index="@i">
+                    <div class="px-5 py-3 bg-base-200 rounded-t-box border-b border-base-200">
                         <h3 class="font-bold text-base-content flex items-center gap-2">
                             <span class="material-symbols-rounded text-primary">person</span>
                             @item.GuestName
                         </h3>
                     </div>
-                    <div class="p-5 space-y-4">
+                    <div class="card-body space-y-4">
                         <input type="hidden" name="GuestLogs[@i].LogId" value="@item.LogId" />
                         <input type="hidden" name="GuestLogs[@i].EpisodeGuestId" value="@item.EpisodeGuestId" />
                         <input type="hidden" name="GuestLogs[@i].EpisodeId" value="@item.EpisodeId" />
@@ -143,7 +143,7 @@
         }
         else
         {
-            <div class="bg-base-100 rounded-xl border border-base-200 p-8 text-center">
+            <div class="wf-card p-8 text-center">
                 <span class="material-symbols-rounded text-base-content/40 text-4xl mb-2">people</span>
                 <p class="text-base-content/60">لا يوجد سجلات نشر لهذه الحلقة.</p>
             </div>
@@ -166,7 +166,7 @@
 </form>
 
 <!-- All Publishing Records for this Episode -->
-<div class="card bg-base-100 shadow-md mt-8">
+<div class="wf-card mt-8">
     <div class="card-body">
         <div class="flex items-center gap-2 mb-4">
             <span class="material-symbols-rounded text-primary">history</span>
@@ -178,7 +178,7 @@
         }
         else
         {
-            <div class="card bg-base-100 shadow-md overflow-hidden">
+            <div class="wf-card overflow-hidden">
                 <div class="overflow-x-auto">
                 <table class="table table-zebra w-full text-sm">
                     <thead>

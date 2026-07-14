@@ -6,13 +6,16 @@
     bool IsActive(string c, string? a = null) => controller == c && (a == null || action == a);
     bool HasAny(params string[] perms) => perms.Any(p => CurrentUser.HasPermission(p));
 }
-<div class="flex items-center gap-2 h-16 px-4 border-b border-base-200 bg-gradient-to-l from-primary to-secondary shrink-0">
-    <a href="/" class="flex items-center gap-2 text-white">
-        <span class="material-symbols-rounded text-2xl">radio</span>
-        <span class="font-bold text-lg">نظام البث الإذاعي</span>
+<div class="flex items-center justify-between h-16 px-4 border-b border-border bg-surface shrink-0">
+    <a href="/" class="flex items-center gap-2">
+        <span class="flex items-center justify-center w-9 h-9 rounded-xl bg-signal/10 text-signal">
+            <span class="material-symbols-rounded text-2xl">radio</span>
+        </span>
+        <span class="font-bold text-lg text-ink">نظام البث</span>
     </a>
+    <span class="wf-onair" title="مباشر" aria-label="النظام على الهواء"></span>
 </div>
-<ul class="menu menu-md p-3 gap-0.5 overflow-y-auto flex-1 bg-base-100 flex-nowrap">
+<ul class="menu menu-md p-3 gap-0.5 overflow-y-auto flex-1 bg-surface flex-nowrap">
     <li><a href="/" class="@(IsActive("Home") ? "active" : "")">
         <span class="material-symbols-rounded">dashboard</span>لوحة التحكم
     </a></li>

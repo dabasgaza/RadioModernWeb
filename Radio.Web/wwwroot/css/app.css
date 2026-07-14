@@ -119,6 +119,21 @@
 
 /* Light mode semantic tokens */
 :root {
+    --surface-rgb:     248, 249, 250;
+    --border-rgb:      206, 212, 218;
+    --ink-rgb:         33, 37, 41;
+    --signal-rgb:      0, 123, 255;
+    --live-rgb:        220, 53, 69;
+    --go-rgb:          40, 167, 69;
+    --warn-rgb:        255, 193, 7;
+    --accent-rgb:      23, 190, 187;
+    --success-rgb:     24, 182, 107;
+    --info-rgb:        47, 107, 255;
+    --warning-rgb:     244, 166, 35;
+    --error-rgb:       220, 53, 69;
+    --purple-rgb:      111, 66, 193;
+    --primary-rgb:     47, 107, 255;
+
     --sem-surface:     var(--color-neutral-50);
     --sem-surface-2:   var(--color-neutral-100);
     --sem-surface-3:   var(--color-neutral-200);
@@ -157,6 +172,21 @@
 
 /* Dark mode semantic tokens */
 html.dark {
+    --surface-rgb:     44, 49, 54;
+    --border-rgb:      52, 58, 64;
+    --ink-rgb:         233, 235, 236;
+    --signal-rgb:      77, 156, 255;
+    --live-rgb:        220, 53, 69;
+    --go-rgb:          111, 216, 162;
+    --warn-rgb:        255, 193, 7;
+    --accent-rgb:      23, 190, 187;
+    --success-rgb:     47, 212, 126;
+    --info-rgb:        91, 140, 255;
+    --warning-rgb:     255, 194, 75;
+    --error-rgb:       255, 92, 119;
+    --purple-rgb:      168, 85, 247;
+    --primary-rgb:     91, 140, 255;
+
     --sem-surface:     var(--color-neutral-dark-800);
     --sem-surface-2:   var(--color-neutral-dark-900);
     --sem-surface-3:   var(--color-neutral-dark-700);
@@ -347,11 +377,18 @@ html.dark ::selection { background: color-mix(in srgb, var(--primary) 22%, trans
 /* Cards use --surface-3 as background, --border for borders */
 /* Card shadows defined via .shadow-* utilities below */
 
-/* ── stat-card ── */
-html.dark .stat-card {
-    background: var(--surface-3);
-    border: 1px solid var(--border);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+/* ── Cards & stats dark mode surfaces ── */
+html.dark .stat-card,
+html.dark .wf-card,
+html.dark .wf-stat,
+html.dark .perm-card,
+html.dark .perm-item,
+html.dark .role-card,
+html.dark .ds-card,
+html.dark .card {
+    background: var(--surface-3) !important;
+    border-color: var(--border) !important;
+    color: var(--ink) !important;
 }
 
 /* ── Tailwind border-border/* overrides ── */
@@ -801,11 +838,61 @@ html.dark header [onclick="toggleNotifications(event)"]:hover {
 }
 
 /* ════════════════════════════════════════════════════════
-    Cards
+    Cards & Stats (Workflow Design System)
     ════════════════════════════════════════════════════════ */
-/* ════════════════════════════════════════════════════════
-    Stat Cards
-    ════════════════════════════════════════════════════════ */
+.wf-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.wf-card-hover {
+    cursor: pointer;
+}
+.wf-card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sem-shadow-card-hover);
+    border-color: var(--primary) !important;
+}
+
+.wf-stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.wf-stat-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.2;
+}
+
+.wf-stat-label {
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+    font-weight: 500;
+    margin-top: 0.25rem;
+}
+
+.wf-stat-ico {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.wf-stat-ico .material-symbols-rounded {
+    font-size: 1.5rem;
+}
+
 .stat-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -1148,6 +1235,23 @@ html.dark .page-header-enhanced {
     h1 { font-size: 16pt !important; margin-bottom: 0.5cm !important; }
     .material-symbols-rounded { display: none !important; }
 }
+
+/* ════════════════════════════════════════════════════════
+   Publishing Stats Cards Custom Colors
+   ════════════════════════════════════════════════════════ */
+.wf-stat .wf-stat-ico {
+    background-color: color-mix(in srgb, var(--ico-color) 12%, transparent) !important;
+    color: var(--ico-color) !important;
+}
+.wf-stat .absolute {
+    background-color: color-mix(in srgb, var(--ico-color) 6%, transparent) !important;
+}
+
+.wf-stat:has(.text-brand-success) { --ico-color: var(--sem-success); }
+.wf-stat:has(.text-brand-info) { --ico-color: var(--sem-primary); }
+.wf-stat:has(.text-brand-purple) { --ico-color: rgb(var(--purple-rgb)); }
+.wf-stat:has(.text-brand-warning) { --ico-color: var(--sem-warning); }
+
 
 
 

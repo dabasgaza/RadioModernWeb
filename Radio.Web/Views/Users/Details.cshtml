@@ -16,7 +16,7 @@
 <partial name="_CreateEditHeader" />
 
 <!-- User Profile Card -->
-<div class="card bg-base-100 shadow-md p-6 mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="wf-card p-6 mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
     <div class="flex items-center gap-4 col-span-2">
         <div class="w-16 h-16 rounded-2xl bg-primary/5 text-primary flex items-center justify-center font-bold text-2xl shadow-inner">
             @user.FullName.Substring(0, Math.Min(2, user.FullName.Length)).ToUpper()
@@ -43,7 +43,7 @@
 </div>
 
 <!-- Effective Permissions Matrix Card -->
-<div class="card bg-base-100 shadow-md">
+<div class="wf-card">
     <div class="card-body p-0">
         <div class="bg-base-200 p-6 border-b border-base-200/40 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
@@ -71,7 +71,7 @@
         <div class="relative w-full">
             <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-base-content/60 text-sm">search</span>
             <input type="text" id="permSearch" placeholder="بحث سريع في الصلاحيات الفعالة..." 
-                   class="input input-bordered pr-11 pl-4 py-2 text-xs rounded-xl w-full border border-base-200/60 focus:border-primary/50 transition-all />
+                   class="input input-bordered pr-11 pl-4 py-2 text-xs rounded-xl w-full border border-base-200/60 focus:border-primary/50 transition-all" />
         </div>
     </div>
 
@@ -89,7 +89,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     @foreach (var p in module)
                     {
-                        <div class="perm-item flex items-center justify-between p-4 bg-base-100 rounded-2xl border border-base-200/60 transition-all duration-200"
+                        <div class="perm-item wf-card flex items-center justify-between p-4 transition-all duration-200"
                              data-text="@p.DisplayName.ToLower() @p.SystemName.ToLower()">
                             
                             <div class="flex flex-col gap-1 pr-2">

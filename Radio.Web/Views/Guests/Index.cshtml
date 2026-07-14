@@ -29,7 +29,7 @@
 </div>
 
 <!-- Filters -->
-<div class="card bg-base-100 shadow-md mb-6">
+<div class="wf-card mb-6">
     <div class="card-body">
         <form method="get" class="flex gap-3">
             <div class="relative flex-1">
@@ -50,7 +50,7 @@
 <!-- Guests Grid -->
 @if (!Model.Any())
 {
-    <div class="card bg-base-100 shadow-md p-12">
+    <div class="wf-card p-12">
     <div class="card-body text-center py-12">
             <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">people_alt</span>
             <h3 class="font-bold text-base-content text-lg mb-2">لا يوجد ضيوف</h3>
@@ -70,7 +70,7 @@ else
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @foreach (var g in Model)
         {
-            <div class="card bg-base-100 shadow-md flex flex-col justify-between h-full group hover:shadow-lg transition-all duration-300">
+            <div class="wf-card flex flex-col justify-between h-full group hover:shadow-lg transition-all duration-300">
                 <div class="card-body space-y-4">
                     <!-- Profile Header / Avatar -->
                     <div class="flex items-center gap-3">

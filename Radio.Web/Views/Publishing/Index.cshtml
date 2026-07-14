@@ -26,58 +26,58 @@
 
 <!-- Stats Dashboard -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div class="stat-card relative overflow-hidden group hover:shadow-lg transition-all duration-300 bg-surface border border-border rounded-2xl p-6">
-        <div class="absolute top-0 right-0 w-24 h-24 bg-success/5 rounded-bl-full transition-all duration-500 group-hover:scale-110"></div>
-        <div class="flex items-center gap-5">
-            <div class="stat-icon bg-success/10 text-success p-4 rounded-xl flex items-center justify-center">
-                <span class="material-symbols-rounded text-3xl">check_circle</span>
+    <div class="wf-stat wf-card-hover relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-24 h-24 bg-brand-success/5 rounded-bl-full transition-all duration-500 group-hover:scale-110 pointer-events-none z-0"></div>
+        <div class="flex items-center gap-4 relative z-10">
+            <div class="wf-stat-ico bg-brand-success/10 text-brand-success">
+                <span class="material-symbols-rounded">check_circle</span>
             </div>
             <div>
-                <span class="block text-2xl font-black text-ink mb-0.5">@executionCount</span>
-                <span class="block text-xs font-semibold text-ink-muted uppercase tracking-wider">سجلات الإنتاج (التنفيذ)</span>
+                <div class="wf-stat-value">@executionCount</div>
+                <div class="wf-stat-label">سجلات الإنتاج (التنفيذ)</div>
             </div>
         </div>
     </div>
-    <div class="stat-card relative overflow-hidden group hover:shadow-lg transition-all duration-300 bg-surface border border-border rounded-2xl p-6">
-        <div class="absolute top-0 right-0 w-24 h-24 bg-info/5 rounded-bl-full transition-all duration-500 group-hover:scale-110"></div>
-        <div class="flex items-center gap-5">
-            <div class="stat-icon bg-info/10 text-info p-4 rounded-xl flex items-center justify-center">
-                <span class="material-symbols-rounded text-3xl">rss_feed</span>
+    <div class="wf-stat wf-card-hover relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-24 h-24 bg-brand-info/5 rounded-bl-full transition-all duration-500 group-hover:scale-110 pointer-events-none z-0"></div>
+        <div class="flex items-center gap-4 relative z-10">
+            <div class="wf-stat-ico bg-brand-info/10 text-brand-info">
+                <span class="material-symbols-rounded">rss_feed</span>
             </div>
             <div>
-                <span class="block text-2xl font-black text-ink mb-0.5">@socialCount</span>
-                <span class="block text-xs font-semibold text-ink-muted uppercase tracking-wider">النشر الرقمي (السوشال)</span>
+                <div class="wf-stat-value">@socialCount</div>
+                <div class="wf-stat-label">النشر الرقمي (السوشال)</div>
             </div>
         </div>
     </div>
-    <div class="stat-card relative overflow-hidden group hover:shadow-lg transition-all duration-300 bg-surface border border-border rounded-2xl p-6">
-        <div class="absolute top-0 right-0 w-24 h-24 bg-secondary/5 rounded-bl-full transition-all duration-500 group-hover:scale-110"></div>
-        <div class="flex items-center gap-5">
-            <div class="stat-icon bg-secondary/10 text-secondary p-4 rounded-xl flex items-center justify-center">
-                <span class="material-symbols-rounded text-3xl">public</span>
+    <div class="wf-stat wf-card-hover relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-24 h-24 bg-brand-purple/5 rounded-bl-full transition-all duration-500 group-hover:scale-110 pointer-events-none z-0"></div>
+        <div class="flex items-center gap-4 relative z-10">
+            <div class="wf-stat-ico bg-brand-purple/10 text-brand-purple">
+                <span class="material-symbols-rounded">public</span>
             </div>
             <div>
-                <span class="block text-2xl font-black text-ink mb-0.5">@websiteCount</span>
-                <span class="block text-xs font-semibold text-ink-muted uppercase tracking-wider">النشر على الموقع الرسمي</span>
+                <div class="wf-stat-value">@websiteCount</div>
+                <div class="wf-stat-label">النشر على الموقع الرسمي</div>
             </div>
         </div>
     </div>
-    <div class="stat-card relative overflow-hidden group hover:shadow-lg transition-all duration-300 bg-surface border border-border rounded-2xl p-6">
-        <div class="absolute top-0 right-0 w-24 h-24 bg-warning/5 rounded-bl-full transition-all duration-500 group-hover:scale-110"></div>
-        <div class="flex items-center gap-5">
-            <div class="stat-icon bg-warning/10 text-warning p-4 rounded-xl flex items-center justify-center">
-                <span class="material-symbols-rounded text-3xl">today</span>
+    <div class="wf-stat wf-card-hover relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-24 h-24 bg-brand-warning/5 rounded-bl-full transition-all duration-500 group-hover:scale-110 pointer-events-none z-0"></div>
+        <div class="flex items-center gap-4 relative z-10">
+            <div class="wf-stat-ico bg-brand-warning/10 text-brand-warning">
+                <span class="material-symbols-rounded">today</span>
             </div>
             <div>
-                <span class="block text-2xl font-black text-ink mb-0.5">@todayCount</span>
-                <span class="block text-xs font-semibold text-ink-muted uppercase tracking-wider">العمليات المسجلة اليوم</span>
+                <div class="wf-stat-value">@todayCount</div>
+                <div class="wf-stat-label">العمليات المسجلة اليوم</div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Modern Filter Panel -->
-<div class="card bg-base-100 shadow-md mb-6">
+<div class="wf-card mb-6">
     <div class="card-body">
         <form method="get" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
@@ -107,11 +107,11 @@
                 </select>
             </div>
             <div class="flex gap-2 items-end">
-                <button type="submit" class="btn btn-primary flex-1 py-2.5 justify-center shadow-md shadow-primary/10">
+                <button type="submit" class="btn btn-primary flex-1 gap-2">
                     <span class="material-symbols-rounded text-sm">filter_alt</span>
                     تطبيق التصفية
                 </button>
-                <a href="/Publishing" class="btn btn-ghost py-2.5 px-4 justify-center" title="إعادة تهيئة">
+                <a href="/Publishing" class="btn btn-ghost" title="إعادة تهيئة">
                     <span class="material-symbols-rounded">restart_alt</span>
                 </a>
             </div>
@@ -120,7 +120,7 @@
 </div>
 
 <!-- Records Display -->
-<div class="card bg-base-100 shadow-md overflow-hidden">
+<div class="wf-card overflow-hidden">
     @if (!Model.Any())
     {
         <div class="card-body text-center py-12">
@@ -170,12 +170,32 @@
                                     @r.Summary
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center">
-                                        @(string.IsNullOrEmpty(r.RecordedBy) ? "?" : r.RecordedBy.Substring(0, 1).ToUpper())
+                            <td class="px-6 py-4 whitespace-nowrap align-middle text-right">
+                                <div class="flex items-center gap-3 justify-start">
+                                    <div class="w-9 h-9 rounded-xl bg-base-200 text-primary font-bold text-sm border border-primary/20 transition-all duration-300 hover:scale-105 flex items-center justify-center shrink-0">
+                                        <span>@(string.IsNullOrEmpty(r.RecordedBy) ? "ت" : r.RecordedBy.Substring(0, 1).ToUpper())</span>
                                     </div>
-                                    <span class="text-ink font-semibold">@(r.RecordedBy ?? "مستخدم تلقائي")</span>
+                                    <div class="flex flex-col text-right">
+                                        <span class="text-sm font-semibold text-base-content leading-none mb-1">@(r.RecordedBy ?? "مستخدم تلقائي")</span>
+                                        <span class="text-[10px] text-base-content/50 font-medium leading-none">
+                                            @if (r.RecordType == "Execution")
+                                            {
+                                                <text>مسؤول التنفيذ</text>
+                                            }
+                                            else if (r.RecordType == "SocialMedia")
+                                            {
+                                                <text>مسؤول النشر الرقمي</text>
+                                            }
+                                            else if (r.RecordType == "Website")
+                                            {
+                                                <text>مسؤول نشر الموقع</text>
+                                            }
+                                            else
+                                            {
+                                                <text>مسؤول النظام</text>
+                                            }
+                                        </span>
+                                    </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-ink-muted">
@@ -224,7 +244,7 @@
 
 <!-- Delete Social Modal -->
 <div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/55 backdrop-blur-sm p-4 transition-all duration-300">
-    <div class="bg-surface rounded-2xl shadow-2xl max-w-sm w-full p-6 border border-border scale-95 transition-all">
+    <div class="wf-card max-w-sm w-full p-6 scale-95 transition-all shadow-2xl">
         <div class="text-center">
             <div class="w-16 h-16 bg-danger/10 text-danger rounded-full flex items-center justify-center mx-auto mb-4">
                 <span class="material-symbols-rounded text-3xl">delete_forever</span>
@@ -247,7 +267,7 @@
 
 <!-- Delete Website Modal -->
 <div id="deleteWebsiteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/55 backdrop-blur-sm p-4 transition-all duration-300">
-    <div class="bg-surface rounded-2xl shadow-2xl max-w-sm w-full p-6 border border-border scale-95 transition-all">
+    <div class="wf-card max-w-sm w-full p-6 scale-95 transition-all shadow-2xl">
         <div class="text-center">
             <div class="w-16 h-16 bg-danger/10 text-danger rounded-full flex items-center justify-center mx-auto mb-4">
                 <span class="material-symbols-rounded text-3xl">delete_forever</span>
