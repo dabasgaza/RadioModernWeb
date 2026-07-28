@@ -87,103 +87,45 @@
         var currentStageIndex = isCancelled ? -1 : Array.FindIndex(stages, s => s.Id == ep.StatusId);
     }
 
-    <div class="hidden sm:flex relative items-center justify-between gap-0 w-full pt-2 pb-4">
+    <div class="relative space-y-0" style="padding-inline-start:2rem">
         @for (int i = 0; i < stages.Length; i++)
         {
             var s = stages[i];
             var done = IsDone(i);
             var current = IsCurrent(i);
+            var lineActive = i < stages.Length - 1 && (IsDone(i + 1) || IsCurrent(i + 1));
 
-            <div class="flex-1 flex flex-col items-center relative">
-                @if (i > 0)
-                {
-                    var lineActive = IsDone(i) || IsCurrent(i);
-                    <div class="absolute top-6 -right-1/2 w-full h-1 z-0 transition-all duration-700 rounded-full @(lineActive && !isCancelled ? "bg-[var(--color-success)]" : "bg-[var(--color-bg)]")"></div>
-                }
+            <div class="flex items-start gap-4 pb-2 relative">
+                <div class="absolute -right-[18px] top-10 w-0.5 h-[calc(100%-2rem)] z-0 transition-all duration-500"
+                     style="background:@(lineActive && !isCancelled ? "var(--color-success)" : "var(--color-bg)")"></div>
 
-                <div class="w-12 h-12 rounded-2xl flex items-center justify-center z-10 transition-all duration-300 border-2 shrink-0
-                    @(done && !isCancelled ? "bg-[var(--color-success)]              border-[var(--color-success)] shadow-lg" :
-                      current && !isCancelled ? "bg-[var(--color-primary)]              border-[var(--color-primary)] shadow-xl scale-110" :
-                      "bg-[var(--color-bg)] text-[var(--color-text-muted)] border-[var(--color-border)]")"
-                     @(done && !isCancelled ? "style=box-shadow:0 0 0 4px var(--color-success-light)" : "")>
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center z-10 shrink-0 border-2 transition-all duration-300"
+                     style="background:@(done && !isCancelled ? "var(--color-success)" : current && !isCancelled ? "var(--color-primary)" : "var(--color-bg)");color:@(done || current ? "white" : "var(--color-text-muted)");border-color:@(done && !isCancelled ? "var(--color-success)" : current && !isCancelled ? "var(--color-primary)" : "var(--color-border)");@(done && !isCancelled ? "box-shadow:0 0 0 4px color-mix(in srgb,var(--color-success) 25%,transparent)" : current && !isCancelled ? "box-shadow:var(--shadow-float);transform:scale(1.1)" : "")">
                     <span class="material-symbols-rounded text-xl">@(done && !isCancelled ? "check" : s.Icon)</span>
                 </div>
 
-                <div class="mt-4 text-center px-1 z-10">
-                    <div class="text-xs font-bold leading-tight transition-colors duration-300 @(done && !isCancelled ? "text-[var(--color-success)]" : current && !isCancelled ? "text-[var(--color-primary)] font-black" : "text-[var(--color-text-muted)]")">
-                        @s.Name
-                    </div>
+                <div class="flex-1 py-2">
+                    <div class="text-sm font-bold" style="color:@(done && !isCancelled ? "var(--color-success)" : current && !isCancelled ? "var(--color-primary)" : "var(--color-text-muted)")">@s.Name</div>
                     @if (current && !isCancelled)
                     {
-                        <span class="text-[10px] font-bold mt-1.5 inline-block px-2.5 py-0.5 rounded-full animate-pulse"
-                              style="background: var(--color-primary-subtle); color: var(--color-primary); border: 1px solid var(--color-border);">المرحلة النشطة</span>
-                    }
-                    @if (done && !isCancelled)
-                    {
-                        <span class="text-[10px] text-[var(--color-success)] mt-0.5 block font-medium">✓ تم</span>
-                    }
-                </div>
-            </div>
-        }
-
-        @if (isCancelled)
-        {
-            <div class="flex-1 flex flex-col items-center relative">
-                <div class="absolute top-6 -right-1/2 w-full h-1 z-0 rounded-full" style="background: var(--color-danger-light);"></div>
-                <div class="w-12 h-12 rounded-2xl flex items-center justify-center z-10 shrink-0 hover:scale-105 transition-all"
-                     style="background: var(--color-danger); color: white; border: 2px solid var(--color-danger); box-shadow: 0 0 0 4px var(--color-danger-light);">
-                    <span class="material-symbols-rounded text-xl">cancel</span>
-                </div>
-                <div class="mt-4 text-center px-1 z-10">
-                    <div class="text-xs font-bold leading-tight text-[var(--color-danger)]">ملغاة</div>
-                    <span class="text-[10px] font-bold mt-1.5 inline-block px-2.5 py-0.5 rounded-full" style="background: var(--color-danger-light); color: var(--color-danger); border: 1px solid var(--color-border);">نهائية</span>
-                </div>
-            </div>
-        }
-    </div>
-
-    <div class="sm:hidden relative pr-5 mr-2 space-y-6 pt-2">
-        @for (int i = 0; i < stages.Length; i++)
-        {
-            var s = stages[i];
-            var done = IsDone(i);
-            var current = IsCurrent(i);
-            <div class="relative flex items-start gap-3">
-                @if (i < stages.Length - 1)
-                {
-                    var lineActive = IsDone(i + 1) || IsCurrent(i + 1);
-                    <div class="absolute top-8 -right-[23px] w-0.5 h-full z-0 transition-all duration-500 @(lineActive && !isCancelled ? "bg-[var(--color-success)]" : "bg-[var(--color-bg)]")"></div>
-                }
-                <div class="w-10 h-10 rounded-2xl flex items-center justify-center z-10 transition-all duration-300 shrink-0 border-2
-                    @(done && !isCancelled ? "bg-[var(--color-success)]              border-[var(--color-success)]" :
-                      current && !isCancelled ? "bg-[var(--color-primary)]              border-[var(--color-primary)] shadow-lg scale-110" :
-                      "bg-[var(--color-bg)] text-[var(--color-text-muted)] border-[var(--color-border)]")">
-                    <span class="material-symbols-rounded text-lg">@(done && !isCancelled ? "check" : s.Icon)</span>
-                </div>
-                <div class="flex-1 py-1">
-                    <div class="text-sm font-bold @(done && !isCancelled ? "text-[var(--color-success)]" : current && !isCancelled ? "text-[var(--color-primary)]" : "text-[var(--color-text-muted)]")">
-                        @s.Name
-                    </div>
-                    @if (current && !isCancelled)
-                    {
-                        <span class="text-[10px] font-bold mt-0.5 inline-block px-2 py-0.5 rounded-full" style="background: var(--color-primary-subtle); color: var(--color-primary);">المرحلة النشطة</span>
+                        <span class="text-[10px] font-bold mt-1 inline-block px-2.5 py-0.5 rounded-full animate-pulse" style="background:var(--color-primary-subtle);color:var(--color-primary)">المرحلة النشطة</span>
                     }
                     @if (done && !isCancelled && !current)
                     {
-                        <span class="text-[10px] text-[var(--color-success)] block">✓ تم</span>
+                        <span class="text-[10px] mt-0.5 block font-medium" style="color:var(--color-success)">✓ تم</span>
                     }
                 </div>
             </div>
         }
         @if (isCancelled)
         {
-            <div class="relative flex items-start gap-3">
-                <div class="w-10 h-10 rounded-2xl flex items-center justify-center z-10 shrink-0" style="background: var(--color-danger); color: white; border: 2px solid var(--color-danger);">
-                    <span class="material-symbols-rounded text-lg">cancel</span>
+            <div class="flex items-start gap-4 pb-2 relative">
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center z-10 shrink-0 border-2" style="background:var(--color-danger);color:white;border-color:var(--color-danger);box-shadow:0 0 0 4px color-mix(in srgb,var(--color-danger) 25%,transparent)">
+                    <span class="material-symbols-rounded text-xl">cancel</span>
                 </div>
-                <div class="flex-1 py-1">
-                    <div class="text-sm font-bold text-[var(--color-danger)]">ملغاة</div>
-                    <span class="text-[10px] font-bold mt-0.5 inline-block px-2 py-0.5 rounded-full" style="background: var(--color-danger-light); color: var(--color-danger);">نهائية</span>
+                <div class="flex-1 py-2">
+                    <div class="text-sm font-bold" style="color:var(--color-danger)">ملغاة</div>
+                    <span class="text-[10px] font-bold mt-1 inline-block px-2.5 py-0.5 rounded-full" style="background:color-mix(in srgb,var(--color-danger) 15%,transparent);color:var(--color-danger)">نهائية</span>
                 </div>
             </div>
         }
