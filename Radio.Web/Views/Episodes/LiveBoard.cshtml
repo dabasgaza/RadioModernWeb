@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "شاشة عرض الحلقات المباشرة";
 
-    // Find the next upcoming planned episode to highlight it as "Next Up" (الحلقة التالية)
     var nowTime = DateTime.Now;
     var nextEpisode = Model
         .Where(e => e.StatusId == EpisodeStatusValues.Planned && e.ScheduledExecutionTime.HasValue && e.ScheduledExecutionTime.Value >= nowTime)
@@ -12,58 +11,32 @@
 }
 
 <style>
-    /* Premium Animations & Keyframes */
     @@keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
-
     @@keyframes pulseGlow {
-        0%, 100% {
-            box-shadow: 0 0 15px -3px rgba(var(--p), 0.25), 0 0 6px -2px rgba(var(--p), 0.25);
-            border-color: rgba(var(--p), 0.4);
-        }
-        50% {
-            box-shadow: 0 0 25px 2px rgba(var(--p), 0.6), 0 0 12px 0px rgba(var(--p), 0.6);
-            border-color: rgba(var(--p), 0.9);
-        }
+        0%, 100% { box-shadow: 0 0 15px -3px var(--color-primary-subtle), 0 0 6px -2px var(--color-primary-subtle); border-color: color-mix(in srgb, var(--color-primary) 40%, transparent); }
+        50% { box-shadow: 0 0 25px 2px color-mix(in srgb, var(--color-primary) 60%, transparent), 0 0 12px 0px color-mix(in srgb, var(--color-primary) 60%, transparent); border-color: color-mix(in srgb, var(--color-primary) 90%, transparent); }
     }
+    .animate-card-in { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .active-pulse-glow { animation: pulseGlow 2.5s infinite ease-in-out; }
 
-    .animate-card-in {
-        animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-
-    .active-pulse-glow {
-        animation: pulseGlow 2.5s infinite ease-in-out;
-    }
-
-    /* Kiosk / Fullscreen Mode Styles */
     body.kiosk-active {
-        background-color: var(--surface-3) !important;
+        background: var(--color-surface) !important;
         overflow: hidden !important;
         font-size: clamp(1rem, 0.6vw + 0.75rem, 1.75rem) !important;
     }
     body.kiosk-active .drawer-side,
     body.kiosk-active footer,
     body.kiosk-active header,
-    body.kiosk-active .navbar,
-    body.kiosk-active #back-to-top {
-        display: none !important;
-    }
-    body.kiosk-active .drawer {
-        display: block !important;
-    }
+    body.kiosk-active #back-to-top { display: none !important; }
+    body.kiosk-active .drawer { display: block !important; }
     body.kiosk-active .drawer-content {
         min-height: 100vh !important;
         padding: 0 !important;
         margin: 0 !important;
-        background-color: var(--surface-3) !important;
+        background: var(--color-surface) !important;
     }
     body.kiosk-active main {
         padding: 1.5rem !important;
@@ -75,77 +48,47 @@
     body.kiosk-active #liveboard-scroll-area {
         flex: 1 !important;
         overflow-y: auto !important;
-        scrollbar-width: none; /* Firefox */
+        scrollbar-width: none;
     }
-    body.kiosk-active #liveboard-scroll-area::-webkit-scrollbar {
-        display: none; /* Safari and Chrome */
-    }
-
-    /* Fluid typography responsive scaling based on viewport width */
-    body.kiosk-active h1 {
-        font-size: clamp(1.5rem, 1.2vw + 1rem, 3rem) !important;
-    }
-    body.kiosk-active h2 {
-        font-size: clamp(1.25rem, 1vw + 0.85rem, 2.5rem) !important;
-    }
-    body.kiosk-active .text-sm {
-        font-size: clamp(0.875rem, 0.5vw + 0.65rem, 1.5rem) !important;
-    }
-    body.kiosk-active .text-xs {
-        font-size: clamp(0.75rem, 0.4vw + 0.55rem, 1.25rem) !important;
-    }
-    body.kiosk-active .badge {
-        font-size: clamp(0.75rem, 0.4vw + 0.55rem, 1.25rem) !important;
-        height: auto !important;
-        padding-top: 0.5em !important;
-        padding-bottom: 0.5em !important;
-        padding-left: 0.75em !important;
-        padding-right: 0.75em !important;
-    }
-    body.kiosk-active .alert {
-        font-size: clamp(0.75rem, 0.4vw + 0.55rem, 1.25rem) !important;
-    }
-
-
+    body.kiosk-active #liveboard-scroll-area::-webkit-scrollbar { display: none; }
+    body.kiosk-active h1 { font-size: clamp(1.5rem, 1.2vw + 1rem, 3rem) !important; }
+    body.kiosk-active .text-sm { font-size: clamp(0.875rem, 0.5vw + 0.65rem, 1.5rem) !important; }
+    body.kiosk-active .text-xs { font-size: clamp(0.75rem, 0.4vw + 0.55rem, 1.25rem) !important; }
+    body.kiosk-active .badge { font-size: clamp(0.75rem, 0.4vw + 0.55rem, 1.25rem) !important; height: auto !important; padding: 0.5em 0.75em !important; }
 </style>
 
 <div id="liveboard-content-wrapper" class="flex flex-col h-full gap-4">
-    <!-- Top Control Bar / Dashboard Header -->
-    <div class="p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4" style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1)">
+    <div class="p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-surface border border-border rounded-xl shadow float-shadow">
         <div class="flex items-center gap-4">
-            <div class="p-3 rounded-2xl text-white shadow-md" style="background:linear-gradient(to bottom right,var(--color-primary),var(--color-accent))">
+            <div class="p-3 rounded-2xl text-primary-foreground shadow-md" style="background:linear-gradient(to bottom right,var(--color-primary),var(--color-accent))">
                 <span class="material-symbols-rounded text-3xl">tv</span>
             </div>
             <div>
-                <h1 class="text-2xl font-black flex items-center gap-2" style="color: var(--color-text)">
+                <h1 class="text-2xl font-black flex items-center gap-2 text-text">
                     شاشة عرض الحلقات المجدولة
                 </h1>
-                <p class="text-sm mt-0.5" style="color: var(--color-text-secondary)">متابعة فورية ومباشرة لحلقات اليوم وتفاصيل البث</p>
+                <p class="text-sm mt-0.5 text-text-secondary">متابعة فورية ومباشرة لحلقات اليوم وتفاصيل البث</p>
             </div>
         </div>
 
-        <!-- Live Clock and Actions -->
         <div class="flex flex-wrap items-center gap-4 justify-end">
-            <!-- SignalR Status Indicator -->
-            <span id="connection-indicator" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; background: color-mix(in srgb, var(--color-success) 10%, transparent); color: var(--color-success)">
+            <span id="connection-indicator" style="display:inline-flex;align-items:center;gap:0.25rem;padding:0.375rem 0.75rem;font-size:0.75rem;font-weight:700;border-radius:9999px;background:color-mix(in srgb,var(--color-success) 10%,transparent);color:var(--color-success)">
                 <span class="w-2.5 h-2.5 rounded-full bg-white animate-ping"></span>
                 <span id="connection-status-text">متصل بالبث الفوري</span>
             </span>
 
-            <!-- Digital Clock -->
-            <div class="bg-neutral text-neutral-content rounded-2xl px-6 py-2.5 font-mono text-xl font-bold flex items-center gap-3 shadow-lg">
-                <span class="material-symbols-rounded text-warning animate-spin-slow">schedule</span>
-                <span id="live-clock">00:00:00</span>
-                <span class="text-xs text-neutral-content/60 border-r border-neutral-content/20 pr-3 mr-1" id="live-date">--/--/----</span>
+            <div id="live-clock-bar" class="rounded-2xl px-6 py-2.5 font-mono text-xl font-bold flex items-center gap-3 shadow-float" style="background:var(--color-surface-hover)">
+                <span class="material-symbols-rounded text-accent">schedule</span>
+                <span id="live-clock" style="color:var(--color-text)">00:00:00</span>
+                <span class="text-xs text-text-muted" id="live-date">--/--/----</span>
             </div>
 
-            <!-- Dashboard Controls -->
             <div class="join shadow-md">
-                <button onclick="toggleAutoScroll()" id="btn-autoscroll" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 600; border: 1px solid var(--color-border); cursor: pointer; background: transparent; color: var(--color-text); transition: all 0.2s" class="join-item">
+                <button onclick="toggleAutoScroll()" id="btn-autoscroll" style="display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.5rem 1rem;font-size:0.875rem;font-weight:600;border:1px solid var(--color-border);cursor:pointer;background:transparent;color:var(--color-text);transition:all 0.2s" class="join-item">
                     <span class="material-symbols-rounded" id="icon-autoscroll">play_arrow</span>
                     <span>تمرير تلقائي</span>
                 </button>
-                <button onclick="toggleKioskMode()" id="btn-kiosk" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 600; border: 1px solid var(--color-border); cursor: pointer; background: var(--color-primary); color: var(--color-primary-text); transition: all 0.2s" class="join-item">
+                <button onclick="toggleKioskMode()" id="btn-kiosk" style="display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.5rem 1rem;font-size:0.875rem;font-weight:600;border:1px solid var(--color-border);cursor:pointer;background:var(--color-primary);color:var(--color-primary-foreground);transition:all 0.2s" class="join-item">
                     <span class="material-symbols-rounded" id="icon-kiosk">fullscreen</span>
                     <span>ملء الشاشة</span>
                 </button>
@@ -153,72 +96,66 @@
         </div>
     </div>
 
-    <!-- Overview Statistics Row -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <!-- Total -->
-        <div class="border-r-8 border-primary hover:-translate-y-1 transition-all duration-300" style="background: var(--color-surface); border-radius: 12px; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1)">
-            <div class="card-body p-4 flex flex-row items-center gap-4">
-                <div class="p-3 bg-primary/10 text-primary rounded-2xl shadow-inner">
+        <div class="hover:-translate-y-1 transition-all duration-300 bg-surface rounded-xl shadow-sm" style="border-inline-start:8px solid var(--color-primary)">
+            <div class="p-4 flex flex-row items-center gap-4">
+                <div class="p-3 rounded-2xl shadow-inner" style="background:color-mix(in srgb,var(--color-primary) 10%,transparent);color:var(--color-primary)">
                     <span class="material-symbols-rounded text-3xl">view_list</span>
                 </div>
                 <div>
-                    <div class="text-sm font-semibold" style="color: var(--color-text-secondary)">إجمالي حلقات اليوم</div>
-                    <div class="text-3xl font-black mt-1" style="color: var(--color-text)">@Model.Count</div>
+                    <div class="text-sm font-semibold text-text-secondary">إجمالي حلقات اليوم</div>
+                    <div class="text-3xl font-black mt-1 text-text">@Model.Count</div>
                 </div>
             </div>
         </div>
 
-        <!-- Planned -->
-        <div class="border-r-8 border-warning hover:-translate-y-1 transition-all duration-300" style="background: var(--color-surface); border-radius: 12px; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1)">
-            <div class="card-body p-4 flex flex-row items-center gap-4">
-                <div class="p-3 bg-warning/10 text-warning rounded-2xl shadow-inner">
+        <div class="hover:-translate-y-1 transition-all duration-300 bg-surface rounded-xl shadow-sm" style="border-inline-start:8px solid var(--color-accent)">
+            <div class="p-4 flex flex-row items-center gap-4">
+                <div class="p-3 rounded-2xl shadow-inner" style="background:color-mix(in srgb,var(--color-accent) 10%,transparent);color:var(--color-accent)">
                     <span class="material-symbols-rounded text-3xl">pending_actions</span>
                 </div>
                 <div>
-                    <div class="text-sm font-semibold" style="color: var(--color-text-secondary)">مجدولة / بانتظار البث</div>
-                    <div class="text-3xl font-black mt-1" style="color: var(--color-text)">@Model.Count(e => e.StatusId == EpisodeStatusValues.Planned)</div>
+                    <div class="text-sm font-semibold text-text-secondary">مجدولة / بانتظار البث</div>
+                    <div class="text-3xl font-black mt-1 text-text">@Model.Count(e => e.StatusId == EpisodeStatusValues.Planned)</div>
                 </div>
             </div>
         </div>
 
-        <!-- Executed / Published -->
-        <div class="border-r-8 border-success hover:-translate-y-1 transition-all duration-300" style="background: var(--color-surface); border-radius: 12px; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1)">
-            <div class="card-body p-4 flex flex-row items-center gap-4">
-                <div class="p-3 bg-success/10 text-success rounded-2xl shadow-inner">
+        <div class="hover:-translate-y-1 transition-all duration-300 bg-surface rounded-xl shadow-sm" style="border-inline-start:8px solid var(--color-success)">
+            <div class="p-4 flex flex-row items-center gap-4">
+                <div class="p-3 rounded-2xl shadow-inner" style="background:color-mix(in srgb,var(--color-success) 10%,transparent);color:var(--color-success)">
                     <span class="material-symbols-rounded text-3xl">check_circle</span>
                 </div>
                 <div>
-                    <div class="text-sm font-semibold" style="color: var(--color-text-secondary)">تم التنفيذ والبث</div>
-                    <div class="text-3xl font-black mt-1" style="color: var(--color-text)">@Model.Count(e => e.StatusId == EpisodeStatusValues.Executed || e.StatusId == EpisodeStatusValues.Published || e.StatusId == EpisodeStatusValues.WebsitePublished)</div>
+                    <div class="text-sm font-semibold text-text-secondary">تم التنفيذ والبث</div>
+                    <div class="text-3xl font-black mt-1 text-text">@Model.Count(e => e.StatusId == EpisodeStatusValues.Executed || e.StatusId == EpisodeStatusValues.Published || e.StatusId == EpisodeStatusValues.WebsitePublished)</div>
                 </div>
             </div>
         </div>
 
-        <!-- Cancelled -->
-        <div class="border-r-8 border-error hover:-translate-y-1 transition-all duration-300" style="background: var(--color-surface); border-radius: 12px; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1)">
-            <div class="card-body p-4 flex flex-row items-center gap-4">
-                <div class="p-3 bg-error/10 text-error rounded-2xl shadow-inner">
+        <div class="hover:-translate-y-1 transition-all duration-300 bg-surface rounded-xl shadow-sm" style="border-inline-start:8px solid var(--color-danger)">
+            <div class="p-4 flex flex-row items-center gap-4">
+                <div class="p-3 rounded-2xl shadow-inner" style="background:color-mix(in srgb,var(--color-danger) 10%,transparent);color:var(--color-danger)">
                     <span class="material-symbols-rounded text-3xl">cancel</span>
                 </div>
                 <div>
-                    <div class="text-sm font-semibold" style="color: var(--color-text-secondary)">حلقات ملغاة</div>
-                    <div class="text-3xl font-black mt-1" style="color: var(--color-text)">@Model.Count(e => e.StatusId == EpisodeStatusValues.Cancelled)</div>
+                    <div class="text-sm font-semibold text-text-secondary">حلقات ملغاة</div>
+                    <div class="text-3xl font-black mt-1 text-text">@Model.Count(e => e.StatusId == EpisodeStatusValues.Cancelled)</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Main Schedule Display Area -->
     <div id="liveboard-scroll-area" class="w-full flex-1 overflow-y-auto pr-1">
         @if (!Model.Any())
         {
-            <div class="p-20 text-center flex flex-col items-center justify-center gap-6" style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1)">
-                <div class="w-24 h-24 rounded-full flex items-center justify-center animate-pulse" style="background: var(--color-bg); color: color-mix(in srgb, var(--color-text) 20%, transparent)">
+            <div class="p-20 text-center flex flex-col items-center justify-center gap-6 bg-surface border border-border rounded-xl shadow-sm">
+                <div class="w-24 h-24 rounded-full flex items-center justify-center animate-pulse" style="background:var(--color-bg);color:color-mix(in srgb,var(--color-text) 20%,transparent)">
                     <span class="material-symbols-rounded text-6xl">event_busy</span>
                 </div>
                 <div>
-                    <h3 class="text-2xl font-black" style="color: var(--color-text)">لا توجد حلقات مجدولة لليوم</h3>
-                    <p class="max-w-md mt-2 leading-relaxed" style="color: var(--color-text-secondary)">سيتم عرض الحلقات وتفاصيل الطاقم والضيوف هنا فور جدولتها في النظام لليوم الحالي.</p>
+                    <h3 class="text-2xl font-black text-text">لا توجد حلقات مجدولة لليوم</h3>
+                    <p class="max-w-md mt-2 leading-relaxed text-text-secondary">سيتم عرض الحلقات وتفاصيل الطاقم والضيوف هنا فور جدولتها في النظام لليوم الحالي.</p>
                 </div>
             </div>
         }
@@ -230,15 +167,15 @@
                     var episode = Model[i];
                     var isCancelled = episode.StatusId == EpisodeStatusValues.Cancelled;
                     var isNext = nextEpisode != null && episode.EpisodeId == nextEpisode.EpisodeId;
-                    
-                    var statusColorClass = episode.StatusId switch
+
+                    var borderColor = episode.StatusId switch
                     {
-                        EpisodeStatusValues.Planned => "border-t-warning",
-                        EpisodeStatusValues.Executed => "border-t-info",
-                        EpisodeStatusValues.Published => "border-t-success",
-                        EpisodeStatusValues.WebsitePublished => "border-t-primary",
-                        EpisodeStatusValues.Cancelled => "border-t-error",
-                        _ => "border-t-neutral"
+                        EpisodeStatusValues.Planned => "var(--color-accent)",
+                        EpisodeStatusValues.Executed => "var(--color-info)",
+                        EpisodeStatusValues.Published => "var(--color-success)",
+                        EpisodeStatusValues.WebsitePublished => "var(--color-primary)",
+                        EpisodeStatusValues.Cancelled => "var(--color-danger)",
+                        _ => "var(--color-border)"
                     };
 
                     var displayTime = "--:--";
@@ -251,21 +188,20 @@
                         displayTime = $"{hour12:D2}:{timeVal.Minute:D2} {ampm}";
                     }
 
-                    <div class="border-t-8 @statusColorClass transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl animate-card-in @(isNext ? "active-pulse-glow border-l border-r border-b" : "") @(isCancelled ? "opacity-60" : "")" 
-                         style="background: var(--color-surface); border-radius: 12px; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1); animation-delay: @(i * 70)ms">
-                        <div class="card-body p-6 flex flex-col justify-between gap-4">
-                            <!-- Card Header: Time and Status -->
-                            <div class="flex items-start justify-between gap-2 pb-4" style="border-bottom: 1px solid var(--color-border)">
+                    <div class="transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl animate-card-in @(isNext ? "active-pulse-glow" : "") @(isCancelled ? "opacity-60" : "")"
+                         style="background:var(--color-surface);border-radius:12px;border-top:8px solid @borderColor;@(isNext ? "border-inline:1px solid var(--color-border)" : "box-shadow:var(--shadow-card)") animation-delay:@(i * 70)ms">
+                        <div class="p-6 flex flex-col justify-between gap-4">
+                            <div class="flex items-start justify-between gap-2 pb-4" style="border-bottom:1px solid var(--color-border)">
                                 <div class="flex flex-col gap-1">
                                     <div class="flex items-center gap-2">
-                                        <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; background: color-mix(in srgb, var(--color-text) 10%, transparent); color: var(--color-text)" class="font-mono font-bold text-md py-3 px-3 shadow-md">
+                                        <span style="display:inline-flex;align-items:center;gap:0.25rem;padding:0.375rem 0.75rem;font-size:0.75rem;font-weight:700;border-radius:9999px;background:color-mix(in srgb,var(--color-text) 10%,transparent);color:var(--color-text)">
                                             <span class="material-symbols-rounded text-sm">alarm</span>
                                             @displayTime
                                         </span>
                                         @if (isNext)
                                         {
-                                            <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary)" class="py-3 px-3 font-extrabold text-xs shadow-sm">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                                            <span style="display:inline-flex;align-items:center;gap:0.25rem;padding:0.375rem 0.75rem;font-size:0.75rem;font-weight:700;border-radius:9999px;background:color-mix(in srgb,var(--color-primary) 10%,transparent);color:var(--color-primary)">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
                                                 الحلقة التالية
                                             </span>
                                         }
@@ -275,7 +211,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Custom Status Badge using Shared CSS Variables -->
                                 <div>
                                     @await Html.PartialAsync("_StatusBadge", new StatusBadgeViewModel
                                     {
@@ -294,24 +229,22 @@
                                 </div>
                             </div>
 
-                            <!-- Card Title & Description -->
                             <div class="flex-1">
-                                <h2 class="text-xl font-extrabold flex items-center gap-2 leading-snug" style="color: var(--color-text)">
+                                <h2 class="text-xl font-extrabold flex items-center gap-2 leading-snug text-text">
                                     @episode.EpisodeName
                                 </h2>
                                 @if (!string.IsNullOrWhiteSpace(episode.EpisodeDescription))
                                 {
-                                    <p class="text-sm mt-2 line-clamp-3 leading-relaxed" style="color: var(--color-text-secondary)">
+                                    <p class="text-sm mt-2 line-clamp-3 leading-relaxed text-text-secondary">
                                         @episode.EpisodeDescription
                                     </p>
                                 }
                             </div>
 
-                            <!-- Team / Staff Members -->
                             @if (episode.EmployeeItems.Any())
                             {
                                 <div class="mt-2">
-                                    <div class="text-xs font-bold mb-2.5 flex items-center gap-1" style="color: var(--color-text-muted)">
+                                    <div class="text-xs font-bold mb-2.5 flex items-center gap-1 text-text-muted">
                                         <span class="material-symbols-rounded text-sm text-primary">groups</span>
                                         طاقم العمل:
                                     </div>
@@ -325,7 +258,7 @@
                                                 var r when r.Contains("صوت") || r.Contains("مهندس") || r.Contains("فني") => "equalizer",
                                                 _ => "person"
                                             };
-                                            <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; background: transparent; border: 1px solid var(--color-border); color: var(--color-text)" class="text-xs font-semibold shadow-sm">
+                                            <span style="display:inline-flex;align-items:center;gap:0.25rem;padding:0.375rem 0.75rem;font-size:0.75rem;font-weight:700;border-radius:9999px;background:transparent;border:1px solid var(--color-border);color:var(--color-text)">
                                                 <span class="material-symbols-rounded text-xs text-primary">@iconName</span>
                                                 <span class="opacity-70">@emp.StaffRoleName:</span>
                                                 <span class="font-bold">@emp.FullName</span>
@@ -335,18 +268,17 @@
                                 </div>
                             }
 
-                            <!-- Guests & Correspondents -->
                             @if (episode.GuestItems.Any() || episode.CorrespondentItems.Any())
                             {
-                                <div class="mt-2 pt-4" style="border-top: 1px solid var(--color-border)">
+                                <div class="mt-2 pt-4" style="border-top:1px solid var(--color-border)">
                                     <div class="flex flex-col gap-2.5">
                                         @if (episode.GuestItems.Any())
                                         {
                                             <div class="flex items-center gap-2 flex-wrap">
-                                                <span class="text-xs font-bold" style="color: var(--color-text-muted)">الضيوف:</span>
+                                                <span class="text-xs font-bold text-text-muted">الضيوف:</span>
                                                 @foreach (var guest in episode.GuestItems)
                                                 {
-                                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; background: color-mix(in srgb, var(--color-secondary) 10%, transparent); color: var(--color-secondary)" class="py-2 px-2.5 shadow-sm font-semibold text-xs">
+                                                    <span style="display:inline-flex;align-items:center;gap:0.25rem;padding:0.375rem 0.75rem;font-size:0.75rem;font-weight:700;border-radius:9999px;background:color-mix(in srgb,var(--color-info) 10%,transparent);color:var(--color-info)">
                                                         <span class="material-symbols-rounded text-xs">person</span>
                                                         @guest.Name
                                                     </span>
@@ -357,10 +289,10 @@
                                         @if (episode.CorrespondentItems.Any())
                                         {
                                             <div class="flex items-center gap-2 flex-wrap">
-                                                <span class="text-xs font-bold" style="color: var(--color-text-muted)">المراسلون:</span>
+                                                <span class="text-xs font-bold text-text-muted">المراسلون:</span>
                                                 @foreach (var corr in episode.CorrespondentItems)
                                                 {
-                                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; background: color-mix(in srgb, var(--color-accent) 10%, transparent); color: var(--color-accent)" class="py-2 px-2.5 shadow-sm font-semibold text-xs">
+                                                    <span style="display:inline-flex;align-items:center;gap:0.25rem;padding:0.375rem 0.75rem;font-size:0.75rem;font-weight:700;border-radius:9999px;background:color-mix(in srgb,var(--color-accent) 10%,transparent);color:var(--color-accent)">
                                                         <span class="material-symbols-rounded text-xs">record_voice_over</span>
                                                         @corr.FullName
                                                         @if (corr.HostingTime.HasValue)
@@ -375,21 +307,20 @@
                                 </div>
                             }
 
-                            <!-- Special Notes & Cancellation reasons -->
                             @if (!string.IsNullOrWhiteSpace(episode.SpecialNotes) || (isCancelled && !string.IsNullOrWhiteSpace(episode.CancellationReason)))
                             {
-                                <div class="mt-2 pt-4" style="border-top: 1px solid var(--color-border)">
+                                <div class="mt-2 pt-4" style="border-top:1px solid var(--color-border)">
                                     @if (!string.IsNullOrWhiteSpace(episode.SpecialNotes))
                                     {
-                                        <div class="alert alert-info py-2.5 px-4 text-xs rounded-xl gap-2 mt-1 shadow-sm">
-                                            <span class="material-symbols-rounded text-sm">info</span>
+                                        <div class="flex items-start gap-2 py-2.5 px-4 text-xs rounded-xl bg-info-subtle text-info">
+                                            <span class="material-symbols-rounded text-sm shrink-0 mt-0.5">info</span>
                                             <span><strong>ملاحظات:</strong> @episode.SpecialNotes</span>
                                         </div>
                                     }
                                     @if (isCancelled && !string.IsNullOrWhiteSpace(episode.CancellationReason))
                                     {
-                                        <div class="alert alert-error py-2.5 px-4 text-xs rounded-xl gap-2 mt-1 shadow-sm text-error-content">
-                                            <span class="material-symbols-rounded text-sm">warning</span>
+                                        <div class="flex items-start gap-2 py-2.5 px-4 text-xs rounded-xl bg-danger-subtle text-danger mt-1">
+                                            <span class="material-symbols-rounded text-sm shrink-0 mt-0.5">warning</span>
                                             <span><strong>سبب الإلغاء:</strong> @episode.CancellationReason</span>
                                         </div>
                                     }
@@ -408,86 +339,60 @@
         let autoScrollInterval = null;
         let isAutoScrolling = false;
 
-        // Digital Clock & Date Update
         function updateClock() {
             const now = new Date();
-            
-            // Format time in 12-hour system with Arabic Fusha AM/PM
             let hours = now.getHours();
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
             const ampm = hours >= 12 ? 'مساءً' : 'صباحاً';
-            hours = hours % 12;
-            hours = hours ? hours : 12;
+            hours = hours % 12 || 12;
             const strHours = String(hours).padStart(2, '0');
-            
             const clockEl = document.getElementById('live-clock');
             if (clockEl) clockEl.textContent = `${strHours}:${minutes}:${seconds} ${ampm}`;
-
-            // Format date in Arabic Fusha using Gregorian calendar
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const dateEl = document.getElementById('live-date');
             if (dateEl) dateEl.textContent = now.toLocaleDateString('ar-EG', options);
         }
 
-        // Kiosk/Fullscreen Mode Toggling
+        function updateConnectionBadge(el, bg, color, text) {
+            if (!el) return;
+            el.style.background = bg;
+            el.style.color = color;
+            var txt = el.querySelector('#connection-status-text, span:last-child');
+            if (txt) txt.textContent = text;
+        }
+
         function toggleKioskMode() {
             const body = document.body;
             const icon = document.getElementById('icon-kiosk');
             const btnText = document.querySelector('#btn-kiosk span:not(.material-symbols-rounded)');
-            
             body.classList.toggle('kiosk-active');
-
             if (body.classList.contains('kiosk-active')) {
-                // Try browser native fullscreen
-                if (document.documentElement.requestFullscreen) {
-                    document.documentElement.requestFullscreen().catch(err => console.log('Fullscreen failed:', err));
-                }
+                if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
                 if (icon) icon.textContent = 'fullscreen_exit';
                 if (btnText) btnText.textContent = 'خروج من الوضع الكامل';
             } else {
-                if (document.exitFullscreen && document.fullscreenElement) {
-                    document.exitFullscreen().catch(err => console.log('Exit fullscreen failed:', err));
-                }
+                if (document.exitFullscreen && document.fullscreenElement) document.exitFullscreen().catch(() => {});
                 if (icon) icon.textContent = 'fullscreen';
                 if (btnText) btnText.textContent = 'ملء الشاشة';
             }
         }
 
-        // Auto Scroll mechanism
         function toggleAutoScroll() {
             const scrollArea = document.getElementById('liveboard-scroll-area');
             const icon = document.getElementById('icon-autoscroll');
             const btnText = document.querySelector('#btn-autoscroll span:not(.material-symbols-rounded)');
-            
             if (!scrollArea) return;
-
             isAutoScrolling = !isAutoScrolling;
-
             if (isAutoScrolling) {
                 if (icon) icon.textContent = 'pause';
                 if (btnText) btnText.textContent = 'إيقاف التمرير';
-                
-                let scrollDirection = 1; // 1 = down, -1 = up
-                const scrollSpeed = 1; // pixels per step
-                
+                let direction = 1;
                 autoScrollInterval = setInterval(() => {
-                    const currentScroll = scrollArea.scrollTop;
-                    const maxScroll = scrollArea.scrollHeight - scrollArea.clientHeight;
-
-                    if (maxScroll <= 0) return; // No scroll needed
-
-                    if (currentScroll >= maxScroll - 5 && scrollDirection === 1) {
-                        scrollDirection = -1;
-                    } else if (currentScroll <= 5 && scrollDirection === -1) {
-                        scrollDirection = 1;
-                    }
-
-                    scrollArea.scrollBy({
-                        top: scrollSpeed * scrollDirection,
-                        behavior: 'auto'
-                    });
-                }, 40); // Smooth 25fps scroll steps
+                    if (scrollArea.scrollTop >= scrollArea.scrollHeight - scrollArea.clientHeight - 5) direction = -1;
+                    else if (scrollArea.scrollTop <= 5) direction = 1;
+                    scrollArea.scrollBy({ top: direction, behavior: 'auto' });
+                }, 40);
             } else {
                 if (icon) icon.textContent = 'play_arrow';
                 if (btnText) btnText.textContent = 'تمرير تلقائي';
@@ -496,107 +401,63 @@
             }
         }
 
-        // Live refresh using DOMParser to avoid complete screen flicker
         async function refreshDashboard() {
             try {
-                const response = await fetch(window.location.href);
-                if (response.ok) {
-                    const html = await response.text();
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    
-                    const currentWrapper = document.getElementById('liveboard-content-wrapper');
-                    const newWrapper = doc.getElementById('liveboard-content-wrapper');
-                    
-                    if (currentWrapper && newWrapper) {
-                        const currentKioskState = document.body.classList.contains('kiosk-active');
-                        const currentScrollTop = document.getElementById('liveboard-scroll-area')?.scrollTop || 0;
-
-                        currentWrapper.innerHTML = newWrapper.innerHTML;
-                        
-                        if (currentKioskState) {
-                            document.body.classList.add('kiosk-active');
-                        }
-                        
-                        const newScrollArea = document.getElementById('liveboard-scroll-area');
-                        if (newScrollArea) {
-                            newScrollArea.scrollTop = currentScrollTop;
-                        }
-                        
-                        if (isAutoScrolling) {
-                            isAutoScrolling = false;
-                            toggleAutoScroll();
-                        }
+                const resp = await fetch(window.location.href);
+                if (resp.ok) {
+                    const html = await resp.text();
+                    const doc = new DOMParser().parseFromString(html, 'text/html');
+                    const cur = document.getElementById('liveboard-content-wrapper');
+                    const nw = doc.getElementById('liveboard-content-wrapper');
+                    if (cur && nw) {
+                        const kiosk = document.body.classList.contains('kiosk-active');
+                        const top = document.getElementById('liveboard-scroll-area')?.scrollTop || 0;
+                        cur.innerHTML = nw.innerHTML;
+                        if (kiosk) document.body.classList.add('kiosk-active');
+                        const sa = document.getElementById('liveboard-scroll-area');
+                        if (sa) sa.scrollTop = top;
+                        if (isAutoScrolling) { isAutoScrolling = false; toggleAutoScroll(); }
                     }
                 }
-            } catch (err) {
-                console.error('Error refreshing dashboard:', err);
-            }
+            } catch (e) { console.error('Refresh error:', e); }
         }
 
-        // Initialize connection status & SignalR binding
         function initSignalR() {
-            const ind = document.getElementById('connection-indicator');
-            const txt = document.getElementById('connection-status-text');
-
             if (typeof signalR === 'undefined') {
-                if (ind) {
-                    ind.className = 'badge badge-warning gap-1.5 py-3 px-4 font-semibold text-sm';
-                    if (txt) txt.textContent = 'التحديث التلقائي (غير مفعل)';
-                }
+                const el = document.getElementById('connection-indicator');
+                if (el) { el.style.background = 'color-mix(in srgb, var(--color-accent) 10%, transparent)'; el.style.color = 'var(--color-accent)'; document.getElementById('connection-status-text').textContent = 'التحديث التلقائي (غير مفعل)'; }
                 return;
             }
-
-            const connection = new signalR.HubConnectionBuilder()
-                .withUrl('/hubs/notifications')
-                .withAutomaticReconnect([0, 1000, 3000, 5000, 10000, 30000])
-                .build();
-
-            connection.on('NotificationReceived', function (notification) {
-                if (notification.type === 'EpisodeStatusChanged' || notification.type === 'AuditLogCreated') {
-                    console.log('Liveboard: SignalR event received. Refreshing...', notification);
-                    refreshDashboard();
-                }
+            const conn = new signalR.HubConnectionBuilder().withUrl('/hubs/notifications').withAutomaticReconnect([0, 1000, 3000, 5000, 10000, 30000]).build();
+            conn.on('NotificationReceived', function (n) {
+                if (n.type === 'EpisodeStatusChanged' || n.type === 'AuditLogCreated') { console.log('SignalR:', n); refreshDashboard(); }
             });
-
-            connection.start()
-                .then(() => {
-                    console.log('Liveboard: SignalR connected');
-                    if (ind) ind.className = 'badge badge-success gap-1.5 py-3 px-4 font-semibold text-sm';
-                    if (txt) txt.textContent = 'متصل بالبث الفوري';
-                })
-                .catch(err => {
-                    console.error('Liveboard: SignalR connection error:', err);
-                    if (ind) ind.className = 'badge badge-error gap-1.5 py-3 px-4 font-semibold text-sm';
-                    if (txt) txt.textContent = 'فشل الاتصال بالبث المباشر';
-                });
-
-            connection.onreconnecting(() => {
-                if (ind) ind.className = 'badge badge-warning gap-1.5 py-3 px-4 font-semibold text-sm';
-                if (txt) txt.textContent = 'إعادة الاتصال بالبث...';
+            conn.start().then(() => {
+                const el = document.getElementById('connection-indicator');
+                if (el) { el.style.background = 'color-mix(in srgb, var(--color-success) 10%, transparent)'; el.style.color = 'var(--color-success)'; document.getElementById('connection-status-text').textContent = 'متصل بالبث الفوري'; }
+            }).catch(() => {
+                const el = document.getElementById('connection-indicator');
+                if (el) { el.style.background = 'color-mix(in srgb, var(--color-danger) 10%, transparent)'; el.style.color = 'var(--color-danger)'; document.getElementById('connection-status-text').textContent = 'فشل الاتصال بالبث المباشر'; }
             });
-
-            connection.onreconnected(() => {
-                if (ind) ind.className = 'badge badge-success gap-1.5 py-3 px-4 font-semibold text-sm';
-                if (txt) txt.textContent = 'تمت إعادة الاتصال';
+            conn.onreconnecting(() => {
+                const el = document.getElementById('connection-indicator');
+                if (el) { el.style.background = 'color-mix(in srgb, var(--color-accent) 10%, transparent)'; el.style.color = 'var(--color-accent)'; document.getElementById('connection-status-text').textContent = 'إعادة الاتصال بالبث...'; }
+            });
+            conn.onreconnected(() => {
+                const el = document.getElementById('connection-indicator');
+                if (el) { el.style.background = 'color-mix(in srgb, var(--color-success) 10%, transparent)'; el.style.color = 'var(--color-success)'; document.getElementById('connection-status-text').textContent = 'تمت إعادة الاتصال'; }
                 refreshDashboard();
             });
-
-            connection.onclose(() => {
-                if (ind) ind.className = 'badge badge-error gap-1.5 py-3 px-4 font-semibold text-sm';
-                if (txt) txt.textContent = 'انقطع الاتصال بالخادم';
+            conn.onclose(() => {
+                const el = document.getElementById('connection-indicator');
+                if (el) { el.style.background = 'color-mix(in srgb, var(--color-danger) 10%, transparent)'; el.style.color = 'var(--color-danger)'; document.getElementById('connection-status-text').textContent = 'انقطع الاتصال بالخادم'; }
             });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Clock
             setInterval(updateClock, 1000);
             updateClock();
-            
-            // SignalR
             initSignalR();
-
-            // Fallback polling (every 60 seconds) in case of SignalR dropouts
             setInterval(refreshDashboard, 60000);
         });
     </script>

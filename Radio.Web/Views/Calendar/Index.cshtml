@@ -6,28 +6,33 @@
     var year = ViewBag.Year;
     var month = ViewBag.Month;
 
-    ViewData["HeaderActions"] = "<div class='flex items-center gap-2'><button onclick='goMonth(-1)' class='inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all' style='color:var(--color-text-secondary)'><span class='material-symbols-rounded'>chevron_right</span></button><span id='monthLabel' class='font-bold text-lg' style='color:var(--color-text)'></span><button onclick='goMonth(1)' class='inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all' style='color:var(--color-text-secondary)'><span class='material-symbols-rounded'>chevron_left</span></button><button onclick='goToday()' class='inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition-all' style='background:var(--color-primary);color:var(--color-primary-foreground)'>اليوم</button></div>";
+    ViewData["HeaderActions"] = "<div class='flex items-center gap-2' role='navigation' aria-label='التنقل في التقويم'><button onclick='goMonth(-1)' class='inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all text-text-secondary' aria-label='الشهر السابق'><span class='material-symbols-rounded'>chevron_right</span></button><span id='monthLabel' class='font-bold text-lg text-text'></span><button onclick='goMonth(1)' class='inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all text-text-secondary' aria-label='الشهر التالي'><span class='material-symbols-rounded'>chevron_left</span></button><button onclick='goToday()' class='inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition-all bg-primary text-primary-foreground' aria-label='العودة إلى اليوم الحالي'>اليوم</button></div>";
 }
 
 <partial name="_PageHeader" />
 
-<div class="rounded-2xl border" style="background: var(--color-surface); border-color: var(--color-border)">
+<div class="rounded-2xl border bg-surface" style="border-color:var(--color-border)">
     <div class="p-4">
-        <div id="calendarGrid" class="grid grid-cols-7 gap-px overflow-hidden rounded-xl" style="background: var(--color-border)"></div>
+        <div id="calendarGrid" class="grid grid-cols-7 gap-px overflow-hidden rounded-xl" style="background:var(--color-border)" role="grid" aria-label="تقويم شهري"></div>
     </div>
 </div>
- 
-<dialog id="episodeModal" class="p-0 bg-transparent border-0" style="max-width: 28rem;">
-    <div class="rounded-2xl border w-full p-6 shadow-xl" style="background: var(--color-surface); border-color: var(--color-border)">
-        <h3 class="font-bold text-lg mb-4" id="modalDate" style="color: var(--color-text)"></h3>
-        <div id="modalEvents" class="space-y-2"></div>
+
+<dialog id="episodeModal" class="p-0 bg-transparent border-0" style="max-width:28rem" aria-labelledby="modalDate">
+    <div class="rounded-2xl border w-full p-6 shadow-xl bg-surface" style="border-color:var(--color-border)">
+        <h3 class="font-bold text-lg mb-4 text-text" id="modalDate"></h3>
+        <div id="modalEvents" class="space-y-2" role="list"></div>
         <div class="mt-4 text-left">
-            <button onclick="closeModal()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-sm transition-all"
-                    style="color: var(--color-text-secondary)">إغلاق</button>
+            <button onclick="closeModal()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-sm transition-all text-text-secondary">إغلاق</button>
         </div>
     </div>
 </dialog>
- 
+
+<style>
+    .cal-cell { background: var(--color-surface); }
+    .cal-cell:hover { background: var(--color-bg-hover) !important; }
+    .cal-event-link:hover { background: var(--color-bg-hover) !important; }
+</style>
+
 @section Scripts {
     <script>
         const monthNames = [
@@ -37,7 +42,7 @@
         const dayNames = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
         let currentYear = @year, currentMonth = @month;
         let allEvents = [];
- 
+
         function closeModal() {
             document.getElementById('episodeModal').close();
         }
@@ -46,44 +51,40 @@
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
             document.getElementById('monthLabel').textContent = monthNames[currentMonth - 1] + ' ' + currentYear;
- 
+
             dayNames.forEach(d => {
                 const h = document.createElement('div');
-                h.className = 'text-center py-2 text-sm font-bold';
-                h.style.color = 'var(--color-text-muted)';
+                h.className = 'text-center py-2 text-sm font-bold text-text-muted';
+                h.setAttribute('role', 'columnheader');
                 grid.appendChild(h);
             });
- 
+
             const firstDay = new Date(currentYear, currentMonth - 1, 1).getDay();
             const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
             const today = new Date();
             const isCurrentMonth = today.getFullYear() === currentYear && today.getMonth() === currentMonth - 1;
             const todayDate = today.getDate();
- 
+
             for (let i = 0; i < firstDay; i++) {
                 const e = document.createElement('div');
-                e.className = 'min-h-[80px] p-1';
-                e.style.background = 'var(--color-surface)';
+                e.className = 'min-h-[80px] p-1 cal-cell';
                 grid.appendChild(e);
             }
- 
+
             for (let d = 1; d <= daysInMonth; d++) {
                 const cell = document.createElement('div');
-                cell.className = 'min-h-[80px] p-1 cursor-pointer transition-colors';
-                cell.style.background = 'var(--color-surface)';
-                cell.onmouseover = () => cell.style.background = 'var(--color-surface)';
-                cell.onmouseout = () => cell.style.background = 'var(--color-surface)';
+                cell.className = 'min-h-[80px] p-1 cursor-pointer cal-cell';
+                cell.setAttribute('role', 'gridcell');
                 if (isCurrentMonth && d === todayDate) cell.style.boxShadow = 'inset 0 0 0 2px var(--color-primary)';
- 
+
                 const num = document.createElement('div');
-                num.className = 'text-xs font-bold mb-0.5';
-                num.style.color = 'var(--color-text-muted)';
+                num.className = 'text-xs font-bold mb-0.5 text-text-muted';
                 num.textContent = d;
                 cell.appendChild(num);
- 
+
                 const dateStr = currentYear + '-' + String(currentMonth).padStart(2, '0') + '-' + String(d).padStart(2, '0');
                 const dayEvents = allEvents.filter(e => e.start && e.start.startsWith(dateStr));
- 
+
                 dayEvents.forEach(ev => {
                     const el = document.createElement('a');
                     el.href = ev.url;
@@ -91,7 +92,7 @@
                     el.textContent = ev.title;
                     cell.appendChild(el);
                 });
- 
+
                 if (dayEvents.length > 3) {
                     const more = document.createElement('button');
                     more.className = 'text-xs font-bold';
@@ -102,17 +103,17 @@
                 } else if (dayEvents.length > 0) {
                     cell.addEventListener('click', () => showDayEvents(dateStr));
                 }
- 
+
                 grid.appendChild(cell);
             }
         }
- 
+
         function showDayEvents(dateStr) {
             const dayEvents = allEvents.filter(e => e.start && e.start.startsWith(dateStr));
             const parts = dateStr.split('-');
             const d = new Date(parts[0], parts[1] - 1, parts[2]);
             document.getElementById('modalDate').textContent = dayNames[d.getDay()] + '، ' + parts[2] + ' ' + monthNames[parts[1] - 1] + ' ' + parts[0];
- 
+
             const container = document.getElementById('modalEvents');
             container.innerHTML = '';
             if (dayEvents.length === 0) {
@@ -122,34 +123,32 @@
                     const time = ev.start ? ev.start.split('T')[1]?.substring(0, 5) : '';
                     const el = document.createElement('a');
                     el.href = ev.url;
-                    el.className = 'flex items-center gap-3 p-2 rounded-lg transition-colors';
+                    el.className = 'flex items-center gap-3 p-2 rounded-lg cal-event-link';
                     el.style.color = 'var(--color-text)';
-                    el.onmouseover = () => el.style.background = 'var(--color-surface)';
-                    el.onmouseout = () => el.style.background = 'transparent';
                     el.innerHTML = '<span class="w-2.5 h-2.5 rounded-full shrink-0 status-badge ' + ev.statusCss + '"></span>' +
                         '<span class="font-semibold text-sm flex-1">' + ev.title + '</span>' +
-                        '<span class="text-xs" style="color:var(--color-text-muted)" dir="ltr">' + time + '</span>' +
+                        '<span class="text-xs text-text-muted" dir="ltr">' + time + '</span>' +
                         '<span class="status-badge ' + ev.statusCss + ' text-[10px] py-0.5 px-2">' + (ev.status || '') + '</span>';
                     container.appendChild(el);
                 });
             }
             document.getElementById('episodeModal').showModal();
         }
- 
+
         function goMonth(delta) {
             currentMonth += delta;
             if (currentMonth > 12) { currentMonth = 1; currentYear++; }
             if (currentMonth < 1) { currentMonth = 12; currentYear--; }
             loadEvents();
         }
- 
+
         function goToday() {
             const t = new Date();
             currentYear = t.getFullYear();
             currentMonth = t.getMonth() + 1;
             loadEvents();
         }
- 
+
         function loadEvents() {
             fetch('/Calendar/GetEvents?year=' + currentYear + '&month=' + currentMonth)
                 .then(r => r.json())
@@ -158,7 +157,7 @@
                     renderCalendar();
                 });
         }
- 
+
         document.addEventListener('DOMContentLoaded', loadEvents);
     </script>
 }
