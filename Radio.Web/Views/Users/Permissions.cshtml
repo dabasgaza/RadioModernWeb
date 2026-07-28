@@ -84,7 +84,7 @@
                                             <input type="radio" name="override_@p.SystemName" value="None" 
                                                    checked="@(p.OverrideType == "None")"
                                                    class="sr-only" onchange="onOverrideChanged('@p.SystemName')" />
-                                            <span class="select-none text-[10px]" style="color: var(--color-text-tertiary);">موروث</span>
+                                            <span class="select-none text-[10px]" style="color: var(--color-text-muted);">موروث</span>
                                         </label>
 
                                         <!-- Direct Grant -->
@@ -93,7 +93,7 @@
                                             <input type="radio" name="override_@p.SystemName" value="Grant" 
                                                    checked="@(p.OverrideType == "Grant")"
                                                    class="sr-only" onchange="onOverrideChanged('@p.SystemName')" />
-                                            <span class="select-none text-[10px]" style="color: var(--color-text-tertiary);">سماح فردي</span>
+                                            <span class="select-none text-[10px]" style="color: var(--color-text-muted);">سماح فردي</span>
                                         </label>
 
                                         <!-- Direct Deny -->
@@ -102,7 +102,7 @@
                                             <input type="radio" name="override_@p.SystemName" value="Deny" 
                                                    checked="@(p.OverrideType == "Deny")"
                                                    class="sr-only" onchange="onOverrideChanged('@p.SystemName')" />
-                                            <span class="select-none text-[10px]" style="color: var(--color-text-tertiary);">حظر فردي</span>
+                                            <span class="select-none text-[10px]" style="color: var(--color-text-muted);">حظر فردي</span>
                                         </label>
 
                                     </div>

@@ -4,42 +4,42 @@
     var pageTitle = ViewData["Title"]?.ToString() ?? "";
 }
 
-<div class="relative overflow-hidden rounded-2xl border border-sys-outline-variant bg-sys-surface-bright p-6 mb-8">
-    <div class="absolute -top-20 -left-20 w-48 h-48 rounded-full blur-3xl pointer-events-none z-0 bg-sys-primary/10"></div>
-    <div class="absolute -bottom-20 -right-20 w-48 h-48 rounded-full blur-3xl pointer-events-none z-0 bg-sys-tertiary/10"></div>
+<div class="relative overflow-hidden rounded-2xl border border-border bg-surface p-6 mb-8">
+    <div class="absolute -top-20 -left-20 w-48 h-48 rounded-full blur-3xl pointer-events-none z-0" style="background:color-mix(in srgb, var(--color-primary) 10%, transparent)"></div>
+    <div class="absolute -bottom-20 -right-20 w-48 h-48 rounded-full blur-3xl pointer-events-none z-0" style="background:color-mix(in srgb, var(--color-accent) 10%, transparent)"></div>
     <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div class="flex items-start gap-4">
             @if (ViewData["HeaderIcon"] != null)
             {
-                <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 bg-sys-primary-container text-sys-on-primary-container">
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style="background:color-mix(in srgb, var(--color-primary) 10%, transparent);color:var(--color-primary)">
                     <span class="material-symbols-rounded text-2xl">@ViewData["HeaderIcon"]</span>
                 </div>
             }
             <div>
-                <nav class="text-xs mb-1.5 text-sys-on-surface-variant" aria-label="Breadcrumb">
+                <nav class="text-xs mb-1.5 text-text-secondary" aria-label="Breadcrumb">
                     <ul class="flex items-center gap-1.5">
                         <li>
-                            <a href="/" class="hover:text-sys-primary transition-colors inline-flex items-center gap-1 text-sys-on-surface-variant">
+                            <a href="/" class="hover:text-primary transition-colors inline-flex items-center gap-1 text-text-muted">
                                 <span class="material-symbols-rounded text-sm">home</span>
                                 الرئيسية
                             </a>
                         </li>
-                        <li class="text-sys-outline">
+                        <li class="text-border">
                             <span class="material-symbols-rounded text-xs">chevron_left</span>
                         </li>
-                        <li class="font-semibold text-sys-on-surface">@pageTitle</li>
+                        <li class="font-semibold text-text">@pageTitle</li>
                     </ul>
                 </nav>
-                <h1 class="text-xl font-black flex items-center gap-2 flex-wrap text-sys-on-surface">
+                <h1 class="text-xl font-black flex items-center gap-2 flex-wrap text-text">
                     @if (ViewData["HeaderIcon"] != null)
                     {
-                        <span class="material-symbols-rounded text-2xl text-sys-primary">@ViewData["HeaderIcon"]</span>
+                        <span class="material-symbols-rounded text-2xl text-primary">@ViewData["HeaderIcon"]</span>
                     }
                     @pageTitle
                 </h1>
                 @if (ViewData["HeaderDescription"] != null)
                 {
-                    <p class="text-sm mt-1 text-sys-on-surface-variant">@ViewData["HeaderDescription"]</p>
+                    <p class="text-sm mt-1 text-text-secondary">@ViewData["HeaderDescription"]</p>
                 }
             </div>
         </div>

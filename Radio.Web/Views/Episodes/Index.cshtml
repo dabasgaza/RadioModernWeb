@@ -7,6 +7,11 @@
     ViewData["HeaderDescription"] = "متابعة دورة حياة الحلقات من الإعداد والجدولة حتى التنفيذ والنشر";
     ViewBag.EntityName = "الحلقات";
 
+    if (User.HasPermission(AppPermissions.EpisodesCreate))
+    {
+        ViewData["HeaderActions"] = "<a href='/Episodes/Create' class='btn btn-primary rounded-xl gap-2'><span class='material-symbols-rounded'>add</span>حلقة جديدة</a>";
+    }
+
     var totalCount = Model.Episodes.Count();
     var scheduledCount = Model.Episodes.Count(e => e.StatusId == 0);
     var executedCount = Model.Episodes.Count(e => e.StatusId == 1);
@@ -148,90 +153,65 @@ else
 }
 
 <!-- Modal: Execute Episode -->
-<dialog id="executeModal" class="modal modal-bottom sm:modal-middle">
-    <div class="modal-box rounded-2xl p-6 border border-border/60 max-w-lg bg-surface shadow-float">
-        <form method="dialog">
-            <button class="btn btn-sm btn-circle btn-ghost absolute left-4 top-4" aria-label="إغلاق">✕</button>
-        </form>
-        <div class="flex items-center gap-3 mb-5">
-            <div class="w-10 h-10 rounded-xl bg-success-soft text-success flex items-center justify-center">
-                <span class="material-symbols-rounded">task_alt</span>
-            </div>
-            <div>
-                <h3 class="type-title-lg text-ink">تسجيل تنفيذ الحلقة</h3>
-                <p class="type-caption-md text-ink-muted">تأكيد تنفيذ البث وإدخال الملاحظات الفنية</p>
-            </div>
+@{
+    ViewBag.ModalId = "executeModal";
+    ViewBag.ModalTitle = "تسجيل تنفيذ الحلقة";
+    ViewBag.ModalMessage = "تأكيد تنفيذ البث وإدخال الملاحظات الفنية";
+    ViewBag.ModalIcon = "task_alt";
+    ViewBag.ModalIconBg = "var(--color-success-subtle)";
+    ViewBag.ModalIconColor = "var(--color-success)";
+    ViewBag.ModalConfirmText = "تأكيد التسجيل";
+    ViewBag.ModalFormAction = "";
+    ViewBag.ModalBody = Html.Raw(@"<div class=""space-y-4"">
+        <div>
+            <label class=""text-xs font-semibold text-text-muted block mb-1.5"">ملاحظات التنفيذ</label>
+            <textarea name=""executionNotes"" rows=""3""
+                      class=""w-full bg-surface-hover border border-border rounded-lg px-3 py-2.5 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-subtle transition-all""
+                      placeholder=""ملاحظات حول أداء الحلقة أو البث...""></textarea>
         </div>
-        <form id="executeForm" method="post" action="">
-            @Html.AntiForgeryToken()
-            <div class="space-y-4 mb-6">
-                <div>
-                    <label class="type-label-md text-ink-muted block mb-1.5">ملاحظات التنفيذ</label>
-                    <textarea name="executionNotes" rows="3"
-                              class="w-full bg-surface-2 border border-border/60 rounded-lg px-3 py-2.5 text-sm text-ink placeholder:text-ink-soft focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all"
-                              placeholder="ملاحظات حول أداء الحلقة أو البث..."></textarea>
-                </div>
-                <div>
-                    <label class="type-label-md text-ink-muted block mb-1.5">مشكلات واجهت التنفيذ</label>
-                    <textarea name="issuesEncountered" rows="2"
-                              class="w-full bg-surface-2 border border-border/60 rounded-lg px-3 py-2.5 text-sm text-ink placeholder:text-ink-soft focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all"
-                              placeholder="المشاكل الفنية أو الصوتية إن وجدت..."></textarea>
-                </div>
-                <div>
-                    <label class="type-label-md text-ink-muted block mb-1.5">المدة الفعلية (بالدقائق) *</label>
-                    <input type="number" name="durationMinutes" min="1" max="720" value="60" required
-                           class="w-full bg-surface-2 border border-border/60 rounded-lg px-3 py-2.5 text-sm text-ink focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all" />
-                </div>
-            </div>
-            <div class="flex items-center justify-end gap-2">
-                <button type="button" class="btn btn-ghost rounded-lg px-5" onclick="closeModal('executeModal')">إلغاء</button>
-                <button type="submit" class="btn btn-success rounded-lg px-6">تأكيد التسجيل</button>
-            </div>
-        </form>
-    </div>
-    <form method="dialog" class="modal-backdrop"><button onclick="closeModal('executeModal')">إغلاق</button></form>
-</dialog>
+        <div>
+            <label class=""text-xs font-semibold text-text-muted block mb-1.5"">مشكلات واجهت التنفيذ</label>
+            <textarea name=""issuesEncountered"" rows=""2""
+                      class=""w-full bg-surface-hover border border-border rounded-lg px-3 py-2.5 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-subtle transition-all""
+                      placeholder=""المشاكل الفنية أو الصوتية إن وجدت...""></textarea>
+        </div>
+        <div>
+            <label class=""text-xs font-semibold text-text-muted block mb-1.5"">المدة الفعلية (بالدقائق) *</label>
+            <input type=""number"" name=""durationMinutes"" min=""1"" max=""720"" value=""60"" required
+                   class=""w-full bg-surface-hover border border-border rounded-lg px-3 py-2.5 text-sm text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-subtle transition-all"" />
+        </div>
+    </div>");
+}
+<partial name="_ConfirmModal" />
 
 <!-- Modal: Cancel Episode -->
-<dialog id="cancelModal" class="modal modal-bottom sm:modal-middle">
-    <div class="modal-box rounded-2xl p-6 border border-border/60 max-w-lg bg-surface shadow-float">
-        <form method="dialog">
-            <button class="btn btn-sm btn-circle btn-ghost absolute left-4 top-4" aria-label="إغلاق">✕</button>
-        </form>
-        <div class="flex items-center gap-3 mb-5">
-            <div class="w-10 h-10 rounded-xl bg-danger-soft text-danger flex items-center justify-center">
-                <span class="material-symbols-rounded">warning</span>
-            </div>
-            <div>
-                <h3 class="type-title-lg text-ink">إلغاء الحلقة الإذاعية</h3>
-                <p class="type-caption-md text-ink-muted">هل أنت متأكد من إلغاء الحلقة المجدولة؟</p>
-            </div>
-        </div>
-        <form id="cancelForm" method="post" action="">
-            @Html.AntiForgeryToken()
-            <div class="mb-6">
-                <label class="type-label-md text-ink-muted block mb-1.5">سبب الإلغاء *</label>
-                <textarea name="reason" rows="3" required
-                          class="w-full bg-surface-2 border border-border/60 rounded-lg px-3 py-2.5 text-sm text-ink placeholder:text-ink-soft focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all"
-                          placeholder="يرجى كتابة سبب الإلغاء بالتفصيل..."></textarea>
-            </div>
-            <div class="flex items-center justify-end gap-2">
-                <button type="button" class="btn btn-ghost rounded-lg px-5" onclick="closeModal('cancelModal')">تراجع</button>
-                <button type="submit" class="btn btn-error rounded-lg px-6">تأكيد الإلغاء</button>
-            </div>
-        </form>
-    </div>
-    <form method="dialog" class="modal-backdrop"><button onclick="closeModal('cancelModal')">إغلاق</button></form>
-</dialog>
+@{
+    ViewBag.ModalId = "cancelModal";
+    ViewBag.ModalTitle = "إلغاء الحلقة الإذاعية";
+    ViewBag.ModalMessage = "هل أنت متأكد من إلغاء الحلقة المجدولة؟";
+    ViewBag.ModalIcon = "warning";
+    ViewBag.ModalIconBg = "var(--color-danger-subtle)";
+    ViewBag.ModalIconColor = "var(--color-danger)";
+    ViewBag.ModalConfirmText = "تأكيد الإلغاء";
+    ViewBag.ModalFormAction = "";
+    ViewBag.ModalDestructive = true;
+    ViewBag.ModalBody = Html.Raw(@"<div>
+        <label class=""text-xs font-semibold text-text-muted block mb-1.5"">سبب الإلغاء *</label>
+        <textarea name=""reason"" rows=""3"" required
+                  class=""w-full bg-surface-hover border border-border rounded-lg px-3 py-2.5 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-subtle transition-all""
+                  placeholder=""يرجى كتابة سبب الإلغاء بالتفصيل...""></textarea>
+    </div>");
+}
+<partial name="_ConfirmModal" />
 
 @section Scripts {
     <script>
         function openExecuteModal(id, name) {
-            document.getElementById('executeForm').action = '/Episodes/Execute/' + id;
+            document.getElementById('executeModalForm').action = '/Episodes/Execute/' + id;
             document.getElementById('executeModal').showModal();
         }
         function openCancelModal(id, name) {
-            document.getElementById('cancelForm').action = '/Episodes/Cancel/' + id;
+            document.getElementById('cancelModalForm').action = '/Episodes/Cancel/' + id;
             document.getElementById('cancelModal').showModal();
         }
         function closeModal(id) {
@@ -248,6 +228,6 @@ else
         2 => ("var(--status-published-bg)", "var(--status-published-text)", "share"),
         3 => ("var(--status-website-bg)", "var(--status-website-text)", "language"),
         4 => ("var(--status-cancelled-bg)", "var(--status-cancelled-text)", "cancel"),
-        _ => ("var(--color-surface-3)", "var(--color-text-3)", "help")
+        _ => ("var(--color-bg-hover)", "var(--color-text-secondary)", "help")
     };
 }

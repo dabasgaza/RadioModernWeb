@@ -30,10 +30,10 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach (var g in Model)
             {
-                <div class="bg-white rounded-2xl border border-border/80 shadow-sm overflow-hidden group hover:border-primary/40 hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+                <div class="bg-surface rounded-2xl border border-border/80 shadow-sm overflow-hidden group hover:border-primary/40 hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
                     <div class="p-6 space-y-4">
                         <div class="flex items-center gap-3.5">
-                            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary to-primary-hover text-white font-bold text-sm flex items-center justify-center shadow-md shadow-primary/20 shrink-0">
+                            <div class="w-12 h-12 rounded-2xl text-primary-foreground font-bold text-sm flex items-center justify-center shadow-md shadow-primary/20 shrink-0" style="background:var(--color-primary)">
                                 @(g.FullName.Length > 0 ? g.FullName[0].ToString() : "G")
                             </div>
                             <div class="min-w-0">

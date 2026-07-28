@@ -15,13 +15,13 @@
 
 <div class="wf-card p-4 mb-8">
     <div class="flex flex-col md:flex-row gap-4 items-center">
-        <div class="relative w-full">
-            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-lg" style="color: var(--color-text-tertiary);">search</span>
-            <input type="text" id="roleSearch" placeholder="بحث باسم الدور أو الوصف..."
-                   class="w-full h-10 rounded-lg pr-10 pl-3 text-sm font-medium focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 transition-all"
-                   style="background: var(--color-surface-3); border: 1px solid var(--color-border); color: var(--color-text);" />
-        </div>
-        <div class="text-xs font-medium whitespace-nowrap shrink-0" style="color: var(--color-text-tertiary);">
+        @{
+            ViewBag.SearchValue = "";
+            ViewBag.SearchPlaceholder = "ابحث عن دور...";
+            ViewBag.SearchHideCard = true;
+        }
+        <partial name="_SearchBar" />
+        <div class="text-xs font-medium whitespace-nowrap shrink-0" style="color: var(--color-text-muted);">
             إجمالي الأدوار: <span class="font-bold" style="color: var(--color-primary);" id="roleCount">@Model.Count</span>
         </div>
     </div>
@@ -51,31 +51,31 @@ else
                     <div class="flex items-start justify-between mb-4">
                         <div class="flex items-center gap-3">
                             <div class="w-11 h-11 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 transition-all"
-                                 style="background: var(--color-primary-light); color: var(--color-primary);">
+                                 style="background: var(--color-primary-subtle); color: var(--color-primary);">
                                 @r.RoleName.Substring(0, Math.Min(2, r.RoleName.Length)).ToUpper()
                             </div>
                             <div>
                                 <h3 class="font-bold text-sm transition-colors" style="color: var(--color-text);">@r.RoleName</h3>
-                                <span class="text-[10px] font-medium" style="color: var(--color-text-tertiary);">معرف الدور: #@r.RoleId</span>
+                                <span class="text-[10px] font-medium" style="color: var(--color-text-muted);">معرف الدور: #@r.RoleId</span>
                             </div>
                         </div>
                         @if (isAdmin)
                         {
                             <span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full"
-                                  style="background: var(--color-primary-light); color: var(--color-primary); border: 1px solid var(--color-primary);">
+                                  style="background: var(--color-primary-subtle); color: var(--color-primary); border: 1px solid var(--color-primary);">
                                 <span class="material-symbols-rounded text-sm">security</span>
                                 مدير النظام
                             </span>
                         }
                     </div>
 
-                    <p class="text-xs leading-relaxed line-clamp-3 mb-5 min-h-[4rem]" style="color: var(--color-text-tertiary);">
+                    <p class="text-xs leading-relaxed line-clamp-3 mb-5 min-h-[4rem]" style="color: var(--color-text-muted);">
                         @(r.RoleDescription ?? "لا يوجد وصف مخصص لهذا الدور الوظيفي بعد. يمكنك إضافة وصف لتعريف مهام الدور بشكل أوضح.")
                     </p>
 
                     <div class="pt-4" style="border-top: 1px solid var(--color-border);">
                         <div class="flex items-center justify-between text-xs">
-                            <span class="flex items-center gap-1" style="color: var(--color-text-tertiary);">
+                            <span class="flex items-center gap-1" style="color: var(--color-text-muted);">
                                 <span class="material-symbols-rounded text-sm">key</span>
                                 التحكم:
                             </span>
@@ -92,14 +92,12 @@ else
                     <div class="flex items-center gap-1">
                         @if (User.HasPermission(AppPermissions.UserManage))
                         {
-                            <a href="/Roles/Clone/@r.RoleId" class="p-2 rounded-lg transition-colors" style="color: var(--color-text-3);" title="نسخ الدور وصلاحياته" aria-label="نسخ الدور وصلاحياته"
-                               onmouseover="this.style.background='var(--color-surface-3)'; this.style.color='var(--color-text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--color-text-3)'">
+                            <a href="/Roles/Clone/@r.RoleId" class="p-2 rounded-lg transition-colors text-text-secondary hover:bg-bg-hover hover:text-text" title="نسخ الدور وصلاحياته" aria-label="نسخ الدور وصلاحياته">
                                 <span class="material-symbols-rounded text-lg">content_copy</span>
                             </a>
                             @if (!isAdmin)
                             {
-                                <a href="/Roles/Edit/@r.RoleId" class="p-2 rounded-lg transition-colors" style="color: var(--color-text-3);" title="تعديل بيانات الدور" aria-label="تعديل بيانات الدور"
-                                   onmouseover="this.style.background='var(--color-primary-light)'; this.style.color='var(--color-primary)'" onmouseout="this.style.background='transparent'; this.style.color='var(--color-text-3)'">
+                                <a href="/Roles/Edit/@r.RoleId" class="p-2 rounded-lg transition-colors text-text-secondary hover:bg-primary-subtle hover:text-primary" title="تعديل بيانات الدور" aria-label="تعديل بيانات الدور">
                                     <span class="material-symbols-rounded text-lg">edit</span>
                                 </a>
                             }
@@ -109,8 +107,7 @@ else
                     {
                         <form method="post" action="/Roles/Delete/@r.RoleId" class="inline" data-confirm="هل أنت متأكد من حذف هذا الدور «@r.RoleName» نهائياً؟ لا يمكن التراجع عن هذا الإجراء وسيتم سحب صلاحيات جميع الموظفين المرتبطين به.">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="p-2 rounded-lg transition-colors" style="color: var(--color-text-3);" title="حذف الدور" aria-label="حذف الدور"
-                                    onmouseover="this.style.background='var(--color-danger-container)'; this.style.color='var(--color-danger)'" onmouseout="this.style.background='transparent'; this.style.color='var(--color-text-3)'">
+                        <button type="submit" class="p-2 rounded-lg transition-colors text-text-secondary hover:bg-danger-subtle hover:text-danger" title="حذف الدور" aria-label="حذف الدور">
                                 <span class="material-symbols-rounded text-lg">delete</span>
                             </button>
                         </form>
@@ -123,11 +120,17 @@ else
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('roleSearch');
+        const searchInput = document.querySelector('input[name="search"]');
         if (searchInput) {
+            const searchForm = searchInput.closest('form');
+            if (searchForm) {
+                searchForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                });
+            }
             searchInput.addEventListener('input', function () {
                 const query = this.value.toLowerCase().trim();
-                const cards = document.querySelectorAll('.role-card, [data-name]');
+                const cards = document.querySelectorAll('[data-name]');
                 let visibleCount = 0;
 
                 cards.forEach(card => {

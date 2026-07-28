@@ -1,0 +1,53 @@
+@* _ConfirmModal — reusable confirmation modal dialog *@
+@{
+    var modalId = ViewBag.ModalId as string ?? "confirmModal";
+    var title = ViewBag.ModalTitle as string ?? "تأكيد الإجراء";
+    var message = ViewBag.ModalMessage as string ?? "هل أنت متأكد من المتابعة؟";
+    var icon = ViewBag.ModalIcon as string ?? "help";
+    var iconBg = ViewBag.ModalIconBg as string ?? "var(--color-primary-subtle)";
+    var iconColor = ViewBag.ModalIconColor as string ?? "var(--color-primary)";
+    var confirmText = ViewBag.ModalConfirmText as string ?? "تأكيد";
+    var cancelText = ViewBag.ModalCancelText as string ?? "إلغاء";
+    var formAction = ViewBag.ModalFormAction as string ?? "";
+    var isDestructive = ViewBag.ModalDestructive as bool? ?? false;
+    var bodyHtml = ViewBag.ModalBody as Microsoft.AspNetCore.Html.IHtmlContent;
+    var showClose = ViewBag.ModalShowClose as bool? ?? true;
+    var btnClass = isDestructive ? "btn btn-error" : "btn btn-primary";
+    var titleId = $"{modalId}Title";
+    var descId = $"{modalId}Desc";
+}
+
+<dialog id="@modalId" class="modal modal-bottom sm:modal-middle" aria-labelledby="@titleId" aria-describedby="@descId">
+    <div class="modal-box rounded-2xl p-6 border border-border max-w-lg bg-surface shadow-modal">
+        @if (showClose)
+        {
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute left-4 top-4" aria-label="إغلاق">&times;</button>
+            </form>
+        }
+        <div class="flex items-center gap-3 mb-5">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background: @iconBg; color: @iconColor;">
+                <span class="material-symbols-rounded text-xl">@icon</span>
+            </div>
+            <div>
+                <h3 class="font-bold text-text" id="@titleId">@title</h3>
+                <p class="text-xs text-text-muted" id="@descId">@message</p>
+            </div>
+        </div>
+
+        <form id="@(modalId)Form" method="post" action="@formAction">
+            @Html.AntiForgeryToken()
+            @if (bodyHtml != null)
+            {
+                <div class="space-y-4 mb-6">
+                    @bodyHtml
+                </div>
+            }
+            <div class="flex items-center justify-end gap-2">
+                <button type="button" class="btn btn-ghost rounded-xl px-5" onclick="document.getElementById('@modalId').close()">@cancelText</button>
+                <button type="submit" class="@btnClass rounded-xl px-6">@confirmText</button>
+            </div>
+        </form>
+    </div>
+    <form method="dialog" class="modal-backdrop"><button>@cancelText</button></form>
+</dialog>

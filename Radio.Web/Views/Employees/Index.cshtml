@@ -36,11 +36,11 @@ else
         <div class="overflow-x-auto">
             <table class="table w-full text-sm">
                 <thead>
-                    <tr style="background: var(--color-surface-3)">
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">الاسم</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">الدور</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">ملاحظات</th>
-                        <th class="px-6 py-4 text-center font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">إجراءات</th>
+                    <tr style="background: var(--color-bg-hover)">
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">الاسم</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">الدور</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider hidden md:table-cell" style="color: var(--color-text-secondary)">ملاحظات</th>
+                        <th class="px-6 py-4 text-center font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">إجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,9 +53,9 @@ else
                                 {
                                     <span class="inline-flex items-center justify-center font-bold text-xs rounded-lg px-3 py-1.5" style="background: color-mix(in srgb, var(--color-info) 10%, transparent); color: var(--color-info)">@e.StaffRoleName</span>
                                 }
-                                else { <span style="color: var(--color-text-tertiary)">—</span> }
+                                else { <span style="color: var(--color-text-muted)">—</span> }
                             </td>
-                            <td class="px-6 py-4" style="color: var(--color-text-3)">@(e.Notes ?? "—")</td>
+                            <td class="px-6 py-4 hidden md:table-cell" style="color: var(--color-text-secondary)">@(e.Notes ?? "—")</td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if (User.HasPermission(AppPermissions.StaffManage))
                                 {

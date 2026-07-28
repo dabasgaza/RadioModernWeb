@@ -6,7 +6,7 @@
     var year = ViewBag.Year;
     var month = ViewBag.Month;
 
-    ViewData["HeaderActions"] = "<div class='flex items-center gap-2'><button onclick='goMonth(-1)' class='inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all' style='color:var(--color-text-secondary)'><span class='material-symbols-rounded'>chevron_right</span></button><span id='monthLabel' class='font-bold text-lg' style='color:var(--color-text)'></span><button onclick='goMonth(1)' class='inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all' style='color:var(--color-text-secondary)'><span class='material-symbols-rounded'>chevron_left</span></button><button onclick='goToday()' class='inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition-all' style='background:var(--color-primary);color:white'>اليوم</button></div>";
+    ViewData["HeaderActions"] = "<div class='flex items-center gap-2'><button onclick='goMonth(-1)' class='inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all' style='color:var(--color-text-secondary)'><span class='material-symbols-rounded'>chevron_right</span></button><span id='monthLabel' class='font-bold text-lg' style='color:var(--color-text)'></span><button onclick='goMonth(1)' class='inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all' style='color:var(--color-text-secondary)'><span class='material-symbols-rounded'>chevron_left</span></button><button onclick='goToday()' class='inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition-all' style='background:var(--color-primary);color:var(--color-primary-foreground)'>اليوم</button></div>";
 }
 
 <partial name="_PageHeader" />
@@ -50,7 +50,7 @@
             dayNames.forEach(d => {
                 const h = document.createElement('div');
                 h.className = 'text-center py-2 text-sm font-bold';
-                h.style.color = 'var(--color-text-tertiary)';
+                h.style.color = 'var(--color-text-muted)';
                 grid.appendChild(h);
             });
  
@@ -63,7 +63,7 @@
             for (let i = 0; i < firstDay; i++) {
                 const e = document.createElement('div');
                 e.className = 'min-h-[80px] p-1';
-                e.style.background = 'var(--color-bg-alt)';
+                e.style.background = 'var(--color-surface)';
                 grid.appendChild(e);
             }
  
@@ -71,13 +71,13 @@
                 const cell = document.createElement('div');
                 cell.className = 'min-h-[80px] p-1 cursor-pointer transition-colors';
                 cell.style.background = 'var(--color-surface)';
-                cell.onmouseover = () => cell.style.background = 'var(--color-bg-alt)';
+                cell.onmouseover = () => cell.style.background = 'var(--color-surface)';
                 cell.onmouseout = () => cell.style.background = 'var(--color-surface)';
                 if (isCurrentMonth && d === todayDate) cell.style.boxShadow = 'inset 0 0 0 2px var(--color-primary)';
  
                 const num = document.createElement('div');
                 num.className = 'text-xs font-bold mb-0.5';
-                num.style.color = 'var(--color-text-tertiary)';
+                num.style.color = 'var(--color-text-muted)';
                 num.textContent = d;
                 cell.appendChild(num);
  
@@ -116,7 +116,7 @@
             const container = document.getElementById('modalEvents');
             container.innerHTML = '';
             if (dayEvents.length === 0) {
-                container.innerHTML = '<p style="color:var(--color-text-tertiary);font-size:0.875rem">لا توجد حلقات في هذا اليوم</p>';
+                container.innerHTML = '<p style="color:var(--color-text-muted);font-size:0.875rem">لا توجد حلقات في هذا اليوم</p>';
             } else {
                 dayEvents.forEach(ev => {
                     const time = ev.start ? ev.start.split('T')[1]?.substring(0, 5) : '';
@@ -124,11 +124,11 @@
                     el.href = ev.url;
                     el.className = 'flex items-center gap-3 p-2 rounded-lg transition-colors';
                     el.style.color = 'var(--color-text)';
-                    el.onmouseover = () => el.style.background = 'var(--color-bg-alt)';
+                    el.onmouseover = () => el.style.background = 'var(--color-surface)';
                     el.onmouseout = () => el.style.background = 'transparent';
                     el.innerHTML = '<span class="w-2.5 h-2.5 rounded-full shrink-0 status-badge ' + ev.statusCss + '"></span>' +
                         '<span class="font-semibold text-sm flex-1">' + ev.title + '</span>' +
-                        '<span class="text-xs" style="color:var(--color-text-tertiary)" dir="ltr">' + time + '</span>' +
+                        '<span class="text-xs" style="color:var(--color-text-muted)" dir="ltr">' + time + '</span>' +
                         '<span class="status-badge ' + ev.statusCss + ' text-[10px] py-0.5 px-2">' + (ev.status || '') + '</span>';
                     container.appendChild(el);
                 });

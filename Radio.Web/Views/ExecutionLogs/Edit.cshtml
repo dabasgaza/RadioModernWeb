@@ -1,4 +1,5 @@
 @model ExecutionLogDto
+@using Microsoft.AspNetCore.Html
 @{
     ViewData["Title"] = "تعديل سجل التنفيذ";
     ViewBag.IsEdit = true;
@@ -13,7 +14,7 @@
 
 <partial name="_PageHeader" />
 
-<form method="post" action="/ExecutionLogs/Edit/@Model.ExecutionLogId" class="max-w-2xl mx-auto">
+<form method="post" action="/ExecutionLogs/Edit/@Model.ExecutionLogId" class="max-w-2xl">
     @Html.AntiForgeryToken()
     <input type="hidden" name="ExecutionLogId" value="@Model.ExecutionLogId" />
     <input type="hidden" name="EpisodeId" value="@Model.EpisodeId" />
@@ -21,61 +22,46 @@
 
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="rounded-xl p-4 mb-6 font-semibold text-sm"
-             style="background: color-mix(in srgb, var(--color-error) 10%, transparent); border: 1px solid color-mix(in srgb, var(--color-error) 20%, transparent); color: var(--color-error)"></div>
+        <div asp-validation-summary="All" class="rounded-xl p-4 mb-6 font-semibold text-sm bg-danger-subtle text-danger border border-danger-subtle"></div>
     }
 
-    <div class="rounded-2xl border" style="background: var(--color-surface); border-color: var(--color-border)">
-        <div class="p-5 space-y-4">
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-rounded" style="color: var(--color-success)">play_circle</span>
-                <h3 class="font-bold" style="color: var(--color-text)">تفاصيل التنفيذ</h3>
-            </div>
-            <div>
-                <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">مدة التنفيذ (بالدقائق)</label>
-                <div class="relative">
-                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">schedule</span>
-                    <input type="number" name="DurationMinutes" value="@Model.DurationMinutes" min="1" max="720"
-                           class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
-                           style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
-                           placeholder="مثال: 60" />
-                </div>
-            </div>
-            <div>
-                <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">ملاحظات التنفيذ</label>
-                <div class="relative">
-                    <span class="material-symbols-rounded absolute right-3 pointer-events-none text-lg"
-                          style="top: 1rem; transform: none; color: var(--color-text-tertiary)">notes</span>
-                    <textarea name="ExecutionNotes" rows="4"
-                              class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
-                              style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
-                              placeholder="أي ملاحظات حول عملية التنفيذ…">@Model.ExecutionNotes</textarea>
-                </div>
-            </div>
-            <div>
-                <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">المشاكل التي واجهت التنفيذ</label>
-                <div class="relative">
-                    <span class="material-symbols-rounded absolute right-3 pointer-events-none text-lg"
-                          style="top: 1rem; transform: none; color: var(--color-text-tertiary)">warning</span>
-                    <textarea name="IssuesEncountered" rows="4"
-                              class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
-                              style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
-                              placeholder="أي مشاكل تقنية أو إدارية أثناء التنفيذ…">@Model.IssuesEncountered</textarea>
-                </div>
-            </div>
+    <div class="bg-surface border border-border rounded-2xl p-5" style="border-color:var(--color-border)">
+        @{
+            ViewBag.SectionIcon = "play_circle"; ViewBag.SectionTitle = "تفاصيل التنفيذ";
+        }
+        <partial name="_SectionHeader" />
+
+        <div class="space-y-4">
+            @{
+                ViewBag.FieldLabel = "مدة التنفيذ (بالدقائق)"; ViewBag.FieldName = "DurationMinutes";
+                ViewBag.FieldIcon = "schedule"; ViewBag.FieldValue = Model.DurationMinutes.ToString();
+                ViewBag.FieldType = "number"; ViewBag.FieldPlaceholder = "مثال: 60";
+                ViewBag.FieldAttrs = "min=\"1\" max=\"720\"";
+            }
+            <partial name="_FormField" />
+
+            @{
+                ViewBag.FieldLabel = "ملاحظات التنفيذ"; ViewBag.FieldName = "ExecutionNotes";
+                ViewBag.FieldIcon = "notes"; ViewBag.FieldValue = Model.ExecutionNotes;
+                ViewBag.FieldType = "textarea"; ViewBag.FieldPlaceholder = "أي ملاحظات حول عملية التنفيذ…";
+            }
+            <partial name="_FormField" />
+
+            @{
+                ViewBag.FieldLabel = "المشاكل التي واجهت التنفيذ"; ViewBag.FieldName = "IssuesEncountered";
+                ViewBag.FieldIcon = "warning"; ViewBag.FieldValue = Model.IssuesEncountered;
+                ViewBag.FieldType = "textarea"; ViewBag.FieldPlaceholder = "أي مشاكل تقنية أو إدارية أثناء التنفيذ…";
+            }
+            <partial name="_FormField" />
         </div>
     </div>
 
     <div class="flex items-center justify-end gap-2 mt-6">
-        <a href="/ExecutionLogs" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all"
-           style="color: var(--color-text-secondary)">
-            <span class="material-symbols-rounded text-lg">arrow_forward</span>
-            رجوع
+        <a href="/ExecutionLogs" class="btn btn-ghost rounded-xl gap-2">
+            <span class="material-symbols-rounded">arrow_forward</span>رجوع
         </a>
-        <button type="submit" class="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl font-bold text-sm shadow-sm transition-all"
-                style="background: var(--color-primary); color: white">
-            <span class="material-symbols-rounded text-lg">save</span>
-            حفظ التعديلات
+        <button type="submit" class="btn btn-primary rounded-xl gap-2">
+            <span class="material-symbols-rounded">save</span>حفظ التعديلات
         </button>
     </div>
 </form>

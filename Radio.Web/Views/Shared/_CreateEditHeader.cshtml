@@ -12,21 +12,21 @@
 <div class="mb-6">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-            <div class="text-xs font-medium text-sys-on-surface-variant mb-1 flex items-center gap-1.5">
-                <a href="/" class="hover:text-sys-primary transition-colors">الرئيسية</a>
-                <span class="text-sys-outline">·</span>
-                <a href="@entityUrl" class="hover:text-sys-primary transition-colors">@entityName</a>
-                <span class="text-sys-outline">·</span>
-                <span class="text-sys-on-surface">@(isEdit ? "تعديل" : "جديد")</span>
+            <div class="text-xs font-medium text-text-secondary mb-1 flex items-center gap-1.5">
+                <a href="/" class="hover:text-primary transition-colors text-text-muted">الرئيسية</a>
+                <span class="text-border">·</span>
+                <a href="@entityUrl" class="hover:text-primary transition-colors text-text-muted">@entityName</a>
+                <span class="text-border">·</span>
+                <span class="text-text">@(isEdit ? "تعديل" : "جديد")</span>
             </div>
-            <h1 class="text-xl font-bold text-sys-on-surface flex items-center gap-2 mt-1">
-                <span class="material-symbols-rounded text-lg text-sys-primary">@icon</span>
+            <h1 class="text-xl font-bold text-text flex items-center gap-2 mt-1">
+                <span class="material-symbols-rounded text-lg text-primary">@icon</span>
                 @title
             </h1>
-            <p class="text-sm text-sys-on-surface-variant mt-0.5">@description</p>
+            <p class="text-sm text-text-secondary mt-0.5">@description</p>
         </div>
         <div class="flex items-center gap-2">
-            <a href="@backUrl" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-sys-on-surface-variant hover:text-sys-on-surface hover:bg-sys-surface-container-high rounded-lg transition-colors">
+            <a href="@backUrl" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-text-secondary hover:text-text hover:bg-surface-hover rounded-lg transition-colors">
                 <span class="material-symbols-rounded text-lg">arrow_forward</span>
                 @backText
             </a>

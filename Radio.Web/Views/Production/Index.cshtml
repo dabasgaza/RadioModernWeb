@@ -17,7 +17,7 @@
 
 <div class="rounded-xl p-5 mb-6" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
     <div class="relative w-full">
-        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-4)] pointer-events-none">search</span>
+        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none">search</span>
         <input type="text" id="productionSearch" placeholder="بحث في جميع الحلقات..."
                class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
                style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);" />
@@ -34,7 +34,7 @@
                 <div class="rounded-xl flex flex-col h-full" style="background: var(--color-bg); border: 1px solid var(--color-border);">
                     <div class="flex items-center justify-between px-4 py-2.5 rounded-t-xl" style="border-bottom: 1px solid var(--color-border); background: var(--color-bg-elevated); color: var(--color-text);">
                         <h3 class="font-bold text-sm">@col.Value.Title</h3>
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg" style="background: var(--color-bg); color: var(--color-text-3);">
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg" style="background: var(--color-bg); color: var(--color-text-secondary);">
                             @col.Value.Cards.Count
                         </span>
                     </div>
@@ -46,29 +46,29 @@
                                  data-search="@card.EpisodeName @card.ProgramName @card.GuestNames"
                                  onclick="window.location='/Episodes/Details/@card.EpisodeId'">
                                 <h4 class="font-bold text-sm text-[var(--color-text)] leading-snug line-clamp-2">@card.EpisodeName</h4>
-                                <p class="text-xs text-[var(--color-text-4)] truncate flex items-center gap-1 mt-1">
+                                <p class="text-xs text-[var(--color-text-muted)] truncate flex items-center gap-1 mt-1">
                                     <span class="material-symbols-rounded text-xs">radio</span>
                                     @card.ProgramName
                                 </p>
                                 @if (!string.IsNullOrEmpty(card.GuestNames))
                                 {
-                                    <p class="text-xs text-[var(--color-text-4)] truncate flex items-center gap-1 mt-0.5">
+                                    <p class="text-xs text-[var(--color-text-muted)] truncate flex items-center gap-1 mt-0.5">
                                         <span class="material-symbols-rounded text-xs">person</span>
                                         @card.GuestNames
                                     </p>
                                 }
                                 <div class="flex items-center justify-between mt-2 pt-1.5" style="border-top: 1px solid var(--color-border);">
-                                    <span class="text-[11px] text-[var(--color-text-4)] flex items-center gap-0.5" dir="ltr">
+                                    <span class="text-[11px] text-[var(--color-text-muted)] flex items-center gap-0.5" dir="ltr">
                                         <span class="material-symbols-rounded text-[14px]">schedule</span>
                                         @(card.ScheduledTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")
                                     </span>
-                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg" style="background: var(--color-primary-light); color: var(--color-primary);">@card.StatusDisplay</span>
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg" style="background: var(--color-primary-subtle); color: var(--color-primary);">@card.StatusDisplay</span>
                                 </div>
                             </div>
                         }
                         @if (!col.Value.Cards.Any())
                         {
-                            <div class="text-center py-10 text-[var(--color-text-4)]">
+                            <div class="text-center py-10 text-[var(--color-text-muted)]">
                                 <span class="material-symbols-rounded text-3xl">inbox</span>
                                 <p class="text-xs mt-1">لا توجد حلقات</p>
                             </div>

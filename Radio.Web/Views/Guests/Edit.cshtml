@@ -1,4 +1,5 @@
 @model GuestDto
+@using Microsoft.AspNetCore.Html
 @{
     ViewData["Title"] = Model.GuestId == 0 ? "ضيف جديد" : "تعديل ضيف";
     var isEdit = Model.GuestId != 0;
@@ -20,94 +21,76 @@
 
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="rounded-xl p-4 mb-6 font-semibold text-sm"
-             style="background: var(--color-danger-light); border: 1px solid var(--color-danger); color: var(--color-danger);"></div>
+        <div asp-validation-summary="All" class="rounded-xl p-4 mb-6 font-semibold text-sm bg-danger-subtle text-danger border border-danger-subtle"></div>
     }
 
-    <div class="rounded-xl p-6" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
-        <div class="flex items-center gap-2 mb-4 pb-3" style="border-bottom: 1px solid var(--color-border);">
-            <span class="material-symbols-rounded text-[var(--color-primary)]">person</span>
-            <h3 class="font-bold text-[var(--color-text)]">الملف التعريفي للضيف</h3>
-        </div>
+    <div class="bg-surface border border-border rounded-2xl p-6" style="border-color:var(--color-border)">
+        @{
+            ViewBag.SectionIcon = "person";
+            ViewBag.SectionTitle = "الملف التعريفي للضيف";
+        }
+        <partial name="_SectionHeader" />
+
         <div class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="label text-sm font-medium mb-1.5 block text-[var(--color-text-3)]">الاسم الكامل *</label>
-                    <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-4)] pointer-events-none text-lg">person</span>
-                        <input type="text" name="FullName" value="@Model.FullName"
-                               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
-                               style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
-                               required placeholder="مثال: د. محمد علي" />
-                    </div>
-                </div>
-                <div>
-                    <label class="label text-sm font-medium mb-1.5 block text-[var(--color-text-3)]">الجنس</label>
-                    <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-4)] pointer-events-none text-lg">wc</span>
-                        <select name="Gender"
-                                class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all appearance-none"
-                                style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);">
-                            <option value="">— اختر —</option>
-                            <option value="ذكر" selected="@(Model.Gender == "ذكر")">ذكر</option>
-                            <option value="أنثى" selected="@(Model.Gender == "أنثى")">أنثى</option>
-                        </select>
-                    </div>
-                </div>
+                @{
+                    ViewBag.FieldLabel = "الاسم الكامل"; ViewBag.FieldName = "FullName";
+                    ViewBag.FieldIcon = "person"; ViewBag.FieldValue = Model.FullName;
+                    ViewBag.FieldRequired = true; ViewBag.FieldPlaceholder = "مثال: د. محمد علي";
+                }
+                <partial name="_FormField" />
+
+                @{
+                    ViewBag.FieldLabel = "الجنس"; ViewBag.FieldName = "Gender";
+                    ViewBag.FieldType = "select"; ViewBag.FieldIcon = "wc";
+                    ViewBag.FieldOptions = new List<SelectListItem>
+                    {
+                        new() { Value = "", Text = "— اختر —", Selected = string.IsNullOrEmpty(Model.Gender) },
+                        new() { Value = "ذكر", Text = "ذكر", Selected = Model.Gender == "ذكر" },
+                        new() { Value = "أنثى", Text = "أنثى", Selected = Model.Gender == "أنثى" },
+                    };
+                }
+                <partial name="_FormField" />
             </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="label text-sm font-medium mb-1.5 block text-[var(--color-text-3)]">الجهة / المؤسسة</label>
-                    <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-4)] pointer-events-none text-lg">business</span>
-                        <input type="text" name="Organization" value="@Model.Organization"
-                               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
-                               style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
-                               placeholder="مثال: وزارة الاقتصاد" />
-                    </div>
-                </div>
-                <div>
-                    <label class="label text-sm font-medium mb-1.5 block text-[var(--color-text-3)]">رقم الهاتف</label>
-                    <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-4)] pointer-events-none text-lg">phone</span>
-                        <input type="text" name="PhoneNumber" value="@Model.PhoneNumber"
-                               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
-                               style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
-                               placeholder="مثال: +966500000000" />
-                    </div>
-                </div>
+                @{
+                    ViewBag.FieldLabel = "الجهة / المؤسسة"; ViewBag.FieldName = "Organization";
+                    ViewBag.FieldIcon = "business"; ViewBag.FieldValue = Model.Organization;
+                    ViewBag.FieldPlaceholder = "مثال: وزارة الاقتصاد"; ViewBag.FieldType = "text";
+                }
+                <partial name="_FormField" />
+
+                @{
+                    ViewBag.FieldLabel = "رقم الهاتف"; ViewBag.FieldName = "PhoneNumber";
+                    ViewBag.FieldIcon = "phone"; ViewBag.FieldValue = Model.PhoneNumber;
+                    ViewBag.FieldPlaceholder = "مثال: +966500000000"; ViewBag.FieldType = "text";
+                }
+                <partial name="_FormField" />
             </div>
-            <div>
-                <label class="label text-sm font-medium mb-1.5 block text-[var(--color-text-3)]">البريد الإلكتروني</label>
-                <div class="relative">
-                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-4)] pointer-events-none text-lg">email</span>
-                    <input type="email" name="EmailAddress" value="@Model.EmailAddress"
-                           class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
-                           style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
-                           placeholder="مثال: guest@example.com" />
-                </div>
-            </div>
-            <div>
-                <label class="label text-sm font-medium mb-1.5 block text-[var(--color-text-3)]">نبذة شخصية (Bio)</label>
-                <div class="relative">
-                    <span class="material-symbols-rounded absolute right-3 pointer-events-none text-lg text-[var(--color-text-4)]" style="top:1rem;transform:none">info</span>
-                    <textarea name="Bio" rows="4"
-                              class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
-                              style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
-                              placeholder="أدخل نبذة مختصرة عن مؤهلات الضيف وخبراته المهنية...">@Model.Bio</textarea>
-                </div>
-            </div>
+
+            @{
+                ViewBag.FieldLabel = "البريد الإلكتروني"; ViewBag.FieldName = "EmailAddress";
+                ViewBag.FieldIcon = "email"; ViewBag.FieldValue = Model.EmailAddress;
+                ViewBag.FieldType = "email"; ViewBag.FieldPlaceholder = "مثال: guest@example.com";
+            }
+            <partial name="_FormField" />
+
+            @{
+                ViewBag.FieldLabel = "نبذة شخصية (Bio)"; ViewBag.FieldName = "Bio";
+                ViewBag.FieldIcon = "info"; ViewBag.FieldValue = Model.Bio;
+                ViewBag.FieldType = "textarea"; ViewBag.FieldPlaceholder = "أدخل نبذة مختصرة عن مؤهلات الضيف وخبراته المهنية...";
+            }
+            <partial name="_FormField" />
         </div>
     </div>
 
     <div class="flex items-center justify-end gap-2 mt-6">
         <a href="/Guests" class="btn btn-ghost rounded-xl gap-2">
-            <span class="material-symbols-rounded">cancel</span>
-            إلغاء
+            <span class="material-symbols-rounded">cancel</span>إلغاء
         </a>
         <button type="submit" class="btn btn-primary rounded-xl gap-2">
-            <span class="material-symbols-rounded">save</span>
-            حفظ البيانات
+            <span class="material-symbols-rounded">save</span>حفظ البيانات
         </button>
     </div>
 </form>

@@ -13,7 +13,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <div class="text-2xl font-black" style="color: var(--color-text)">@Model.Summary.TotalLogs</div>
-                <div class="text-xs font-bold mt-1" style="color: var(--color-text-tertiary)">إجمالي السجلات</div>
+                <div class="text-xs font-bold mt-1" style="color: var(--color-text-muted)">إجمالي السجلات</div>
             </div>
             <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary)">
                 <span class="material-symbols-rounded">list_alt</span>
@@ -25,7 +25,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <div class="text-2xl font-black" style="color: var(--color-text)">@Model.Summary.TotalErrors</div>
-                <div class="text-xs font-bold mt-1" style="color: var(--color-text-tertiary)">إجمالي الأخطاء</div>
+                <div class="text-xs font-bold mt-1" style="color: var(--color-text-muted)">إجمالي الأخطاء</div>
             </div>
             <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: color-mix(in srgb, var(--color-error) 10%, transparent); color: var(--color-error)">
                 <span class="material-symbols-rounded">error</span>
@@ -37,7 +37,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <div class="text-2xl font-black" style="color: var(--color-text)">@Model.Summary.TotalWarnings</div>
-                <div class="text-xs font-bold mt-1" style="color: var(--color-text-tertiary)">التحذيرات</div>
+                <div class="text-xs font-bold mt-1" style="color: var(--color-text-muted)">التحذيرات</div>
             </div>
             <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: color-mix(in srgb, var(--color-warning) 10%, transparent); color: var(--color-warning)">
                 <span class="material-symbols-rounded">warning</span>
@@ -49,7 +49,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <div class="text-2xl font-black" style="color: var(--color-text)">@Model.Summary.SlowQueriesCount</div>
-                <div class="text-xs font-bold mt-1" style="color: var(--color-text-tertiary)">استعلامات بطيئة</div>
+                <div class="text-xs font-bold mt-1" style="color: var(--color-text-muted)">استعلامات بطيئة</div>
             </div>
             <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: color-mix(in srgb, var(--color-accent) 10%, transparent); color: var(--color-accent)">
                 <span class="material-symbols-rounded">speed</span>
@@ -79,7 +79,7 @@
             @foreach (var log in Model.Logs)
             {
                 <tr class="border-t transition-colors duration-200" style="border-color: var(--color-border)">
-                    <td class="px-6 py-4 text-xs font-semibold" style="color: var(--color-text-tertiary)">@log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td class="px-6 py-4 text-xs font-semibold" style="color: var(--color-text-muted)">@log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
                     <td class="px-6 py-4">
                         <span class="inline-flex items-center px-2.5 py-0.5 text-xs font-bold rounded-full"
                               style="background: color-mix(in srgb, @GetLevelColor(log.Level) 10%, transparent); color: @GetLevelColor(log.Level)">
@@ -87,7 +87,7 @@
                         </span>
                     </td>
                     <td class="px-6 py-4 font-medium text-xs" style="color: var(--color-text-secondary)">@log.Message</td>
-                    <td class="px-6 py-4 text-xs max-w-xs truncate" style="color: var(--color-text-tertiary)" title="@log.SourceContext">@log.SourceContext</td>
+                    <td class="px-6 py-4 text-xs max-w-xs truncate" style="color: var(--color-text-muted)" title="@log.SourceContext">@log.SourceContext</td>
                 </tr>
             }
         </tbody>
@@ -101,6 +101,6 @@
         "Error" or "Fatal" => "var(--color-error)",
         "Warning" => "var(--color-warning)",
         "Information" => "var(--color-info)",
-        _ => "var(--color-text-tertiary)"
+        _ => "var(--color-text-muted)"
     };
 }

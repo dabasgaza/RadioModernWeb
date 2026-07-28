@@ -16,7 +16,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <div class="text-lg font-black" style="color: var(--color-text)">@Model.DatabaseSizeFormatted</div>
-                <div class="text-[10px] font-bold mt-1" style="color: var(--color-text-tertiary)">حجم قاعدة البيانات</div>
+                <div class="text-[10px] font-bold mt-1" style="color: var(--color-text-muted)">حجم قاعدة البيانات</div>
             </div>
             <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary)">
                 <span class="material-symbols-rounded">database</span>
@@ -96,24 +96,24 @@
         <span class="material-symbols-rounded text-sm">@(Model.IsHealthy ? "check_circle" : "error")</span>
         @(Model.IsHealthy ? "قاعدة البيانات بحالة جيدة" : "قاعدة البيانات تحتاج مراجعة")
     </div>
-    <span class="text-[11px]" style="color: var(--color-text-tertiary)">|</span>
+    <span class="text-[11px]" style="color: var(--color-text-muted)">|</span>
     <span class="text-[11px] flex items-center gap-1" style="color: var(--color-text-secondary)">
         <span class="material-symbols-rounded text-xs">link</span>
         @Model.ActiveConnections اتصال نشط
     </span>
-    <span class="text-[11px]" style="color: var(--color-text-tertiary)">|</span>
+    <span class="text-[11px]" style="color: var(--color-text-muted)">|</span>
     <span class="text-[11px] flex items-center gap-1" style="color: var(--color-text-secondary)">
         <span class="material-symbols-rounded text-xs">autorenew</span>
         @(Model.IsAutoBackupEnabled ? "النسخ التلقائي: مفعل" : "النسخ التلقائي: معطل")
     </span>
-    <span class="text-[11px]" style="color: var(--color-text-tertiary)">|</span>
+    <span class="text-[11px]" style="color: var(--color-text-muted)">|</span>
     <span class="text-[11px] flex items-center gap-1" style="color: var(--color-text-secondary)">
         <span class="material-symbols-rounded text-xs">cloud</span>
         @(Model.IsCloudSyncEnabled ? "المزامنة السحابية: مفعلة" : "المزامنة السحابية: معطلة")
     </span>
     @if (Model.FailureCount > 0)
     {
-        <span class="text-[11px]" style="color: var(--color-text-tertiary)">|</span>
+        <span class="text-[11px]" style="color: var(--color-text-muted)">|</span>
         <span class="text-[11px] text-error font-bold flex items-center gap-1">
             <span class="material-symbols-rounded text-xs">bug_report</span>
             @Model.FailureCount فشل
@@ -274,7 +274,7 @@
 
         <div class="flex gap-3 flex-wrap items-center mb-4">
             <div class="relative flex-1 min-w-[200px]">
-                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-tertiary)">search</span>
+                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-muted)">search</span>
                 <input type="text" id="backupSearch" placeholder="بحث في مسار الملف..." class="input input-bordered pr-8 text-xs w-full" />
             </div>
             <select id="filterType" class="select select-bordered w-32 text-xs">
@@ -297,7 +297,7 @@
             @if (!Model.BackupLogs.Any())
             {
                 <div style="background: var(--color-surface); border: 1px solid var(--color-border)"><div class="text-center py-12">
-                    <span class="material-symbols-rounded text-4xl mb-2" style="color: var(--color-text-tertiary)">history</span>
+                    <span class="material-symbols-rounded text-4xl mb-2" style="color: var(--color-text-muted)">history</span>
                     <h3 class="font-bold text-lg mb-2">لا نسخ احتياطية</h3>
                     <p class="text-sm" style="color: var(--color-text-secondary)">لم يتم تسجيل أي عمليات نسخ احتياطي تاريخية بعد.</p>
                 </div></div>
@@ -342,10 +342,10 @@
                                 }
                                 else
                                 {
-                                    <span style="color: var(--color-text-tertiary)">—</span>
+                                    <span style="color: var(--color-text-muted)">—</span>
                                 }
                             </td>
-                            <td class="text-[10px] max-w-[200px] truncate dir-ltr" style="color: var(--color-text-tertiary)" title="@b.BackupPath">@System.IO.Path.GetFileName(b.BackupPath)</td>
+                            <td class="text-[10px] max-w-[200px] truncate dir-ltr" style="color: var(--color-text-muted)" title="@b.BackupPath">@System.IO.Path.GetFileName(b.BackupPath)</td>
                             <td class="">
                                 <div class="flex flex-wrap items-center justify-center gap-1.5">
                                     @if (b.Status == "Success" && System.IO.File.Exists(b.BackupPath))
@@ -424,7 +424,7 @@
         @if (!timeline.Any())
         {
             <div style="background: var(--color-surface); border: 1px solid var(--color-border)"><div class="text-center py-6">
-                <span class="material-symbols-rounded text-4xl mb-2" style="color: var(--color-text-tertiary)">timeline</span>
+                <span class="material-symbols-rounded text-4xl mb-2" style="color: var(--color-text-muted)">timeline</span>
                 <p class="text-sm" style="color: var(--color-text-secondary)">لا توجد أنشطة مسجلة بعد.</p>
             </div></div>
         }

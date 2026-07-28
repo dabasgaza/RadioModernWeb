@@ -1,4 +1,5 @@
 @model EmployeeDto
+@using Microsoft.AspNetCore.Html
 @{
     ViewData["Title"] = Model.EmployeeId == 0 ? "موظف جديد" : "تعديل موظف";
     var isEdit = Model.EmployeeId != 0;
@@ -21,54 +22,48 @@
 
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="bg-[var(--color-danger-light)] border border-[var(--color-danger)]/20 text-[var(--color-danger)] rounded-xl p-4 mb-6 font-semibold text-sm"></div>
+        <div asp-validation-summary="All" class="rounded-xl p-4 mb-6 font-semibold text-sm bg-danger-subtle text-danger border border-danger-subtle"></div>
     }
 
-    <div class="wf-card">
-        <div class="p-5 space-y-5">
-            <div class="flex items-center gap-2 pb-3 border-b border-[var(--color-border)]">
-                <span class="material-symbols-rounded text-lg text-[var(--color-primary)]">person</span>
-                <h3 class="font-bold text-sm text-[var(--color-text)]">الملف التعريفي للموظف</h3>
-            </div>
-            <div>
-                <label class="text-xs font-medium text-[var(--color-text-3)] mb-1.5 block">الاسم الكامل *</label>
-                <div class="relative">
-                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-4)] pointer-events-none text-lg">person</span>
-                    <input type="text" name="FullName" value="@Model.FullName"
-                           class="w-full h-10 bg-[var(--color-bg-hover)] border border-[var(--color-border)] rounded-lg pr-10 pl-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-4)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary-light)] transition-all"
-                           required placeholder="مثال: أحمد محمد" />
-                </div>
-            </div>
-            <div>
-                <label class="text-xs font-medium text-[var(--color-text-3)] mb-1.5 block">الدور الوظيفي *</label>
-                <div class="relative">
-                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-4)] pointer-events-none text-lg">work</span>
-                    <select name="StaffRoleId" required
-                            class="w-full h-10 bg-[var(--color-bg-hover)] border border-[var(--color-border)] rounded-lg pr-10 pl-3 text-sm text-[var(--color-text)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary-light)] transition-all appearance-none">
-                        <option value="">— اختر —</option>
-                        @foreach (var r in staffRoles ?? new())
-                        {
-                            <option value="@r.StaffRoleId" selected="@(Model.StaffRoleId == r.StaffRoleId)">@r.RoleName</option>
-                        }
-                    </select>
-                </div>
-            </div>
-            <div>
-                <label class="text-xs font-medium text-[var(--color-text-3)] mb-1.5 block">ملاحظات</label>
-                <div class="relative">
-                    <span class="material-symbols-rounded absolute right-3 top-3 text-[var(--color-text-4)] pointer-events-none text-lg">notes</span>
-                    <textarea name="Notes" rows="4" placeholder="ملاحظات إضافية حول مهام الموظف…"
-                              class="w-full bg-[var(--color-bg-hover)] border border-[var(--color-border)] rounded-lg pr-10 px-3 py-2 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-4)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary-light)] transition-all">@Model.Notes</textarea>
-                </div>
-            </div>
+    <div class="bg-surface border border-border rounded-2xl p-5" style="border-color:var(--color-border)">
+        @{
+            ViewBag.SectionIcon = "person";
+            ViewBag.SectionTitle = "الملف التعريفي للموظف";
+        }
+        <partial name="_SectionHeader" />
+
+        <div class="space-y-4">
+            @{
+                ViewBag.FieldLabel = "الاسم الكامل"; ViewBag.FieldName = "FullName";
+                ViewBag.FieldIcon = "person"; ViewBag.FieldValue = Model.FullName;
+                ViewBag.FieldRequired = true; ViewBag.FieldPlaceholder = "مثال: أحمد محمد";
+            }
+            <partial name="_FormField" />
+
+            @{
+                var roleOptions = (staffRoles ?? new()).Select(r => new SelectListItem { Value = r.StaffRoleId.ToString(), Text = r.RoleName, Selected = Model.StaffRoleId == r.StaffRoleId }).ToList();
+                roleOptions.Insert(0, new SelectListItem { Value = "", Text = "— اختر —" });
+                ViewBag.FieldLabel = "الدور الوظيفي"; ViewBag.FieldName = "StaffRoleId";
+                ViewBag.FieldIcon = "work"; ViewBag.FieldType = "select";
+                ViewBag.FieldRequired = true; ViewBag.FieldOptions = roleOptions;
+            }
+            <partial name="_FormField" />
+
+            @{
+                ViewBag.FieldLabel = "ملاحظات"; ViewBag.FieldName = "Notes";
+                ViewBag.FieldIcon = "notes"; ViewBag.FieldValue = Model.Notes;
+                ViewBag.FieldType = "textarea"; ViewBag.FieldPlaceholder = "ملاحظات إضافية حول مهام الموظف…";
+            }
+            <partial name="_FormField" />
         </div>
     </div>
 
-    <div class="flex items-center justify-end gap-3 mt-6">
-        <a href="/Employees" class="px-4 py-2 text-sm font-medium text-[var(--color-text-3)] hover:text-[var(--color-text)] transition-colors">إلغاء</a>
-        <button type="submit" class="inline-flex items-center gap-1.5 px-5 py-2.5 bg-primary text-primary-foreground text-sm font-semibold rounded-lg hover:bg-[var(--color-primary-hover)] transition-colors shadow-sm">
-            <span class="material-symbols-rounded text-lg">save</span>
-            حفظ البيانات
+    <div class="flex items-center justify-end gap-2 mt-6">
+        <a href="/Employees" class="btn btn-ghost rounded-xl gap-2">
+            <span class="material-symbols-rounded">cancel</span>إلغاء
+        </a>
+        <button type="submit" class="btn btn-primary rounded-xl gap-2">
+            <span class="material-symbols-rounded">save</span>حفظ البيانات
         </button>
     </div>
 </form>

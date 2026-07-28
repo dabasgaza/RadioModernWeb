@@ -35,11 +35,11 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-bold" style="color: var(--color-text)">@(episode?.EpisodeName ?? "—")</h3>
-                    <p class="text-sm" style="color: var(--color-text-3)">@(episode?.ProgramName ?? "")</p>
+                    <p class="text-sm" style="color: var(--color-text-secondary)">@(episode?.ProgramName ?? "")</p>
                 </div>
             </div>
             <a href="/Episodes/Details/@log.EpisodeId" class="btn btn-ghost rounded-xl text-sm gap-1.5" target="_blank"
-               style="color: var(--color-text-3)">
+               style="color: var(--color-text-secondary)">
                 <span class="material-symbols-rounded">open_in_new</span>
                 عرض الحلقة
             </a>
@@ -58,7 +58,7 @@
                 var item = Model.GuestLogs[i];
                 <div class="wf-card mb-4 guest-card" data-index="@i">
                     <div class="px-5 py-3 rounded-t-xl flex items-center gap-2"
-                         style="background: var(--color-surface-3); border-bottom: 1px solid var(--color-border)">
+                         style="background: var(--color-bg-hover); border-bottom: 1px solid var(--color-border)">
                         <span class="material-symbols-rounded" style="color: var(--color-primary)">person</span>
                         <h3 class="font-bold" style="color: var(--color-text)">@item.GuestName</h3>
                     </div>
@@ -69,9 +69,9 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-3)">عنوان المقطع</label>
+                                <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">عنوان المقطع</label>
                                 <div class="relative">
-                                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">title</span>
+                                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-muted)">title</span>
                                     <input type="text" name="GuestLogs[@i].ClipTitle" value="@item.ClipTitle"
                                            class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
                                            style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
@@ -79,9 +79,9 @@
                                 </div>
                             </div>
                             <div>
-                                <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-3)">المدة (دقيقة)</label>
+                                <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">المدة (دقيقة)</label>
                                 <div class="relative">
-                                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">timer</span>
+                                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-muted)">timer</span>
                                     <input type="number" name="GuestLogs[@i].DurationMinutes" value="@item.DurationMinutes"
                                            class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
                                            style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
@@ -89,9 +89,9 @@
                                 </div>
                             </div>
                             <div>
-                                <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-3)">نوع الوسائط</label>
+                                <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">نوع الوسائط</label>
                                 <div class="relative">
-                                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">category</span>
+                                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-muted)">category</span>
                                     <select name="GuestLogs[@i].MediaType"
                                             class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
                                             style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);">
@@ -105,7 +105,7 @@
 
                         <!-- Platforms -->
                         <div>
-                            <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-3)">منصات النشر</label>
+                            <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">منصات النشر</label>
                             <div class="platforms-container space-y-2" id="platforms-@i">
                                 @if (item.Platforms.Any())
                                 {
@@ -159,7 +159,7 @@
                                 }
                             </div>
                             <button type="button" class="btn btn-ghost text-sm mt-2 rounded-xl gap-1"
-                                    style="color: var(--color-text-3)" onclick="addPlatform(@i)">
+                                    style="color: var(--color-text-secondary)" onclick="addPlatform(@i)">
                                 <span class="material-symbols-rounded">add</span>
                                 إضافة منصة
                             </button>
@@ -171,16 +171,16 @@
         else
         {
             <div class="wf-card rounded-3xl p-12 text-center">
-                <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style="background: var(--color-surface-3); color: var(--color-text-tertiary)">
+                <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style="background: var(--color-bg-hover); color: var(--color-text-muted)">
                     <span class="material-symbols-rounded text-5xl">people</span>
                 </div>
-                <p class="text-sm" style="color: var(--color-text-3)">لا يوجد سجلات نشر لهذه الحلقة.</p>
+                <p class="text-sm" style="color: var(--color-text-secondary)">لا يوجد سجلات نشر لهذه الحلقة.</p>
             </div>
         }
     </div>
 
     <div class="flex items-center justify-end gap-2">
-        <a href="/Publishing" class="btn btn-ghost rounded-xl px-5" style="color: var(--color-text-3)">
+        <a href="/Publishing" class="btn btn-ghost rounded-xl px-5" style="color: var(--color-text-secondary)">
             <span class="material-symbols-rounded">cancel</span>
             إلغاء
         </a>
@@ -203,7 +203,7 @@
         </div>
         @if (Model.EpisodePublishingRecords == null || !Model.EpisodePublishingRecords.Any())
         {
-            <p class="text-sm" style="color: var(--color-text-3)">لا توجد سجلات أخرى لهذه الحلقة.</p>
+            <p class="text-sm" style="color: var(--color-text-secondary)">لا توجد سجلات أخرى لهذه الحلقة.</p>
         }
         else
         {
@@ -211,12 +211,12 @@
                 <div class="overflow-x-auto">
                     <table class="table w-full text-sm">
                         <thead>
-                            <tr style="background: var(--color-surface-3)">
-                                <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">النوع</th>
-                                <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">التفاصيل / الملخص</th>
-                                <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">بواسطة</th>
-                                <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">التاريخ والتوقيت</th>
-                                <th class="px-6 py-4 text-center font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">الإجراء</th>
+                            <tr style="background: var(--color-bg-hover)">
+                                <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">النوع</th>
+                                <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">التفاصيل / الملخص</th>
+                                <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">بواسطة</th>
+                                <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">التاريخ والتوقيت</th>
+                                <th class="px-6 py-4 text-center font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">الإجراء</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -229,9 +229,9 @@
                                             @GetRecordTypeName(r.RecordType)
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4" style="color: var(--color-text-3)">@r.Summary</td>
-                                    <td class="px-6 py-4 font-medium" style="color: var(--color-text-3)">@(r.RecordedBy ?? "تلقائي")</td>
-                                    <td class="px-6 py-4 text-xs" dir="ltr" style="color: var(--color-text-tertiary)">@r.RecordDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td class="px-6 py-4" style="color: var(--color-text-secondary)">@r.Summary</td>
+                                    <td class="px-6 py-4 font-medium" style="color: var(--color-text-secondary)">@(r.RecordedBy ?? "تلقائي")</td>
+                                    <td class="px-6 py-4 text-xs" dir="ltr" style="color: var(--color-text-muted)">@r.RecordDate.ToString("yyyy-MM-dd HH:mm")</td>
                                     <td class="px-6 py-4 text-center">
                                         @if (r.RecordType == "SocialMedia")
                                         {
@@ -249,7 +249,7 @@
                                         }
                                         else
                                         {
-                                            <span class="text-xs" style="color: var(--color-text-tertiary)">—</span>
+                                            <span class="text-xs" style="color: var(--color-text-muted)">—</span>
                                         }
                                     </td>
                                 </tr>

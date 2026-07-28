@@ -8,12 +8,12 @@
     background-image:
       radial-gradient(
         at 0% 0%,
-        color-mix(in srgb, var(--primary) 4%, transparent) 0px,
+        color-mix(in srgb, var(--color-primary) 4%, transparent) 0px,
         transparent 50%
       ),
       radial-gradient(
         at 100% 100%,
-        color-mix(in srgb, var(--secondary) 3%, transparent) 0px,
+        color-mix(in srgb, var(--color-secondary) 3%, transparent) 0px,
         transparent 50%
       );
   }
@@ -26,55 +26,55 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: color-mix(in srgb, var(--border) 70%, transparent);
+    background: color-mix(in srgb, var(--color-border) 70%, transparent);
     border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: color-mix(in srgb, var(--primary) 60%, transparent);
+    background: color-mix(in srgb, var(--color-primary) 60%, transparent);
   }
 }
 
 @layer components {
   /* ── Glass Morphism ── */
   .glass-card {
-    background: color-mix(in srgb, var(--surface) 80%, transparent);
+    background: color-mix(in srgb, var(--color-surface) 80%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
     box-shadow: var(--shadow-card);
   }
 
   .glass-sidebar {
-    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-left: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+    border-left: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
   }
 
   .glass-topbar {
-    background: color-mix(in srgb, var(--surface) 75%, transparent);
+    background: color-mix(in srgb, var(--color-surface) 75%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
   }
 
   /* ── Navigation Links ── */
   .nav-link {
     @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ease-out font-medium;
-    color: var(--ink-muted);
+    color: var(--color-text-secondary);
   }
   .nav-link:hover {
-    background-color: color-mix(in srgb, var(--primary) 8%, transparent);
-    color: var(--primary);
+    background-color: color-mix(in srgb, var(--color-primary) 8%, transparent);
+    color: var(--color-primary);
   }
 
   .nav-link.active {
     @apply text-white shadow-lg;
-    background: var(--primary);
-    box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 25%, transparent);
+    background: var(--color-primary);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 25%, transparent);
   }
   .nav-link.active:hover {
-    background: var(--primary);
+    background: var(--color-primary);
     color: #fff;
   }
 
@@ -89,9 +89,9 @@
   .shimmer {
     background: linear-gradient(
       90deg,
-      color-mix(in srgb, var(--surface-3) 60%, transparent) 25%,
-      color-mix(in srgb, var(--surface-3) 90%, transparent) 50%,
-      color-mix(in srgb, var(--surface-3) 60%, transparent) 75%
+      color-mix(in srgb, var(--color-bg-hover) 60%, transparent) 25%,
+      color-mix(in srgb, var(--color-bg-hover) 90%, transparent) 50%,
+      color-mix(in srgb, var(--color-bg-hover) 60%, transparent) 75%
     );
     background-size: 200% 100%;
     animation: shimmer-anim 1.6s infinite linear;
@@ -100,20 +100,20 @@
   /* ── Tabulator Overrides ── */
   .tabulator {
     @apply border-0 bg-transparent !important;
-    color: var(--ink);
+    color: var(--color-text);
   }
   .tabulator-header {
     @apply border-b font-bold text-xs uppercase !important;
-    background: var(--surface-2);
-    border-color: color-mix(in srgb, var(--border) 80%, transparent);
-    color: var(--ink-muted);
+    background: var(--color-surface-hover);
+    border-color: color-mix(in srgb, var(--color-border) 80%, transparent);
+    color: var(--color-text-secondary);
   }
   .tabulator-row {
     @apply border-b transition-colors duration-200 !important;
-    border-color: color-mix(in srgb, var(--border) 40%, transparent);
+    border-color: color-mix(in srgb, var(--color-border) 40%, transparent);
   }
   .tabulator-row:hover {
-    background-color: color-mix(in srgb, var(--primary) 6%, transparent) !important;
+    background-color: color-mix(in srgb, var(--color-primary) 6%, transparent) !important;
   }
 }
 

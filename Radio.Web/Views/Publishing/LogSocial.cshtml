@@ -31,7 +31,7 @@
                       style="background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary)">الحلقة الحالية</span>
                 <h3 class="text-xl font-black" style="color: var(--color-text)">@episode.EpisodeName</h3>
                 <p class="text-sm flex items-center gap-1.5 mt-0.5" style="color: var(--color-text-secondary)">
-                    <span class="material-symbols-rounded text-sm" style="color: var(--color-text-tertiary)">folder</span>
+                    <span class="material-symbols-rounded text-sm" style="color: var(--color-text-muted)">folder</span>
                     البرنامج: @episode.ProgramName
                 </p>
             </div>
@@ -77,7 +77,7 @@
                         <div>
                             <label class="text-xs font-bold mb-1.5 block" style="color: var(--color-text-secondary)">عنوان المقطع المنشور</label>
                             <div class="relative">
-                                <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-tertiary)">title</span>
+                                <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-muted)">title</span>
                                 <input type="text" name="GuestLogs[@i].ClipTitle"
                                        class="w-full rounded-xl py-2.5 pr-12 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
                                        style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
@@ -88,7 +88,7 @@
                         <div>
                             <label class="text-xs font-bold mb-1.5 block" style="color: var(--color-text-secondary)">المدة (بالدقائق)</label>
                             <div class="relative">
-                                <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-tertiary)">hourglass_empty</span>
+                                <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-muted)">hourglass_empty</span>
                                 <input type="number" name="GuestLogs[@i].DurationMinutes"
                                        class="w-full rounded-xl py-2.5 pr-12 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
                                        style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
@@ -99,7 +99,7 @@
                         <div>
                             <label class="text-xs font-bold mb-1.5 block" style="color: var(--color-text-secondary)">نوع الوسائط</label>
                             <div class="relative">
-                                <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-tertiary)">video_library</span>
+                                <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-muted)">video_library</span>
                                 <select name="GuestLogs[@i].MediaType"
                                         class="w-full rounded-xl py-2.5 pr-12 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
                                         style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)">
@@ -128,7 +128,7 @@
                             <div class="platform-row grid grid-cols-1 sm:grid-cols-12 gap-3 items-center p-4 rounded-2xl transition-all" style="background: var(--color-bg-alt); border: 1px solid var(--color-border)">
                                 <div class="sm:col-span-4">
                                     <div class="relative">
-                                        <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-tertiary)">social_leaderboard</span>
+                                        <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-muted)">social_leaderboard</span>
                                         <select name="GuestLogs[@i].Platforms[0].PlatformId"
                                                 class="w-full rounded-xl py-2.5 pr-12 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
                                                 style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)">
@@ -142,7 +142,7 @@
                                 </div>
                                 <div class="sm:col-span-7">
                                     <div class="relative">
-                                        <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-tertiary)">link</span>
+                                        <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-muted)">link</span>
                                         <input type="url" name="GuestLogs[@i].Platforms[0].Url"
                                                class="w-full rounded-xl py-2.5 pr-12 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
                                                style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
@@ -163,7 +163,7 @@
         else
         {
             <div class="rounded-2xl border text-center py-12" style="background: var(--color-surface); border-color: var(--color-border)">
-                <span class="material-symbols-rounded text-5xl mb-2" style="color: var(--color-text-tertiary)">people</span>
+                <span class="material-symbols-rounded text-5xl mb-2" style="color: var(--color-text-muted)">people</span>
                 <p class="font-semibold" style="color: var(--color-text-secondary)">لا يوجد ضيوف مسجلين في هذه الحلقة.</p>
             </div>
         }
@@ -215,7 +215,7 @@
                 <div class="platform-row grid grid-cols-1 sm:grid-cols-12 gap-3 items-center p-4 rounded-2xl transition-all mt-3" style="background: var(--color-bg-alt); border: 1px solid var(--color-border)">
                     <div class="sm:col-span-4">
                         <div class="relative">
-                            <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-tertiary)">social_leaderboard</span>
+                            <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-muted)">social_leaderboard</span>
                             <select name="GuestLogs[${guestIdx}].Platforms[${count}].PlatformId"
                                     class="w-full rounded-xl py-2.5 pr-12 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
                                     style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)">
@@ -229,7 +229,7 @@
                     </div>
                     <div class="sm:col-span-7">
                         <div class="relative">
-                            <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-tertiary)">link</span>
+                            <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-muted)">link</span>
                             <input type="url" name="GuestLogs[${guestIdx}].Platforms[${count}].Url"
                                    class="w-full rounded-xl py-2.5 pr-12 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
                                    style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"

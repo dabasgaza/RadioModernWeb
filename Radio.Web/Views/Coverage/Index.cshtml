@@ -15,22 +15,16 @@
 
 @if (!Model.Coverages.Any())
 {
-    <div class="wf-card rounded-3xl p-12 text-center my-8">
-        <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style="background: var(--color-surface-3); color: var(--color-text-tertiary)">
-            <span class="material-symbols-rounded text-5xl">edit_location_alt</span>
-        </div>
-        <h3 class="text-xl font-bold mb-2" style="color: var(--color-text)">لا تغطيات</h3>
-        <p class="text-sm max-w-md mx-auto mb-6" style="color: var(--color-text-3)">لم تتم إضافة أي تغطيات ميدانية بعد.</p>
-        @if (User.HasPermission(AppPermissions.CoordinationManage))
-        {
-            <div class="flex items-center justify-center gap-3">
-                <a href="/Coverage/Create" class="btn btn-primary rounded-xl gap-2">
-                    <span class="material-symbols-rounded">add</span>
-                    إضافة تغطية جديدة
-                </a>
-            </div>
-        }
-    </div>
+    ViewBag.EmptyIcon = "edit_location_alt";
+    ViewBag.EmptyTitle = "لا تغطيات";
+    ViewBag.EmptyDesc = "لم تتم إضافة أي تغطيات ميدانية بعد.";
+    if (User.HasPermission(AppPermissions.CoordinationManage))
+    {
+        ViewBag.EmptyActionUrl = "/Coverage/Create";
+        ViewBag.EmptyActionText = "إضافة تغطية جديدة";
+        ViewBag.EmptyActionIcon = "add";
+    }
+    <partial name="_EmptyState" />
 }
 else
 {
@@ -38,14 +32,14 @@ else
         <div class="overflow-x-auto">
             <table class="table w-full text-sm">
                 <thead>
-                    <tr style="background: var(--color-surface-3)">
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">المراسل</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">الضيف</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">الموقع</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">الموضوع</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">الوقت المجدول</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">الوقت الفعلي</th>
-                        <th class="px-6 py-4 text-center font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">إجراءات</th>
+                    <tr style="background: var(--color-bg-hover)">
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">المراسل</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider hidden md:table-cell" style="color: var(--color-text-secondary)">الضيف</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider hidden md:table-cell" style="color: var(--color-text-secondary)">الموقع</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">الموضوع</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider hidden lg:table-cell" style="color: var(--color-text-secondary)">الوقت المجدول</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider hidden lg:table-cell" style="color: var(--color-text-secondary)">الوقت الفعلي</th>
+                        <th class="px-6 py-4 text-center font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">إجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,11 +47,11 @@ else
                     {
                         <tr class="transition-colors duration-200" style="border-bottom: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent)">
                             <td class="px-6 py-4 font-semibold" style="color: var(--color-text)">@c.CorrespondentName</td>
-                            <td class="px-6 py-4" style="color: var(--color-text-3)">@(c.GuestName ?? "—")</td>
-                            <td class="px-6 py-4" style="color: var(--color-text-3)">@(c.Location ?? "—")</td>
-                            <td class="px-6 py-4" style="color: var(--color-text-3)">@(c.Topic ?? "—")</td>
-                            <td class="px-6 py-4 font-semibold whitespace-nowrap" dir="ltr" style="color: var(--color-text-3)">@(c.ScheduledTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
-                            <td class="px-6 py-4 font-semibold whitespace-nowrap" dir="ltr" style="color: var(--color-text-3)">@(c.ActualTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                            <td class="px-6 py-4 hidden md:table-cell" style="color: var(--color-text-secondary)">@(c.GuestName ?? "—")</td>
+                            <td class="px-6 py-4 hidden md:table-cell" style="color: var(--color-text-secondary)">@(c.Location ?? "—")</td>
+                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@(c.Topic ?? "—")</td>
+                            <td class="px-6 py-4 font-semibold whitespace-nowrap hidden lg:table-cell" dir="ltr" style="color: var(--color-text-secondary)">@(c.ScheduledTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                            <td class="px-6 py-4 font-semibold whitespace-nowrap hidden lg:table-cell" dir="ltr" style="color: var(--color-text-secondary)">@(c.ActualTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
                             <td class="px-6 py-4">
                                 @if (User.HasPermission(AppPermissions.CoordinationManage))
                                 {

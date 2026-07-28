@@ -1,7 +1,7 @@
 @model List<ProgramViewModel>
 @using Radio.Web.ViewModels
 @{
-    ViewData["Title"] = "دليل البرامج الإذاعية والتلفزيونية";
+    ViewData["Title"] = "دليل البرامج الإذاعية";
     ViewData["HeaderIcon"] = "radio";
     ViewData["HeaderDescription"] = "دليل وإدارة الخطة البرامجية، التصنيفات، وسجلات الإنتاج الموحد";
     ViewBag.EntityName = "البرامج";
@@ -45,7 +45,7 @@
             @foreach (var item in Model)
             {
                 var p = item.Program;
-                <div class="bg-white rounded-2xl border border-border/80 shadow-sm overflow-hidden group hover:border-primary/40 hover:shadow-xl transition-all duration-300 flex flex-col">
+                <div class="bg-surface rounded-2xl border border-border/80 shadow-sm overflow-hidden group hover:border-primary/40 hover:shadow-xl transition-all duration-300 flex flex-col">
                     <div class="p-6 flex-1 flex flex-col justify-between">
                         <div>
                             <div class="flex items-center justify-between mb-4">
@@ -78,7 +78,7 @@
                             @if (User.HasPermission(AppPermissions.ProgramsManage))
                             {
                                 <div class="flex items-center gap-1">
-                                    <a href="/Programs/Edit/@p.ProgramId" class="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-white transition-colors" title="تعديل">
+                                    <a href="/Programs/Edit/@p.ProgramId" class="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-primary-subtle transition-colors" title="تعديل">
                                         <span class="material-symbols-rounded text-base">edit</span>
                                     </a>
                                 </div>

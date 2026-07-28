@@ -2,51 +2,32 @@
 @{
     ViewData["Title"] = "لوحة التحكم الرئيسية";
     ViewData["HeaderIcon"] = "dashboard";
-    ViewData["HeaderDescription"] = "ملخص فوري ومؤشرات أداء الجدولة والإنتاج التلفزيوني اليوم";
-    ViewData["HeaderActions"] = "<a href='/Episodes/LiveBoard' class='btn btn-sm gap-1.5' style='background:linear-gradient(135deg,var(--color-danger),#dc2626);color:white;border:none'><span class='w-2 h-2 rounded-full bg-white animate-ping'></span><span class='material-symbols-rounded text-base'>live_tv</span><span>شاشة العرض المباشر</span></a><a href='/Episodes' class='btn btn-primary btn-sm gap-1.5'><span class='material-symbols-rounded text-base'>add_circle</span><span>حلقة جديدة</span></a>";
+    ViewData["HeaderDescription"] = "ملخص فوري ومؤشرات أداء الجدولة والبث الإذاعي اليوم";
+    ViewData["HeaderActions"] = "<a href='/Episodes/LiveBoard' class='btn btn-sm gap-1.5' style='background:linear-gradient(135deg,var(--color-danger),var(--color-danger));color:var(--color-primary-foreground);border:none'><span class='w-2 h-2 rounded-full bg-white animate-ping'></span><span class='material-symbols-rounded text-base'>live_tv</span><span>شاشة العرض المباشر</span></a><a href='/Episodes' class='btn btn-primary btn-sm gap-1.5'><span class='material-symbols-rounded text-base'>add_circle</span><span>حلقة جديدة</span></a>";
+
+    var kpiItems = new List<KpiItem>
+    {
+        new() { Label = "حلقات البث اليوم", Value = Model.TodayEpisodes.Count.ToString(), Subtitle = "مجدولة لليوم", Icon = "live_tv", Color = "var(--color-primary)", IconBg = "color-mix(in srgb, var(--color-primary) 10%, transparent)", IconColor = "var(--color-primary)" },
+        new() { Label = "إجمالي الحلقات", Value = Model.TotalEpisodes.ToString(), Subtitle = "الأرشيف والتنفيذ", Icon = "analytics", Color = "var(--color-accent)", IconBg = "color-mix(in srgb, var(--color-accent) 10%, transparent)", IconColor = "var(--color-accent)" },
+        new() { Label = "البرامج النشطة", Value = Model.TotalPrograms.ToString(), Subtitle = "الدورة البرامجية", Icon = "tv", Color = "var(--color-warning)", IconBg = "color-mix(in srgb, var(--color-warning) 10%, transparent)", IconColor = "var(--color-warning)" },
+        new() { Label = "حلقات ملغاة", Value = Model.CancelledEpisodes.Count.ToString(), Subtitle = "موقوفة أو مستبعدة", Icon = "cancel", Color = "var(--color-danger)", IconBg = "color-mix(in srgb, var(--color-danger) 10%, transparent)", IconColor = "var(--color-danger)" }
+    };
+    ViewBag.KpiItems = kpiItems;
 }
 <div class="max-w-7xl mx-auto space-y-6">
     <partial name="_PageHeader" />
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        @{
-            var cards = new[] {
-                new { Label = "حلقات البث اليوم", Value = Model.TodayEpisodes.Count, Sub = "مجدولة لليوم", Icon = "live_tv", Color = "var(--color-primary)" },
-                new { Label = "إجمالي الحلقات", Value = Model.TotalEpisodes, Sub = "الأرشيف والتنفيذ", Icon = "analytics", Color = "var(--color-accent)" },
-                new { Label = "البرامج النشطة", Value = Model.TotalPrograms, Sub = "الدورة البرامجية", Icon = "tv", Color = "var(--color-warning)" },
-                new { Label = "حلقات ملغاة", Value = Model.CancelledEpisodes.Count, Sub = "موقوفة أو مستبعدة", Icon = "cancel", Color = "var(--color-danger)" }
-            };
-        }
-        @foreach (var c in cards)
-        {
-            <div class="kpi-card group">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <div class="text-xs font-semibold mb-1" style="color:var(--color-text-variant)">@c.Label</div>
-                        <div class="text-3xl font-black tabular-nums tracking-tight" style="color:var(--color-text)">@c.Value</div>
-                        <div class="text-[11px] font-bold mt-1.5 flex items-center gap-1" style="color:@c.Color">
-                            <span class="material-symbols-rounded text-xs">schedule</span>
-                            <span>@c.Sub</span>
-                        </div>
-                    </div>
-                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110" style="background:color-mix(in srgb, @c.Color 10%, transparent);color:@c.Color">
-                        <span class="material-symbols-rounded text-2xl">@c.Icon</span>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
+    <partial name="_KpiCards" />
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="rounded-2xl border p-6" style="background:var(--color-surface);border-color:var(--color-border)">
+        <div class="bg-surface border border-border rounded-2xl p-6" style="border-color:var(--color-border)">
             <div class="flex items-center justify-between mb-4 pb-3" style="border-bottom:1px solid var(--color-border)">
                 <div class="flex items-center gap-2">
-                    <div class="p-2 rounded-lg" style="background:color-mix(in srgb, var(--color-primary) 10%, transparent);color:var(--color-primary)">
+                    <div class="p-2 rounded-lg bg-primary-subtle text-primary">
                         <span class="material-symbols-rounded text-lg">donut_large</span>
                     </div>
                     <div>
-                        <h3 class="font-bold text-sm" style="color:var(--color-text)">توزيع حالات الحلقات</h3>
-                        <p class="text-[11px]" style="color:var(--color-text-variant)">نسب الجدولة، التنفيذ والنشر الرقمي</p>
+                        <h3 class="font-bold text-sm text-text">توزيع حالات الحلقات</h3>
+                        <p class="text-[11px] text-text-secondary">نسب الجدولة، التنفيذ والنشر الرقمي</p>
                     </div>
                 </div>
             </div>
@@ -54,16 +35,15 @@
                 <canvas id="statusChart"></canvas>
             </div>
         </div>
-
-        <div class="rounded-2xl border p-6" style="background:var(--color-surface);border-color:var(--color-border)">
+        <div class="bg-surface border border-border rounded-2xl p-6" style="border-color:var(--color-border)">
             <div class="flex items-center justify-between mb-4 pb-3" style="border-bottom:1px solid var(--color-border)">
                 <div class="flex items-center gap-2">
-                    <div class="p-2 rounded-lg" style="background:color-mix(in srgb, var(--color-accent) 10%, transparent);color:var(--color-accent)">
+                    <div class="p-2 rounded-lg bg-warning-subtle text-warning">
                         <span class="material-symbols-rounded text-lg">bar_chart</span>
                     </div>
                     <div>
-                        <h3 class="font-bold text-sm" style="color:var(--color-text)">البرامج الأكثر إنتاجاً</h3>
-                        <p class="text-[11px]" style="color:var(--color-text-variant)">عدد الحلقات المنفذة لكل برنامج</p>
+                        <h3 class="font-bold text-sm text-text">البرامج الأكثر إنتاجاً</h3>
+                        <p class="text-[11px] text-text-secondary">عدد الحلقات المنفذة لكل برنامج</p>
                     </div>
                 </div>
             </div>
@@ -73,16 +53,16 @@
         </div>
     </div>
 
-    <div class="rounded-2xl border overflow-hidden" style="background:var(--color-surface);border-color:var(--color-border)">
-        <div class="flex items-center justify-between p-5" style="border-bottom:1px solid var(--color-border);background:var(--color-bg-hover-low)">
+    <div class="bg-surface border border-border rounded-2xl overflow-hidden">
+        <div class="flex items-center justify-between p-5" style="border-bottom:1px solid var(--color-border);background:var(--color-bg-hover)">
             <div class="flex items-center gap-2.5">
-                <span class="material-symbols-rounded text-xl" style="color:var(--color-primary)">today</span>
+                <span class="material-symbols-rounded text-xl text-primary">today</span>
                 <div>
-                    <h3 class="font-bold text-sm" style="color:var(--color-text)">جدول حلقات البث لليوم</h3>
-                    <p class="text-[11px]" style="color:var(--color-text-variant)">قائمة الحلقات والمواعيد المجدولة للبث الفوري</p>
+                    <h3 class="font-bold text-sm text-text">جدول حلقات البث لليوم</h3>
+                    <p class="text-[11px] text-text-secondary">قائمة الحلقات والمواعيد المجدولة للبث الفوري</p>
                 </div>
             </div>
-            <a href="/Episodes" class="text-xs font-semibold flex items-center gap-1 hover:underline" style="color:var(--color-primary)">
+            <a href="/Episodes" class="text-xs font-semibold flex items-center gap-1 text-primary hover:underline">
                 <span>عرض أرشيف الحلقات</span>
                 <span class="material-symbols-rounded text-sm">chevron_left</span>
             </a>
@@ -93,24 +73,22 @@
             <div class="divide-y" style="border-color:var(--color-border)">
                 @foreach (var ep in Model.TodayEpisodes)
                 {
-                    <div class="flex items-center gap-4 p-4 transition-colors" style="border-color:var(--color-border)" onmouseover="this.style.background='var(--color-bg-hover-low)'" onmouseout="this.style.background='transparent'">
-                        <div class="w-3 h-3 rounded-full shrink-0 ring-4" style="background:var(--color-primary);--tw-ring-color:color-mix(in srgb, var(--color-primary) 15%, transparent)"></div>
+                    <div class="flex items-center gap-4 p-4 transition-colors hover:bg-bg-hover" style="border-color:var(--color-border)">
+                        <div class="w-3 h-3 rounded-full shrink-0 ring-4 bg-primary" style="--tw-ring-color:color-mix(in srgb, var(--color-primary) 15%, transparent)"></div>
                         <div class="flex-1 min-w-0">
-                            <a href="/Episodes/Details/@ep.EpisodeId" class="font-bold text-xs transition-colors" style="color:var(--color-text)" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--color-text)'">
-                                @ep.EpisodeName
-                            </a>
+                            <a href="/Episodes/Details/@ep.EpisodeId" class="font-bold text-xs text-text hover:text-primary transition-colors">@ep.EpisodeName</a>
                             <div class="flex items-center gap-2 mt-1">
-                                <span class="text-[11px] font-semibold" style="color:var(--color-text-variant)">@ep.ProgramName</span>
+                                <span class="text-[11px] font-semibold text-text-secondary">@ep.ProgramName</span>
                                 @if (!string.IsNullOrWhiteSpace(ep.GuestsDisplay))
                                 {
-                                    <span class="text-xs" style="color:var(--color-text-muted)">·</span>
-                                    <span class="text-[11px]" style="color:var(--color-text-muted)">@ep.GuestsDisplay</span>
+                                    <span class="text-xs text-text-muted">·</span>
+                                    <span class="text-[11px] text-text-muted">@ep.GuestsDisplay</span>
                                 }
                             </div>
                         </div>
                         <div class="text-right px-2">
-                            <div class="text-xs font-bold tabular-nums" style="color:var(--color-text)">@(ep.ScheduledExecutionTime?.ToString("HH:mm") ?? "—")</div>
-                            <div class="text-[10px]" style="color:var(--color-text-muted)">توقيت البث</div>
+                            <div class="text-xs font-bold tabular-nums text-text">@(ep.ScheduledExecutionTime?.ToString("HH:mm") ?? "—")</div>
+                            <div class="text-[10px] text-text-muted">توقيت البث</div>
                         </div>
                         <partial name="_StatusBadge" model='new StatusBadgeViewModel { Type = "episode", Status = ep.StatusText, Label = ep.StatusText }' />
                     </div>
@@ -127,10 +105,10 @@
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="rounded-2xl border p-6" style="background:var(--color-surface);border-color:var(--color-border)">
+        <div class="bg-surface border border-border rounded-2xl p-6" style="border-color:var(--color-border)">
             <div class="flex items-center gap-2 mb-4 pb-3" style="border-bottom:1px solid var(--color-border)">
-                <span class="material-symbols-rounded text-lg" style="color:var(--color-primary)">trending_up</span>
-                <h3 class="font-bold text-sm" style="color:var(--color-text)">قائمة البرامج الأكثر نشاطاً</h3>
+                <span class="material-symbols-rounded text-lg text-primary">trending_up</span>
+                <h3 class="font-bold text-sm text-text">البرامج الأكثر نشاطاً</h3>
             </div>
             @if (Model.TopPrograms.Any())
             {
@@ -139,12 +117,12 @@
                     {
                         <div class="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                             <div>
-                                <div class="font-bold text-xs" style="color:var(--color-text)">@p.ProgramName</div>
-                                <div class="text-[11px] mt-0.5" style="color:var(--color-text-variant)">@(p.Category ?? "برنامج عام")</div>
+                                <div class="font-bold text-xs text-text">@p.ProgramName</div>
+                                <div class="text-[11px] mt-0.5 text-text-secondary">@(p.Category ?? "برنامج عام")</div>
                             </div>
                             <div class="text-left">
-                                <div class="text-sm font-black tabular-nums" style="color:var(--color-primary)">@p.TotalEpisodes</div>
-                                <div class="text-[10px] font-medium" style="color:var(--color-text-variant)">حلقة</div>
+                                <div class="text-sm font-black tabular-nums text-primary">@p.TotalEpisodes</div>
+                                <div class="text-[10px] font-medium text-text-secondary">حلقة</div>
                             </div>
                         </div>
                     }
@@ -153,16 +131,16 @@
             else
             {
                 <div class="flex flex-col items-center py-8 text-center">
-                    <span class="material-symbols-rounded text-3xl mb-2" style="color:var(--color-text-muted)">live_tv</span>
-                    <p class="text-xs" style="color:var(--color-text-variant)">لا تتوفر بيانات كافية حالياً</p>
+                    <span class="material-symbols-rounded text-3xl mb-2 text-text-muted">live_tv</span>
+                    <p class="text-xs text-text-secondary">لا تتوفر بيانات كافية حالياً</p>
                 </div>
             }
         </div>
 
-        <div class="rounded-2xl border p-6" style="background:var(--color-surface);border-color:var(--color-border)">
+        <div class="bg-surface border border-border rounded-2xl p-6" style="border-color:var(--color-border)">
             <div class="flex items-center gap-2 mb-4 pb-3" style="border-bottom:1px solid var(--color-border)">
-                <span class="material-symbols-rounded text-lg" style="color:var(--color-accent)">people_alt</span>
-                <h3 class="font-bold text-sm" style="color:var(--color-text)">الضيوف الأكثر استضافة</h3>
+                <span class="material-symbols-rounded text-lg text-accent">people_alt</span>
+                <h3 class="font-bold text-sm text-text">الضيوف الأكثر استضافة</h3>
             </div>
             @if (Model.TopGuests.Any())
             {
@@ -171,15 +149,15 @@
                     {
                         <div class="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-xl text-xs font-bold flex items-center justify-center shrink-0" style="background:color-mix(in srgb, var(--color-primary) 10%, transparent);color:var(--color-primary)">@g.Rank</div>
+                                <div class="w-8 h-8 rounded-xl text-xs font-bold flex items-center justify-center shrink-0 bg-primary-subtle text-primary">@g.Rank</div>
                                 <div>
-                                    <div class="font-bold text-xs" style="color:var(--color-text)">@g.FullName</div>
-                                    <div class="text-[11px] mt-0.5" style="color:var(--color-text-variant)">@(g.Organization ?? "ضيف مستقل")</div>
+                                    <div class="font-bold text-xs text-text">@g.FullName</div>
+                                    <div class="text-[11px] mt-0.5 text-text-secondary">@(g.Organization ?? "ضيف مستقل")</div>
                                 </div>
                             </div>
                             <div class="text-left">
-                                <div class="text-sm font-black tabular-nums" style="color:var(--color-primary)">@g.AppearanceCount</div>
-                                <div class="text-[10px] font-medium" style="color:var(--color-text-variant)">مشاركة</div>
+                                <div class="text-sm font-black tabular-nums text-primary">@g.AppearanceCount</div>
+                                <div class="text-[10px] font-medium text-text-secondary">مشاركة</div>
                             </div>
                         </div>
                     }
@@ -188,8 +166,8 @@
             else
             {
                 <div class="flex flex-col items-center py-8 text-center">
-                    <span class="material-symbols-rounded text-3xl mb-2" style="color:var(--color-text-muted)">group</span>
-                    <p class="text-xs" style="color:var(--color-text-variant)">لا توجد سجلات استضافة بعد</p>
+                    <span class="material-symbols-rounded text-3xl mb-2 text-text-muted">group</span>
+                    <p class="text-xs text-text-secondary">لا توجد سجلات استضافة بعد</p>
                 </div>
             }
         </div>
@@ -201,78 +179,49 @@
         const css = getComputedStyle(document.documentElement);
         const token = name => css.getPropertyValue(name).trim();
 
-        const statusCanvas = document.getElementById('statusChart');
-        const ctxStatus = statusCanvas.getContext('2d');
-        const statusData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.StatusStats));
-        const statusLabels = Object.keys(statusData).map(k => {
-            const map = { 'Planned': 'مجدولة', 'Executed': 'منفّذة', 'Published': 'منشورة رقمياً', 'WebsitePublished': 'منشورة على الموقع', 'Cancelled': 'ملغاة' };
-            return map[k] || k;
-        });
-        const statusValues = Object.values(statusData);
-
-        function createGrad(ctx, c1, c2) {
-            const g = ctx.createLinearGradient(0, 0, 0, 250);
-            g.addColorStop(0, c1);
-            g.addColorStop(1, c2);
-            return g;
-        }
-
-        const doughnutGradients = ['--chart-1', '--chart-2', '--chart-2', '--chart-3', '--chart-5']
-            .map(name => createGrad(ctxStatus, token(name), token(name)));
-
-        new Chart(statusCanvas, {
+        new Chart(document.getElementById('statusChart'), {
             type: 'doughnut',
             data: {
-                labels: statusLabels,
+                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(new[] { "مجدولة", "منفّذة", "منشورة رقمياً", "منشورة على الموقع", "ملغاة" })),
                 datasets: [{
-                    data: statusValues,
-                    backgroundColor: doughnutGradients,
+                    data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.StatusStats)),
+                    backgroundColor: ['--chart-1', '--chart-2', '--chart-2', '--chart-3', '--chart-5'].map(n => token(n)),
                     borderWidth: 3,
                     borderColor: token('--color-surface'),
                     hoverOffset: 8
                 }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '70%',
+                responsive: true, maintainAspectRatio: false, cutout: '70%',
                 plugins: {
-                    legend: { position: 'bottom', rtl: true, labels: { padding: 20, usePointStyle: true, pointStyle: 'circle', color: token('--color-text-variant'), font: { family: 'Cairo', weight: '600', size: 11 } } }
+                    legend: { position: 'bottom', rtl: true, labels: { padding: 20, usePointStyle: true, pointStyle: 'circle', color: token('--color-text-secondary'), font: { family: 'Cairo', weight: '600', size: 11 } } }
                 },
                 animation: { animateScale: true, animateRotate: true }
             }
         });
 
-        const programsCanvas = document.getElementById('programsChart');
-        const ctxPrograms = programsCanvas.getContext('2d');
         const programsData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TopPrograms.Take(5).Select(p => new { name = p.ProgramName, total = p.TotalEpisodes }).ToList()));
-
-        const barGradient = ctxPrograms.createLinearGradient(0, 0, 400, 0);
-        barGradient.addColorStop(0, token('--chart-4'));
-        barGradient.addColorStop(1, token('--chart-1'));
-
-        new Chart(programsCanvas, {
+        new Chart(document.getElementById('programsChart'), {
             type: 'bar',
             data: {
                 labels: programsData.map(p => p.name),
                 datasets: [{
                     label: 'عدد الحلقات',
                     data: programsData.map(p => p.total),
-                    backgroundColor: barGradient,
-                    hoverBackgroundColor: token('--color-primary'),
+                    backgroundColor: token('--chart-4') + '40',
+                    borderColor: token('--chart-1'),
+                    borderWidth: 2,
                     borderRadius: 12,
                     borderSkipped: false,
                     barThickness: 16
                 }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                indexAxis: 'y',
+                responsive: true, maintainAspectRatio: false, indexAxis: 'y',
                 plugins: { legend: { display: false } },
                 scales: {
-                    x: { grid: { color: token('--chart-grid') }, ticks: { font: { family: 'Cairo', weight: 'bold' }, color: token('--color-text-variant') } },
-                    y: { grid: { display: false }, ticks: { font: { family: 'Cairo', weight: 'bold' }, color: token('--color-text-variant') } }
+                    x: { grid: { color: token('--chart-grid') }, ticks: { font: { family: 'Cairo', weight: 'bold' }, color: token('--color-text-secondary') } },
+                    y: { grid: { display: false }, ticks: { font: { family: 'Cairo', weight: 'bold' }, color: token('--color-text-secondary') } }
                 }
             }
         });

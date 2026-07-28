@@ -132,9 +132,9 @@
                     {
                         <div class="flex flex-col items-center justify-center py-8 text-center rounded-xl border-2 border-dashed"
                              style="background: var(--color-bg); border-color: var(--color-border);">
-                            <span class="material-symbols-rounded text-3xl mb-2 text-[var(--color-text-4)]">groups</span>
-                            <p class="text-sm font-bold text-[var(--color-text-3)]">لم تتم إضافة ضيوف بعد</p>
-                            <p class="text-xs mt-1 text-[var(--color-text-4)]">انقر على زر الإضافة أعلاه لتسجيل ضيف في الحلقة</p>
+                            <span class="material-symbols-rounded text-3xl mb-2 text-[var(--color-text-muted)]">groups</span>
+                            <p class="text-sm font-bold text-[var(--color-text-secondary)]">لم تتم إضافة ضيوف بعد</p>
+                            <p class="text-xs mt-1 text-[var(--color-text-muted)]">انقر على زر الإضافة أعلاه لتسجيل ضيف في الحلقة</p>
                         </div>
                     }
                 </div>
@@ -196,9 +196,9 @@
                     {
                         <div class="flex flex-col items-center justify-center py-8 text-center rounded-xl border-2 border-dashed"
                              style="background: var(--color-bg); border-color: var(--color-border);">
-                            <span class="material-symbols-rounded text-3xl mb-2 text-[var(--color-text-4)]">map</span>
-                            <p class="text-sm font-bold text-[var(--color-text-3)]">لم تتم إضافة مراسلين بعد</p>
-                            <p class="text-xs mt-1 text-[var(--color-text-4)]">انقر على زر الإضافة لتسجيل مراسل ميداني للتغطية</p>
+                            <span class="material-symbols-rounded text-3xl mb-2 text-[var(--color-text-muted)]">map</span>
+                            <p class="text-sm font-bold text-[var(--color-text-secondary)]">لم تتم إضافة مراسلين بعد</p>
+                            <p class="text-xs mt-1 text-[var(--color-text-muted)]">انقر على زر الإضافة لتسجيل مراسل ميداني للتغطية</p>
                         </div>
                     }
                 </div>
@@ -254,9 +254,9 @@
                     {
                         <div class="flex flex-col items-center justify-center py-8 text-center rounded-xl border-2 border-dashed"
                              style="background: var(--color-bg); border-color: var(--color-border);">
-                            <span class="material-symbols-rounded text-3xl mb-2 text-[var(--color-text-4)]">badge</span>
-                            <p class="text-sm font-bold text-[var(--color-text-3)]">لم يتم إضافة أي موظف للطاقم بعد</p>
-                            <p class="text-xs mt-1 text-[var(--color-text-4)]">انقر على زر الإضافة لتسجيل أعضاء فريق الإنتاج</p>
+                            <span class="material-symbols-rounded text-3xl mb-2 text-[var(--color-text-muted)]">badge</span>
+                            <p class="text-sm font-bold text-[var(--color-text-secondary)]">لم يتم إضافة أي موظف للطاقم بعد</p>
+                            <p class="text-xs mt-1 text-[var(--color-text-muted)]">انقر على زر الإضافة لتسجيل أعضاء فريق الإنتاج</p>
                         </div>
                     }
                 </div>
@@ -332,13 +332,13 @@
                      style="background: var(--color-bg); border: 1px solid var(--color-border);">
                     <div class="text-4xl font-bold leading-tight tracking-tight text-[var(--color-primary)]" id="preview-day">@dayName</div>
                     <div class="w-10 h-px mx-auto my-3 rounded-full" style="background: var(--color-primary); opacity: 0.3;"></div>
-                    <div class="text-sm font-semibold text-[var(--color-text-3)]" id="preview-date">
+                    <div class="text-sm font-semibold text-[var(--color-text-secondary)]" id="preview-date">
                         @if (dt.HasValue) { <text>@dayNum @monthName @yearNum</text> } else { <text>لم يُحدد</text> }
                     </div>
                     @if (dt.HasValue || tm.HasValue)
                     {
                         <div class="inline-flex items-center gap-1.5 mt-3 text-xs font-bold rounded-full px-3 py-1.5"
-                             style="background: var(--color-bg); color: var(--color-text-4); border: 1px solid var(--color-border);">
+                             style="background: var(--color-bg); color: var(--color-text-muted); border: 1px solid var(--color-border);">
                             <span class="material-symbols-rounded text-sm" style="color: var(--color-primary);">access_time</span>
                             <span id="preview-time">@(tm.HasValue ? timeStr : "–")</span>
                         </div>
@@ -349,7 +349,7 @@
                     <div>
                         <label class="type-label-md text-ink-muted mb-1.5 block">التاريخ</label>
                         <div class="relative">
-                            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg text-[var(--color-text-4)]">calendar_month</span>
+                            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg text-[var(--color-text-muted)]">calendar_month</span>
                             <input type="text" name="ScheduledDate"
                                    value="@(dt?.ToString("yyyy-MM-dd"))"
                                    class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all datepicker"
@@ -359,7 +359,7 @@
                     <div>
                         <label class="type-label-md text-ink-muted mb-1.5 block">الوقت</label>
                         <div class="relative">
-                            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg text-[var(--color-text-4)]">access_time</span>
+                            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg text-[var(--color-text-muted)]">access_time</span>
                             <input type="text" name="BroadcastTime"
                                    value="@(tm?.ToString(@"hh\:mm"))"
                                    class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all timepicker"
@@ -446,7 +446,7 @@
                         @(isEdit ? "حفظ التغييرات" : "إنشاء الحلقة")
                     </button>
                     <a href="/Episodes" class="inline-flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-medium transition-all"
-                       style="color: var(--color-text-3); background: var(--color-bg); border: 1px solid var(--color-border);">
+                       style="color: var(--color-text-secondary); background: var(--color-bg); border: 1px solid var(--color-border);">
                         <span class="material-symbols-rounded">close</span>
                         إلغاء والعودة
                     </a>

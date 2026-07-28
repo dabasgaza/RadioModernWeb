@@ -3,8 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@ViewData["Title"] — نظام إدارة الإنتاج التلفزيوني</title>
-    <meta name="theme-color" content="#1E293B" />
+    <title>@ViewData["Title"] — نظام إدارة البث الإذاعي</title>
+    <meta name="theme-color" content="#FAFAFA" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0A0A0A" media="(prefers-color-scheme: dark)" />
     <meta name="color-scheme" content="light dark" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -25,16 +26,17 @@
     </script>
 </head>
 <body class="bg-[var(--color-bg)] text-[var(--color-text)] font-sans antialiased min-h-screen">
+    <a href="#main-content" class="skip-link">تجاوز إلى المحتوى الرئيسي</a>
     <div class="drawer lg:drawer-open">
         <input id="sidebar-drawer" type="checkbox" class="drawer-toggle" />
         <div class="drawer-content flex flex-col min-h-screen">
             <partial name="_Topbar" />
             <partial name="_Toastr" />
-            <main class="flex-1 p-5 lg:p-6 page-transition">
+            <main id="main-content" class="flex-1 p-5 lg:p-6 page-transition">
                 @RenderBody()
             </main>
             <footer class="border-t px-6 py-4 text-center text-sm" style="border-color:var(--color-border);color:var(--color-text-muted)">
-                <span>© @DateTime.UtcNow.Year — نظام إدارة الإنتاج التلفزيوني</span>
+                <span>© @DateTime.UtcNow.Year — نظام إدارة البث الإذاعي</span>
             </footer>
         </div>
         <div class="drawer-side">

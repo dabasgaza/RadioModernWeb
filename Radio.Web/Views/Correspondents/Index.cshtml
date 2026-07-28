@@ -36,12 +36,12 @@ else
                 <div class="p-5 space-y-4">
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
-                             style="background: var(--color-primary-light); color: var(--color-primary); border: 1px solid var(--color-border);">
+                             style="background: var(--color-primary-subtle); color: var(--color-primary); border: 1px solid var(--color-border);">
                             <span class="material-symbols-rounded text-lg">my_location</span>
                         </div>
                         <div class="min-w-0">
                             <h3 class="font-bold text-[var(--color-text)] truncate group-hover:text-[var(--color-primary)] transition-colors duration-300">@c.FullName</h3>
-                            <p class="text-xs text-[var(--color-text-4)] truncate flex items-center gap-1">
+                            <p class="text-xs text-[var(--color-text-muted)] truncate flex items-center gap-1">
                                 <span class="material-symbols-rounded text-xs">phone</span>
                                 @(c.PhoneNumber ?? "—")
                             </p>
@@ -49,7 +49,7 @@ else
                     </div>
 
                     <div class="space-y-2 pt-2" style="border-top: 1px solid var(--color-border);">
-                        <div class="text-[10px] font-bold text-[var(--color-text-4)]">المواقع المخصصة</div>
+                        <div class="text-[10px] font-bold text-[var(--color-text-muted)]">المواقع المخصصة</div>
                         <div class="flex flex-wrap gap-1.5 min-h-[2rem]">
                             @if (!string.IsNullOrWhiteSpace(c.AssignedLocations))
                             {
@@ -61,21 +61,21 @@ else
                             }
                             else
                             {
-                                <span class="text-xs text-[var(--color-text-4)] italic">لم يتم تعيين مواقع حالياً.</span>
+                                <span class="text-xs text-[var(--color-text-muted)] italic">لم يتم تعيين مواقع حالياً.</span>
                             }
                         </div>
                     </div>
                 </div>
 
                 <div class="px-5 py-3 flex items-center justify-between" style="background: var(--color-bg); border-top: 1px solid var(--color-border);">
-                    <a href="/Correspondents/Coverage/@c.CorrespondentId" class="btn btn-ghost py-1 px-3 text-xs flex items-center gap-1 text-[var(--color-text-3)]">
+                    <a href="/Correspondents/Coverage/@c.CorrespondentId" class="btn btn-ghost py-1 px-3 text-xs flex items-center gap-1 text-[var(--color-text-secondary)]">
                         <span class="material-symbols-rounded" style="font-size: 16px;">list_alt</span>
                         تغطيات المراسل
                     </a>
                     @if (User.HasPermission(AppPermissions.CoordinationManage))
                     {
                         <div class="flex items-center gap-1">
-                            <a href="/Correspondents/Edit/@c.CorrespondentId" class="inline-flex items-center justify-center w-9 h-9 rounded-lg text-[var(--color-primary)] hover:bg-[var(--color-primary-light)] transition-colors" title="تعديل">
+                            <a href="/Correspondents/Edit/@c.CorrespondentId" class="inline-flex items-center justify-center w-9 h-9 rounded-lg text-[var(--color-primary)] hover:bg-[var(--color-primary-subtle)] transition-colors" title="تعديل">
                                 <span class="material-symbols-rounded text-xl">edit</span>
                             </a>
                             <form method="post" action="/Correspondents/Delete/@c.CorrespondentId" class="inline" data-confirm="هل أنت متأكد من حذف المراسل «@c.FullName»؟">
