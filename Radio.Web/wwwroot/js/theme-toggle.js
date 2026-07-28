@@ -12,11 +12,11 @@
 function applyTheme(theme) {
   var html = document.documentElement;
   var isDark = theme === 'dark';
-  html.setAttribute('data-theme', isDark ? 'radiomodernDark' : 'radiomodern');
+  html.setAttribute('data-theme', isDark ? 'tvprodDark' : 'tvprod');
   html.classList.toggle('dark', isDark);
 }
 
-var RadioTheme = {
+var TvProdTheme = {
   current: function () {
     return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
   },
@@ -24,7 +24,7 @@ var RadioTheme = {
   apply: function (theme) {
     applyTheme(theme);
     try { localStorage.setItem('theme', theme); } catch (e) {}
-    document.dispatchEvent(new CustomEvent('radiotheme:change', { detail: { theme: theme } }));
+    document.dispatchEvent(new CustomEvent('tvprod:theme-change', { detail: { theme: theme } }));
     updateThemeToggleButton();
   },
 
@@ -42,13 +42,13 @@ var RadioTheme = {
 };
 
 function toggleTheme() {
-  RadioTheme.toggle();
+  TvProdTheme.toggle();
 }
 
 function updateThemeToggleButton() {
   var btn = document.getElementById('theme-toggle-btn');
   if (!btn) return;
-  var isDark = RadioTheme.current() === 'dark';
+  var isDark = TvProdTheme.current() === 'dark';
   var icon = btn.querySelector('.material-symbols-rounded');
   if (icon) icon.textContent = isDark ? 'light_mode' : 'dark_mode';
 }
@@ -67,4 +67,4 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-window.RadioTheme = RadioTheme;
+window.TvProdTheme = TvProdTheme;

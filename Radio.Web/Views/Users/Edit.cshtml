@@ -13,7 +13,7 @@
     ViewBag.BackText = "الرجوع للمستخدمين";
 }
 
-<partial name="_CreateEditHeader" />
+<partial name="_PageHeader" />
 
 <form method="post" action="@(isEdit ? $"/Users/Edit/{Model.UserId}" : "/Users/Create")" class="max-w-2xl">
     @Html.AntiForgeryToken()
@@ -22,53 +22,68 @@
 
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="bg-error/10 border border-error/20 text-error rounded-xl p-4 mb-6 font-semibold text-sm"></div>
+        <div asp-validation-summary="All" class="rounded-xl p-4 mb-6 font-semibold text-sm"
+             style="background: color-mix(in srgb, var(--color-error) 10%, transparent); border: 1px solid color-mix(in srgb, var(--color-error) 20%, transparent); color: var(--color-error)"></div>
     }
 
-    <div class="wf-card">
-        <div class="card-body space-y-4">
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-rounded text-primary">person</span>
-                <h3 class="font-bold text-base-content text-base">الملف التعريفي للمستخدم</h3>
+    <div class="rounded-2xl border" style="background: var(--color-surface); border-color: var(--color-border)">
+        <div class="p-6 space-y-4">
+            <div class="flex items-center gap-2.5">
+                <span class="material-symbols-rounded" style="color: var(--color-primary)">person</span>
+                <h3 class="font-bold" style="color: var(--color-text)">الملف التعريفي للمستخدم</h3>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="label">الاسم الكامل *</label>
+                    <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">الاسم الكامل <span style="color: var(--color-error)">*</span></label>
                     <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">person</span>
-                        <input type="text" name="FullName" value="@Model.FullName" class="input input-bordered w-full pr-10" required placeholder="مثال: سارة أحمد" />
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">person</span>
+                        <input type="text" name="FullName" value="@Model.FullName" required
+                               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                               style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
+                               placeholder="مثال: سارة أحمد" />
                     </div>
                 </div>
                 <div>
-                    <label class="label">اسم الدخول *</label>
+                    <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">اسم الدخول <span style="color: var(--color-error)">*</span></label>
                     <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">account_circle</span>
-                        <input type="text" name="Username" value="@Model.Username" class="input input-bordered w-full pr-10" required @(isEdit ? "readonly" : "") placeholder="example_user" />
-                    </div>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="label">البريد الإلكتروني</label>
-                    <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">email</span>
-                        <input type="email" name="EmailAddress" value="@Model.EmailAddress" class="input input-bordered w-full pr-10" placeholder="user@example.com" />
-                    </div>
-                </div>
-                <div>
-                    <label class="label">رقم الهاتف</label>
-                    <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">phone</span>
-                        <input type="text" name="PhoneNumber" value="@Model.PhoneNumber" class="input input-bordered w-full pr-10" placeholder="+966500000000" />
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">account_circle</span>
+                        <input type="text" name="Username" value="@Model.Username" required @(isEdit ? "readonly" : "")
+                               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                               style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
+                               placeholder="example_user" />
                     </div>
                 </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="label">الدور *</label>
+                    <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">البريد الإلكتروني</label>
                     <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">group_work</span>
-                        <select name="RoleId" class="select select-bordered w-full pr-10" required>
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">email</span>
+                        <input type="email" name="EmailAddress" value="@Model.EmailAddress"
+                               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                               style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
+                               placeholder="user@example.com" />
+                    </div>
+                </div>
+                <div>
+                    <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">رقم الهاتف</label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">phone</span>
+                        <input type="text" name="PhoneNumber" value="@Model.PhoneNumber"
+                               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                               style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
+                               placeholder="+966500000000" />
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">الدور <span style="color: var(--color-error)">*</span></label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">group_work</span>
+                        <select name="RoleId" required
+                                class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                                style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)">
                             <option value="">— اختر —</option>
                             @foreach (var r in roles ?? new())
                             {
@@ -78,10 +93,15 @@
                     </div>
                 </div>
                 <div>
-                    <label class="label">@if (isEdit) { <text>كلمة مرور جديدة (اتركها فارغة للإبقاء)</text> } else { <text>كلمة المرور *</text> }</label>
+                    <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">
+                        @if (isEdit) { <text>كلمة مرور جديدة (اتركها فارغة للإبقاء)</text> } else { <text>كلمة المرور <span style="color: var(--color-error)">*</span></text> }
+                    </label>
                     <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">lock</span>
-                        <input type="password" name="Password" class="input input-bordered w-full pr-10" placeholder="@(isEdit ? "اترك فارغاً" : "••••••••")" />
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">lock</span>
+                        <input type="password" name="Password"
+                               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                               style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
+                               placeholder="@(isEdit ? "اترك فارغاً" : "••••••••")" />
                     </div>
                 </div>
             </div>
@@ -90,9 +110,10 @@
                 <div class="flex items-center gap-3 pt-2">
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" name="IsActive" value="true" id="IsActive" @(Model.IsActive ? "checked" : "") class="sr-only peer" />
-                        <div class="w-11 h-6 bg-base-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-base-200 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                        <div class="w-11 h-6 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"
+                             style="background: var(--color-bg-alt); border: 1px solid var(--color-border);"></div>
                     </label>
-                    <label for="IsActive" class="text-sm font-semibold text-base-content cursor-pointer">الحساب نشط</label>
+                    <label for="IsActive" class="text-sm font-semibold cursor-pointer" style="color: var(--color-text)">الحساب نشط</label>
                 </div>
             }
         </div>
@@ -101,8 +122,9 @@
     <div class="flex items-center justify-between gap-2 mt-6 w-full max-w-2xl">
         @if (isEdit)
         {
-            <a href="/Users/Permissions/@Model.UserId" class="btn btn-ghost text-success flex items-center gap-1.5 py-3 px-5 rounded-2xl font-bold">
-                <span class="material-symbols-rounded">admin_panel_settings</span>
+            <a href="/Users/Permissions/@Model.UserId" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all"
+               style="color: var(--color-success)">
+                <span class="material-symbols-rounded text-lg">admin_panel_settings</span>
                 تعديل الصلاحيات الاستثنائية الفردية
             </a>
         }
@@ -111,12 +133,14 @@
             <div></div>
         }
         <div class="flex items-center gap-2">
-            <a href="/Users" class="btn btn-ghost">
-                <span class="material-symbols-rounded">cancel</span>
+            <a href="/Users" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all"
+               style="color: var(--color-text-secondary)">
+                <span class="material-symbols-rounded text-lg">cancel</span>
                 إلغاء
             </a>
-            <button type="submit" class="btn btn-primary">
-                <span class="material-symbols-rounded">save</span>
+            <button type="submit" class="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl font-bold text-sm shadow-sm transition-all"
+                    style="background: var(--color-primary); color: white">
+                <span class="material-symbols-rounded text-lg">save</span>
                 حفظ البيانات
             </button>
         </div>

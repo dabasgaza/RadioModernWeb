@@ -111,26 +111,26 @@
 
 <div id="liveboard-content-wrapper" class="flex flex-col h-full gap-4">
     <!-- Top Control Bar / Dashboard Header -->
-    <div class="wf-card p-4 border border-base-200/50 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div class="p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4" style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1)">
         <div class="flex items-center gap-4">
             <div class="p-3 rounded-2xl bg-gradient-to-br from-primary to-secondary text-white shadow-md">
                 <span class="material-symbols-rounded text-3xl">tv</span>
             </div>
             <div>
-                <h1 class="text-2xl font-black text-base-content flex items-center gap-2">
+                <h1 class="text-2xl font-black flex items-center gap-2" style="color: var(--color-text)">
                     شاشة عرض الحلقات المجدولة
                 </h1>
-                <p class="text-sm text-base-content/60 mt-0.5">متابعة فورية ومباشرة لحلقات اليوم وتفاصيل البث</p>
+                <p class="text-sm mt-0.5" style="color: var(--color-text-secondary)">متابعة فورية ومباشرة لحلقات اليوم وتفاصيل البث</p>
             </div>
         </div>
 
         <!-- Live Clock and Actions -->
         <div class="flex flex-wrap items-center gap-4 justify-end">
             <!-- SignalR Status Indicator -->
-            <div id="connection-indicator" class="badge badge-success gap-2 py-3 px-4 font-semibold text-sm shadow-sm transition-all duration-300">
+            <span id="connection-indicator" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; background: color-mix(in srgb, var(--color-success) 10%, transparent); color: var(--color-success)">
                 <span class="w-2.5 h-2.5 rounded-full bg-white animate-ping"></span>
                 <span id="connection-status-text">متصل بالبث الفوري</span>
-            </div>
+            </span>
 
             <!-- Digital Clock -->
             <div class="bg-neutral text-neutral-content rounded-2xl px-6 py-2.5 font-mono text-xl font-bold flex items-center gap-3 shadow-lg">
@@ -141,11 +141,11 @@
 
             <!-- Dashboard Controls -->
             <div class="join shadow-md">
-                <button onclick="toggleAutoScroll()" id="btn-autoscroll" class="btn btn-neutral join-item gap-1">
+                <button onclick="toggleAutoScroll()" id="btn-autoscroll" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 600; border: 1px solid var(--color-border); cursor: pointer; background: transparent; color: var(--color-text); transition: all 0.2s" class="join-item">
                     <span class="material-symbols-rounded" id="icon-autoscroll">play_arrow</span>
                     <span>تمرير تلقائي</span>
                 </button>
-                <button onclick="toggleKioskMode()" id="btn-kiosk" class="btn btn-primary join-item gap-1">
+                <button onclick="toggleKioskMode()" id="btn-kiosk" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 600; border: 1px solid var(--color-border); cursor: pointer; background: var(--color-primary); color: var(--color-primary-text); transition: all 0.2s" class="join-item">
                     <span class="material-symbols-rounded" id="icon-kiosk">fullscreen</span>
                     <span>ملء الشاشة</span>
                 </button>
@@ -156,53 +156,53 @@
     <!-- Overview Statistics Row -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Total -->
-        <div class="wf-card border-r-8 border-primary hover:-translate-y-1 transition-all duration-300">
+        <div class="border-r-8 border-primary hover:-translate-y-1 transition-all duration-300" style="background: var(--color-surface); border-radius: 12px; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1)">
             <div class="card-body p-4 flex flex-row items-center gap-4">
                 <div class="p-3 bg-primary/10 text-primary rounded-2xl shadow-inner">
                     <span class="material-symbols-rounded text-3xl">view_list</span>
                 </div>
                 <div>
-                    <div class="text-base-content/60 text-sm font-semibold">إجمالي حلقات اليوم</div>
-                    <div class="text-3xl font-black text-base-content mt-1">@Model.Count</div>
+                    <div class="text-sm font-semibold" style="color: var(--color-text-secondary)">إجمالي حلقات اليوم</div>
+                    <div class="text-3xl font-black mt-1" style="color: var(--color-text)">@Model.Count</div>
                 </div>
             </div>
         </div>
 
         <!-- Planned -->
-        <div class="wf-card border-r-8 border-warning hover:-translate-y-1 transition-all duration-300">
+        <div class="border-r-8 border-warning hover:-translate-y-1 transition-all duration-300" style="background: var(--color-surface); border-radius: 12px; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1)">
             <div class="card-body p-4 flex flex-row items-center gap-4">
                 <div class="p-3 bg-warning/10 text-warning rounded-2xl shadow-inner">
                     <span class="material-symbols-rounded text-3xl">pending_actions</span>
                 </div>
                 <div>
-                    <div class="text-base-content/60 text-sm font-semibold">مجدولة / بانتظار البث</div>
-                    <div class="text-3xl font-black text-base-content mt-1">@Model.Count(e => e.StatusId == EpisodeStatusValues.Planned)</div>
+                    <div class="text-sm font-semibold" style="color: var(--color-text-secondary)">مجدولة / بانتظار البث</div>
+                    <div class="text-3xl font-black mt-1" style="color: var(--color-text)">@Model.Count(e => e.StatusId == EpisodeStatusValues.Planned)</div>
                 </div>
             </div>
         </div>
 
         <!-- Executed / Published -->
-        <div class="wf-card border-r-8 border-success hover:-translate-y-1 transition-all duration-300">
+        <div class="border-r-8 border-success hover:-translate-y-1 transition-all duration-300" style="background: var(--color-surface); border-radius: 12px; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1)">
             <div class="card-body p-4 flex flex-row items-center gap-4">
                 <div class="p-3 bg-success/10 text-success rounded-2xl shadow-inner">
                     <span class="material-symbols-rounded text-3xl">check_circle</span>
                 </div>
                 <div>
-                    <div class="text-base-content/60 text-sm font-semibold">تم التنفيذ والبث</div>
-                    <div class="text-3xl font-black text-base-content mt-1">@Model.Count(e => e.StatusId == EpisodeStatusValues.Executed || e.StatusId == EpisodeStatusValues.Published || e.StatusId == EpisodeStatusValues.WebsitePublished)</div>
+                    <div class="text-sm font-semibold" style="color: var(--color-text-secondary)">تم التنفيذ والبث</div>
+                    <div class="text-3xl font-black mt-1" style="color: var(--color-text)">@Model.Count(e => e.StatusId == EpisodeStatusValues.Executed || e.StatusId == EpisodeStatusValues.Published || e.StatusId == EpisodeStatusValues.WebsitePublished)</div>
                 </div>
             </div>
         </div>
 
         <!-- Cancelled -->
-        <div class="wf-card border-r-8 border-error hover:-translate-y-1 transition-all duration-300">
+        <div class="border-r-8 border-error hover:-translate-y-1 transition-all duration-300" style="background: var(--color-surface); border-radius: 12px; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1)">
             <div class="card-body p-4 flex flex-row items-center gap-4">
                 <div class="p-3 bg-error/10 text-error rounded-2xl shadow-inner">
                     <span class="material-symbols-rounded text-3xl">cancel</span>
                 </div>
                 <div>
-                    <div class="text-base-content/60 text-sm font-semibold">حلقات ملغاة</div>
-                    <div class="text-3xl font-black text-base-content mt-1">@Model.Count(e => e.StatusId == EpisodeStatusValues.Cancelled)</div>
+                    <div class="text-sm font-semibold" style="color: var(--color-text-secondary)">حلقات ملغاة</div>
+                    <div class="text-3xl font-black mt-1" style="color: var(--color-text)">@Model.Count(e => e.StatusId == EpisodeStatusValues.Cancelled)</div>
                 </div>
             </div>
         </div>
@@ -212,13 +212,13 @@
     <div id="liveboard-scroll-area" class="w-full flex-1 overflow-y-auto pr-1">
         @if (!Model.Any())
         {
-            <div class="wf-card p-20 text-center flex flex-col items-center justify-center gap-6 border border-base-200/50">
-                <div class="w-24 h-24 rounded-full bg-base-200 flex items-center justify-center text-base-content/20 animate-pulse">
+            <div class="p-20 text-center flex flex-col items-center justify-center gap-6" style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1)">
+                <div class="w-24 h-24 rounded-full flex items-center justify-center animate-pulse" style="background: var(--color-bg); color: color-mix(in srgb, var(--color-text) 20%, transparent)">
                     <span class="material-symbols-rounded text-6xl">event_busy</span>
                 </div>
                 <div>
-                    <h3 class="text-2xl font-black text-base-content">لا توجد حلقات مجدولة لليوم</h3>
-                    <p class="text-base-content/60 max-w-md mt-2 leading-relaxed">سيتم عرض الحلقات وتفاصيل الطاقم والضيوف هنا فور جدولتها في النظام لليوم الحالي.</p>
+                    <h3 class="text-2xl font-black" style="color: var(--color-text)">لا توجد حلقات مجدولة لليوم</h3>
+                    <p class="max-w-md mt-2 leading-relaxed" style="color: var(--color-text-secondary)">سيتم عرض الحلقات وتفاصيل الطاقم والضيوف هنا فور جدولتها في النظام لليوم الحالي.</p>
                 </div>
             </div>
         }
@@ -251,20 +251,20 @@
                         displayTime = $"{hour12:D2}:{timeVal.Minute:D2} {ampm}";
                     }
 
-                    <div class="wf-card border-t-8 @statusColorClass transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl animate-card-in @(isNext ? "active-pulse-glow border-l border-r border-b" : "") @(isCancelled ? "opacity-60" : "")" 
-                         style="animation-delay: @(i * 70)ms">
+                    <div class="border-t-8 @statusColorClass transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl animate-card-in @(isNext ? "active-pulse-glow border-l border-r border-b" : "") @(isCancelled ? "opacity-60" : "")" 
+                         style="background: var(--color-surface); border-radius: 12px; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1); animation-delay: @(i * 70)ms">
                         <div class="card-body p-6 flex flex-col justify-between gap-4">
                             <!-- Card Header: Time and Status -->
-                            <div class="flex items-start justify-between gap-2 border-b border-base-200/50 pb-4">
+                            <div class="flex items-start justify-between gap-2 pb-4" style="border-bottom: 1px solid var(--color-border)">
                                 <div class="flex flex-col gap-1">
                                     <div class="flex items-center gap-2">
-                                        <span class="badge badge-neutral font-mono font-bold text-md py-3 px-3 shadow-md flex items-center gap-1">
+                                        <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; background: color-mix(in srgb, var(--color-text) 10%, transparent); color: var(--color-text)" class="font-mono font-bold text-md py-3 px-3 shadow-md">
                                             <span class="material-symbols-rounded text-sm">alarm</span>
                                             @displayTime
                                         </span>
                                         @if (isNext)
                                         {
-                                            <span class="badge badge-primary gap-1 py-3 px-3 font-extrabold text-xs shadow-sm animate-pulse">
+                                            <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary)" class="py-3 px-3 font-extrabold text-xs shadow-sm">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
                                                 الحلقة التالية
                                             </span>
@@ -296,12 +296,12 @@
 
                             <!-- Card Title & Description -->
                             <div class="flex-1">
-                                <h2 class="text-xl font-extrabold text-base-content flex items-center gap-2 leading-snug">
+                                <h2 class="text-xl font-extrabold flex items-center gap-2 leading-snug" style="color: var(--color-text)">
                                     @episode.EpisodeName
                                 </h2>
                                 @if (!string.IsNullOrWhiteSpace(episode.EpisodeDescription))
                                 {
-                                    <p class="text-sm text-base-content/70 mt-2 line-clamp-3 leading-relaxed">
+                                    <p class="text-sm mt-2 line-clamp-3 leading-relaxed" style="color: var(--color-text-secondary)">
                                         @episode.EpisodeDescription
                                     </p>
                                 }
@@ -311,7 +311,7 @@
                             @if (episode.EmployeeItems.Any())
                             {
                                 <div class="mt-2">
-                                    <div class="text-xs text-base-content/50 font-bold mb-2.5 flex items-center gap-1">
+                                    <div class="text-xs font-bold mb-2.5 flex items-center gap-1" style="color: var(--color-text-tertiary)">
                                         <span class="material-symbols-rounded text-sm text-primary">groups</span>
                                         طاقم العمل:
                                     </div>
@@ -325,7 +325,7 @@
                                                 var r when r.Contains("صوت") || r.Contains("مهندس") || r.Contains("فني") => "equalizer",
                                                 _ => "person"
                                             };
-                                            <span class="badge badge-outline border-base-content/10 badge-md gap-1.5 py-2.5 px-3 text-xs font-semibold text-base-content/80 shadow-sm bg-base-100/50">
+                                            <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; background: transparent; border: 1px solid var(--color-border); color: var(--color-text)" class="text-xs font-semibold shadow-sm">
                                                 <span class="material-symbols-rounded text-xs text-primary">@iconName</span>
                                                 <span class="opacity-70">@emp.StaffRoleName:</span>
                                                 <span class="font-bold">@emp.FullName</span>
@@ -338,15 +338,15 @@
                             <!-- Guests & Correspondents -->
                             @if (episode.GuestItems.Any() || episode.CorrespondentItems.Any())
                             {
-                                <div class="mt-2 pt-4 border-t border-base-200/50">
+                                <div class="mt-2 pt-4" style="border-top: 1px solid var(--color-border)">
                                     <div class="flex flex-col gap-2.5">
                                         @if (episode.GuestItems.Any())
                                         {
                                             <div class="flex items-center gap-2 flex-wrap">
-                                                <span class="text-xs text-base-content/50 font-bold">الضيوف:</span>
+                                                <span class="text-xs font-bold" style="color: var(--color-text-tertiary)">الضيوف:</span>
                                                 @foreach (var guest in episode.GuestItems)
                                                 {
-                                                    <span class="badge badge-secondary gap-1 py-2 px-2.5 shadow-sm font-semibold text-xs text-secondary-content">
+                                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; background: color-mix(in srgb, var(--color-secondary) 10%, transparent); color: var(--color-secondary)" class="py-2 px-2.5 shadow-sm font-semibold text-xs">
                                                         <span class="material-symbols-rounded text-xs">person</span>
                                                         @guest.Name
                                                     </span>
@@ -357,10 +357,10 @@
                                         @if (episode.CorrespondentItems.Any())
                                         {
                                             <div class="flex items-center gap-2 flex-wrap">
-                                                <span class="text-xs text-base-content/50 font-bold">المراسلون:</span>
+                                                <span class="text-xs font-bold" style="color: var(--color-text-tertiary)">المراسلون:</span>
                                                 @foreach (var corr in episode.CorrespondentItems)
                                                 {
-                                                    <span class="badge badge-accent gap-1 py-2 px-2.5 shadow-sm font-semibold text-xs text-accent-content">
+                                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; background: color-mix(in srgb, var(--color-accent) 10%, transparent); color: var(--color-accent)" class="py-2 px-2.5 shadow-sm font-semibold text-xs">
                                                         <span class="material-symbols-rounded text-xs">record_voice_over</span>
                                                         @corr.FullName
                                                         @if (corr.HostingTime.HasValue)
@@ -378,7 +378,7 @@
                             <!-- Special Notes & Cancellation reasons -->
                             @if (!string.IsNullOrWhiteSpace(episode.SpecialNotes) || (isCancelled && !string.IsNullOrWhiteSpace(episode.CancellationReason)))
                             {
-                                <div class="mt-2 pt-4 border-t border-base-200/50">
+                                <div class="mt-2 pt-4" style="border-top: 1px solid var(--color-border)">
                                     @if (!string.IsNullOrWhiteSpace(episode.SpecialNotes))
                                     {
                                         <div class="alert alert-info py-2.5 px-4 text-xs rounded-xl gap-2 mt-1 shadow-sm">

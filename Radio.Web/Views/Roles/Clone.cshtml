@@ -1,56 +1,39 @@
 @model RoleDto
 @{
     ViewData["Title"] = "استنساخ الدور الوظيفي";
+    ViewData["HeaderIcon"] = "content_copy";
+    ViewData["HeaderDescription"] = "إنشاء دور وظيفي جديد بناءً على صلاحيات دور حالي لتسهيل التهيئة";
+    ViewBag.EntityName = "الأدوار الوظيفية";
+    ViewBag.EntityUrl = "/Roles";
+    ViewBag.BackUrl = "/Roles";
+    ViewBag.BackText = "الرجوع للأدوار";
 }
 
-<div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-8 mb-8 border border-primary/10">
-    <div class="absolute inset-0 bg-grid-slate-900/[0.04] bg-[size:20px_20px] pointer-events-none"></div>
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 relative z-10">
-        <div>
-            <div class="breadcrumbs text-sm text-base-content/60 mb-3">
-                <ul>
-                    <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
-                    <li><a href="/Roles" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">groups</span>الأدوار الوظيفية</a></li>
-                    <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">content_copy</span>استنساخ دور</span></li>
-                </ul>
-            </div>
-            <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
-                <span class="material-symbols-rounded text-primary">content_copy</span>
-                استنساخ الدور الوظيفي
-            </h1>
-            <p class="text-sm text-base-content/60 mt-0.5">إنشاء دور وظيفي جديد بناءً على صلاحيات دور حالي لتسهيل التهيئة</p>
-        </div>
-        <div class="flex items-center gap-2">
-            <a href="/Roles" class="btn btn-ghost py-2.5 px-4 rounded-xl font-bold flex items-center gap-1.5 transition-all">
-                <span class="material-symbols-rounded">arrow_forward</span>
-                الرجوع للأدوار
-            </a>
-        </div>
-    </div>
-</div>
+<partial name="_PageHeader" />
 
-<div class="wf-card max-w-2xl mx-auto">
+<div class="rounded-2xl border max-w-2xl mx-auto" style="background: var(--color-surface); border-color: var(--color-border)">
     <form method="post" action="/Roles/Clone/@ViewBag.SourceRoleId">
         @Html.AntiForgeryToken()
         
-        <div class="card-body space-y-6">
-            <div class="bg-base-200 p-6 border-b border-base-200/40 flex items-center gap-3">
-                <span class="material-symbols-rounded text-primary p-2 bg-primary/10 rounded-xl">content_copy</span>
+        <div class="p-6 space-y-6">
+            <div class="flex items-center gap-3" style="color: var(--color-text)">
+                <span class="material-symbols-rounded p-2 rounded-xl" style="background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary)">content_copy</span>
                 <div>
-                    <h3 class="font-extrabold text-base-content text-base">استنساخ وتكرار الدور</h3>
-                    <p class="text-xs text-base-content/60 mt-1">سيتم توريد الصلاحيات تلقائياً للدور الجديد</p>
+                    <h3 class="font-extrabold" style="color: var(--color-text)">استنساخ وتكرار الدور</h3>
+                    <p class="text-xs mt-1" style="color: var(--color-text-tertiary)">سيتم توريد الصلاحيات تلقائياً للدور الجديد</p>
                 </div>
             </div>
-            <div class="bg-primary/5 border border-primary/10 rounded-2xl p-5 flex items-start gap-4">
-                <span class="material-symbols-rounded text-primary p-1 bg-primary/10 rounded-lg shrink-0">info</span>
-                <div class="text-xs text-base-content/60 leading-relaxed">
-                    سيتم إنشاء دور وظيفي جديد بنسخة مطابقة تماماً من صلاحيات دور <strong class="text-primary font-black">@ViewBag.SourceRoleName</strong>. بعد إتمام الاستنساخ، يمكنك التعديل والتحكم بالصلاحيات بحرية تامة من مصفوفة الصلاحيات.
+            <div class="rounded-2xl p-5 flex items-start gap-4" style="background: color-mix(in srgb, var(--color-primary) 5%, transparent); border: 1px solid color-mix(in srgb, var(--color-primary) 10%, transparent)">
+                <span class="material-symbols-rounded p-1 rounded-lg shrink-0" style="background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary)">info</span>
+                <div class="text-xs leading-relaxed" style="color: var(--color-text-tertiary)">
+                    سيتم إنشاء دور وظيفي جديد بنسخة مطابقة تماماً من صلاحيات دور <strong style="color: var(--color-primary)">@ViewBag.SourceRoleName</strong>. بعد إتمام الاستنساخ، يمكنك التعديل والتحكم بالصلاحيات بحرية تامة من مصفوفة الصلاحيات.
                 </div>
             </div>
 
             @if (ViewContext.ModelState.ErrorCount > 0)
             {
-                <div asp-validation-summary="All" class="bg-error/5 border border-error/20 text-error rounded-2xl p-4 text-xs font-semibold flex items-start gap-3">
+                <div asp-validation-summary="All" class="rounded-2xl p-4 text-xs font-semibold flex items-start gap-3"
+                     style="background: color-mix(in srgb, var(--color-error) 5%, transparent); border: 1px solid color-mix(in srgb, var(--color-error) 20%, transparent); color: var(--color-error)">
                     <span class="material-symbols-rounded shrink-0 text-sm">error</span>
                     <div class="flex-1 space-y-1">
                         <span class="block font-bold">يرجى تصحيح الأخطاء التالية:</span>
@@ -59,24 +42,32 @@
             }
 
             <div>
-                <label class="label font-bold text-base-content text-xs mb-2 block">اسم الدور الجديد <span class="text-error">*</span></label>
+                <label class="text-sm font-bold mb-2 block" style="color: var(--color-text)">اسم الدور الجديد <span style="color: var(--color-error)">*</span></label>
                 <div class="relative">
-                    <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-base-content/60">badge</span>
-                    <input type="text" name="newRoleName" class="input input-bordered pr-12 pl-4 py-3.5 rounded-2xl w-full border border-base-200/80 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-bold text-base-content placeholder="مثال: محرر أول" required maxlength="100" />
+                    <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2" style="color: var(--color-text-tertiary)">badge</span>
+                    <input type="text" name="newRoleName"
+                           class="w-full rounded-xl py-3 pr-12 pl-4 text-sm font-bold focus:outline-none focus:ring-4 transition-all"
+                           style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: color-mix(in srgb, var(--color-primary) 10%, transparent)"
+                           placeholder="مثال: محرر أول" required maxlength="100" />
                 </div>
             </div>
 
             <div>
-                <label class="label font-bold text-base-content text-xs mb-2 block">الوصف للدور الجديد</label>
-                <textarea name="newDescription" class="textarea textarea-bordered p-4 rounded-2xl w-full border border-base-200/80 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all text-base-content" rows="4" placeholder="وصف مختصر للمهام والمسؤوليات الموكلة لهذا الدور الجديد…" maxlength="500">@Model.RoleDescription</textarea>
+                <label class="text-sm font-bold mb-2 block" style="color: var(--color-text)">الوصف للدور الجديد</label>
+                <textarea name="newDescription"
+                          class="w-full rounded-xl p-4 text-sm focus:outline-none focus:ring-4 transition-all"
+                          style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: color-mix(in srgb, var(--color-primary) 10%, transparent)"
+                          rows="4" placeholder="وصف مختصر للمهام والمسؤوليات الموكلة لهذا الدور الجديد…" maxlength="500">@Model.RoleDescription</textarea>
             </div>
         
-        <div class="px-6 py-5 bg-base-200 border-t border-base-200/40 flex items-center justify-between gap-3">
-            <a href="/Roles" class="btn btn-ghost py-3 px-5 rounded-2xl font-bold flex items-center gap-1.5 transition-all">
+        <div class="flex items-center justify-between gap-3 pt-4" style="border-top: 1px solid var(--color-border)">
+            <a href="/Roles" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all"
+               style="color: var(--color-text-secondary)">
                 <span class="material-symbols-rounded">cancel</span>
                 إلغاء
             </a>
-            <button type="submit" class="btn btn-primary py-3 px-6 rounded-2xl font-bold flex items-center gap-1.5 shadow-lg shadow-primary/20 transition-all duration-300">
+            <button type="submit" class="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl font-bold text-sm shadow-sm transition-all"
+                    style="background: var(--color-primary); color: white">
                 <span class="material-symbols-rounded">content_copy</span>
                 تأكيد واستنساخ الدور
             </button>

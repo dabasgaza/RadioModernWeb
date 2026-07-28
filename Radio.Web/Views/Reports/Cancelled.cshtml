@@ -1,34 +1,19 @@
 @model List<CancelledEpisodeDto>
-@{ ViewData["Title"] = "الحلقات الملغاة"; }
+@{
+    ViewData["Title"] = "الحلقات الملغاة";
+    ViewData["HeaderIcon"] = "cancel";
+    ViewData["HeaderDescription"] = "قائمة بكل الحلقات الملغاة وأسباب الإلغاء وتفاصيلها";
+    ViewBag.EntityName = "التقارير";
+    ViewBag.EntityUrl = "/Reports";
+    ViewData["HeaderActions"] = "<div class='flex items-center gap-2'><a href='/Reports/ExportCancelledExcel' class='btn btn-success btn-sm rounded-xl gap-2'><span class='material-symbols-rounded text-lg'>file_download</span>Excel</a><a href='/Reports/ExportCancelledPdf' class='btn btn-danger btn-sm rounded-xl gap-2'><span class='material-symbols-rounded text-lg'>file_download</span>PDF</a><button onclick='window.print()' class='btn btn-ghost btn-sm rounded-xl no-print'><span class='material-symbols-rounded text-lg'>print</span></button></div>";
+}
 
-<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-    <div>
-        <div class="breadcrumbs text-sm text-base-content/60">
-            <ul>
-                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
-                <li><a href="/Reports" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">assessment</span>التقارير</a></li>
-                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">cancel</span>الحلقات الملغاة</span></li>
-            </ul>
-        </div>
-        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
-            <span class="material-symbols-rounded text-danger">cancel</span>
-            الحلقات الملغاة
-        </h1>
-        <p class="text-sm text-base-content/60 mt-0.5">قائمة بكل الحلقات الملغاة وأسباب الإلغاء وتفاصيلها</p>
-    </div>
-    <div class="flex items-center gap-2">
-        <a href="/Reports/ExportCancelledExcel" class="btn btn-success btn-sm">
-            <span class="material-symbols-rounded text-lg">file_download</span>
-            Excel
-        </a>
-        <a href="/Reports/ExportCancelledPdf" class="btn btn-error btn-sm">
-            <span class="material-symbols-rounded text-lg">file_download</span>
-            PDF
-        </a>
-        <button onclick="window.print()" class="btn btn-ghost btn-sm no-print">
+<partial name="_PageHeader" />
+                style="color: var(--color-text-secondary)">
             <span class="material-symbols-rounded text-lg">print</span>
         </button>
-        <a href="/Reports" class="btn btn-ghost">
+        <a href="/Reports" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-sm transition-all"
+           style="color: var(--color-text-secondary)">
             <span class="material-symbols-rounded">arrow_forward</span>
             الرجوع للتقارير
         </a>
@@ -37,46 +22,43 @@
 
 @if (!Model.Any())
 {
-    <div class="wf-card"><div class="card-body text-center py-12">
-        <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">check_circle</span>
-        <h3 class="font-bold text-lg mb-2">لا حلقات ملغاة</h3>
-        <p class="text-sm text-base-content/60 mb-4">لم تُلغَ أي حلقات بعد. هذا مؤشر ممتاز!</p>
-    </div></div>
+    <partial name="_EmptyState" model='new { Icon = "cancel", Title = "لا توجد حلقات ملغاة", Description = "لم يتم إلغاء أي حلقات في الفترة المحددة." }' />
 }
 else
 {
-    <div class="wf-card overflow-hidden">
+    <div class="rounded-2xl border overflow-hidden" style="background: var(--color-surface); border-color: var(--color-border)">
         <div class="overflow-x-auto">
-        <table class="table table-zebra w-full text-sm">
-            <thead>
-                <tr>
-                    <th class="text-right font-semibold">الحلقة</th>
-                    <th class="text-right font-semibold">البرنامج</th>
-                    <th class="text-right font-semibold">الموعد</th>
-                    <th class="text-right font-semibold">السبب</th>
-                    <th class="text-right font-semibold">بواسطة</th>
-                    <th class="text-right font-semibold">تاريخ الإلغاء</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var c in Model)
-                {
-                    <tr>
-                        <td class="font-semibold">
-                            <span class="badge badge-error gap-1">
-                                <span class="material-symbols-rounded text-[inherit] text-xs">cancel</span>
-                                @c.EpisodeName
-                            </span>
-                        </td>
-                        <td class="text-base-content/60">@c.ProgramName</td>
-                        <td class="text-base-content/60">@(c.ScheduledExecutionTime?.ToString("yyyy-MM-dd") ?? "—")</td>
-                        <td class="text-base-content/60">@c.CancellationReason</td>
-                        <td class="text-base-content/60">@(c.CancelledBy ?? "—")</td>
-                        <td class="text-base-content/60 whitespace-nowrap" dir="ltr">@c.CancelledAt.ToString("yyyy-MM-dd HH:mm")</td>
+            <table class="w-full text-sm">
+                <thead>
+                    <tr style="background: var(--color-bg-alt)">
+                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">الحلقة</th>
+                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">البرنامج</th>
+                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">الموعد</th>
+                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">السبب</th>
+                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">بواسطة</th>
+                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">تاريخ الإلغاء</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model)
+                    {
+                        <tr class="border-t transition-colors duration-200" style="border-color: var(--color-border)">
+                            <td class="px-6 py-4 font-semibold">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-bold rounded-full"
+                                      style="background: color-mix(in srgb, var(--color-error) 10%, transparent); color: var(--color-error)">
+                                    <span class="material-symbols-rounded text-xs">cancel</span>
+                                    @c.EpisodeName
+                                </span>
+                            </td>
+                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@c.ProgramName</td>
+                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@(c.ScheduledExecutionTime?.ToString("yyyy-MM-dd") ?? "—")</td>
+                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@c.CancellationReason</td>
+                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@(c.CancelledBy ?? "—")</td>
+                            <td class="px-6 py-4 whitespace-nowrap" dir="ltr" style="color: var(--color-text-secondary)">@c.CancelledAt.ToString("yyyy-MM-dd HH:mm")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 }

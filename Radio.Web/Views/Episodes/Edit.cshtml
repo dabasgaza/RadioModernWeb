@@ -2,59 +2,16 @@
 @{
     ViewData["Title"] = Model.Episode.EpisodeId == 0 ? "حلقة جديدة" : "تعديل حلقة";
     var isEdit = Model.Episode.EpisodeId != 0;
+    ViewData["HeaderIcon"] = isEdit ? "edit" : "add";
+    ViewData["HeaderDescription"] = "إدخال وتعديل البيانات والتفاصيل والضيوف المشاركين في الحلقة";
     ViewBag.IsEdit = isEdit;
-    ViewBag.Icon = isEdit ? "edit" : "add";
-    ViewBag.Title = isEdit ? "تعديل الحلقة" : "حلقة جديدة";
-    ViewBag.Description = "إدخال وتعديل البيانات والتفاصيل والضيوف المشاركين في الحلقة";
     ViewBag.EntityName = "الحلقات";
     ViewBag.EntityUrl = "/Episodes";
     ViewBag.BackUrl = "/Episodes";
     ViewBag.BackText = "الرجوع للحلقات";
 }
 
-<div class="page-header-enhanced p-6">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
-        <div>
-            <div class="breadcrumbs text-sm text-base-content/60">
-                <ul>
-                    <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
-                    <li><a href="/Episodes" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">podcasts</span>الحلقات</a></li>
-                    <li><span class="inline-flex items-center gap-1">@(isEdit ? "تعديل حلقة" : "حلقة جديدة")</span></li>
-                </ul>
-            </div>
-            <div class="flex items-center gap-3 flex-wrap">
-                <h1 class="text-2xl font-extrabold text-base-content flex items-center gap-2">
-                    <span class="material-symbols-rounded text-primary">podcasts</span>
-                    @(isEdit ? "تعديل حلقة" : "حلقة جديدة")
-                </h1>
-                @if (isEdit)
-                {
-                    var statusClasses = new Dictionary<byte, string>
-                    {
-                        { 0, "planned" },
-                        { 1, "executed" },
-                        { 2, "published" },
-                        { 3, "website-published" },
-                        { 4, "cancelled" },
-                    };
-                    var sc = statusClasses.GetValueOrDefault(Model.StatusId, "");
-                    <span class="status-badge @sc border text-sm px-3 py-1">@(Model.StatusText ?? "—")</span>
-                    <span class="text-xs text-base-content/40 font-semibold flex items-center gap-1">
-                        <span class="material-symbols-rounded text-xs">tag</span>
-                        #@Model.Episode.EpisodeId
-                    </span>
-                }
-            </div>
-            <p class="text-sm text-base-content/60 mt-0.5">إدخال وتعديل البيانات والتفاصيل والضيوف المشاركين في الحلقة</p>
-        </div>
-        <div class="flex items-center gap-2">
-            <a href="/Episodes" class="btn btn-ghost">
-                <span class="material-symbols-rounded">arrow_forward</span>
-                الرجوع للحلقات
-            </a>
-        </div>
-    </div>
-</div>
+<partial name="_PageHeader" />
 
 <form method="post" action="@(isEdit ? $"/Episodes/Edit/{Model.Episode.EpisodeId}" : "/Episodes/Create")" id="episodeForm">
     @Html.AntiForgeryToken()
@@ -62,27 +19,26 @@
 
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="bg-error/10 border border-error/20 text-error rounded-xl p-4 mb-6 font-semibold text-sm"></div>
+        <div asp-validation-summary="All" class="rounded-lg p-4 mb-6 font-semibold text-sm bg-danger/5 border border-danger/20 text-danger"></div>
     }
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-        <!-- ─── Main Column ─── -->
         <div class="lg:col-span-8 space-y-6">
 
-            <!-- ═══ Basic Info ═══ -->
-            <div class="wf-card">
-                <div class="card-body">
-                    <div class="flex items-center gap-2 mb-4">
-                        <span class="material-symbols-rounded text-primary">info</span>
-                        <h3 class="font-bold text-base-content text-base">المعلومات الأساسية</h3>
+            <div class="glass-card rounded-xl p-6">
+                <div class="flex items-center gap-3 mb-4 pb-3 border-b border-border/60">
+                    <div class="w-9 h-9 rounded-lg bg-primary-soft text-primary flex items-center justify-center">
+                        <span class="material-symbols-rounded text-xl">info</span>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <h3 class="type-title-lg text-ink">المعلومات الأساسية</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="label">البرنامج *</label>
+                        <label class="type-label-md text-ink-muted mb-1.5 block">البرنامج *</label>
                         <div class="relative">
-                            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">radio</span>
-                            <select name="ProgramId" class="select select-bordered" required>
+                            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg text-ink-soft">radio</span>
+                            <select name="ProgramId" class="w-full bg-surface-2 border border-border/60 rounded-lg py-2.5 pr-10 pl-3 text-sm text-ink focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all appearance-none" required>
                                 <option value="">— اختر البرنامج —</option>
                                 @foreach (var p in Model.Programs)
                                 {
@@ -92,261 +48,269 @@
                         </div>
                     </div>
                     <div>
-                        <label class="label">عنوان الحلقة *</label>
+                        <label class="type-label-md text-ink-muted mb-1.5 block">عنوان الحلقة *</label>
                         <div class="relative">
-                            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">edit</span>
-                            <input type="text" name="EpisodeName" value="@Model.Episode.EpisodeName" class="input input-bordered w-full pr-10" required placeholder="مثال: حلقة السبت" />
+                            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg text-ink-soft">edit</span>
+                            <input type="text" name="EpisodeName" value="@Model.Episode.EpisodeName"
+                                   class="w-full bg-surface-2 border border-border/60 rounded-lg py-2.5 pr-10 pl-3 text-sm text-ink focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all"
+                                   required placeholder="مثال: حلقة السبت" />
                         </div>
                     </div>
                     <div class="md:col-span-2">
-                        <label class="label">وصف الحلقة</label>
+                        <label class="type-label-md text-ink-muted mb-1.5 block">وصف الحلقة</label>
                         <div class="relative">
-                            <span class="material-symbols-rounded absolute right-3 text-base-content/40 pointer-events-none text-lg" style="top:1rem;transform:none">description</span>
-                            <textarea name="EpisodeDescription" rows="4" class="textarea textarea-bordered w-full pr-10" placeholder="وصف مختصر لمحتوى الحلقة وموضوعاتها الرئيسية…">@Model.Episode.EpisodeDescription</textarea>
+                            <span class="material-symbols-rounded absolute right-3 pointer-events-none text-lg text-ink-soft" style="top: 1rem; transform: none;">description</span>
+                            <textarea name="EpisodeDescription" rows="4" class="w-full bg-surface-2 border border-border/60 rounded-lg py-2.5 pr-10 pl-3 text-sm text-ink focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all"
+                                      placeholder="وصف مختصر لمحتوى الحلقة وموضوعاتها الرئيسية…">@Model.Episode.EpisodeDescription</textarea>
                         </div>
                     </div>
                     <div class="md:col-span-2">
-                        <label class="label">ملاحظات خاصة</label>
+                        <label class="type-label-md text-ink-muted mb-1.5 block">ملاحظات خاصة</label>
                         <div class="relative">
-                            <span class="material-symbols-rounded absolute right-3 text-base-content/40 pointer-events-none text-lg" style="top:1rem;transform:none">notes</span>
-                            <textarea name="SpecialNotes" rows="3" class="textarea textarea-bordered w-full pr-10" placeholder="ملاحظات داخلية حول التحضير والإنتاج…">@Model.Episode.SpecialNotes</textarea>
+                            <span class="material-symbols-rounded absolute right-3 pointer-events-none text-lg text-ink-soft" style="top: 1rem; transform: none;">notes</span>
+                            <textarea name="SpecialNotes" rows="3" class="w-full bg-surface-2 border border-border/60 rounded-lg py-2.5 pr-10 pl-3 text-sm text-ink focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all"
+                                      placeholder="ملاحظات داخلية حول التحضير والإنتاج…">@Model.Episode.SpecialNotes</textarea>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- ═══ Guests ═══ -->
-            <div class="wf-card">
-                <div class="card-body">
-                    <div class="flex items-center justify-between gap-2 mb-4">
-                        <div class="flex items-center gap-2">
-                            <span class="material-symbols-rounded text-primary">people_alt</span>
-                            <h3 class="font-bold text-base-content text-base">الضيوف</h3>
+            <div class="glass-card rounded-xl p-6">
+                <div class="flex items-center justify-between gap-2 mb-4 pb-3 border-b border-border/60">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-primary-soft text-primary flex items-center justify-center">
+                            <span class="material-symbols-rounded text-xl">people_alt</span>
                         </div>
-                        <button type="button" class="btn btn-success text-xs" onclick="EP.addRow('guests-container','guest-row-tpl')">
-                            <span class="material-symbols-rounded text-sm">add</span>
-                            إضافة ضيف
-                        </button>
+                        <h3 class="type-title-lg text-ink">الضيوف</h3>
                     </div>
-                    <div id="guests-container" data-empty="true" class="space-y-3">
-                        @if (Model.Episode.Guests.Any())
+                    <button type="button" class="btn btn-success btn-sm rounded-lg gap-1" onclick="EP.addRow('guests-container','guest-row-tpl')">
+                        <span class="material-symbols-rounded text-sm">add</span>
+                        إضافة ضيف
+                    </button>
+                </div>
+                <div id="guests-container" data-empty="true" class="space-y-3">
+                    @if (Model.Episode.Guests.Any())
+                    {
+                        @for (int i = 0; i < Model.Episode.Guests.Count; i++)
                         {
-                            @for (int i = 0; i < Model.Episode.Guests.Count; i++)
-                            {
-                                var g = Model.Episode.Guests[i];
-                                <div class="ep-row guest-row" draggable="true">
-                                    <input type="hidden" name="Guests[@i].EpisodeGuestId" value="@g.EpisodeGuestId" />
-                                    <div class="ep-row-handle" title="سحب لإعادة الترتيب"><span class="material-symbols-rounded">drag_indicator</span></div>
-                                    <div class="ep-row-body">
-                                        <div class="ep-row-fields">
-                                            <div class="ep-field flex-1">
-                                                <select name="Guests[@i].GuestId" class="select select-bordered">
-                                                    <option value="">— اختر الضيف —</option>
-                                                    @foreach (var guest in Model.Guests)
-                                                    {
-                                                        <option value="@guest.GuestId" selected="@(g.GuestId == guest.GuestId)">@guest.FullName</option>
-                                                    }
-                                                </select>
-                                            </div>
-                                            <div class="ep-field flex-1">
-                                                <input type="text" name="Guests[@i].Topic" value="@g.Topic" class="input input-bordered" placeholder="موضوع الاستضافة" />
-                                            </div>
-                                            <div class="ep-field w-28">
-                                                                <input type="text" name="Guests[@i].HostingTime" value="@(g.HostingTime?.ToString(@"hh\:mm"))" class="input input-bordered timepicker" />
-                                            </div>
-                                            <input type="hidden" name="Guests[@i].ClipNotes" value="@g.ClipNotes" />
+                            var g = Model.Episode.Guests[i];
+                            <div class="ep-row guest-row" draggable="true">
+                                <input type="hidden" name="Guests[@i].EpisodeGuestId" value="@g.EpisodeGuestId" />
+                                <div class="ep-row-handle" title="سحب لإعادة الترتيب"><span class="material-symbols-rounded">drag_indicator</span></div>
+                                <div class="ep-row-body">
+                                    <div class="ep-row-fields">
+                                        <div class="ep-field flex-1">
+                                            <select name="Guests[@i].GuestId" class="w-full rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 transition-all"
+                                                    style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);">
+                                                <option value="">— اختر الضيف —</option>
+                                                @foreach (var guest in Model.Guests)
+                                                {
+                                                    <option value="@guest.GuestId" selected="@(g.GuestId == guest.GuestId)">@guest.FullName</option>
+                                                }
+                                            </select>
                                         </div>
-                                        <div class="ep-row-actions">
-                                            <button type="button" class="ep-row-del" title="حذف" onclick="EP.removeRow(this)">
-                                                <span class="material-symbols-rounded">close</span>
-                                            </button>
+                                        <div class="ep-field flex-1">
+                                            <input type="text" name="Guests[@i].Topic" value="@g.Topic" class="w-full rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 transition-all"
+                                                   style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);" placeholder="موضوع الاستضافة" />
                                         </div>
+                                        <div class="ep-field w-28">
+                                            <input type="text" name="Guests[@i].HostingTime" value="@(g.HostingTime?.ToString(@"hh\:mm"))" class="w-full rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 transition-all timepicker"
+                                                   style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);" />
+                                        </div>
+                                        <input type="hidden" name="Guests[@i].ClipNotes" value="@g.ClipNotes" />
+                                    </div>
+                                    <div class="ep-row-actions">
+                                        <button type="button" class="ep-row-del" title="حذف" onclick="EP.removeRow(this)">
+                                            <span class="material-symbols-rounded">close</span>
+                                        </button>
                                     </div>
                                 </div>
-                            }
-                        }
-                        else
-                        {
-                            <div class="flex flex-col items-center justify-center py-8 text-center bg-base-200 rounded-xl border-2 border-dashed border-base-200/50">
-                                <span class="material-symbols-rounded text-base-content/40 text-3xl mb-2">groups</span>
-                                <p class="text-sm font-bold text-base-content/60">لم تتم إضافة ضيوف بعد</p>
-                                <p class="text-xs text-base-content/40 mt-1">انقر على زر الإضافة أعلاه لتسجيل ضيف في الحلقة</p>
                             </div>
                         }
-                    </div>
+                    }
+                    else
+                    {
+                        <div class="flex flex-col items-center justify-center py-8 text-center rounded-xl border-2 border-dashed"
+                             style="background: var(--color-bg); border-color: var(--color-border);">
+                            <span class="material-symbols-rounded text-3xl mb-2 text-[var(--color-text-4)]">groups</span>
+                            <p class="text-sm font-bold text-[var(--color-text-3)]">لم تتم إضافة ضيوف بعد</p>
+                            <p class="text-xs mt-1 text-[var(--color-text-4)]">انقر على زر الإضافة أعلاه لتسجيل ضيف في الحلقة</p>
+                        </div>
+                    }
                 </div>
             </div>
 
-            <!-- ═══ Correspondents ═══ -->
-            <div class="wf-card">
-                <div class="card-body">
-                    <div class="flex items-center justify-between gap-2 mb-4">
-                        <div class="flex items-center gap-2">
-                            <span class="material-symbols-rounded text-primary">map</span>
-                            <h3 class="font-bold text-base-content text-base">المراسلون</h3>
+            <div class="glass-card rounded-xl p-6">
+                <div class="flex items-center justify-between gap-2 mb-4 pb-3 border-b border-border/60">
+                    <div class="flex items-center gap-2">
+                        <div class="w-9 h-9 rounded-lg bg-primary-soft text-primary flex items-center justify-center">
+                            <span class="material-symbols-rounded text-lg">map</span>
                         </div>
-                        <button type="button" class="btn btn-success text-xs" onclick="EP.addRow('correspondents-container','corr-row-tpl')">
-                            <span class="material-symbols-rounded text-sm">add</span>
-                            إضافة مراسل
-                        </button>
+                        <h3 class="font-bold text-ink">المراسلون</h3>
                     </div>
-                    <div id="correspondents-container" data-empty="true" class="space-y-3">
-                        @if (Model.Episode.Correspondents.Any())
+                    <button type="button" class="btn btn-success btn-sm rounded-xl gap-1" onclick="EP.addRow('correspondents-container','corr-row-tpl')">
+                        <span class="material-symbols-rounded text-sm">add</span>
+                        إضافة مراسل
+                    </button>
+                </div>
+                <div id="correspondents-container" data-empty="true" class="space-y-3">
+                    @if (Model.Episode.Correspondents.Any())
+                    {
+                        @for (int i = 0; i < Model.Episode.Correspondents.Count; i++)
                         {
-                            @for (int i = 0; i < Model.Episode.Correspondents.Count; i++)
-                            {
-                                var c = Model.Episode.Correspondents[i];
-                                <div class="ep-row corr-row" draggable="true">
-                                    <input type="hidden" name="Correspondents[@i].Id" value="@c.Id" />
-                                    <div class="ep-row-handle" title="سحب لإعادة الترتيب"><span class="material-symbols-rounded">drag_indicator</span></div>
-                                    <div class="ep-row-body">
-                                        <div class="ep-row-fields">
-                                            <div class="ep-field flex-1">
-                                                <select name="Correspondents[@i].CorrespondentId" class="select select-bordered">
-                                                    <option value="">— اختر —</option>
-                                                    @foreach (var cor in Model.Correspondents)
-                                                    {
-                                                        <option value="@cor.CorrespondentId" selected="@(c.CorrespondentId == cor.CorrespondentId)">@cor.FullName</option>
-                                                    }
-                                                </select>
-                                            </div>
-                                            <div class="ep-field flex-1">
-                                                <input type="text" name="Correspondents[@i].Topic" value="@c.Topic" class="input input-bordered" placeholder="موضوع التغطية" />
-                                            </div>
-                                            <div class="ep-field w-28">
-                                                                <input type="text" name="Correspondents[@i].HostingTime" value="@(c.HostingTime?.ToString(@"hh\:mm"))" class="input input-bordered timepicker" />
-                                            </div>
+                            var c = Model.Episode.Correspondents[i];
+                            <div class="ep-row corr-row" draggable="true">
+                                <input type="hidden" name="Correspondents[@i].Id" value="@c.Id" />
+                                <div class="ep-row-handle" title="سحب لإعادة الترتيب"><span class="material-symbols-rounded">drag_indicator</span></div>
+                                <div class="ep-row-body">
+                                    <div class="ep-row-fields">
+                                        <div class="ep-field flex-1">
+                                            <select name="Correspondents[@i].CorrespondentId" class="w-full rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 transition-all"
+                                                    style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);">
+                                                <option value="">— اختر —</option>
+                                                @foreach (var cor in Model.Correspondents)
+                                                {
+                                                    <option value="@cor.CorrespondentId" selected="@(c.CorrespondentId == cor.CorrespondentId)">@cor.FullName</option>
+                                                }
+                                            </select>
                                         </div>
-                                        <div class="ep-row-actions">
-                                            <button type="button" class="ep-row-del" title="حذف" onclick="EP.removeRow(this)">
-                                                <span class="material-symbols-rounded">close</span>
-                                            </button>
+                                        <div class="ep-field flex-1">
+                                            <input type="text" name="Correspondents[@i].Topic" value="@c.Topic" class="w-full rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 transition-all"
+                                                   style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);" placeholder="موضوع التغطية" />
+                                        </div>
+                                        <div class="ep-field w-28">
+                                            <input type="text" name="Correspondents[@i].HostingTime" value="@(c.HostingTime?.ToString(@"hh\:mm"))" class="w-full rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 transition-all timepicker"
+                                                   style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);" />
                                         </div>
                                     </div>
+                                    <div class="ep-row-actions">
+                                        <button type="button" class="ep-row-del" title="حذف" onclick="EP.removeRow(this)">
+                                            <span class="material-symbols-rounded">close</span>
+                                        </button>
+                                    </div>
                                 </div>
-                            }
-                        }
-                        else
-                        {
-                            <div class="flex flex-col items-center justify-center py-8 text-center bg-base-200 rounded-xl border-2 border-dashed border-base-200/50">
-                                <span class="material-symbols-rounded text-base-content/40 text-3xl mb-2">map</span>
-                                <p class="text-sm font-bold text-base-content/60">لم تتم إضافة مراسلين بعد</p>
-                                <p class="text-xs text-base-content/40 mt-1">انقر على زر الإضافة لتسجيل مراسل ميداني للتغطية</p>
                             </div>
                         }
-                    </div>
+                    }
+                    else
+                    {
+                        <div class="flex flex-col items-center justify-center py-8 text-center rounded-xl border-2 border-dashed"
+                             style="background: var(--color-bg); border-color: var(--color-border);">
+                            <span class="material-symbols-rounded text-3xl mb-2 text-[var(--color-text-4)]">map</span>
+                            <p class="text-sm font-bold text-[var(--color-text-3)]">لم تتم إضافة مراسلين بعد</p>
+                            <p class="text-xs mt-1 text-[var(--color-text-4)]">انقر على زر الإضافة لتسجيل مراسل ميداني للتغطية</p>
+                        </div>
+                    }
                 </div>
             </div>
 
-            <!-- ═══ Employees ═══ -->
-            <div class="wf-card">
-                <div class="card-body">
-                    <div class="flex items-center justify-between gap-2 mb-4">
-                        <div class="flex items-center gap-2">
-                            <span class="material-symbols-rounded text-primary">badge</span>
-                            <h3 class="font-bold text-base-content text-base">طاقم العمل والإنتاج</h3>
+            <div class="glass-card rounded-xl p-6">
+                <div class="flex items-center justify-between gap-2 mb-4 pb-3 border-b border-border/60">
+                    <div class="flex items-center gap-2">
+                        <div class="w-9 h-9 rounded-lg bg-primary-soft text-primary flex items-center justify-center">
+                            <span class="material-symbols-rounded text-lg">badge</span>
                         </div>
-                        <button type="button" class="btn btn-success text-xs" onclick="EP.addRow('employees-container','emp-row-tpl')">
-                            <span class="material-symbols-rounded text-sm">add</span>
-                            إضافة عضو للطاقم
-                        </button>
+                        <h3 class="font-bold text-ink">طاقم العمل والإنتاج</h3>
                     </div>
-                    <div id="employees-container" data-empty="true" class="space-y-3">
-                        @if (Model.Episode.Employees.Any())
+                    <button type="button" class="btn btn-success btn-sm rounded-xl gap-1" onclick="EP.addRow('employees-container','emp-row-tpl')">
+                        <span class="material-symbols-rounded text-sm">add</span>
+                        إضافة عضو للطاقم
+                    </button>
+                </div>
+                <div id="employees-container" data-empty="true" class="space-y-3">
+                    @if (Model.Episode.Employees.Any())
+                    {
+                        @for (int i = 0; i < Model.Episode.Employees.Count; i++)
                         {
-                            @for (int i = 0; i < Model.Episode.Employees.Count; i++)
-                            {
-                                var e = Model.Episode.Employees[i];
-                                <div class="ep-row emp-row" draggable="true">
-                                    <input type="hidden" name="Employees[@i].Id" value="@e.Id" />
-                                    <div class="ep-row-handle" title="سحب لإعادة الترتيب"><span class="material-symbols-rounded">drag_indicator</span></div>
-                                    <div class="ep-row-body">
-                                        <div class="ep-row-fields">
-                                            <div class="ep-field flex-1">
-                                                <select name="Employees[@i].EmployeeId" class="select select-bordered">
-                                                    <option value="">— اختر عضو الطاقم —</option>
-                                                    @foreach (var emp in Model.Employees)
-                                                    {
-                                                        <option value="@emp.EmployeeId" selected="@(e.EmployeeId == emp.EmployeeId)">
-                                                            @emp.FullName@(emp.StaffRoleName != null ? $" — {emp.StaffRoleName}" : "")
-                                                        </option>
-                                                    }
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="ep-row-actions">
-                                            <button type="button" class="ep-row-del" title="حذف" onclick="EP.removeRow(this)">
-                                                <span class="material-symbols-rounded">close</span>
-                                            </button>
+                            var e = Model.Episode.Employees[i];
+                            <div class="ep-row emp-row" draggable="true">
+                                <input type="hidden" name="Employees[@i].Id" value="@e.Id" />
+                                <div class="ep-row-handle" title="سحب لإعادة الترتيب"><span class="material-symbols-rounded">drag_indicator</span></div>
+                                <div class="ep-row-body">
+                                    <div class="ep-row-fields">
+                                        <div class="ep-field flex-1">
+                                            <select name="Employees[@i].EmployeeId" class="w-full rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 transition-all"
+                                                    style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);">
+                                                <option value="">— اختر عضو الطاقم —</option>
+                                                @foreach (var emp in Model.Employees)
+                                                {
+                                                    <option value="@emp.EmployeeId" selected="@(e.EmployeeId == emp.EmployeeId)">
+                                                        @emp.FullName@(emp.StaffRoleName != null ? $" — {emp.StaffRoleName}" : "")
+                                                    </option>
+                                                }
+                                            </select>
                                         </div>
                                     </div>
+                                    <div class="ep-row-actions">
+                                        <button type="button" class="ep-row-del" title="حذف" onclick="EP.removeRow(this)">
+                                            <span class="material-symbols-rounded">close</span>
+                                        </button>
+                                    </div>
                                 </div>
-                            }
-                        }
-                        else
-                        {
-                            <div class="flex flex-col items-center justify-center py-8 text-center bg-base-200 rounded-xl border-2 border-dashed border-base-200/50">
-                                <span class="material-symbols-rounded text-base-content/40 text-3xl mb-2">badge</span>
-                                <p class="text-sm font-bold text-base-content/60">لم يتم إضافة أي موظف للطاقم بعد</p>
-                                <p class="text-xs text-base-content/40 mt-1">انقر على زر الإضافة لتسجيل أعضاء فريق الإنتاج</p>
                             </div>
                         }
-                    </div>
+                    }
+                    else
+                    {
+                        <div class="flex flex-col items-center justify-center py-8 text-center rounded-xl border-2 border-dashed"
+                             style="background: var(--color-bg); border-color: var(--color-border);">
+                            <span class="material-symbols-rounded text-3xl mb-2 text-[var(--color-text-4)]">badge</span>
+                            <p class="text-sm font-bold text-[var(--color-text-3)]">لم يتم إضافة أي موظف للطاقم بعد</p>
+                            <p class="text-xs mt-1 text-[var(--color-text-4)]">انقر على زر الإضافة لتسجيل أعضاء فريق الإنتاج</p>
+                        </div>
+                    }
                 </div>
             </div>
 
         </div>
 
-        <!-- ─── Sidebar ─── -->
         <div class="lg:col-span-4 space-y-6 lg:sticky lg:top-6">
 
             @if (isEdit)
             {
-                <!-- ═══ Status Timeline ═══ -->
-                <div class="wf-card">
-                    <div class="card-body">
-                        <div class="flex items-center gap-2 mb-4">
-                            <span class="material-symbols-rounded text-primary">timeline</span>
-                            <h3 class="font-bold text-base-content text-base">مسار الحلقة</h3>
+                <div class="glass-card rounded-xl p-6">
+                    <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border/60">
+                        <div class="w-9 h-9 rounded-lg bg-primary-soft text-primary flex items-center justify-center">
+                            <span class="material-symbols-rounded text-lg">timeline</span>
                         </div>
-                        <div class="status-timeline">
-                            @{
-                                var stages = new[] {
-                                    new { Id = 0, Name = "مجدولة",       Icon = "calendar_today" },
-                                    new { Id = 1, Name = "منفّذة",        Icon = "play_circle" },
-                                    new { Id = 2, Name = "منشورة رقمياً", Icon = "share" },
-                                    new { Id = 3, Name = "منشورة على الموقع", Icon = "public" }
-                                };
-                                var sid = Model.StatusId;
-                                var isCancelled = sid == 4;
-                            }
-                            @for (int i = 0; i < stages.Length; i++)
-                            {
-                                var s = stages[i];
-                                var cls = sid > s.Id ? "done" : (sid == s.Id ? "active" : "");
-                                <div class="status-timeline-item @cls">
-                                    <div class="status-timeline-dot"></div>
-                                    <div class="status-timeline-text">@s.Name</div>
-                                    @if (sid == s.Id && !isCancelled)
-                                    {
-                                        <div class="status-timeline-date text-primary font-bold">الحالية</div>
-                                    }
-                                </div>
-                            }
-                            @if (isCancelled)
-                            {
-                                <div class="status-timeline-item cancelled">
-                                    <div class="status-timeline-dot"></div>
-                                    <div class="status-timeline-text">ملغاة</div>
-                                    <div class="status-timeline-date text-error font-bold">نهائية</div>
-                                </div>
-                            }
-                        </div>
+                        <h3 class="font-bold text-ink">مسار الحلقة</h3>
+                    </div>
+                    <div class="status-timeline">
+                        @{
+                            var stages = new[] {
+                                new { Id = 0, Name = "مجدولة",       Icon = "calendar_today" },
+                                new { Id = 1, Name = "منفّذة",        Icon = "play_circle" },
+                                new { Id = 2, Name = "منشورة رقمياً", Icon = "share" },
+                                new { Id = 3, Name = "منشورة على الموقع", Icon = "public" }
+                            };
+                            var sid = Model.StatusId;
+                            var isCancelled = sid == 4;
+                        }
+                        @for (int i = 0; i < stages.Length; i++)
+                        {
+                            var s = stages[i];
+                            var cls = sid > s.Id ? "done" : (sid == s.Id ? "active" : "");
+                            <div class="status-timeline-item @cls">
+                                <div class="status-timeline-dot"></div>
+                                <div class="status-timeline-text">@s.Name</div>
+                                @if (sid == s.Id && !isCancelled)
+                                {
+                                    <div class="status-timeline-date font-bold text-[var(--color-primary)]">الحالية</div>
+                                }
+                            </div>
+                        }
+                        @if (isCancelled)
+                        {
+                            <div class="status-timeline-item cancelled">
+                                <div class="status-timeline-dot"></div>
+                                <div class="status-timeline-text">ملغاة</div>
+                                <div class="status-timeline-date font-bold text-[var(--color-danger)]">نهائية</div>
+                            </div>
+                        }
                     </div>
                 </div>
             }
 
-            <!-- ═══ Scheduling ═══ -->
             @{
                 var arDays = new[] { "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت" };
                 var arMonths = new[] { "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر" };
@@ -357,45 +321,49 @@
                 else { dayName = "اليوم"; dayNum = "–"; monthName = ""; yearNum = ""; }
                 timeStr = tm?.ToString(@"hh\:mm") ?? "";
             }
-            <div class="wf-card">
-                <div class="card-body">
-                    <div class="flex items-center gap-2 mb-4">
-                        <span class="material-symbols-rounded text-primary">schedule</span>
-                        <h3 class="font-bold text-base-content text-base">الموعد</h3>
+            <div class="glass-card rounded-xl p-6">
+                <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border/60">
+                    <div class="w-9 h-9 rounded-lg bg-primary-soft text-primary flex items-center justify-center">
+                        <span class="material-symbols-rounded text-lg">schedule</span>
                     </div>
-                    <div id="date-preview" class="text-center py-5 px-4 mb-5 bg-base-200 rounded-xl border border-base-200 shadow-sm transition-all duration-300">
-                        <div class="text-4xl font-black text-primary leading-tight tracking-tight" id="preview-day">@dayName</div>
-                        <div class="w-10 h-px bg-primary/30 mx-auto my-3 rounded-full"></div>
-                        <div class="text-sm font-semibold text-base-content/60" id="preview-date">
-                            @if (dt.HasValue) { <text>@dayNum @monthName @yearNum</text> } else { <text>لم يُحدد</text> }
+                    <h3 class="font-bold text-ink">الموعد</h3>
+                </div>
+                <div id="date-preview" class="text-center py-5 px-4 mb-5 rounded-xl transition-all duration-300"
+                     style="background: var(--color-bg); border: 1px solid var(--color-border);">
+                    <div class="text-4xl font-bold leading-tight tracking-tight text-[var(--color-primary)]" id="preview-day">@dayName</div>
+                    <div class="w-10 h-px mx-auto my-3 rounded-full" style="background: var(--color-primary); opacity: 0.3;"></div>
+                    <div class="text-sm font-semibold text-[var(--color-text-3)]" id="preview-date">
+                        @if (dt.HasValue) { <text>@dayNum @monthName @yearNum</text> } else { <text>لم يُحدد</text> }
+                    </div>
+                    @if (dt.HasValue || tm.HasValue)
+                    {
+                        <div class="inline-flex items-center gap-1.5 mt-3 text-xs font-bold rounded-full px-3 py-1.5"
+                             style="background: var(--color-bg); color: var(--color-text-4); border: 1px solid var(--color-border);">
+                            <span class="material-symbols-rounded text-sm" style="color: var(--color-primary);">access_time</span>
+                            <span id="preview-time">@(tm.HasValue ? timeStr : "–")</span>
                         </div>
-                        @if (dt.HasValue || tm.HasValue)
-                        {
-                            <div class="inline-flex items-center gap-1.5 mt-3 text-xs font-bold text-base-content/40 bg-base-300 px-3 py-1.5 rounded-full border border-base-200/70">
-                                <span class="material-symbols-rounded text-sm text-primary/70">access_time</span>
-                                <span id="preview-time">@(tm.HasValue ? timeStr : "–")</span>
-                            </div>
-                        }
-                    </div>
+                    }
+                </div>
 
-                    <div class="space-y-3">
-                        <div>
-                            <label class="label">التاريخ</label>
-                            <div class="relative">
-                                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">calendar_month</span>
-                                <input type="text" name="ScheduledDate"
-                                       value="@(dt?.ToString("yyyy-MM-dd"))"
-                                       class="input input-bordered datepicker w-full pr-10" id="input-date" />
-                            </div>
+                <div class="space-y-3">
+                    <div>
+                        <label class="type-label-md text-ink-muted mb-1.5 block">التاريخ</label>
+                        <div class="relative">
+                            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg text-[var(--color-text-4)]">calendar_month</span>
+                            <input type="text" name="ScheduledDate"
+                                   value="@(dt?.ToString("yyyy-MM-dd"))"
+                                   class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all datepicker"
+                                   style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);" id="input-date" />
                         </div>
-                        <div>
-                            <label class="label">الوقت</label>
-                            <div class="relative">
-                                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">access_time</span>
-                                <input type="text" name="BroadcastTime"
-                                       value="@(tm?.ToString(@"hh\:mm"))"
-                                       class="input input-bordered timepicker w-full pr-10" id="input-time" />
-                            </div>
+                    </div>
+                    <div>
+                        <label class="type-label-md text-ink-muted mb-1.5 block">الوقت</label>
+                        <div class="relative">
+                            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg text-[var(--color-text-4)]">access_time</span>
+                            <input type="text" name="BroadcastTime"
+                                   value="@(tm?.ToString(@"hh\:mm"))"
+                                   class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all timepicker"
+                                   style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);" id="input-time" />
                         </div>
                     </div>
                 </div>
@@ -438,47 +406,47 @@
 
             @if (isEdit)
             {
-                <!-- ═══ Metadata ═══ -->
-                <div class="wf-card">
-                    <div class="card-body">
-                        <div class="flex items-center gap-2 mb-4">
-                            <span class="material-symbols-rounded text-primary">info</span>
-                            <h3 class="font-bold text-base-content text-base">معلومات الحلقة</h3>
+                <div class="glass-card rounded-xl p-6">
+                    <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border/60">
+                        <div class="w-9 h-9 rounded-lg bg-primary-soft text-primary flex items-center justify-center">
+                            <span class="material-symbols-rounded text-lg">info</span>
                         </div>
-                        <div class="space-y-3 text-sm">
+                        <h3 class="font-bold text-ink">معلومات الحلقة</h3>
+                    </div>
+                    <div class="space-y-3 text-sm">
                         <div class="meta-pill w-full">
                             <span class="material-symbols-rounded">tag</span>
                             <span class="flex-1">رقم الحلقة</span>
-                            <span class="font-bold text-base-content" dir="ltr">#@Model.Episode.EpisodeId</span>
+                            <span class="font-bold text-ink" dir="ltr">#@Model.Episode.EpisodeId</span>
                         </div>
                         <div class="meta-pill w-full">
                             <span class="material-symbols-rounded">calendar_today</span>
                             <span class="flex-1">تاريخ الإنشاء</span>
-                            <span class="font-bold text-base-content">—</span>
+                            <span class="font-bold text-ink">—</span>
                         </div>
                         <div class="meta-pill w-full">
                             <span class="material-symbols-rounded">update</span>
                             <span class="flex-1">آخر تعديل</span>
-                            <span class="font-bold text-base-content">—</span>
+                            <span class="font-bold text-ink">—</span>
                         </div>
                     </div>
                 </div>
-            </div>
             }
 
-            <!-- ═══ Save Actions ═══ -->
-            <div class="wf-card">
-                <div class="card-body">
-                    <div class="flex items-center gap-2 mb-4">
-                        <span class="material-symbols-rounded text-primary">save</span>
-                        <h3 class="font-bold text-base-content text-base">حفظ التغييرات</h3>
+            <div class="glass-card rounded-xl p-6">
+                <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border/60">
+                    <div class="w-9 h-9 rounded-lg bg-primary-soft text-primary flex items-center justify-center">
+                        <span class="material-symbols-rounded text-lg">save</span>
                     </div>
-                    <div class="flex flex-col gap-3">
-                    <button type="submit" class="btn btn-primary w-full justify-center py-3">
+                    <h3 class="font-bold text-ink">حفظ التغييرات</h3>
+                </div>
+                <div class="flex flex-col gap-3">
+                    <button type="submit" class="btn btn-primary rounded-xl w-full justify-center py-3 gap-2">
                         <span class="material-symbols-rounded">save</span>
                         @(isEdit ? "حفظ التغييرات" : "إنشاء الحلقة")
                     </button>
-                    <a href="/Episodes" class="btn btn-ghost w-full justify-center py-3">
+                    <a href="/Episodes" class="inline-flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-medium transition-all"
+                       style="color: var(--color-text-3); background: var(--color-bg); border: 1px solid var(--color-border);">
                         <span class="material-symbols-rounded">close</span>
                         إلغاء والعودة
                     </a>
@@ -489,9 +457,6 @@
     </div>
 </form>
 
-<!-- ═══════════════════════════════════════════════════════
-     Templates for dynamic rows
-     ═══════════════════════════════════════════════════════ -->
 <template id="guest-row-tpl">
     <div class="ep-row guest-row" draggable="true">
         <input type="hidden" name="Guests[{i}].EpisodeGuestId" value="0" />
@@ -499,7 +464,8 @@
         <div class="ep-row-body">
             <div class="ep-row-fields">
                 <div class="ep-field flex-1">
-                    <select name="Guests[{i}].GuestId" class="select select-bordered">
+                    <select name="Guests[{i}].GuestId" class="w-full rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 transition-all"
+                            style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);">
                         <option value="">— اختر الضيف —</option>
                         @foreach (var g in Model.Guests)
                         {
@@ -508,10 +474,12 @@
                     </select>
                 </div>
                 <div class="ep-field flex-1">
-                    <input type="text" name="Guests[{i}].Topic" class="input input-bordered" placeholder="موضوع الاستضافة" />
+                    <input type="text" name="Guests[{i}].Topic" class="w-full rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 transition-all"
+                           style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);" placeholder="موضوع الاستضافة" />
                 </div>
                 <div class="ep-field w-28">
-                                <input type="text" name="Guests[{i}].HostingTime" class="input input-bordered timepicker" />
+                    <input type="text" name="Guests[{i}].HostingTime" class="w-full rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 transition-all timepicker"
+                           style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);" />
                 </div>
                 <input type="hidden" name="Guests[{i}].ClipNotes" value="" />
             </div>
@@ -531,7 +499,8 @@
         <div class="ep-row-body">
             <div class="ep-row-fields">
                 <div class="ep-field flex-1">
-                    <select name="Correspondents[{i}].CorrespondentId" class="select select-bordered">
+                    <select name="Correspondents[{i}].CorrespondentId" class="w-full rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 transition-all"
+                            style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);">
                         <option value="">— اختر —</option>
                         @foreach (var c in Model.Correspondents)
                         {
@@ -540,10 +509,12 @@
                     </select>
                 </div>
                 <div class="ep-field flex-1">
-                    <input type="text" name="Correspondents[{i}].Topic" class="input input-bordered" placeholder="موضوع التغطية" />
+                    <input type="text" name="Correspondents[{i}].Topic" class="w-full rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 transition-all"
+                           style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);" placeholder="موضوع التغطية" />
                 </div>
                 <div class="ep-field w-28">
-                                <input type="text" name="Correspondents[{i}].HostingTime" class="input input-bordered timepicker" />
+                    <input type="text" name="Correspondents[{i}].HostingTime" class="w-full rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 transition-all timepicker"
+                           style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);" />
                 </div>
             </div>
             <div class="ep-row-actions">
@@ -562,7 +533,8 @@
         <div class="ep-row-body">
             <div class="ep-row-fields">
                 <div class="ep-field flex-1">
-                    <select name="Employees[{i}].EmployeeId" class="select select-bordered">
+                    <select name="Employees[{i}].EmployeeId" class="w-full rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 transition-all"
+                            style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);">
                         <option value="">— اختر عضو الطاقم —</option>
                         @foreach (var emp in Model.Employees)
                         {

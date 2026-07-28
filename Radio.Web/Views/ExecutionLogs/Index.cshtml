@@ -1,82 +1,76 @@
 @model List<PublishingRecordDto>
 @using DataAccess.Common
 @inject ICurrentUserService CurrentUser
-@{ ViewData["Title"] = "سجلات التنفيذ"; }
+@{
+    ViewData["Title"] = "سجلات التنفيذ";
+    ViewData["HeaderIcon"] = "play_circle";
+    ViewData["HeaderDescription"] = "سجل عمليات تنفيذ الحلقات وجدولة البث";
+    ViewBag.EntityName = "سجلات التنفيذ";
+}
 
-<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-    <div>
-        <div class="breadcrumbs text-sm text-base-content/60">
-            <ul>
-                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
-                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">play_circle</span>سجلات التنفيذ</span></li>
-            </ul>
-        </div>
-        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
-            <span class="material-symbols-rounded text-primary">play_circle</span>
-            سجلات التنفيذ
-        </h1>
-        <p class="text-sm text-base-content/60 mt-0.5">سجل عمليات تنفيذ الحلقات وجدولة البث</p>
-    </div>
-</div>
+<partial name="_PageHeader" />
 
 @if (!Model.Any())
 {
-    <div class="wf-card">
-        <div class="card-body text-center py-12">
-            <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">play_circle</span>
-            <h3 class="font-bold text-lg mb-2">لا سجلات تنفيذ</h3>
-            <p class="text-sm text-base-content/60">لم يتم تسجيل أي عمليات تنفيذ للحلقات بعد.</p>
+    <div class="rounded-2xl border text-center py-12 my-8" style="background: var(--color-surface); border-color: var(--color-border)">
+        <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style="background: var(--color-bg-alt); color: var(--color-text-tertiary)">
+            <span class="material-symbols-rounded text-5xl">play_circle</span>
         </div>
+        <h3 class="text-xl font-bold mb-2" style="color: var(--color-text)">لا سجلات تنفيذ</h3>
+        <p class="text-sm max-w-md mx-auto" style="color: var(--color-text-secondary)">لم يتم تسجيل أي عمليات تنفيذ للحلقات بعد.</p>
     </div>
 }
 else
 {
     var canEdit = CurrentUser.HasPermission(AppPermissions.ExecutionExecute) || CurrentUser.HasPermission(AppPermissions.ExecutionEdit);
-    <div class="wf-card overflow-hidden">
+    <div class="rounded-2xl border overflow-hidden" style="background: var(--color-surface); border-color: var(--color-border)">
         <div class="overflow-x-auto">
-        <table class="table table-zebra w-full text-sm">
-            <thead>
-                <tr>
-                    <th class="text-right font-semibold">الحلقة</th>
-                    <th class="text-right font-semibold">البرنامج</th>
-                    <th class="text-right font-semibold">الملخص</th>
-                    <th class="text-right font-semibold">بواسطة</th>
-                    <th class="text-right font-semibold">التاريخ</th>
-                    @if (canEdit)
-                    {
-                        <th class="text-center font-semibold">الإجراءات</th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var r in Model)
-                {
-                    <tr>
-                        <td>
-                            <a href="/Episodes/Details/@r.EpisodeId" class="text-primary font-semibold hover:underline">
-                                @(r.EpisodeName ?? "—")
-                            </a>
-                        </td>
-                        <td>@r.ProgramName</td>
-                        <td>@r.Summary</td>
-                        <td>@r.RecordedBy</td>
-                        <td class="whitespace-nowrap" dir="ltr">@r.RecordDate.ToString("yyyy-MM-dd HH:mm")</td>
+            <table class="w-full text-sm">
+                <thead>
+                    <tr style="background: var(--color-bg-alt)">
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">الحلقة</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">البرنامج</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">الملخص</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">بواسطة</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">التاريخ</th>
                         @if (canEdit)
                         {
-                            <td class="text-center">
-                                <div class="flex items-center justify-center gap-1 whitespace-nowrap">
-                                    <a href="/ExecutionLogs/Edit/@r.RecordId"
-                                       class="btn btn-ghost btn-square btn-sm text-primary"
-                                       title="تعديل سجل التنفيذ" aria-label="تعديل سجل التنفيذ">
-                                        <span class="material-symbols-rounded text-lg">edit</span>
-                                    </a>
-                                </div>
-                            </td>
+                            <th class="px-6 py-4 text-center font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">الإجراءات</th>
                         }
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model)
+                    {
+                        <tr class="transition-colors duration-200" style="border-bottom: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent)">
+                            <td class="px-6 py-4">
+                                <a href="/Episodes/Details/@r.EpisodeId" class="font-semibold hover:underline"
+                                   style="color: var(--color-primary)" target="_blank">
+                                    @(r.EpisodeName ?? "—")
+                                </a>
+                            </td>
+                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@r.ProgramName</td>
+                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@r.Summary</td>
+                            <td class="px-6 py-4 font-semibold" style="color: var(--color-text)">@r.RecordedBy</td>
+                            <td class="px-6 py-4 whitespace-nowrap" dir="ltr">
+                                <span style="color: var(--color-text-secondary)">@r.RecordDate.ToString("yyyy-MM-dd HH:mm")</span>
+                            </td>
+                            @if (canEdit)
+                            {
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center justify-center gap-1">
+                                        <a href="/ExecutionLogs/Edit/@r.RecordId"
+                                           class="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all" title="تعديل سجل التنفيذ" aria-label="تعديل سجل التنفيذ"
+                                           style="color: var(--color-primary)">
+                                            <span class="material-symbols-rounded text-xl leading-none">edit</span>
+                                        </a>
+                                    </div>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 }

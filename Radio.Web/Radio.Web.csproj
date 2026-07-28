@@ -4,9 +4,9 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>Radio.Web</RootNamespace>
-    <AssemblyName>Radio.Web</AssemblyName>
-    <UserSecretsId>radio-web-mvc-2026</UserSecretsId>
+<RootNamespace>Radio.Web</RootNamespace>
+<AssemblyName>Radio.Web</AssemblyName>
+    <UserSecretsId>tvprod-web-2026</UserSecretsId>
     <NoWarn>$(NoWarn);NU1605;NU1603;NU1608</NoWarn>
   </PropertyGroup>
 

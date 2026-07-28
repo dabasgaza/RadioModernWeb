@@ -3,49 +3,52 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@ViewData["Title"] — نظام سير عمل البث الإذاعي</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet" />
+    <title>@ViewData["Title"] — نظام إدارة الإنتاج التلفزيوني</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0" rel="stylesheet" />
-    <link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />
-    <link href="~/css/app.css" rel="stylesheet" asp-append-version="true" />
-    <link href="~/css/theme-dark-overrides.css" rel="stylesheet" asp-append-version="true" />
-    <link href="~/css/login.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/lib/flatpickr/flatpickr.min.css" rel="stylesheet" />
     <link href="~/css/flatpickr-theme.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/site.css" rel="stylesheet" />
+    <link href="~/css/app.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/login.css" rel="stylesheet" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
     <script>
-        (function() {
-            var theme = localStorage.getItem('theme');
-            var isDark = theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
-            document.documentElement.setAttribute('data-theme', isDark ? 'radiomodernDark' : 'radiomodern');
-            document.documentElement.classList.toggle('dark', isDark);
+        (function () {
+            try {
+                var theme = localStorage.getItem('theme');
+                var isDark = theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                document.documentElement.classList.toggle('dark', isDark);
+                document.documentElement.setAttribute('data-theme', isDark ? 'tvprodDark' : 'tvprod');
+            } catch (e) {}
         })();
     </script>
 </head>
-<body class="bg-surface-2 text-ink font-sans antialiased">
+<body class="bg-[var(--color-bg)] text-[var(--color-text)] font-sans antialiased min-h-screen">
     <div class="drawer lg:drawer-open">
         <input id="sidebar-drawer" type="checkbox" class="drawer-toggle" />
-
         <div class="drawer-content flex flex-col min-h-screen">
             <partial name="_Topbar" />
             <partial name="_Toastr" />
-            <main class="flex-1 p-6 page-transition">
+            <main class="flex-1 p-5 lg:p-6 page-transition">
                 @RenderBody()
             </main>
-            <footer class="bg-surface border-t border-border px-6 py-3 text-center text-sm text-ink-soft">
-                <span>© @DateTime.UtcNow.Year نظام سير عمل البث الإذاعي — جميع الحقوق محفوظة</span>
+            <footer class="border-t border-[var(--color-border)] px-6 py-4 text-center text-sm text-[var(--color-text-4)]">
+                <span>© @DateTime.UtcNow.Year — نظام إدارة الإنتاج التلفزيوني</span>
             </footer>
         </div>
-
         <div class="drawer-side z-40">
             <label for="sidebar-drawer" class="drawer-overlay"></label>
-            <aside class="w-72 h-full bg-surface border-l border-border flex flex-col">
+            <aside class="w-72 h-full bg-[var(--color-surface)] border-l border-[var(--color-border)] flex flex-col">
                 <partial name="_Sidebar" />
             </aside>
         </div>
     </div>
 
     <div id="modal-root"></div>
+
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="العودة إلى الأعلى">
+        <span class="material-symbols-rounded">arrow_upward</span>
+    </button>
 
     <script src="~/lib/jquery/jquery.min.js"></script>
     <script src="~/lib/signalr/signalr.min.js"></script>
@@ -56,11 +59,6 @@
     <script src="~/lib/chartjs/chart.umd.js"></script>
     <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
     <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
-
-    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="العودة إلى الأعلى">
-        <span class="material-symbols-rounded">arrow_upward</span>
-    </button>
-
     <script src="~/js/theme-toggle.js"></script>
     <script src="~/js/waveform.js" asp-append-version="true"></script>
     <script src="~/lib/preline/preline.min.js"></script>

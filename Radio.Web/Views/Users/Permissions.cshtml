@@ -13,14 +13,14 @@
     ViewBag.BackText = "الرجوع للمستخدمين";
 }
 
-<partial name="_CreateEditHeader" />
+<partial name="_PageHeader" />
 
-<div class="wf-card p-6 mb-8">
+<div class="p-6 mb-8" style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 1rem;">
     <div class="flex items-center gap-4">
-        <span class="material-symbols-rounded text-primary p-3 bg-primary/10 rounded-2xl text-2xl">account_circle</span>
+        <span class="material-symbols-rounded text-primary p-3 rounded-2xl text-2xl" style="background: color-mix(in srgb, var(--color-primary) 10%, transparent);">account_circle</span>
         <div>
-            <h3 class="font-extrabold text-base-content text-base">حساب المستخدم: <span class="text-primary font-black">@user.FullName</span></h3>
-            <p class="text-xs text-base-content/60 mt-1">اسم الدخول: @user.Username | الدور الأساسي الحالي: <span class="badge badge-info">@user.RoleName</span></p>
+            <h3 class="font-extrabold text-base" style="color: var(--color-text);">حساب المستخدم: <span class="text-primary font-black">@user.FullName</span></h3>
+            <p class="text-xs mt-1" style="color: var(--color-text-secondary);">اسم الدخول: @user.Username | الدور الأساسي الحالي: <span style="background: color-mix(in srgb, var(--color-info) 15%, transparent); color: var(--color-info); padding: 0.125rem 0.5rem; font-size: 0.75rem; font-weight: 700; border-radius: 9999px;">@user.RoleName</span></p>
         </div>
     </div>
 </div>
@@ -28,28 +28,27 @@
 <form method="post" action="/Users/UpdatePermissions/@user.UserId">
     @Html.AntiForgeryToken()
 
-    <div class="wf-card">
-        <div class="card-body p-0">
-            <div class="bg-base-200 p-6 border-b border-base-200/40 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 1rem;">
+            <div class="p-6 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4" style="background: var(--color-bg-alt); border-color: var(--color-border);">
                 <div>
-                    <h3 class="font-extrabold text-base-content text-base">استثناءات الصلاحيات الفردية</h3>
-                    <p class="text-xs text-base-content/60 mt-1">اختر "موروث" للاستعانة بصلاحيات الدور الافتراضي، أو قم بـ "فرض السماح" أو "فرض الحظر" للمستخدم بشكل فردي</p>
+                    <h3 class="font-extrabold text-base" style="color: var(--color-text);">استثناءات الصلاحيات الفردية</h3>
+                    <p class="text-xs mt-1" style="color: var(--color-text-secondary);">اختر "موروث" للاستعانة بصلاحيات الدور الافتراضي، أو قم بـ "فرض السماح" أو "فرض الحظر" للمستخدم بشكل فردي</p>
                 </div>
                 
                 <div class="flex items-center gap-2">
-                    <button type="button" class="btn btn-ghost py-2 px-4 rounded-xl text-xs font-bold transition-all" onclick="resetAllOverrides()">
+                    <button type="button" class="py-2 px-4 rounded-xl text-xs font-bold transition-all" style="background: transparent; border: none; cursor: pointer; color: var(--color-text);" onclick="resetAllOverrides()">
                         إعادة ضبط الاستثناءات (موروث للكل)
                     </button>
                 </div>
             </div>
 
         <!-- Matrix Body -->
-        <div class="p-6 space-y-8 bg-base-100/30">
+        <div class="p-6 space-y-8" style="background: color-mix(in srgb, var(--color-surface) 30%, transparent);">
             @foreach (var module in permissionsByModule)
             {
                 <div class="module-section space-y-4">
-                    <div class="flex items-center justify-between border-b border-base-200/40 pb-2">
-                        <h4 class="font-extrabold text-base-content text-sm flex items-center gap-2">
+                    <div class="flex items-center justify-between border-b pb-2" style="border-color: var(--color-border);">
+                        <h4 class="font-extrabold text-sm flex items-center gap-2" style="color: var(--color-text);">
                             <span class="w-1.5 h-3.5 bg-primary rounded-full"></span>
                             @module.Key
                         </h4>
@@ -58,59 +57,59 @@
                     <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
                         @foreach (var p in module)
                         {
-                            <div class="perm-card wf-card p-4 hover:border-primary/20 hover:shadow-md transition-all duration-200"
+                            <div class="perm-card p-4 hover:border-primary/20 hover:shadow-md transition-all duration-200" style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 1rem;"
                                  data-inherited-access="@(p.InheritedAccess ? "true" : "false")">
                                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                                     
                                     <!-- Permission Info -->
                                     <div class="flex flex-col gap-1 pr-2 max-w-sm">
                                         <div class="flex items-center gap-2">
-                                            <span class="text-xs font-bold text-base-content">@p.DisplayName</span>
-                                            <span class="text-[9px] font-mono text-base-content/60">@p.SystemName</span>
+                                            <span class="text-xs font-bold" style="color: var(--color-text);">@p.DisplayName</span>
+                                            <span class="text-[9px] font-mono" style="color: var(--color-text-secondary);">@p.SystemName</span>
                                         </div>
                                         <div class="flex items-center gap-2 mt-1">
-                                            <span class="text-[10px] text-base-content/60">الحالة الموروثة:</span>
-                                            <span class="badge @(p.InheritedAccess ? "bg-success/20 text-success" : "bg-error/20 text-error") py-0.5 px-2 text-[9px] font-bold rounded-full">
+                                            <span class="text-[10px]" style="color: var(--color-text-secondary);">الحالة الموروثة:</span>
+                                            <span class="badge py-0.5 px-2 text-[9px] font-bold rounded-full" style="@(p.InheritedAccess ? "background: color-mix(in srgb, var(--color-success) 20%, transparent); color: var(--color-success);" : "background: color-mix(in srgb, var(--color-error) 20%, transparent); color: var(--color-error);")">
                                                 @(p.InheritedAccess ? "ممنوحة للدور" : "محظورة عن الدور")
                                             </span>
                                         </div>
                                     </div>
 
                                     <!-- Override Type Selection (Radio Buttons) -->
-                                    <div class="flex items-center gap-3 bg-base-200 p-1.5 rounded-xl border border-base-200/40 self-end sm:self-auto">
+                                    <div class="flex items-center gap-3 p-1.5 rounded-xl border self-end sm:self-auto" style="background: var(--color-bg-alt); border-color: var(--color-border);">
                                         
                                         <!-- None / Inherited -->
                                         <label class="cursor-pointer flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all peer-checked:bg-white
-                                                     has-[:checked]:bg-white dark:has-[:checked]:bg-base-100-2 has-[:checked]:shadow-sm">
+                                                     has-[:checked]:style="background: var(--color-surface); box-shadow: 0 1px 3px rgba(0,0,0,0.1);" dark:has-[:checked]:bg-base-100-2 has-[:checked]:shadow-sm">
                                             <input type="radio" name="override_@p.SystemName" value="None" 
                                                    checked="@(p.OverrideType == "None")"
                                                    class="sr-only" onchange="onOverrideChanged('@p.SystemName')" />
-                                            <span class="text-base-content/40 select-none text-[10px]">موروث</span>
+                                            <span class="select-none text-[10px]" style="color: var(--color-text-tertiary);">موروث</span>
                                         </label>
 
                                         <!-- Direct Grant -->
                                         <label class="cursor-pointer flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all
-                                                     has-[:checked]:bg-success/20 has-[:checked]:text-success">
+                                                     has-[:checked]:style="background: color-mix(in srgb, var(--color-success) 20%, transparent); color: var(--color-success);" has-[:checked]:text-success">
                                             <input type="radio" name="override_@p.SystemName" value="Grant" 
                                                    checked="@(p.OverrideType == "Grant")"
                                                    class="sr-only" onchange="onOverrideChanged('@p.SystemName')" />
-                                            <span class="text-base-content/40 select-none text-[10px]">سماح فردي</span>
+                                            <span class="select-none text-[10px]" style="color: var(--color-text-tertiary);">سماح فردي</span>
                                         </label>
 
                                         <!-- Direct Deny -->
                                         <label class="cursor-pointer flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all
-                                                     has-[:checked]:bg-error/20 has-[:checked]:text-error">
+                                                     has-[:checked]:style="background: color-mix(in srgb, var(--color-error) 20%, transparent); color: var(--color-error);" has-[:checked]:text-error">
                                             <input type="radio" name="override_@p.SystemName" value="Deny" 
                                                    checked="@(p.OverrideType == "Deny")"
                                                    class="sr-only" onchange="onOverrideChanged('@p.SystemName')" />
-                                            <span class="text-base-content/40 select-none text-[10px]">حظر فردي</span>
+                                            <span class="select-none text-[10px]" style="color: var(--color-text-tertiary);">حظر فردي</span>
                                         </label>
 
                                     </div>
 
                                     <!-- Resulting Effective Access Badge -->
-                                    <div class="flex flex-col items-center justify-center shrink-0 pr-4 border-r border-base-200/20 self-end sm:self-auto">
-                                        <span class="text-[9px] text-base-content/60 mb-0.5">الصلاحية النهائية</span>
+                                    <div class="flex flex-col items-center justify-center shrink-0 pr-4 border-r self-end sm:self-auto" style="border-color: var(--color-border);">
+                                        <span class="text-[9px] mb-0.5" style="color: var(--color-text-secondary);">الصلاحية النهائية</span>
                                         <span id="effective_@p.SystemName" class="badge text-xs font-black py-1 px-3 rounded-full transition-all duration-300">
                                             جاري التقييم...
                                         </span>
@@ -127,13 +126,12 @@
         <!-- Hidden lists for POST submission -->
         <div id="hidden-inputs-container"></div>
 
-        <div class="px-6 py-5 bg-base-200 border-t border-base-200/40 flex justify-end">
-            <button type="submit" onclick="prepareSubmit(event)" class="btn btn-primary py-3 px-6 rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-primary/20 transition-all duration-300">
+        <div class="px-6 py-5 border-t flex justify-end" style="background: var(--color-bg-alt); border-color: var(--color-border);">
+            <button type="submit" onclick="prepareSubmit(event)" class="py-3 px-6 rounded-2xl font-bold flex items-center gap-2 transition-all duration-300" style="background: var(--color-primary); color: white; border: none; cursor: pointer; box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--color-primary) 20%, transparent);">
                 <span class="material-symbols-rounded">save</span>
                 حفظ استثناءات الصلاحيات فورياً
             </button>
         </div>
-    </div>
     </div>
 </form>
 

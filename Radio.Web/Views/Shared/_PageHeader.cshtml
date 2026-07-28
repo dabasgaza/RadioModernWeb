@@ -1,0 +1,93 @@
+@{
+    var title = ViewBag.Title ?? ViewData["Title"]?.ToString() ?? "";
+    var description = ViewBag.Description ?? ViewData["HeaderDescription"]?.ToString();
+    var icon = ViewBag.Icon ?? ViewData["HeaderIcon"]?.ToString();
+    var isEdit = ViewBag.IsEdit ?? false;
+
+    var entityName = ViewBag.EntityName ?? ViewData["HeaderEntityName"]?.ToString();
+    var entityUrl = ViewBag.EntityUrl ?? ViewData["HeaderEntityUrl"]?.ToString();
+
+    var backUrl = ViewBag.BackUrl ?? ViewData["HeaderBackUrl"]?.ToString();
+    var backText = ViewBag.BackText ?? ViewData["HeaderBackText"]?.ToString() ?? "العودة";
+
+    if (string.IsNullOrEmpty(icon) && ViewBag.Icon == null && ViewData["HeaderIcon"] == null)
+    {
+        icon = isEdit ? "edit" : "add_circle";
+    }
+}
+
+<div class="relative overflow-hidden rounded-2xl border p-6 mb-8" style="background: var(--color-surface); border-color: var(--color-border)">
+    <div class="absolute -top-20 -left-20 w-48 h-48 rounded-full blur-3xl pointer-events-none z-0" style="background: color-mix(in srgb, var(--color-primary) 10%, transparent)"></div>
+    <div class="absolute -bottom-20 -right-20 w-48 h-48 rounded-full blur-3xl pointer-events-none z-0" style="background: color-mix(in srgb, var(--color-accent) 10%, transparent)"></div>
+    <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="flex items-start gap-4">
+            @if (!string.IsNullOrEmpty(icon))
+            {
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style="background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary)">
+                    <span class="material-symbols-rounded text-2xl">@icon</span>
+                </div>
+            }
+            <div>
+                <nav class="text-xs mb-1.5" style="color: var(--color-text-tertiary)" aria-label="Breadcrumb">
+                    <ul class="flex items-center gap-1.5">
+                        <li>
+                            <a href="/" class="hover:opacity-80 transition-colors inline-flex items-center gap-1" style="color: var(--color-text-tertiary)">
+                                <span class="material-symbols-rounded text-sm">home</span>
+                                الرئيسية
+                            </a>
+                        </li>
+                        @if (!string.IsNullOrEmpty(entityName))
+                        {
+                            <li style="color: var(--color-border)">
+                                <span class="material-symbols-rounded text-xs">chevron_left</span>
+                            </li>
+                            <li>
+                                @if (!string.IsNullOrEmpty(entityUrl))
+                                {
+                                    <a href="@entityUrl" class="hover:opacity-80 transition-colors" style="color: var(--color-text-tertiary)">@entityName</a>
+                                }
+                                else
+                                {
+                                    <span style="color: var(--color-text-tertiary)">@entityName</span>
+                                }
+                            </li>
+                        }
+                        @if (!string.IsNullOrEmpty(title))
+                        {
+                            <li style="color: var(--color-border)">
+                                <span class="material-symbols-rounded text-xs">chevron_left</span>
+                            </li>
+                            <li class="font-semibold" style="color: var(--color-text)">@title</li>
+                        }
+                    </ul>
+                </nav>
+                <h1 class="text-xl font-black flex items-center gap-2 flex-wrap" style="color: var(--color-text)">
+                    @if (!string.IsNullOrEmpty(icon))
+                    {
+                        <span class="material-symbols-rounded text-2xl" style="color: var(--color-primary)">@icon</span>
+                    }
+                    @title
+                </h1>
+                @if (!string.IsNullOrEmpty(description))
+                {
+                    <p class="text-sm mt-1" style="color: var(--color-text-secondary)">@description</p>
+                }
+            </div>
+        </div>
+        @if (ViewData["HeaderActions"] != null)
+        {
+            <div class="flex items-center gap-2 shrink-0">
+                @Html.Raw(ViewData["HeaderActions"])
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(backUrl))
+        {
+            <div class="flex items-center gap-2 shrink-0">
+                <a href="@backUrl" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-all rounded-xl" style="color: var(--color-text-secondary)">
+                    <span class="material-symbols-rounded text-lg">arrow_forward</span>
+                    @backText
+                </a>
+            </div>
+        }
+    </div>
+</div>

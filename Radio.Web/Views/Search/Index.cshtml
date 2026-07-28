@@ -1,130 +1,137 @@
 @model SearchViewModel
-@{ ViewData["Title"] = "نتائج البحث"; }
+@{
+    ViewData["Title"] = "نتائج البحث";
+    ViewData["HeaderIcon"] = "search";
+    if (Model.TotalResults > 0)
+    {
+        ViewData["HeaderDescription"] = $"تم العثور على {Model.TotalResults} نتيجة لـ \"{Model.Query}\"";
+    }
+    else
+    {
+        ViewData["HeaderDescription"] = $"لا توجد نتائج لـ \"{Model.Query}\"";
+    }
+}
 
-<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-    <div>
-        <div class="breadcrumbs text-sm text-base-content/60">
-            <ul>
-                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
-                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">search</span>بحث</span></li>
-            </ul>
-        </div>
-        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
-            <span class="material-symbols-rounded text-primary">search</span>
-            نتائج البحث
-        </h1>
-        <p class="text-sm text-base-content/60 mt-0.5">
-            @if (Model.TotalResults > 0)
-            {
-                <text>تم العثور على <strong>@Model.TotalResults</strong> نتيجة لـ "<strong>@Model.Query</strong>"</text>
-            }
-            else
-            {
-                <text>لا توجد نتائج لـ "<strong>@Model.Query</strong>"</text>
-            }
-        </p>
-    </div>
-</div>
+<partial name="_PageHeader" />
 
 <form method="get" action="/Search" class="mb-6">
-    <div class="join w-full">
-        <input type="text" name="q" value="@Model.Query" class="input input-bordered join-item flex-1" placeholder="ابحث عن حلقات، برامج، ضيوف…" autofocus />
-        <button type="submit" class="btn btn-primary join-item">
+    <div class="flex w-full rounded-xl overflow-hidden" style="border: 1px solid var(--color-border);">
+        <button type="submit" class="px-4 py-2.5 text-sm font-medium transition-all"
+                style="background: var(--color-primary); color: white;">
             <span class="material-symbols-rounded">search</span>
-            بحث
         </button>
+        <input type="text" name="q" value="@Model.Query" class="flex-1 py-2.5 px-3 text-sm font-medium focus:outline-none"
+               style="background: var(--color-bg-elevated); color: var(--color-text);" placeholder="ابحث عن حلقات، برامج، ضيوف…" autofocus />
     </div>
 </form>
 
 @if (Model.TotalResults == 0 && !string.IsNullOrWhiteSpace(Model.Query))
 {
-    <div class="wf-card"><div class="card-body text-center py-12">
-        <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">search_off</span>
-        <h3 class="font-bold text-lg mb-2">لا توجد نتائج</h3>
-        <p class="text-sm text-base-content/60 mb-4">لم نعثر على أي نتائج تطابق بحثك. حاول استخدام كلمات مختلفة.</p>
-    </div></div>
+    <div class="rounded-xl p-12 text-center" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
+        <span class="material-symbols-rounded text-4xl text-[var(--color-text-4)] mb-2 block">search_off</span>
+        <h3 class="font-bold text-lg mb-2 text-[var(--color-text)]">لا توجد نتائج</h3>
+        <p class="text-sm text-[var(--color-text-3)]">لم نعثر على أي نتائج تطابق بحثك. حاول استخدام كلمات مختلفة.</p>
+    </div>
 }
 else
 {
     @if (Model.Episodes.Any())
     {
-        <div class="wf-card mb-4">
-            <div class="card-body">
-                <h2 class="font-bold text-base-content flex items-center gap-2 mb-3">
-                    <span class="material-symbols-rounded text-primary">podcasts</span>
-                    الحلقات (@Model.Episodes.Count)
-                </h2>
-                <div class="overflow-x-auto">
-                    <table class="table table-zebra w-full text-sm">
-                        <thead><tr><th class="text-right">الحلقة</th><th class="text-right">البرنامج</th><th class="text-right">الموعد</th><th class="text-right">الحالة</th></tr></thead>
-                        <tbody>
-                            @foreach (var e in Model.Episodes)
-                            {
-                                <tr>
-                                    <td class="font-semibold"><a href="/Episodes/Details/@e.EpisodeId" class="text-primary hover:underline">@e.EpisodeName</a></td>
-                                    <td class="text-base-content/60">@(e.ProgramName ?? "—")</td>
-                                    <td class="text-base-content/60 whitespace-nowrap" dir="ltr">@(e.ScheduledTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
-                                    <td><span class="badge badge-ghost">@e.StatusText</span></td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+        <div class="rounded-xl p-6 mb-4" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
+            <h2 class="font-bold text-[var(--color-text)] flex items-center gap-2 mb-3 text-sm">
+                <span class="material-symbols-rounded text-[var(--color-primary)]">podcasts</span>
+                الحلقات (@Model.Episodes.Count)
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-xs font-semibold text-[var(--color-text-4)]" style="border-bottom: 1px solid var(--color-border); background: var(--color-bg);">
+                            <th class="text-right py-2 px-3">الحلقة</th>
+                            <th class="text-right py-2 px-3">البرنامج</th>
+                            <th class="text-right py-2 px-3">الموعد</th>
+                            <th class="text-right py-2 px-3">الحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var e in Model.Episodes)
+                        {
+                            <tr style="border-bottom: 1px solid var(--color-border);">
+                                <td class="py-2 px-3 font-semibold"><a href="/Episodes/Details/@e.EpisodeId" class="text-[var(--color-primary)] hover:underline">@e.EpisodeName</a></td>
+                                <td class="py-2 px-3 text-[var(--color-text-3)]">@(e.ProgramName ?? "—")</td>
+                                <td class="py-2 px-3 text-[var(--color-text-3)] whitespace-nowrap" dir="ltr">@(e.ScheduledTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                                <td class="py-2 px-3">
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg" style="background: var(--color-bg); color: var(--color-text-3);">@e.StatusText</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     }
 
     @if (Model.Programs.Any())
     {
-        <div class="wf-card mb-4">
-            <div class="card-body">
-                <h2 class="font-bold text-base-content flex items-center gap-2 mb-3">
-                    <span class="material-symbols-rounded text-success">radio</span>
-                    البرامج (@Model.Programs.Count)
-                </h2>
-                <div class="overflow-x-auto">
-                    <table class="table table-zebra w-full text-sm">
-                        <thead><tr><th class="text-right">البرنامج</th><th class="text-right">الفئة</th><th class="text-right">عدد الحلقات</th></tr></thead>
-                        <tbody>
-                            @foreach (var p in Model.Programs)
-                            {
-                                <tr>
-                                    <td class="font-semibold"><a href="/Programs/Details/@p.ProgramId" class="text-primary hover:underline">@p.ProgramName</a></td>
-                                    <td><span class="badge badge-info">@(p.Category ?? "عام")</span></td>
-                                    <td class="text-base-content/60">@p.EpisodeCount</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+        <div class="rounded-xl p-6 mb-4" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
+            <h2 class="font-bold text-[var(--color-text)] flex items-center gap-2 mb-3 text-sm">
+                <span class="material-symbols-rounded text-[var(--color-success)]">radio</span>
+                البرامج (@Model.Programs.Count)
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-xs font-semibold text-[var(--color-text-4)]" style="border-bottom: 1px solid var(--color-border); background: var(--color-bg);">
+                            <th class="text-right py-2 px-3">البرنامج</th>
+                            <th class="text-right py-2 px-3">الفئة</th>
+                            <th class="text-right py-2 px-3">عدد الحلقات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model.Programs)
+                        {
+                            <tr style="border-bottom: 1px solid var(--color-border);">
+                                <td class="py-2 px-3 font-semibold"><a href="/Programs/Details/@p.ProgramId" class="text-[var(--color-primary)] hover:underline">@p.ProgramName</a></td>
+                                <td class="py-2 px-3">
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg" style="background: var(--color-info-light); color: var(--color-info);">@(p.Category ?? "عام")</span>
+                                </td>
+                                <td class="py-2 px-3 text-[var(--color-text-3)]">@p.EpisodeCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     }
 
     @if (Model.Guests.Any())
     {
-        <div class="wf-card mb-4">
-            <div class="card-body">
-                <h2 class="font-bold text-base-content flex items-center gap-2 mb-3">
-                    <span class="material-symbols-rounded text-accent">people_alt</span>
-                    الضيوف (@Model.Guests.Count)
-                </h2>
-                <div class="overflow-x-auto">
-                    <table class="table table-zebra w-full text-sm">
-                        <thead><tr><th class="text-right">الاسم</th><th class="text-right">الجهة</th><th class="text-right">الهاتف</th><th class="text-right">البريد</th></tr></thead>
-                        <tbody>
-                            @foreach (var g in Model.Guests)
-                            {
-                                <tr>
-                                    <td class="font-semibold"><a href="/Guests/Details/@g.GuestId" class="text-primary hover:underline">@g.FullName</a></td>
-                                    <td class="text-base-content/60">@(g.Organization ?? "—")</td>
-                                    <td class="text-base-content/60" dir="ltr">@(g.Phone ?? "—")</td>
-                                    <td class="text-base-content/60">@(g.Email ?? "—")</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+        <div class="rounded-xl p-6 mb-4" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
+            <h2 class="font-bold text-[var(--color-text)] flex items-center gap-2 mb-3 text-sm">
+                <span class="material-symbols-rounded text-[var(--color-accent)]">people_alt</span>
+                الضيوف (@Model.Guests.Count)
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-xs font-semibold text-[var(--color-text-4)]" style="border-bottom: 1px solid var(--color-border); background: var(--color-bg);">
+                            <th class="text-right py-2 px-3">الاسم</th>
+                            <th class="text-right py-2 px-3">الجهة</th>
+                            <th class="text-right py-2 px-3">الهاتف</th>
+                            <th class="text-right py-2 px-3">البريد</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var g in Model.Guests)
+                        {
+                            <tr style="border-bottom: 1px solid var(--color-border);">
+                                <td class="py-2 px-3 font-semibold"><a href="/Guests/Details/@g.GuestId" class="text-[var(--color-primary)] hover:underline">@g.FullName</a></td>
+                                <td class="py-2 px-3 text-[var(--color-text-3)]">@(g.Organization ?? "—")</td>
+                                <td class="py-2 px-3 text-[var(--color-text-3)]" dir="ltr">@(g.Phone ?? "—")</td>
+                                <td class="py-2 px-3 text-[var(--color-text-3)]">@(g.Email ?? "—")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     }

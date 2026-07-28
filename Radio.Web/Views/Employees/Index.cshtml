@@ -1,111 +1,73 @@
 @model List<EmployeeDto>
 @{
     ViewData["Title"] = "الموظفون";
+    ViewData["HeaderIcon"] = "badge";
+    ViewData["HeaderDescription"] = "إدارة أعضاء طاقم العمل والمسميات الوظيفية المرتبطة بهم";
+    ViewBag.EntityName = "الموظفون";
     var staffRoles = ViewBag.StaffRoles as List<StaffRoleDto>;
+
+    if (User.HasPermission(AppPermissions.StaffManage))
+    {
+        ViewData["HeaderActions"] = "<a href='/Employees/Create' class='btn btn-primary rounded-xl px-5 shadow-sm gap-2'><span class='material-symbols-rounded'>add_circle</span><span>موظف جديد</span></a>";
+    }
 }
 
-<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-    <div>
-        <div class="breadcrumbs text-sm text-base-content/60">
-            <ul>
-                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
-                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">badge</span>الموظفون</span></li>
-            </ul>
-        </div>
-        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
-            <span class="material-symbols-rounded text-primary">badge</span>
-            الموظفون
-        </h1>
-        <p class="text-sm text-base-content/60 mt-0.5">إدارة أعضاء طاقم العمل والمسميات الوظيفية المرتبطة بهم</p>
-    </div>
-    <div class="flex items-center gap-2">
-        @if (User.HasPermission(AppPermissions.StaffManage))
-        {
-            <a href="/Employees/Create" class="btn btn-primary">
-                <span class="material-symbols-rounded">add</span>
-                موظف جديد
-            </a>
-        }
-    </div>
-</div>
+<partial name="_PageHeader" />
 
-<div class="wf-card mb-6">
-    <div class="card-body">
-        <form method="get" class="flex gap-3">
-            <div class="relative flex-1">
-                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40">search</span>
-                <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث باسم الموظف…" class="input input-bordered pr-10" />
-            </div>
-            <button type="submit" class="btn btn-primary">
-                <span class="material-symbols-rounded">search</span>
-                بحث
-            </button>
-            <a href="/Employees" class="btn btn-ghost" title="إعادة ضبط">
-                <span class="material-symbols-rounded">refresh</span>
-            </a>
-        </form>
-    </div>
-</div>
+@{ ViewBag.SearchValue = ViewBag.Search; ViewBag.SearchPlaceholder = "بحث باسم الموظف..."; ViewBag.SearchAction = "/Employees"; }
+<partial name="_SearchBar" />
 
+<!-- Employees Content -->
 @if (!Model.Any())
 {
-    <div class="wf-card">
-        <div class="card-body text-center py-12">
-            <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">badge</span>
-            <h3 class="font-bold text-lg mb-2">لا موظفين</h3>
-            <p class="text-sm text-base-content/60 mb-4">لم يتم العثور على أي موظفين تطابق البحث.</p>
-            @if (User.HasPermission(AppPermissions.StaffManage))
-            {
-                <a href="/Employees/Create" class="btn btn-primary">
-                    <span class="material-symbols-rounded">add</span>
-                    إضافة موظف جديد
-                </a>
-            }
-        </div>
-    </div>
+    <partial name="_EmptyState" model='new { Icon = "badge", Title = "لا موظفين", Description = "لم يتم العثور على أي موظفين تطابق البحث.", SecondaryUrl = "/Employees", SecondaryText = "إعادة ضبط البحث", ActionUrl = User.HasPermission(AppPermissions.StaffManage) ? "/Employees/Create" : null, ActionText = "إضافة موظف جديد", ActionIcon = "add" }' />
 }
 else
 {
     <div class="wf-card overflow-hidden">
         <div class="overflow-x-auto">
-        <table class="table table-zebra w-full text-sm">
-            <thead>
-                <tr>
-                    <th class="text-right font-semibold">الاسم</th>
-                    <th class="text-right font-semibold">الدور</th>
-                    <th class="text-right font-semibold">ملاحظات</th>
-                    <th class="text-right font-semibold">إجراءات</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var e in Model)
-                {
-                    <tr>
-                        <td class="font-semibold">@e.FullName</td>
-                        <td>
-                            @if (!string.IsNullOrWhiteSpace(e.StaffRoleName))
-                            {
-                                <span class="badge badge-info">@e.StaffRoleName</span>
-                            }
-                            else { <span class="text-base-content/40">—</span> }
-                        </td>
-                        <td>@(e.Notes ?? "—")</td>
-                        <td>
-                            @if (User.HasPermission(AppPermissions.StaffManage))
-                            {
-                                <div class="flex items-center justify-center gap-1 whitespace-nowrap">
-                                    <a href="/Employees/Edit/@e.EmployeeId" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-0 bg-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 text-primary hover:bg-primary/10" title="تعديل" aria-label="تعديل"><span class="material-symbols-rounded text-xl leading-none">edit</span></a>
-                                    <form method="post" action="/Employees/Delete/@e.EmployeeId" class="inline" data-confirm="هل أنت متأكد من حذف الموظف «@e.FullName»؟">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-0 bg-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 text-danger hover:bg-danger/10 hover:text-danger focus-visible:ring-danger" title="حذف" aria-label="حذف"><span class="material-symbols-rounded text-xl leading-none">delete</span></button>
-                                    </form>
-                                </div>
-                            }
-                        </td>
+            <table class="table w-full text-sm">
+                <thead>
+                    <tr style="background: var(--color-surface-3)">
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">الاسم</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">الدور</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">ملاحظات</th>
+                        <th class="px-6 py-4 text-center font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">إجراءات</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach (var e in Model)
+                    {
+                        <tr class="transition-colors duration-200" style="border-bottom: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent)">
+                            <td class="px-6 py-4 font-semibold" style="color: var(--color-text)">@e.FullName</td>
+                            <td class="px-6 py-4">
+                                @if (!string.IsNullOrWhiteSpace(e.StaffRoleName))
+                                {
+                                    <span class="inline-flex items-center justify-center font-bold text-xs rounded-lg px-3 py-1.5" style="background: color-mix(in srgb, var(--color-info) 10%, transparent); color: var(--color-info)">@e.StaffRoleName</span>
+                                }
+                                else { <span style="color: var(--color-text-tertiary)">—</span> }
+                            </td>
+                            <td class="px-6 py-4" style="color: var(--color-text-3)">@(e.Notes ?? "—")</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if (User.HasPermission(AppPermissions.StaffManage))
+                                {
+                                    <div class="flex items-center justify-center gap-1">
+                                        <a href="/Employees/Edit/@e.EmployeeId" class="btn btn-ghost btn-square btn-sm" title="تعديل" aria-label="تعديل" style="color: var(--color-primary)">
+                                            <span class="material-symbols-rounded text-xl leading-none">edit</span>
+                                        </a>
+                                        <form method="post" action="/Employees/Delete/@e.EmployeeId" class="inline" data-confirm="هل أنت متأكد من حذف الموظف «@e.FullName»؟">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-ghost btn-square btn-sm" title="حذف" aria-label="حذف" style="color: var(--color-danger)">
+                                                <span class="material-symbols-rounded text-xl leading-none">delete</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 }

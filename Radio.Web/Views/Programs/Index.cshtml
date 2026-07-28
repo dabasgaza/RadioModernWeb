@@ -1,122 +1,90 @@
 @model List<ProgramViewModel>
+@using Radio.Web.ViewModels
 @{
-    ViewData["Title"] = "البرامج الإذاعية";
+    ViewData["Title"] = "دليل البرامج الإذاعية والتلفزيونية";
+    ViewData["HeaderIcon"] = "radio";
+    ViewData["HeaderDescription"] = "دليل وإدارة الخطة البرامجية، التصنيفات، وسجلات الإنتاج الموحد";
+    ViewBag.EntityName = "البرامج";
+    var totalPrograms = Model.Count();
+    var totalEpisodes = Model.Sum(x => x.EpisodeCount);
+    var searchStr = ViewBag.Search as string;
+
+    var kpiItems = new List<KpiItem>
+    {
+        new() { Label = "إجمالي البرامج", Value = totalPrograms.ToString(), Icon = "radio", Color = "var(--color-primary)", IconBg = "color-mix(in srgb, var(--color-primary) 10%, transparent)", IconColor = "var(--color-primary)", Subtitle = "برنامج نشط" },
+        new() { Label = "إجمالي الحلقات المنفذة", Value = totalEpisodes.ToString(), Icon = "podcasts", Color = "var(--color-success)", IconBg = "color-mix(in srgb, var(--color-success) 10%, transparent)", IconColor = "var(--color-success)", Subtitle = "حلقة مسجلة وبث حي" },
+        new() { Label = "متوسط الكثافة", Value = (totalPrograms > 0 ? (totalEpisodes / (double)totalPrograms).ToString("0.0") : "0"), Icon = "analytics", Color = "var(--color-info)", IconBg = "color-mix(in srgb, var(--color-info) 10%, transparent)", IconColor = "var(--color-info)", Subtitle = "حلقة لكل برنامج" }
+    };
+    ViewBag.KpiItems = kpiItems;
 }
 
-<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-    <div>
-        <div class="breadcrumbs text-sm text-base-content/60">
-            <ul>
-                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
-                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">radio</span>البرامج الإذاعية</span></li>
-            </ul>
-        </div>
-        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
-            <span class="material-symbols-rounded text-primary">radio</span>
-            البرامج الإذاعية
-        </h1>
-        <p class="text-sm text-base-content/60 mt-0.5">إدارة البرامج الإذاعية ومتابعة إحصائياتها وتصنيفاتها</p>
-    </div>
-    @if (User.HasPermission(AppPermissions.ProgramManage))
+<div class="max-w-7xl mx-auto space-y-6">
+    @{
+        if (User.HasPermission(AppPermissions.ProgramsManage))
+        {
+            ViewData["HeaderActions"] = "<a href='/Programs/Create' class='inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs shadow-sm transition-all' style='background:var(--color-primary);color:white'><span class='material-symbols-rounded text-base'>add</span><span>إضافة برنامج جديد</span></a>";
+        }
+    }
+    <partial name="_PageHeader" />
+    <partial name="_KpiCards" />
+
+    @{ ViewBag.SearchValue = searchStr; ViewBag.SearchPlaceholder = "ابحث باسم البرنامج الإذاعي، الكادر، أو التصنيف..."; ViewBag.SearchAction = "/Programs"; }
+    <partial name="_SearchBar" />
+
+    <!-- Programs Grid -->
+    @if (!Model.Any())
     {
-        <a href="/Programs/Create" class="btn btn-primary">
-            <span class="material-symbols-rounded">add</span>
-            برنامج جديد
-        </a>
+        <partial name="_EmptyState" model='new { Icon = "radio", Title = "لا توجد برامج إذاعية مطابقة", Description = "لم نتمكن من العثور على أية برامج تتوافق مع محددات البحث الحالية" }' />
+    }
+    else
+    {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach (var item in Model)
+            {
+                var p = item.Program;
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden group hover:border-blue-500/50 hover:shadow-xl transition-all duration-300 flex flex-col">
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="px-3 py-1 rounded-full text-[11px] font-bold bg-blue-50 dark:bg-blue-950/40 text-blue-600">
+                                    @(p.Category ?? "برنامج عام")
+                                </span>
+                                <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+                                    <span class="material-symbols-rounded text-xl">radio</span>
+                                </div>
+                            </div>
+
+                            <h3 class="font-black text-base text-slate-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors">
+                                @p.ProgramName
+                            </h3>
+
+                            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+                                @(p.ProgramDescription ?? "لا يوجد وصف متوفر لهذا البرنامج الإذاعي حالياً.")
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="px-6 py-4 bg-slate-50/70 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-800">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-300">
+                                <span class="material-symbols-rounded text-base text-blue-600">podcasts</span>
+                                <span>إجمالي الحلقات:</span>
+                                <span class="px-2.5 py-0.5 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-extrabold text-xs">@item.EpisodeCount</span>
+                            </div>
+
+                            @if (User.HasPermission(AppPermissions.ProgramsManage))
+                            {
+                                <div class="flex items-center gap-1">
+                                    <a href="/Programs/Edit/@p.ProgramId" class="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-white dark:hover:bg-slate-800 transition-colors" title="تعديل">
+                                        <span class="material-symbols-rounded text-base">edit</span>
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
     }
 </div>
 
-<!-- Filters -->
-<div class="wf-card mb-6">
-    <div class="card-body">
-        <form method="get" class="flex gap-3">
-            <div class="relative flex-1">
-                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40">search</span>
-                <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث باسم البرنامج أو الفئة…" class="input input-bordered w-full pr-10" />
-            </div>
-            <button type="submit" class="btn btn-primary">
-                <span class="material-symbols-rounded">search</span>
-                بحث
-            </button>
-            <a href="/Programs" class="btn btn-ghost" title="إعادة ضبط">
-                <span class="material-symbols-rounded">refresh</span>
-            </a>
-        </form>
-    </div>
-</div>
-
-<!-- Programs Grid -->
-@if (!Model.Any())
-{
-    <div class="wf-card">
-        <div class="card-body items-center text-center py-16">
-            <span class="material-symbols-rounded text-6xl text-base-content/20 mb-4">radio</span>
-            <h3 class="font-bold text-lg text-base-content mb-1">لا توجد برامج إذاعية</h3>
-            <p class="text-sm text-base-content/60 mb-6">لم تتم إضافة أي برامج إذاعية بعد مطابقة للبحث.</p>
-            @if (User.HasPermission(AppPermissions.ProgramManage))
-            {
-                <a href="/Programs/Create" class="btn btn-primary">
-                    <span class="material-symbols-rounded">add</span>
-                    إضافة برنامج جديد
-                </a>
-            }
-        </div>
-    </div>
-}
-else
-{
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        @foreach (var item in Model)
-        {
-            var p = item.Program;
-            <div class="wf-card group hover:shadow-lg transition-shadow duration-300">
-                <div class="card-body gap-4">
-                    <!-- Top Category & Icon -->
-                    <div class="flex items-center justify-between">
-                        <span class="badge @(p.Category == "سياسي" ? "badge-error" : p.Category == "ثقافي" ? "badge-accent" : p.Category == "اجتماعي" ? "badge-success" : "badge-info")">
-                            @(p.Category ?? "عام")
-                        </span>
-                        <span class="material-symbols-rounded text-base-content/40 group-hover:text-primary transition-colors duration-300">radio</span>
-                    </div>
-
-                    <!-- Program Title & Description -->
-                    <div class="space-y-1.5">
-                        <h3 class="text-base font-extrabold text-base-content group-hover:text-primary transition-colors duration-300">
-                            @p.ProgramName
-                        </h3>
-                        <p class="text-xs text-base-content/60 leading-relaxed line-clamp-3 min-h-[4.5rem]">
-                            @(p.ProgramDescription ?? "لا يوجد وصف متوفر للبرنامج حالياً.")
-                        </p>
-                    </div>
-
-                    <!-- Stat branding -->
-                    <div class="pt-3 border-t border-base-300 flex items-center justify-between text-xs">
-                        <span class="text-base-content/60 font-medium flex items-center gap-1">
-                            <span class="material-symbols-rounded text-base-content/40" style="font-size: 16px;">podcasts</span>
-                            الحلقات النشطة
-                        </span>
-                        <span class="font-black text-primary bg-primary/10 px-3 py-1 rounded-lg">
-                            @item.EpisodeCount
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Card Actions Footer -->
-                @if (User.HasPermission(AppPermissions.ProgramManage))
-                {
-                    <div class="px-5 py-3 bg-base-200 border-t border-base-300 flex items-center justify-end gap-1.5">
-                        <a href="/Programs/Edit/@p.ProgramId" class="btn btn-ghost btn-square btn-sm" title="تعديل" aria-label="تعديل">
-                            <span class="material-symbols-rounded">edit</span>
-                        </a>
-                        <form method="post" action="/Programs/Delete/@p.ProgramId" class="inline" data-confirm="هل أنت متأكد من حذف البرنامج «@p.ProgramName»؟">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-ghost btn-square btn-sm text-error hover:bg-error/10" title="حذف" aria-label="حذف">
-                                <span class="material-symbols-rounded">delete</span>
-                            </button>
-                        </form>
-                    </div>
-                }
-            </div>
-        }
-    </div>
-}

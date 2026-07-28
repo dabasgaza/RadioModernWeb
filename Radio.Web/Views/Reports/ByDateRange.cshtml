@@ -1,57 +1,42 @@
 @model List<DateRangeEpisodeDto>
-@{ ViewData["Title"] = "حلقات حسب الفترة"; }
+@{
+    ViewData["Title"] = "حلقات حسب الفترة";
+    ViewData["HeaderIcon"] = "date_range";
+    ViewData["HeaderDescription"] = "عرض الحلقات المصفاة ضمن نطاق زمني محدد: من @ViewBag.From إلى @ViewBag.To";
+    ViewBag.EntityName = "التقارير";
+    ViewBag.EntityUrl = "/Reports";
+    ViewBag.BackUrl = "/Reports";
+    ViewBag.BackText = "الرجوع للتقارير";
+    ViewData["HeaderActions"] = "<div class='flex items-center gap-2'><a href='/Reports/ExportDateRangeExcel?from=@ViewBag.From&to=@ViewBag.To' class='btn btn-success btn-sm rounded-xl gap-2'><span class='material-symbols-rounded text-lg'>file_download</span>Excel</a><a href='/Reports/ExportDateRangePdf?from=@ViewBag.From&to=@ViewBag.To' class='btn btn-danger btn-sm rounded-xl gap-2'><span class='material-symbols-rounded text-lg'>file_download</span>PDF</a><button onclick='window.print()' class='btn btn-ghost btn-sm rounded-xl no-print'><span class='material-symbols-rounded text-lg'>print</span></button></div>";
+}
 
-<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-    <div>
-        <div class="breadcrumbs text-sm text-base-content/60">
-            <ul>
-                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
-                <li><a href="/Reports" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">assessment</span>التقارير</a></li>
-                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">date_range</span>حلقات حسب الفترة</span></li>
-            </ul>
-        </div>
-        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
-            <span class="material-symbols-rounded text-primary">date_range</span>
-            حلقات حسب الفترة
-        </h1>
-        <p class="text-sm text-base-content/60 mt-0.5">عرض الحلقات المصفاة ضمن نطاق زمني محدد: من @ViewBag.From إلى @ViewBag.To</p>
-    </div>
-    <div class="flex items-center gap-2">
-        <a href="/Reports/ExportDateRangeExcel?from=@ViewBag.From&to=@ViewBag.To" class="btn btn-success btn-sm">
-            <span class="material-symbols-rounded text-lg">file_download</span>
-            Excel
-        </a>
-        <a href="/Reports/ExportDateRangePdf?from=@ViewBag.From&to=@ViewBag.To" class="btn btn-error btn-sm">
-            <span class="material-symbols-rounded text-lg">file_download</span>
-            PDF
-        </a>
-        <button onclick="window.print()" class="btn btn-ghost btn-sm no-print">
-            <span class="material-symbols-rounded text-lg">print</span>
-        </button>
-        <a href="/Reports" class="btn btn-ghost">
-            <span class="material-symbols-rounded">arrow_forward</span>
-            الرجوع للتقارير
-        </a>
-    </div>
-</div>
+<partial name="_PageHeader" />
 
-<div class="wf-card mb-6">
-    <div class="card-body">
+<div class="rounded-2xl border mb-6" style="background: var(--color-surface); border-color: var(--color-border)">
+    <div class="p-5">
         <form method="get" class="flex gap-3">
             <div class="relative flex-1">
-                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40">calendar_month</span>
-                <input type="text" name="from" value="@ViewBag.From" class="input input-bordered datepicker pr-10" placeholder="من تاريخ" />
+                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style="color: var(--color-text-tertiary)">calendar_month</span>
+                <input type="text" name="from" value="@ViewBag.From"
+                       class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all datepicker"
+                       style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
+                       placeholder="من تاريخ" />
             </div>
             <div class="relative flex-1">
-                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40">calendar_month</span>
-                <input type="text" name="to" value="@ViewBag.To" class="input input-bordered datepicker pr-10" placeholder="إلى تاريخ" />
+                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style="color: var(--color-text-tertiary)">calendar_month</span>
+                <input type="text" name="to" value="@ViewBag.To"
+                       class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all datepicker"
+                       style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
+                       placeholder="إلى تاريخ" />
             </div>
-            <button type="submit" class="btn btn-primary">
-                <span class="material-symbols-rounded">search</span>
+            <button type="submit" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-sm shadow-sm transition-all"
+                    style="background: var(--color-primary); color: white">
+                <span class="material-symbols-rounded text-lg">search</span>
                 تطبيق
             </button>
-            <a href="/Reports/ByDateRange" class="btn btn-ghost" title="إعادة ضبط">
-                <span class="material-symbols-rounded">refresh</span>
+            <a href="/Reports/ByDateRange" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-sm transition-all" title="إعادة ضبط"
+               style="color: var(--color-text-secondary)">
+                <span class="material-symbols-rounded text-lg">refresh</span>
             </a>
         </form>
     </div>
@@ -59,51 +44,35 @@
 
 @if (!Model.Any())
 {
-    <div class="wf-card"><div class="card-body text-center py-12">
-        <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">event_busy</span>
-        <h3 class="font-bold text-lg mb-2">لا حلقات</h3>
-        <p class="text-sm text-base-content/60 mb-4">لا توجد حلقات في هذه الفترة.</p>
-    </div></div>
+    <partial name="_EmptyState" model='new { Icon = "date_range", Title = "لا توجد حلقات في هذه الفترة", Description = "لا توجد حلقات ضمن النطاق الزمني المحدد." }' />
 }
 else
 {
-    <div class="wf-card overflow-hidden">
+    <div class="rounded-2xl border overflow-hidden" style="background: var(--color-surface); border-color: var(--color-border)">
         <div class="overflow-x-auto">
-        <table class="table table-zebra w-full text-sm">
-            <thead>
-                <tr>
-                    <th class="text-right font-semibold">الحلقة</th>
-                    <th class="text-right font-semibold">البرنامج</th>
-                    <th class="text-right font-semibold">الضيوف</th>
-                    <th class="text-right font-semibold">الموعد</th>
-                    <th class="text-right font-semibold">الحالة</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var ep in Model)
-                {
-                    <tr>
-                        <td class="font-semibold text-base-content">@ep.EpisodeName</td>
-                        <td class="text-base-content/60">@ep.ProgramName</td>
-                        <td class="text-base-content/60">@ep.GuestsDisplay</td>
-                        <td class="text-base-content/60 whitespace-nowrap" dir="ltr">@(ep.ScheduledExecutionTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
-                        <td><span class="badge @GetStatusBadgeClass(ep.StatusText)">@ep.StatusText</span></td>
+            <table class="w-full text-sm">
+                <thead>
+                    <tr style="background: var(--color-bg-alt)">
+                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">الحلقة</th>
+                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">البرنامج</th>
+                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">الضيوف</th>
+                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">الموعد</th>
+                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">الحالة</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var ep in Model)
+                    {
+                        <tr class="border-t transition-colors duration-200" style="border-color: var(--color-border)">
+                            <td class="px-6 py-4 font-semibold" style="color: var(--color-text)">@ep.EpisodeName</td>
+                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@ep.ProgramName</td>
+                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@ep.GuestsDisplay</td>
+                            <td class="px-6 py-4 whitespace-nowrap" dir="ltr" style="color: var(--color-text-secondary)">@(ep.ScheduledExecutionTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                            <td class="px-6 py-4">@await Html.PartialAsync("_StatusBadge", new StatusBadgeViewModel { Type = "episode", Status = ep.StatusText.ToLower(), Label = ep.StatusText })</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
-    </div>
-}
-
-@functions {
-    string GetStatusBadgeClass(string s) => s switch
-    {
-        "Planned" => "badge-info",
-        "Executed" => "badge-success",
-        "Published" => "badge-success",
-        "WebsitePublished" => "badge-info",
-        "Cancelled" => "badge-error",
-        _ => "badge-ghost"
-    };
 }

@@ -3,6 +3,7 @@
     var pageIndex = (int)Model.PageIndex;
     var totalPages = (int)Model.TotalPages;
     var totalCount = (int)Model.TotalCount;
+    var itemLabel = ViewBag.PaginationLabel as string ?? "عنصر";
     var queryDict = Context.Request.Query
         .Where(kv => kv.Key != "page")
         .ToDictionary(kv => kv.Key, kv => kv.Value.ToString());
@@ -12,7 +13,7 @@
 
 <div class="pagination-bar">
     <div class="pagination-info">
-        عرض <strong>@startRecord</strong>–<strong>@endRecord</strong> من <strong>@totalCount</strong> حلقة
+        عرض <strong>@startRecord</strong>–<strong>@endRecord</strong> من <strong>@totalCount</strong> @itemLabel
     </div>
 
     @if (totalPages > 1)

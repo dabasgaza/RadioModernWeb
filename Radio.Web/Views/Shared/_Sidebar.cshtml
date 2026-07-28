@@ -6,136 +6,183 @@
     bool IsActive(string c, string? a = null) => controller == c && (a == null || action == a);
     bool HasAny(params string[] perms) => perms.Any(p => CurrentUser.HasPermission(p));
 }
-<div class="flex items-center justify-between h-16 px-4 border-b border-border bg-surface shrink-0">
-    <a href="/" class="flex items-center gap-2">
-        <span class="flex items-center justify-center w-9 h-9 rounded-xl bg-signal/10 text-signal">
-            <span class="material-symbols-rounded text-2xl">radio</span>
-        </span>
-        <span class="font-bold text-lg text-ink">نظام البث</span>
-    </a>
-    <span class="wf-onair" title="مباشر" aria-label="النظام على الهواء"></span>
+<div class="flex flex-col h-full bg-sys-surface-low text-sys-on-surface select-none border-l border-sys-outline-variant shadow-2xl">
+    <!-- Sidebar Header -->
+    <div class="flex items-center gap-3 h-16 px-5 border-b border-sys-outline-variant shrink-0 bg-sys-surface-container-high">
+        <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-sys-tertiary text-sys-on-tertiary shadow-lg ring-1 ring-sys-tertiary/30">
+            <span class="material-symbols-rounded text-xl">live_tv</span>
+        </div>
+        <div class="flex flex-col">
+            <span class="font-bold text-sm tracking-wide text-sys-on-surface">نظام إدارة الإنتاج التلفزيوني</span>
+            <span class="text-[11px] text-sys-tertiary font-medium">برامج — حلقات — بث مباشر</span>
+        </div>
+        <span class="wf-onair mr-auto shadow-sm" title="مباشر" aria-label="النظام على الهواء"></span>
+    </div>
+
+    <!-- Navigation Scroll Area -->
+    <nav class="flex-1 overflow-y-auto p-3 space-y-1 custom-scrollbar">
+        <!-- Main Navigation -->
+        <a href="/" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("Home") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+            <span class="material-symbols-rounded text-lg @(IsActive("Home") ? "text-sys-on-primary" : "text-sys-outline")">dashboard</span>
+            لوحة التحكم الرئيسية
+        </a>
+        <a href="/Search" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("Search") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+            <span class="material-symbols-rounded text-lg @(IsActive("Search") ? "text-sys-on-primary" : "text-sys-outline")">search</span>
+            البحث العام
+        </a>
+        <a href="/Calendar" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("Calendar") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+            <span class="material-symbols-rounded text-lg @(IsActive("Calendar") ? "text-sys-on-primary" : "text-sys-outline")">calendar_month</span>
+            جدول البث والإعادة
+        </a>
+
+        @if (HasAny(AppPermissions.EpisodesView, AppPermissions.EpisodesCreate, AppPermissions.EpisodesEdit, AppPermissions.ExecutionExecute))
+        {
+            <div class="pt-4 pb-1.5 px-3">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-sys-outline">إدارة الإنتاج التلفزيوني</div>
+            </div>
+            <a href="/Episodes" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("Episodes", "Index") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                <span class="material-symbols-rounded text-lg @(IsActive("Episodes", "Index") ? "text-sys-on-primary" : "text-sys-outline")">tv</span>
+                سجل الحلقات
+            </a>
+            <a href="/Episodes/LiveBoard" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("Episodes", "LiveBoard") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                <span class="material-symbols-rounded text-lg @(IsActive("Episodes", "LiveBoard") ? "text-sys-on-primary" : "text-sys-outline")">live_tv</span>
+                شاشة العرض المباشر
+            </a>
+            <a href="/Production" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("Production") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                <span class="material-symbols-rounded text-lg @(IsActive("Production") ? "text-sys-on-primary" : "text-sys-outline")">view_column</span>
+                لوحة سير الإنتاج
+            </a>
+        }
+
+        @if (HasAny(AppPermissions.ProgramsView, AppPermissions.ProgramsManage))
+        {
+            <a href="/Programs" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("Programs") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                <span class="material-symbols-rounded text-lg @(IsActive("Programs") ? "text-sys-on-primary" : "text-sys-outline")">live_tv</span>
+                دليل البرامج
+            </a>
+        }
+
+        @if (HasAny(AppPermissions.GuestsView, AppPermissions.GuestsManage))
+        {
+            <div class="pt-4 pb-1.5 px-3">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-sys-outline">المشاركون والضيوف</div>
+            </div>
+            <a href="/Guests" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("Guests") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                <span class="material-symbols-rounded text-lg @(IsActive("Guests") ? "text-sys-on-primary" : "text-sys-outline")">people_alt</span>
+                سجل الضيوف
+            </a>
+        }
+
+        @if (HasAny(AppPermissions.CoordinationView, AppPermissions.CoordinationManage))
+        {
+            <a href="/Correspondents" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("Correspondents") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                <span class="material-symbols-rounded text-lg @(IsActive("Correspondents") ? "text-sys-on-primary" : "text-sys-outline")">map</span>
+                المراسلون الميدانيون
+            </a>
+            <a href="/Coverage" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("Coverage") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                <span class="material-symbols-rounded text-lg @(IsActive("Coverage") ? "text-sys-on-primary" : "text-sys-outline")">edit_location_alt</span>
+                التغطيات الميدانية
+            </a>
+        }
+
+        @if (HasAny(AppPermissions.StaffView, AppPermissions.StaffManage))
+        {
+            <div class="pt-4 pb-1.5 px-3">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-sys-outline">إدارة الكادر والمشاريع</div>
+            </div>
+            <a href="/Employees" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("Employees") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                <span class="material-symbols-rounded text-lg @(IsActive("Employees") ? "text-sys-on-primary" : "text-sys-outline")">badge</span>
+                الموظفون والكادر
+            </a>
+            <a href="/StaffRoles" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("StaffRoles") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                <span class="material-symbols-rounded text-lg @(IsActive("StaffRoles") ? "text-sys-on-primary" : "text-sys-outline")">work_history</span>
+                المسميات الوظيفية
+            </a>
+            <a href="/SocialPlatforms" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("SocialPlatforms") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                <span class="material-symbols-rounded text-lg @(IsActive("SocialPlatforms") ? "text-sys-on-primary" : "text-sys-outline")">share</span>
+                منصات النشر الرقمي
+            </a>
+        }
+
+        @if (HasAny(AppPermissions.SocialPublishingView, AppPermissions.WebsitePublishingView, AppPermissions.ExecutionView, AppPermissions.SocialPublishingPublish, AppPermissions.WebsitePublishingPublish, AppPermissions.ExecutionExecute))
+        {
+            <div class="pt-4 pb-1.5 px-3">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-sys-outline">النشر والتوزيع</div>
+            </div>
+            @if (HasAny(AppPermissions.SocialPublishingPublish, AppPermissions.SocialPublishingView))
+            {
+                <a href="/Publishing" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("Publishing") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                    <span class="material-symbols-rounded text-lg @(IsActive("Publishing") ? "text-sys-on-primary" : "text-sys-outline")">rss_feed</span>
+                    سجل التواصل الاجتماعي
+                </a>
+            }
+            @if (HasAny(AppPermissions.WebsitePublishingPublish, AppPermissions.WebsitePublishingView))
+            {
+                <a href="/WebsitePublishing" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("WebsitePublishing") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                    <span class="material-symbols-rounded text-lg @(IsActive("WebsitePublishing") ? "text-sys-on-primary" : "text-sys-outline")">public</span>
+                    نشر البوابة الرقمية
+                </a>
+            }
+            @if (HasAny(AppPermissions.ExecutionExecute, AppPermissions.ExecutionView))
+            {
+                <a href="/ExecutionLogs" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("ExecutionLogs") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                    <span class="material-symbols-rounded text-lg @(IsActive("ExecutionLogs") ? "text-sys-on-primary" : "text-sys-outline")">assignment</span>
+                    سجلات التنفيذ والإعادة
+                </a>
+            }
+        }
+
+        @if (CurrentUser.HasPermission(AppPermissions.ReportsView))
+        {
+            <div class="pt-4 pb-1.5 px-3">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-sys-outline">التقارير والإحصائيات</div>
+            </div>
+            <a href="/Reports" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("Reports") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                <span class="material-symbols-rounded text-lg @(IsActive("Reports") ? "text-sys-on-primary" : "text-sys-outline")">assessment</span>
+                تقارير الإنتاج والأداء
+            </a>
+        }
+
+        @if (HasAny(AppPermissions.AdminUsersManage, AppPermissions.AdminRolesManage))
+        {
+            <div class="pt-4 pb-1.5 px-3">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-sys-outline">إعدادات النظام</div>
+            </div>
+            <a href="/Users" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("Users") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                <span class="material-symbols-rounded text-lg @(IsActive("Users") ? "text-sys-on-primary" : "text-sys-outline")">group</span>
+                إدارة المستخدمين
+            </a>
+            <a href="/Roles" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("Roles") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                <span class="material-symbols-rounded text-lg @(IsActive("Roles") ? "text-sys-on-primary" : "text-sys-outline")">group_work</span>
+                أدوار العمل والصلاحيات
+            </a>
+            <a href="/Permissions" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("Permissions") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                <span class="material-symbols-rounded text-lg @(IsActive("Permissions") ? "text-sys-on-primary" : "text-sys-outline")">admin_panel_settings</span>
+                جدول الصلاحيات
+            </a>
+            @if (CurrentUser.HasPermission(AppPermissions.SystemViewAuditLogs))
+            {
+                <a href="/AuditLogs" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("AuditLogs") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                    <span class="material-symbols-rounded text-lg @(IsActive("AuditLogs") ? "text-sys-on-primary" : "text-sys-outline")">history</span>
+                    سجل التدقيق الأمني
+                </a>
+            }
+            @if (CurrentUser.HasPermission(AppPermissions.SystemDatabaseManage))
+            {
+                <a href="/Database" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("Database") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                    <span class="material-symbols-rounded text-lg @(IsActive("Database") ? "text-sys-on-primary" : "text-sys-outline")">storage</span>
+                    إدارة قاعدة البيانات
+                </a>
+                <a href="/Diagnostics" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("Diagnostics") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                    <span class="material-symbols-rounded text-lg @(IsActive("Diagnostics") ? "text-sys-on-primary" : "text-sys-outline")">monitor_heart</span>
+                    تشخيص حالة النظام
+                </a>
+            }
+            <a href="/Settings" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @(IsActive("Settings") ? "bg-sys-primary text-sys-on-primary shadow-md font-bold" : "text-sys-on-surface-variant hover:bg-sys-surface-container-high hover:text-sys-on-surface")">
+                <span class="material-symbols-rounded text-lg @(IsActive("Settings") ? "text-sys-on-primary" : "text-sys-outline")">settings</span>
+                إعدادات النظام العريضة
+            </a>
+        }
+    </nav>
 </div>
-<ul class="menu menu-md p-3 gap-0.5 overflow-y-auto flex-1 bg-surface flex-nowrap">
-    <li><a href="/" class="@(IsActive("Home") ? "active" : "")">
-        <span class="material-symbols-rounded">dashboard</span>لوحة التحكم
-    </a></li>
-    <li><a href="/Search" class="@(IsActive("Search") ? "active" : "")">
-        <span class="material-symbols-rounded">search</span>بحث عام
-    </a></li>
-    <li><a href="/Calendar" class="@(IsActive("Calendar") ? "active" : "")">
-        <span class="material-symbols-rounded">calendar_month</span>التقويم الشهري
-    </a></li>
 
-    @if (HasAny(AppPermissions.EpisodesView, AppPermissions.EpisodesCreate, AppPermissions.EpisodesEdit, AppPermissions.ExecutionExecute))
-    {
-        <li><a href="/Episodes" class="@(IsActive("Episodes", "Index") ? "active" : "")">
-            <span class="material-symbols-rounded">podcasts</span>الحلقات
-        </a></li>
-        <li><a href="/Episodes/LiveBoard" class="@(IsActive("Episodes", "LiveBoard") ? "active" : "")">
-            <span class="material-symbols-rounded">tv</span>شاشة العرض المباشر
-        </a></li>
-        <li><a href="/Production" class="@(IsActive("Production") ? "active" : "")">
-            <span class="material-symbols-rounded">view_column</span>لوحة الإنتاج
-        </a></li>
-    }
-
-    @if (HasAny(AppPermissions.ProgramsView, AppPermissions.ProgramsManage))
-    {
-        <li><a href="/Programs" class="@(IsActive("Programs") ? "active" : "")">
-            <span class="material-symbols-rounded">radio</span>البرامج
-        </a></li>
-    }
-
-    @if (HasAny(AppPermissions.GuestsView, AppPermissions.GuestsManage))
-    {
-        <li><a href="/Guests" class="@(IsActive("Guests") ? "active" : "")">
-            <span class="material-symbols-rounded">people_alt</span>الضيوف
-        </a></li>
-    }
-
-    @if (HasAny(AppPermissions.CoordinationView, AppPermissions.CoordinationManage))
-    {
-        <li><a href="/Correspondents" class="@(IsActive("Correspondents") ? "active" : "")">
-            <span class="material-symbols-rounded">map</span>المراسلون
-        </a></li>
-        <li><a href="/Coverage" class="@(IsActive("Coverage") ? "active" : "")">
-            <span class="material-symbols-rounded">edit_location_alt</span>التغطيات الميدانية
-        </a></li>
-    }
-
-    @if (HasAny(AppPermissions.StaffView, AppPermissions.StaffManage))
-    {
-        <li>
-            <details @(IsActive("Employees") || IsActive("StaffRoles") ? "open" : "")>
-                <summary><span class="material-symbols-rounded">badge</span>طاقم العمل</summary>
-                <ul>
-                    <li><a href="/Employees" class="@(IsActive("Employees") ? "active" : "")">الموظفون</a></li>
-                    <li><a href="/StaffRoles" class="@(IsActive("StaffRoles") ? "active" : "")">المسميات الوظيفية</a></li>
-                </ul>
-            </details>
-        </li>
-        <li><a href="/SocialPlatforms" class="@(IsActive("SocialPlatforms") ? "active" : "")">
-            <span class="material-symbols-rounded">share</span>منصات النشر
-        </a></li>
-    }
-
-    @if (HasAny(AppPermissions.SocialPublishingView, AppPermissions.WebsitePublishingView, AppPermissions.ExecutionView, AppPermissions.SocialPublishingPublish, AppPermissions.WebsitePublishingPublish, AppPermissions.ExecutionExecute))
-    {
-        <li>
-            <details @(IsActive("Publishing") || IsActive("WebsitePublishing") || IsActive("ExecutionLogs") ? "open" : "")>
-                <summary><span class="material-symbols-rounded">publish</span>النشر الرقمي</summary>
-                <ul>
-                    @if (HasAny(AppPermissions.SocialPublishingPublish, AppPermissions.SocialPublishingView))
-                    {
-                        <li><a href="/Publishing" class="@(IsActive("Publishing") ? "active" : "")">النشر الاجتماعي</a></li>
-                    }
-                    @if (HasAny(AppPermissions.WebsitePublishingPublish, AppPermissions.WebsitePublishingView))
-                    {
-                        <li><a href="/WebsitePublishing" class="@(IsActive("WebsitePublishing") ? "active" : "")">نشر الموقع</a></li>
-                    }
-                    @if (HasAny(AppPermissions.ExecutionExecute, AppPermissions.ExecutionView))
-                    {
-                        <li><a href="/ExecutionLogs" class="@(IsActive("ExecutionLogs") ? "active" : "")">سجلات التنفيذ</a></li>
-                    }
-                </ul>
-            </details>
-        </li>
-    }
-
-    @if (CurrentUser.HasPermission(AppPermissions.ReportsView))
-    {
-        <li><a href="/Reports" class="@(IsActive("Reports") ? "active" : "")">
-            <span class="material-symbols-rounded">assessment</span>التقارير
-        </a></li>
-    }
-
-    @if (HasAny(AppPermissions.AdminUsersManage, AppPermissions.AdminRolesManage))
-    {
-        <li>
-            <details @(IsActive("Users") || IsActive("Roles") || IsActive("Permissions") || IsActive("AuditLogs") || IsActive("Database") || IsActive("Diagnostics") || IsActive("Settings") ? "open" : "")>
-                <summary><span class="material-symbols-rounded">admin_panel_settings</span>إدارة النظام</summary>
-                <ul>
-                    <li><a href="/Users" class="@(IsActive("Users") ? "active" : "")">المستخدمون</a></li>
-                    <li><a href="/Roles" class="@(IsActive("Roles") ? "active" : "")">الأدوار</a></li>
-                    <li><a href="/Permissions" class="@(IsActive("Permissions") ? "active" : "")">الصلاحيات</a></li>
-                    @if (CurrentUser.HasPermission(AppPermissions.SystemViewAuditLogs))
-                    {
-                        <li><a href="/AuditLogs" class="@(IsActive("AuditLogs") ? "active" : "")">سجل التدقيق</a></li>
-                    }
-                    @if (CurrentUser.HasPermission(AppPermissions.SystemDatabaseManage))
-                    {
-                        <li><a href="/Database" class="@(IsActive("Database") ? "active" : "")">
-                            <span class="material-symbols-rounded text-sm">storage</span>قاعدة البيانات
-                        </a></li>
-                        <li><a href="/Diagnostics" class="@(IsActive("Diagnostics") ? "active" : "")">
-                            <span class="material-symbols-rounded text-sm">monitor_heart</span>تشخيص النظام
-                        </a></li>
-                    }
-                    <li><a href="/Settings" class="@(IsActive("Settings") ? "active" : "")">
-                        <span class="material-symbols-rounded text-sm">settings</span>الإعدادات
-                    </a></li>
-                </ul>
-            </details>
-        </li>
-    }
-</ul>

@@ -1,48 +1,32 @@
 @{
     ViewData["Title"] = "التقويم الشهري";
+    ViewData["HeaderIcon"] = "calendar_month";
+    ViewData["HeaderDescription"] = "عرض الحلقات المجدولة على تقويم شهري";
+    ViewBag.EntityName = "التقويم";
     var year = ViewBag.Year;
     var month = ViewBag.Month;
+
+    ViewData["HeaderActions"] = "<div class='flex items-center gap-2'><button onclick='goMonth(-1)' class='inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all' style='color:var(--color-text-secondary)'><span class='material-symbols-rounded'>chevron_right</span></button><span id='monthLabel' class='font-bold text-lg' style='color:var(--color-text)'></span><button onclick='goMonth(1)' class='inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all' style='color:var(--color-text-secondary)'><span class='material-symbols-rounded'>chevron_left</span></button><button onclick='goToday()' class='inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-sm shadow-sm transition-all' style='background:var(--color-primary);color:white'>اليوم</button></div>";
 }
 
-<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-    <div>
-        <div class="breadcrumbs text-sm text-base-content/60">
-            <ul>
-                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
-                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">calendar_month</span>التقويم الشهري</span></li>
-            </ul>
-        </div>
-        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
-            <span class="material-symbols-rounded text-primary">calendar_month</span>
-            التقويم الشهري
-        </h1>
-        <p class="text-sm text-base-content/60 mt-0.5">عرض الحلقات المجدولة على تقويم شهري</p>
-    </div>
-    <div class="flex items-center gap-2">
-        <button onclick="goMonth(-1)" class="btn btn-ghost btn-sm">
-            <span class="material-symbols-rounded">chevron_right</span>
-        </button>
-        <span id="monthLabel" class="font-bold text-base-content text-lg"></span>
-        <button onclick="goMonth(1)" class="btn btn-ghost btn-sm">
-            <span class="material-symbols-rounded">chevron_left</span>
-        </button>
-        <button onclick="goToday()" class="btn btn-primary btn-sm">اليوم</button>
-    </div>
-</div>
+<partial name="_PageHeader" />
 
-<div class="wf-card">
-    <div class="card-body p-4">
-        <div id="calendarGrid" class="grid grid-cols-7 gap-px bg-border rounded-box overflow-hidden"></div>
+<div class="rounded-2xl border" style="background: var(--color-surface); border-color: var(--color-border)">
+    <div class="p-4">
+        <div id="calendarGrid" class="grid grid-cols-7 gap-px overflow-hidden rounded-xl" style="background: var(--color-border)"></div>
     </div>
 </div>
  
-<div id="episodeModal" class="modal">
-    <div class="modal-box">
-        <h3 class="font-bold text-lg mb-4" id="modalDate"></h3>
+<dialog id="episodeModal" class="p-0 bg-transparent border-0" style="max-width: 28rem;">
+    <div class="rounded-2xl border w-full p-6 shadow-xl" style="background: var(--color-surface); border-color: var(--color-border)">
+        <h3 class="font-bold text-lg mb-4" id="modalDate" style="color: var(--color-text)"></h3>
         <div id="modalEvents" class="space-y-2"></div>
-        <div class="modal-action"><button onclick="document.getElementById('episodeModal').close()" class="btn">إغلاق</button></div>
+        <div class="mt-4 text-left">
+            <button onclick="closeModal()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-sm transition-all"
+                    style="color: var(--color-text-secondary)">إغلاق</button>
+        </div>
     </div>
-</div>
+</dialog>
  
 @section Scripts {
     <script>
@@ -54,6 +38,10 @@
         let currentYear = @year, currentMonth = @month;
         let allEvents = [];
  
+        function closeModal() {
+            document.getElementById('episodeModal').close();
+        }
+
         function renderCalendar() {
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
@@ -61,8 +49,8 @@
  
             dayNames.forEach(d => {
                 const h = document.createElement('div');
-                h.className = 'bg-base-100 text-center py-2 text-sm font-bold text-base-content/60';
-                h.textContent = d;
+                h.className = 'text-center py-2 text-sm font-bold';
+                h.style.color = 'var(--color-text-tertiary)';
                 grid.appendChild(h);
             });
  
@@ -74,17 +62,22 @@
  
             for (let i = 0; i < firstDay; i++) {
                 const e = document.createElement('div');
-                e.className = 'bg-base-100/50 min-h-[80px] p-1';
+                e.className = 'min-h-[80px] p-1';
+                e.style.background = 'var(--color-bg-alt)';
                 grid.appendChild(e);
             }
  
             for (let d = 1; d <= daysInMonth; d++) {
                 const cell = document.createElement('div');
-                cell.className = 'bg-base-100 min-h-[80px] p-1 cursor-pointer hover:bg-base-200/40 transition-colors';
-                if (isCurrentMonth && d === todayDate) cell.className += ' ring-2 ring-primary ring-inset';
+                cell.className = 'min-h-[80px] p-1 cursor-pointer transition-colors';
+                cell.style.background = 'var(--color-surface)';
+                cell.onmouseover = () => cell.style.background = 'var(--color-bg-alt)';
+                cell.onmouseout = () => cell.style.background = 'var(--color-surface)';
+                if (isCurrentMonth && d === todayDate) cell.style.boxShadow = 'inset 0 0 0 2px var(--color-primary)';
  
                 const num = document.createElement('div');
-                num.className = 'text-xs font-bold text-base-content/60 mb-0.5';
+                num.className = 'text-xs font-bold mb-0.5';
+                num.style.color = 'var(--color-text-tertiary)';
                 num.textContent = d;
                 cell.appendChild(num);
  
@@ -94,66 +87,69 @@
                 dayEvents.forEach(ev => {
                     const el = document.createElement('a');
                     el.href = ev.url;
-                    el.className = `block text-[10px] md:text-xs rounded-md px-1 py-0.5 mb-0.5 font-semibold truncate hover:opacity-80 status-badge ${ev.statusCss}`;
-                    el.style.borderRadius = '4px';
+                    el.className = 'block text-[10px] md:text-xs rounded-md px-1 py-0.5 mb-0.5 font-semibold truncate hover:opacity-80 status-badge ' + ev.statusCss;
                     el.textContent = ev.title;
                     cell.appendChild(el);
                 });
-
+ 
                 if (dayEvents.length > 3) {
                     const more = document.createElement('button');
-                    more.className = 'text-xs text-primary font-bold';
+                    more.className = 'text-xs font-bold';
+                    more.style.color = 'var(--color-primary)';
                     more.textContent = '+' + (dayEvents.length - 3);
                     more.onclick = (e) => { e.stopPropagation(); showDayEvents(dateStr); };
                     cell.addEventListener('click', () => showDayEvents(dateStr));
                 } else if (dayEvents.length > 0) {
                     cell.addEventListener('click', () => showDayEvents(dateStr));
                 }
-
+ 
                 grid.appendChild(cell);
             }
         }
-
+ 
         function showDayEvents(dateStr) {
             const dayEvents = allEvents.filter(e => e.start && e.start.startsWith(dateStr));
             const parts = dateStr.split('-');
             const d = new Date(parts[0], parts[1] - 1, parts[2]);
             document.getElementById('modalDate').textContent = dayNames[d.getDay()] + '، ' + parts[2] + ' ' + monthNames[parts[1] - 1] + ' ' + parts[0];
-
+ 
             const container = document.getElementById('modalEvents');
             container.innerHTML = '';
             if (dayEvents.length === 0) {
-                container.innerHTML = '<p class="text-base-content/60 text-sm">لا توجد حلقات في هذا اليوم</p>';
+                container.innerHTML = '<p style="color:var(--color-text-tertiary);font-size:0.875rem">لا توجد حلقات في هذا اليوم</p>';
             } else {
                 dayEvents.forEach(ev => {
                     const time = ev.start ? ev.start.split('T')[1]?.substring(0, 5) : '';
                     const el = document.createElement('a');
                     el.href = ev.url;
-                    el.className = 'flex items-center gap-3 p-2 rounded-lg hover:bg-base-200 transition-colors';
+                    el.className = 'flex items-center gap-3 p-2 rounded-lg transition-colors';
+                    el.style.color = 'var(--color-text)';
+                    el.onmouseover = () => el.style.background = 'var(--color-bg-alt)';
+                    el.onmouseout = () => el.style.background = 'transparent';
                     el.innerHTML = '<span class="w-2.5 h-2.5 rounded-full shrink-0 status-badge ' + ev.statusCss + '"></span>' +
                         '<span class="font-semibold text-sm flex-1">' + ev.title + '</span>' +
-                        '<span class="text-xs text-base-content/60" dir="ltr">' + time + '</span>' +
+                        '<span class="text-xs" style="color:var(--color-text-tertiary)" dir="ltr">' + time + '</span>' +
                         '<span class="status-badge ' + ev.statusCss + ' text-[10px] py-0.5 px-2">' + (ev.status || '') + '</span>';
                     container.appendChild(el);
                 });
             }
             document.getElementById('episodeModal').showModal();
         }
-
+ 
         function goMonth(delta) {
             currentMonth += delta;
             if (currentMonth > 12) { currentMonth = 1; currentYear++; }
             if (currentMonth < 1) { currentMonth = 12; currentYear--; }
             loadEvents();
         }
-
+ 
         function goToday() {
             const t = new Date();
             currentYear = t.getFullYear();
             currentMonth = t.getMonth() + 1;
             loadEvents();
         }
-
+ 
         function loadEvents() {
             fetch('/Calendar/GetEvents?year=' + currentYear + '&month=' + currentMonth)
                 .then(r => r.json())
@@ -162,7 +158,7 @@
                     renderCalendar();
                 });
         }
-
+ 
         document.addEventListener('DOMContentLoaded', loadEvents);
     </script>
 }

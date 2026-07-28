@@ -13,28 +13,31 @@
     ViewBag.BackText = "الرجوع للتغطيات";
 }
 
-<partial name="_CreateEditHeader" />
+<partial name="_PageHeader" />
 
 <form method="post" action="@(isEdit ? $"/Coverage/Edit/{coverage.CoverageId}" : "/Coverage/Create")" class="max-w-2xl">
     @Html.AntiForgeryToken()
 
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="bg-error/10 border border-error/20 text-error rounded-xl p-4 mb-6 font-semibold text-sm"></div>
+        <div asp-validation-summary="All" class="rounded-xl p-4 mb-6 font-semibold text-sm"
+             style="background: color-mix(in srgb, var(--color-error) 10%, transparent); border: 1px solid color-mix(in srgb, var(--color-error) 20%, transparent); color: var(--color-error)"></div>
     }
 
-    <div class="wf-card">
-        <div class="card-body space-y-4">
+    <div class="rounded-2xl border" style="background: var(--color-surface); border-color: var(--color-border)">
+        <div class="p-5 space-y-4">
             <div class="flex items-center gap-2">
-                <span class="material-symbols-rounded text-primary">edit_location_alt</span>
-                <h3 class="font-bold text-base-content text-base">بيانات التغطية</h3>
+                <span class="material-symbols-rounded" style="color: var(--color-primary)">edit_location_alt</span>
+                <h3 class="font-bold" style="color: var(--color-text)">بيانات التغطية</h3>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="label">المراسل *</label>
+                    <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">المراسل *</label>
                     <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">map</span>
-                        <select name="CorrespondentId" class="select select-bordered w-full pr-10" required>
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">map</span>
+                        <select name="CorrespondentId" required
+                                class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                                style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)">
                             <option value="">— اختر —</option>
                             @foreach (var c in Model.Correspondents)
                             {
@@ -44,10 +47,12 @@
                     </div>
                 </div>
                 <div>
-                    <label class="label">الضيف</label>
+                    <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">الضيف</label>
                     <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">people_alt</span>
-                        <select name="GuestId" class="select select-bordered w-full pr-10">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">people_alt</span>
+                        <select name="GuestId"
+                                class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                                style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)">
                             <option value="">— بدون —</option>
                             @foreach (var g in Model.Guests)
                             {
@@ -59,33 +64,43 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="label">الموقع</label>
+                    <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">الموقع</label>
                     <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">location_on</span>
-                        <input type="text" name="Location" value="@coverage.Location" class="input input-bordered w-full pr-10" placeholder="مثال: الرياض - حي الصحافة" />
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">location_on</span>
+                        <input type="text" name="Location" value="@coverage.Location"
+                               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                               style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
+                               placeholder="مثال: الرياض - حي الصحافة" />
                     </div>
                 </div>
                 <div>
-                    <label class="label">الموضوع *</label>
+                    <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">الموضوع *</label>
                     <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">topic</span>
-                        <input type="text" name="Topic" value="@coverage.Topic" class="input input-bordered w-full pr-10" required placeholder="موضوع التغطية" />
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">topic</span>
+                        <input type="text" name="Topic" value="@coverage.Topic" required
+                               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                               style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
+                               placeholder="موضوع التغطية" />
                     </div>
                 </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="label">الوقت المجدول</label>
+                    <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">الوقت المجدول</label>
                     <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">schedule</span>
-                        <input type="text" name="ScheduledTime" value="@(coverage.ScheduledTime?.ToString("yyyy-MM-ddTHH:mm"))" class="input input-bordered w-full pr-10 datetimepicker" />
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">schedule</span>
+                        <input type="text" name="ScheduledTime" value="@(coverage.ScheduledTime?.ToString("yyyy-MM-ddTHH:mm"))"
+                               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all datetimepicker"
+                               style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)" />
                     </div>
                 </div>
                 <div>
-                    <label class="label">الوقت الفعلي</label>
+                    <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">الوقت الفعلي</label>
                     <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">access_time</span>
-                        <input type="text" name="ActualTime" value="@(coverage.ActualTime?.ToString("yyyy-MM-ddTHH:mm"))" class="input input-bordered w-full pr-10 datetimepicker" />
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">access_time</span>
+                        <input type="text" name="ActualTime" value="@(coverage.ActualTime?.ToString("yyyy-MM-ddTHH:mm"))"
+                               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all datetimepicker"
+                               style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)" />
                     </div>
                 </div>
             </div>
@@ -93,12 +108,14 @@
     </div>
 
     <div class="flex items-center justify-end gap-2 mt-6">
-        <a href="/Coverage" class="btn btn-ghost">
-            <span class="material-symbols-rounded">cancel</span>
+        <a href="/Coverage" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all"
+           style="color: var(--color-text-secondary)">
+            <span class="material-symbols-rounded text-lg">cancel</span>
             إلغاء
         </a>
-        <button type="submit" class="btn btn-primary">
-            <span class="material-symbols-rounded">save</span>
+        <button type="submit" class="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl font-bold text-sm shadow-sm transition-all"
+                style="background: var(--color-primary); color: white">
+            <span class="material-symbols-rounded text-lg">save</span>
             @(isEdit ? "حفظ التغييرات" : "إضافة التغطية")
         </button>
     </div>

@@ -1,78 +1,70 @@
 @inject ICurrentUserService CurrentUser
 
-<header class="sticky top-0 z-30 glass-topbar h-16 flex items-center px-4 gap-4 shadow-sm relative">
-    <canvas class="wf-waveform absolute inset-x-0 bottom-0 h-9 opacity-25 pointer-events-none" aria-hidden="true"></canvas>
-    <label for="sidebar-drawer" class="lg:hidden text-ink-muted p-2 hover:bg-surface-3 rounded-lg cursor-pointer">
-        <span class="material-symbols-rounded">menu</span>
+<header class="sticky top-0 z-30 h-16 flex items-center px-6 gap-4 bg-sys-surface-bright/80 backdrop-blur-xl border-b border-sys-outline-variant shadow-sm transition-all duration-200">
+    <label for="sidebar-drawer" class="lg:hidden p-2 rounded-xl text-sys-on-surface-variant hover:bg-sys-surface-container-high cursor-pointer transition-colors">
+        <span class="material-symbols-rounded text-2xl">menu</span>
     </label>
 
-    <div class="flex items-center gap-2">
-        <span class="material-symbols-rounded text-primary">radio</span>
-        <span class="font-bold text-ink hidden sm:inline">نظام سير عمل البث الإذاعي</span>
-    </div>
-
-    <div class="flex-1 max-w-md mx-auto hidden md:block">
+    <div class="flex-1 max-w-md hidden md:block">
         <form action="/Search" method="get" class="relative">
-            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-ink-soft">search</span>
-            <input type="text" name="q" placeholder="بحث سريع…"
-                   class="input input-bordered w-full rounded-lg py-2 pr-10 pl-4 text-sm" />
+            <span class="material-symbols-rounded absolute right-3.5 top-1/2 -translate-y-1/2 text-sys-outline text-xl">search</span>
+            <input type="text" name="q" placeholder="بحث سريع في الحلقات، الضيوف، والبرامج..."
+                   class="w-full h-10 bg-sys-surface-container-low border border-sys-outline-variant rounded-xl pr-11 pl-4 text-xs font-medium text-sys-on-surface placeholder:text-sys-outline focus:outline-none focus:border-sys-primary focus:ring-2 focus:ring-sys-primary/20 transition-all duration-200" />
         </form>
     </div>
 
-    <div class="flex items-center gap-1 mr-auto">
-        <!-- Dark Mode Toggle -->
-        <button class="p-2 hover:bg-surface-3 rounded-lg text-ink-muted" onclick="toggleTheme()" id="theme-toggle-btn" aria-label="تبديل السمة">
-            <span class="material-symbols-rounded" id="theme-icon">dark_mode</span>
+    <div class="flex items-center gap-2 mr-auto">
+        <button class="p-2.5 rounded-xl text-sys-on-surface-variant hover:bg-sys-surface-container-high transition-colors" onclick="toggleTheme()" id="theme-toggle-btn" aria-label="تبديل السمة">
+            <span class="material-symbols-rounded text-xl" id="theme-icon">dark_mode</span>
         </button>
 
-        <!-- Notifications dropdown -->
         <div class="relative">
-            <button class="relative p-2 hover:bg-surface-3 rounded-lg text-ink-muted" onclick="toggleNotifications(event)">
-                <span class="material-symbols-rounded">notifications</span>
-                <span id="notification-badge-ping" class="hidden absolute -top-0.5 -left-0.5 w-3.5 h-3.5 bg-danger/50 rounded-full ping-notification"></span>
-                <span id="notification-badge" class="hidden absolute -top-0.5 -left-0.5 bg-danger text-white text-[9px] rounded-full w-3.5 h-3.5 flex items-center justify-center font-bold">0</span>
+            <button class="relative p-2.5 rounded-xl text-sys-on-surface-variant hover:bg-sys-surface-container-high transition-colors" onclick="toggleNotifications(event)">
+                <span class="material-symbols-rounded text-xl">notifications</span>
+                <span id="notification-badge-ping" class="hidden absolute top-1.5 left-1.5 w-2.5 h-2.5 bg-sys-error rounded-full animate-ping"></span>
+                <span id="notification-badge" class="hidden absolute top-1 left-1 bg-sys-error text-sys-on-error text-[9px] rounded-full w-4 h-4 flex items-center justify-center font-bold ring-2 ring-sys-surface-bright">0</span>
             </button>
-            <div id="notifications-dropdown" class="hidden absolute left-0 mt-2 w-80 bg-surface rounded-xl shadow-xl border border-border z-50 max-h-96 overflow-y-auto">
-                <div class="p-3 border-b border-border flex items-center justify-between">
-                    <span class="font-bold">الإشعارات</span>
-                    <button class="text-xs text-primary" onclick="clearNotifications()">مسح الكل</button>
+            <div id="notifications-dropdown" class="hidden absolute left-0 mt-3 w-80 bg-sys-surface-bright rounded-2xl shadow-2xl border border-sys-outline-variant z-50 max-h-96 overflow-y-auto">
+                <div class="p-4 border-b border-sys-outline-variant flex items-center justify-between">
+                    <span class="font-bold text-xs text-sys-on-surface">مركز الإشعارات</span>
+                    <button class="text-xs text-sys-primary font-semibold hover:underline" onclick="clearNotifications()">مسح الكل</button>
                 </div>
-                <div id="notifications-list" class="divide-y divide-border">
-                    <div class="p-3 text-sm text-ink-soft text-center">لا توجد إشعارات</div>
+                <div id="notifications-list" class="divide-y divide-sys-outline-variant">
+                    <div class="p-6 text-xs text-sys-on-surface-variant text-center">لا توجد إشعارات حالية</div>
                 </div>
             </div>
         </div>
 
-        <!-- User menu -->
         <div class="relative">
-            <button class="flex items-center gap-2 p-1 pr-2 bg-surface-2 hover:bg-surface-3 rounded-lg border border-border transition-all duration-200" onclick="toggleUserMenu(event)">
-                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center font-bold text-sm shadow-sm">
+            <button class="flex items-center gap-3 p-1.5 pr-3 bg-sys-surface-container-low hover:bg-sys-surface-container-high rounded-xl border border-sys-outline-variant transition-all duration-200" onclick="toggleUserMenu(event)">
+                <div class="w-8 h-8 rounded-lg bg-sys-primary text-sys-on-primary flex items-center justify-center font-bold text-xs shadow-md shrink-0">
                     @(CurrentUser.FullName?.Substring(0, 1) ?? "U")
                 </div>
                 <div class="hidden md:block text-right">
-                    <div class="text-sm font-bold text-ink leading-tight">@(CurrentUser.FullName ?? "مستخدم")</div>
-                    <div class="text-xs text-ink-soft">@CurrentUser.PrimaryRole</div>
+                    <div class="text-xs font-bold text-sys-on-surface leading-tight">@(CurrentUser.FullName ?? "مستخدم النظام")</div>
+                    <div class="text-[10px] text-sys-on-surface-variant font-medium">@CurrentUser.PrimaryRole</div>
                 </div>
-                <span class="material-symbols-rounded text-ink-soft text-base hidden md:inline">expand_more</span>
+                <span class="material-symbols-rounded text-lg text-sys-outline hidden md:inline">expand_more</span>
             </button>
-            <div id="user-menu" class="hidden absolute left-0 mt-2 w-56 bg-surface rounded-xl border border-border z-50 user-dropdown-menu">
-                <a href="/Account/Profile" class="flex px-4 py-2.5 hover:bg-surface-3 text-sm items-center gap-2 rounded-t-xl transition-colors">
-                    <span class="material-symbols-rounded text-ink-muted text-base">person</span>
-                    <span class="text-ink">الملف الشخصي</span>
+            <div id="user-menu" class="hidden absolute left-0 mt-3 w-60 bg-sys-surface-bright rounded-2xl border border-sys-outline-variant z-50 shadow-2xl overflow-hidden">
+                <a href="/Account/Profile" class="flex items-center gap-3 px-4 py-3 hover:bg-sys-surface-container-high text-xs font-semibold text-sys-on-surface transition-colors">
+                    <span class="material-symbols-rounded text-lg text-sys-outline">person</span>
+                    <span>الملف الشخصي</span>
                 </a>
-                <a href="/Account/Settings" class="flex px-4 py-2.5 hover:bg-surface-3 text-sm items-center gap-2 transition-colors">
-                    <span class="material-symbols-rounded text-ink-muted text-base">settings</span>
-                    <span class="text-ink">الإعدادات</span>
+                <a href="/Account/Settings" class="flex items-center gap-3 px-4 py-3 hover:bg-sys-surface-container-high text-xs font-semibold text-sys-on-surface transition-colors">
+                    <span class="material-symbols-rounded text-lg text-sys-outline">settings</span>
+                    <span>تفضيلات الإعدادات</span>
                 </a>
-                <div class="border-t border-border my-1"></div>
-                <form action="/Account/Logout" method="post" class="block">
+                <div class="border-t border-sys-outline-variant"></div>
+                <form action="/Account/Logout" method="post">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="w-full text-right px-4 py-2.5 hover:bg-danger/10 text-sm flex items-center gap-2 text-danger rounded-b-xl transition-colors logout-btn">
-                        <span class="material-symbols-rounded text-base">logout</span>
-                        تسجيل الخروج
+                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 hover:bg-sys-error-container/20 text-xs font-semibold text-sys-error transition-colors">
+                        <span class="material-symbols-rounded text-lg text-sys-error">logout</span>
+                        <span>تسجيل الخروج</span>
                     </button>
                 </form>
             </div>
         </div>
     </div>
 </header>
+

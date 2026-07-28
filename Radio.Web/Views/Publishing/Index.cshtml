@@ -1,105 +1,54 @@
 @model List<PublishingRecordDto>
+@using Radio.Web.ViewModels
 @{
-    ViewData["Title"] = "سجل النشر الموحد";
+    ViewData["Title"] = "سجل النشر والتوزيع الموحد";
+    ViewData["HeaderIcon"] = "hub";
+    ViewData["HeaderDescription"] = "متابعة وإدارة عمليات الإنتاج والنشر الرقمي على وسائل التواصل الاجتماعي والموقع الرسمي";
+    ViewBag.EntityName = "سجل النشر";
     var socialCount = Model.Count(r => r.RecordType == "SocialMedia");
     var websiteCount = Model.Count(r => r.RecordType == "Website");
     var executionCount = Model.Count(r => r.RecordType == "Execution");
     var todayCount = Model.Count(r => r.RecordDate.Date == DateTime.UtcNow.Date);
     var programs = ViewBag.Programs as List<ProgramDto> ?? new();
+
+    var kpiItems = new List<KpiItem>
+    {
+        new() { Label = "سجلات الإنتاج", Value = executionCount.ToString(), Icon = "check_circle", Color = "var(--color-success)", IconBg = "color-mix(in srgb, var(--color-success) 10%, transparent)", IconColor = "var(--color-success)", Subtitle = "منفذة ومسجلة" },
+        new() { Label = "النشر الرقمي", Value = socialCount.ToString(), Icon = "rss_feed", Color = "var(--color-primary)", IconBg = "color-mix(in srgb, var(--color-primary) 10%, transparent)", IconColor = "var(--color-primary)", Subtitle = "وسائل التواصل الاجتماعي" },
+        new() { Label = "الموقع الرسمي", Value = websiteCount.ToString(), Icon = "public", Color = "var(--color-info)", IconBg = "color-mix(in srgb, var(--color-info) 10%, transparent)", IconColor = "var(--color-info)", Subtitle = "نشر على البوابة" },
+        new() { Label = "نشاط اليوم", Value = todayCount.ToString(), Icon = "today", Color = "var(--color-warning)", IconBg = "color-mix(in srgb, var(--color-warning) 10%, transparent)", IconColor = "var(--color-warning)", Subtitle = "سجلات منشورة اليوم" }
+    };
+    ViewBag.KpiItems = kpiItems;
 }
 
-<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-    <div>
-        <div class="breadcrumbs text-sm text-base-content/60">
-            <ul>
-                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
-                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">share</span>سجل النشر الموحد</span></li>
-            </ul>
-        </div>
-        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
-            <span class="material-symbols-rounded text-primary p-1 bg-primary/10 rounded-lg">share</span>
-            سجل النشر الموحد
-        </h1>
-        <p class="text-sm text-base-content/60 mt-0.5">شاشة ذكية وعصرية لمتابعة وإدارة كافة عمليات الإنتاج والنشر الرقمي والموقع الرسمي</p>
-    </div>
-</div>
+<div class="max-w-7xl mx-auto space-y-6">
+    <partial name="_PageHeader" />
+    <partial name="_KpiCards" />
 
-<!-- Stats Dashboard -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div class="wf-stat wf-card-hover relative overflow-hidden group">
-        <div class="absolute top-0 right-0 w-24 h-24 bg-brand-success/5 rounded-bl-full transition-all duration-500 group-hover:scale-110 pointer-events-none z-0"></div>
-        <div class="flex items-center gap-4 relative z-10">
-            <div class="wf-stat-ico bg-brand-success/10 text-brand-success">
-                <span class="material-symbols-rounded">check_circle</span>
-            </div>
-            <div>
-                <div class="wf-stat-value">@executionCount</div>
-                <div class="wf-stat-label">سجلات الإنتاج (التنفيذ)</div>
-            </div>
-        </div>
-    </div>
-    <div class="wf-stat wf-card-hover relative overflow-hidden group">
-        <div class="absolute top-0 right-0 w-24 h-24 bg-brand-info/5 rounded-bl-full transition-all duration-500 group-hover:scale-110 pointer-events-none z-0"></div>
-        <div class="flex items-center gap-4 relative z-10">
-            <div class="wf-stat-ico bg-brand-info/10 text-brand-info">
-                <span class="material-symbols-rounded">rss_feed</span>
-            </div>
-            <div>
-                <div class="wf-stat-value">@socialCount</div>
-                <div class="wf-stat-label">النشر الرقمي (السوشال)</div>
-            </div>
-        </div>
-    </div>
-    <div class="wf-stat wf-card-hover relative overflow-hidden group">
-        <div class="absolute top-0 right-0 w-24 h-24 bg-brand-purple/5 rounded-bl-full transition-all duration-500 group-hover:scale-110 pointer-events-none z-0"></div>
-        <div class="flex items-center gap-4 relative z-10">
-            <div class="wf-stat-ico bg-brand-purple/10 text-brand-purple">
-                <span class="material-symbols-rounded">public</span>
-            </div>
-            <div>
-                <div class="wf-stat-value">@websiteCount</div>
-                <div class="wf-stat-label">النشر على الموقع الرسمي</div>
-            </div>
-        </div>
-    </div>
-    <div class="wf-stat wf-card-hover relative overflow-hidden group">
-        <div class="absolute top-0 right-0 w-24 h-24 bg-brand-warning/5 rounded-bl-full transition-all duration-500 group-hover:scale-110 pointer-events-none z-0"></div>
-        <div class="flex items-center gap-4 relative z-10">
-            <div class="wf-stat-ico bg-brand-warning/10 text-brand-warning">
-                <span class="material-symbols-rounded">today</span>
-            </div>
-            <div>
-                <div class="wf-stat-value">@todayCount</div>
-                <div class="wf-stat-label">العمليات المسجلة اليوم</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modern Filter Panel -->
-<div class="wf-card mb-6">
-    <div class="card-body">
+    <!-- Filters Section -->
+    <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
         <form method="get" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-                <span class="label-text font-bold text-xs text-base-content/70 mb-1.5 block">البحث العام</span>
+                <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 block">البحث باسم الحلقة</label>
                 <div class="relative">
-                    <span class="material-symbols-rounded absolute right-3 top-3 text-base-content/40 text-lg">search</span>
-                    <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث باسم الحلقة أو ملخص التفاصيل..." class="input input-bordered pr-10 w-full" />
+                    <span class="material-symbols-rounded absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-base">search</span>
+                    <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث باسم الحلقة..."
+                           class="w-full h-10 bg-slate-100/70 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 rounded-xl pr-10 pl-3 text-xs font-semibold text-slate-800 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 transition-all" />
                 </div>
             </div>
             <div>
-                <span class="label-text font-bold text-xs text-base-content/70 mb-1.5 block">حسب منصة النشر</span>
-                <select name="type" class="select select-bordered w-full" onchange="this.form.submit()">
+                <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 block">حسب منصة النشر</label>
+                <select name="type" class="w-full h-10 bg-slate-100/70 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 rounded-xl px-3 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500 transition-all" onchange="this.form.submit()">
                     <option value="">كل منصات وأنواع النشر</option>
-                    <option value="Execution" selected="@(ViewBag.TypeFilter == "Execution")">سجلات الإنتاج (التنفيذ)</option>
-                    <option value="SocialMedia" selected="@(ViewBag.TypeFilter == "SocialMedia")">سجلات التواصل الاجتماعي (الرقمي)</option>
+                    <option value="Execution" selected="@(ViewBag.TypeFilter == "Execution")">سجلات الإنتاج</option>
+                    <option value="SocialMedia" selected="@(ViewBag.TypeFilter == "SocialMedia")">سجلات التواصل الاجتماعي</option>
                     <option value="Website" selected="@(ViewBag.TypeFilter == "Website")">سجلات الموقع الرسمي</option>
                 </select>
             </div>
             <div>
-                <span class="label-text font-bold text-xs text-base-content/70 mb-1.5 block">فلترة حسب البرنامج</span>
-                <select name="programId" class="select select-bordered w-full" onchange="this.form.submit()">
-                    <option value="">كل البرامج الإذاعية</option>
+                <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 block">فلترة حسب البرنامج</label>
+                <select name="programId" class="w-full h-10 bg-slate-100/70 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 rounded-xl px-3 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500 transition-all" onchange="this.form.submit()">
+                    <option value="">كل البرامج</option>
                     @foreach (var prog in programs)
                     {
                         <option value="@prog.ProgramId" selected="@(ViewBag.ProgramFilter == prog.ProgramId)">@prog.ProgramName</option>
@@ -107,129 +56,111 @@
                 </select>
             </div>
             <div class="flex gap-2 items-end">
-                <button type="submit" class="btn btn-primary flex-1 gap-2">
-                    <span class="material-symbols-rounded text-sm">filter_alt</span>
-                    تطبيق التصفية
+                <button type="submit" class="flex-1 h-10 rounded-xl bg-blue-600 text-white font-bold text-xs shadow-md shadow-blue-600/20 hover:bg-blue-700 transition-all flex items-center justify-center gap-1.5">
+                    <span class="material-symbols-rounded text-base">filter_alt</span>
+                    <span>تصفية</span>
                 </button>
-                <a href="/Publishing" class="btn btn-ghost" title="إعادة تهيئة">
-                    <span class="material-symbols-rounded">restart_alt</span>
+                <a href="/Publishing" class="h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" title="إعادة تهيئة">
+                    <span class="material-symbols-rounded text-base">restart_alt</span>
                 </a>
             </div>
         </form>
     </div>
-</div>
 
-<!-- Records Display -->
-<div class="wf-card overflow-hidden">
+    <!-- Records Grid Container -->
     @if (!Model.Any())
     {
-        <div class="card-body text-center py-12">
-            <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">folder_off</span>
-            <h3 class="font-bold text-lg mb-2">لا توجد سجلات نشر مطابقة</h3>
-            <p class="text-sm text-base-content/60 max-w-sm mx-auto">لم يتم العثور على أي نتائج تطابق خيارات التصفية الحالية. يرجى تجربة خيارات أخرى.</p>
-        </div>
+        <partial name="_EmptyState" model='new { Icon = "folder_off", Title = "لا توجد سجلات نشر مطابقة", Description = "لم نتمكن من العثور على أية نتائج تطابق محددات البحث الحالية" }' />
     }
     else
     {
-        <div class="overflow-x-auto">
-            <table class="table table-zebra w-full text-sm">
-                <thead>
-                    <tr class="bg-base-200 border-b border-base-300 text-base-content/70 uppercase tracking-wider text-xs">
-                        <th class="px-6 py-4 text-right font-bold">المنصة / النوع</th>
-                        <th class="px-6 py-4 text-right font-bold">معلومات الحلقة</th>
-                        <th class="px-6 py-4 text-right font-bold">تفاصيل النشر والمحتوى</th>
-                        <th class="px-6 py-4 text-right font-bold">المسؤول</th>
-                        <th class="px-6 py-4 text-right font-bold">التوقيت والتاريخ</th>
-                        <th class="px-6 py-4 text-center font-bold">الخيارات</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-base-200">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-xs text-right">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200/80 dark:border-slate-800 text-slate-400 font-bold uppercase tracking-wider">
+                            <th class="px-6 py-4">المنصة</th>
+                            <th class="px-6 py-4">معلومات الحلقة</th>
+                            <th class="px-6 py-4">تفاصيل النشر</th>
+                            <th class="px-6 py-4">المسؤول</th>
+                            <th class="px-6 py-4">التوقيت</th>
+                            <th class="px-6 py-4 text-center">الخيارات</th>
+                        </tr>
+                    </thead>
+                <tbody>
                     @foreach (var r in Model)
                     {
-                        <tr class="hover:bg-surface-2 transition duration-200">
+                        <tr class="transition-colors duration-200" style="border-bottom: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent)">
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-center gap-3">
                                     <div class="p-1.5 rounded-lg text-white flex items-center justify-center" style="background-color: @r.RecordColor">
                                         <span class="material-symbols-rounded text-lg">@GetRecordIcon(r.RecordType)</span>
                                     </div>
-                                    <span class="badge font-bold" style="background-color: @(r.RecordColor)15; color: @r.RecordColor">
+                                    <span class="inline-flex items-center px-2.5 py-1 text-xs font-bold rounded-lg"
+                                          style="background: color-mix(in srgb, @r.RecordColor 15%, transparent); color: @r.RecordColor">
                                         @GetRecordTypeName(r.RecordType)
                                     </span>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <a href="/Episodes/Details/@r.EpisodeId" class="text-primary font-bold hover:text-primary-hover hover:underline block text-sm transition" target="_blank">
+                                <a href="/Episodes/Details/@r.EpisodeId" class="font-semibold text-sm hover:underline transition-colors"
+                                   style="color: var(--color-primary)" target="_blank">
                                     @(r.EpisodeName ?? "حلقة غير معنونة")
                                 </a>
-                                <span class="text-xs font-medium text-ink-muted mt-1 inline-block bg-ink-soft/5 px-2 py-0.5 rounded">
-                                    @r.ProgramName
-                                </span>
+                                <span class="text-xs mt-0.5 block" style="color: var(--color-text-tertiary)">@r.ProgramName</span>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="text-ink font-medium max-w-sm line-clamp-2">
-                                    @r.Summary
-                                </div>
+                                <div class="text-sm max-w-sm line-clamp-2" style="color: var(--color-text-3)">@r.Summary</div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap align-middle text-right">
-                                <div class="flex items-center gap-3 justify-start">
-                                    <div class="w-9 h-9 rounded-xl bg-base-200 text-primary font-bold text-sm border border-primary/20 transition-all duration-300 hover:scale-105 flex items-center justify-center shrink-0">
-                                        <span>@(string.IsNullOrEmpty(r.RecordedBy) ? "ت" : r.RecordedBy.Substring(0, 1).ToUpper())</span>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 font-bold text-xs"
+                                         style="background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary)">
+                                        @(string.IsNullOrEmpty(r.RecordedBy) ? "ت" : r.RecordedBy.Substring(0, 1).ToUpper())
                                     </div>
-                                    <div class="flex flex-col text-right">
-                                        <span class="text-sm font-semibold text-base-content leading-none mb-1">@(r.RecordedBy ?? "مستخدم تلقائي")</span>
-                                        <span class="text-[10px] text-base-content/50 font-medium leading-none">
-                                            @if (r.RecordType == "Execution")
-                                            {
-                                                <text>مسؤول التنفيذ</text>
-                                            }
-                                            else if (r.RecordType == "SocialMedia")
-                                            {
-                                                <text>مسؤول النشر الرقمي</text>
-                                            }
-                                            else if (r.RecordType == "Website")
-                                            {
-                                                <text>مسؤول نشر الموقع</text>
-                                            }
-                                            else
-                                            {
-                                                <text>مسؤول النظام</text>
-                                            }
-                                        </span>
+                                    <div class="text-right">
+                                        <div class="text-sm font-semibold" style="color: var(--color-text)">@(r.RecordedBy ?? "مستخدم تلقائي")</div>
+                                        <div class="text-[10px]" style="color: var(--color-text-tertiary)">@GetRoleName(r.RecordType)</div>
                                     </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-ink-muted">
-                                <div class="flex flex-col text-xs" dir="ltr">
-                                    <span class="font-bold text-ink text-right">@r.RecordDate.ToString("yyyy-MM-dd")</span>
-                                    <span class="text-ink-soft text-right mt-0.5">@r.RecordDate.ToString("hh:mm tt")</span>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center justify-center gap-1.5">
+                                <div class="flex flex-col text-xs">
+                                    <span class="font-semibold" style="color: var(--color-text)">@r.RecordDate.ToString("yyyy-MM-dd")</span>
+                                    <span style="color: var(--color-text-tertiary)">@r.RecordDate.ToString("hh:mm tt")</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center justify-center gap-1">
                                     @if (r.RecordType == "SocialMedia" && User.HasPermission(AppPermissions.EpisodePublish))
                                     {
-                                        <a href="/Publishing/Edit/@r.RecordId" class="btn btn-ghost btn-square btn-sm text-primary hover:bg-primary/10" title="تعديل">
-                                            <span class="material-symbols-rounded text-lg">edit</span>
+                                        <a href="/Publishing/Edit/@r.RecordId" class="btn btn-ghost btn-square btn-sm" title="تعديل"
+                                           style="color: var(--color-primary)">
+                                            <span class="material-symbols-rounded text-xl leading-none">edit</span>
                                         </a>
-                                        <button type="button" class="btn btn-ghost btn-square btn-sm text-error hover:bg-error/10" title="حذف"
+                                        <button type="button" class="btn btn-ghost btn-square btn-sm" title="حذف"
+                                                style="color: var(--color-danger)"
                                                 onclick="confirmDelete(@r.RecordId, '@(r.EpisodeName ?? "سجل")')">
-                                            <span class="material-symbols-rounded text-lg">delete</span>
+                                            <span class="material-symbols-rounded text-xl leading-none">delete</span>
                                         </button>
                                     }
                                     @if (r.RecordType == "Website" && User.HasPermission(AppPermissions.EpisodeWebPublish))
                                     {
-                                        <a href="/WebsitePublishing/Edit/@r.RecordId" class="btn btn-ghost btn-square btn-sm text-primary hover:bg-primary/10" title="تعديل">
-                                            <span class="material-symbols-rounded text-lg">edit</span>
+                                        <a href="/WebsitePublishing/Edit/@r.RecordId" class="btn btn-ghost btn-square btn-sm" title="تعديل"
+                                           style="color: var(--color-primary)">
+                                            <span class="material-symbols-rounded text-xl leading-none">edit</span>
                                         </a>
-                                        <button type="button" class="btn btn-ghost btn-square btn-sm text-error hover:bg-error/10" title="حذف"
+                                        <button type="button" class="btn btn-ghost btn-square btn-sm" title="حذف"
+                                                style="color: var(--color-danger)"
                                                 onclick="confirmWebsiteDelete(@r.RecordId, '@(r.EpisodeName ?? "سجل")')">
-                                            <span class="material-symbols-rounded text-lg">delete</span>
+                                            <span class="material-symbols-rounded text-xl leading-none">delete</span>
                                         </button>
                                     }
                                     @if (r.RecordType == "Execution" && (User.HasPermission(AppPermissions.ExecutionExecute) || User.HasPermission(AppPermissions.ExecutionEdit)))
                                     {
-                                        <a href="/ExecutionLogs/Edit/@r.RecordId" class="btn btn-ghost btn-square btn-sm text-success hover:bg-success/10" title="تعديل سجل التنفيذ">
-                                            <span class="material-symbols-rounded text-lg">edit</span>
+                                        <a href="/ExecutionLogs/Edit/@r.RecordId" class="btn btn-ghost btn-square btn-sm" title="تعديل سجل التنفيذ"
+                                           style="color: var(--color-primary)">
+                                            <span class="material-symbols-rounded text-xl leading-none">edit</span>
                                         </a>
                                     }
                                 </div>
@@ -239,83 +170,79 @@
                 </tbody>
             </table>
         </div>
-    }
-</div>
+    </div>
+}
 
 <!-- Delete Social Modal -->
-<div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/55 backdrop-blur-sm p-4 transition-all duration-300">
-    <div class="wf-card max-w-sm w-full p-6 scale-95 transition-all shadow-2xl">
+<dialog id="deleteModal" class="p-0 bg-transparent border-0" style="max-width: 24rem;">
+    <div class="rounded-2xl border w-full p-6 shadow-xl" style="background: var(--color-surface); border-color: var(--color-border)">
         <div class="text-center">
-            <div class="w-16 h-16 bg-danger/10 text-danger rounded-full flex items-center justify-center mx-auto mb-4">
+            <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
+                 style="background: color-mix(in srgb, var(--color-error) 10%, transparent); color: var(--color-error)">
                 <span class="material-symbols-rounded text-3xl">delete_forever</span>
             </div>
-            <h3 class="text-lg font-bold text-ink mb-2">حذف سجل النشر الرقمي</h3>
-            <p class="text-ink-muted text-sm mb-6" id="deleteMessage">هل أنت متأكد من حذف هذا السجل؟</p>
+            <h3 class="text-base font-bold mb-2" style="color: var(--color-text)">حذف سجل النشر الرقمي</h3>
+            <p class="text-sm mb-5" id="deleteMessage" style="color: var(--color-text-secondary)">هل أنت متأكد من حذف هذا السجل؟</p>
             <form id="deleteForm" method="post" action="">
                 @Html.AntiForgeryToken()
                 <div class="flex gap-2 justify-center">
-                    <button type="button" class="btn btn-ghost px-5" onclick="closeDeleteModal()">إلغاء</button>
-                    <button type="submit" class="btn btn-error px-5">
-                        <span class="material-symbols-rounded">delete</span>
+                    <button type="button" class="btn btn-ghost rounded-xl px-4 py-2 text-sm font-medium"
+                            style="color: var(--color-text-secondary)" onclick="closeDeleteModal()">إلغاء</button>
+                    <button type="submit" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-xl transition-colors"
+                            style="background: var(--color-error); color: #fff">
+                        <span class="material-symbols-rounded text-lg">delete</span>
                         نعم، احذف
                     </button>
                 </div>
             </form>
         </div>
     </div>
-</div>
+</dialog>
 
 <!-- Delete Website Modal -->
-<div id="deleteWebsiteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/55 backdrop-blur-sm p-4 transition-all duration-300">
-    <div class="wf-card max-w-sm w-full p-6 scale-95 transition-all shadow-2xl">
+<dialog id="deleteWebsiteModal" class="p-0 bg-transparent border-0" style="max-width: 24rem;">
+    <div class="rounded-2xl border w-full p-6 shadow-xl" style="background: var(--color-surface); border-color: var(--color-border)">
         <div class="text-center">
-            <div class="w-16 h-16 bg-danger/10 text-danger rounded-full flex items-center justify-center mx-auto mb-4">
+            <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
+                 style="background: color-mix(in srgb, var(--color-error) 10%, transparent); color: var(--color-error)">
                 <span class="material-symbols-rounded text-3xl">delete_forever</span>
             </div>
-            <h3 class="text-lg font-bold text-ink mb-2">حذف سجل نشر الموقع</h3>
-            <p class="text-ink-muted text-sm mb-6" id="deleteWebsiteMessage">هل أنت متأكد من حذف هذا السجل؟</p>
+            <h3 class="text-base font-bold mb-2" style="color: var(--color-text)">حذف سجل نشر الموقع</h3>
+            <p class="text-sm mb-5" id="deleteWebsiteMessage" style="color: var(--color-text-secondary)">هل أنت متأكد من حذف هذا السجل؟</p>
             <form id="deleteWebsiteForm" method="post" action="">
                 @Html.AntiForgeryToken()
                 <div class="flex gap-2 justify-center">
-                    <button type="button" class="btn btn-ghost px-5" onclick="closeWebsiteDeleteModal()">إلغاء</button>
-                    <button type="submit" class="btn btn-error px-5">
-                        <span class="material-symbols-rounded">delete</span>
+                    <button type="button" class="btn btn-ghost rounded-xl px-4 py-2 text-sm font-medium"
+                            style="color: var(--color-text-secondary)" onclick="closeWebsiteDeleteModal()">إلغاء</button>
+                    <button type="submit" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-xl transition-colors"
+                            style="background: var(--color-error); color: #fff">
+                        <span class="material-symbols-rounded text-lg">delete</span>
                         نعم، احذف
                     </button>
                 </div>
             </form>
         </div>
     </div>
-</div>
+</dialog>
 
 @section Scripts {
     <script>
         function confirmDelete(id, name) {
             document.getElementById('deleteMessage').textContent = 'هل أنت متأكد من حذف سجل النشر الرقمي للحلقة "' + name + '"؟';
             document.getElementById('deleteForm').action = '/Publishing/Delete/' + id;
-            document.getElementById('deleteModal').classList.remove('hidden');
-            document.getElementById('deleteModal').classList.add('flex');
+            document.getElementById('deleteModal').showModal();
         }
         function closeDeleteModal() {
-            document.getElementById('deleteModal').classList.add('hidden');
-            document.getElementById('deleteModal').classList.remove('flex');
+            document.getElementById('deleteModal').close();
         }
         function confirmWebsiteDelete(id, name) {
             document.getElementById('deleteWebsiteMessage').textContent = 'هل أنت متأكد من حذف سجل نشر الموقع للحلقة "' + name + '"؟';
             document.getElementById('deleteWebsiteForm').action = '/WebsitePublishing/Delete/' + id;
-            document.getElementById('deleteWebsiteModal').classList.remove('hidden');
-            document.getElementById('deleteWebsiteModal').classList.add('flex');
+            document.getElementById('deleteWebsiteModal').showModal();
         }
         function closeWebsiteDeleteModal() {
-            document.getElementById('deleteWebsiteModal').classList.add('hidden');
-            document.getElementById('deleteWebsiteModal').classList.remove('flex');
+            document.getElementById('deleteWebsiteModal').close();
         }
-        document.addEventListener('click', function (e) {
-            if (e.target.classList.contains('bg-black/55')) {
-                closeDeleteModal();
-                closeWebsiteDeleteModal();
-            }
-        });
     </script>
 }
 
@@ -334,5 +261,13 @@
         "SocialMedia" => "share",
         "Website" => "public",
         _ => "assignment"
+    };
+
+    string GetRoleName(string t) => t switch
+    {
+        "Execution" => "مسؤول التنفيذ",
+        "SocialMedia" => "مسؤول النشر الرقمي",
+        "Website" => "مسؤول نشر الموقع",
+        _ => "مسؤول النظام"
     };
 }

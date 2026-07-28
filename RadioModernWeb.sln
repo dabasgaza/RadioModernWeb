@@ -6,9 +6,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{A1B2C3D4-0001-0001-0001-000000000002}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Radio.Web", "Radio.Web\Radio.Web.csproj", "{A1B2C3D4-0001-0001-0001-000000000003}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvProduction.Web", "Radio.Web\Radio.Web.csproj", "{A1B2C3D4-0001-0001-0001-000000000003}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Radio.Tests", "Radio.Tests\Radio.Tests.csproj", "{A1B2C3D4-0001-0001-0001-000000000004}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvProduction.Tests", "Radio.Tests\Radio.Tests.csproj", "{A1B2C3D4-0001-0001-0001-000000000004}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

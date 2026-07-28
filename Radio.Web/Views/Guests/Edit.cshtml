@@ -12,7 +12,7 @@
     ViewBag.BackText = "الرجوع للضيوف";
 }
 
-<partial name="_CreateEditHeader" />
+<partial name="_PageHeader" />
 
 <form method="post" action="@(isEdit ? $"/Guests/Edit/{Model.GuestId}" : "/Guests/Create")" class="max-w-2xl">
     @Html.AntiForgeryToken()
@@ -20,28 +20,34 @@
 
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="bg-error/10 border border-error/20 text-error rounded-xl p-4 mb-6 font-semibold text-sm"></div>
+        <div asp-validation-summary="All" class="rounded-xl p-4 mb-6 font-semibold text-sm"
+             style="background: var(--color-danger-light); border: 1px solid var(--color-danger); color: var(--color-danger);"></div>
     }
 
-    <div class="wf-card">
-        <div class="card-body space-y-4">
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-rounded text-primary">person</span>
-                <h3 class="font-bold text-base-content text-base">الملف التعريفي للضيف</h3>
-            </div>
+    <div class="rounded-xl p-6" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
+        <div class="flex items-center gap-2 mb-4 pb-3" style="border-bottom: 1px solid var(--color-border);">
+            <span class="material-symbols-rounded text-[var(--color-primary)]">person</span>
+            <h3 class="font-bold text-[var(--color-text)]">الملف التعريفي للضيف</h3>
+        </div>
+        <div class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="label">الاسم الكامل *</label>
+                    <label class="label text-sm font-medium mb-1.5 block text-[var(--color-text-3)]">الاسم الكامل *</label>
                     <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">person</span>
-                        <input type="text" name="FullName" value="@Model.FullName" class="input input-bordered w-full pr-10" required placeholder="مثال: د. محمد علي" />
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-4)] pointer-events-none text-lg">person</span>
+                        <input type="text" name="FullName" value="@Model.FullName"
+                               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                               style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
+                               required placeholder="مثال: د. محمد علي" />
                     </div>
                 </div>
                 <div>
-                    <label class="label">الجنس</label>
+                    <label class="label text-sm font-medium mb-1.5 block text-[var(--color-text-3)]">الجنس</label>
                     <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">wc</span>
-                        <select name="Gender" class="select select-bordered w-full pr-10">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-4)] pointer-events-none text-lg">wc</span>
+                        <select name="Gender"
+                                class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all appearance-none"
+                                style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);">
                             <option value="">— اختر —</option>
                             <option value="ذكر" selected="@(Model.Gender == "ذكر")">ذكر</option>
                             <option value="أنثى" selected="@(Model.Gender == "أنثى")">أنثى</option>
@@ -51,43 +57,55 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="label">الجهة / المؤسسة</label>
+                    <label class="label text-sm font-medium mb-1.5 block text-[var(--color-text-3)]">الجهة / المؤسسة</label>
                     <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">business</span>
-                        <input type="text" name="Organization" value="@Model.Organization" class="input input-bordered w-full pr-10" placeholder="مثال: وزارة الاقتصاد" />
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-4)] pointer-events-none text-lg">business</span>
+                        <input type="text" name="Organization" value="@Model.Organization"
+                               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                               style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
+                               placeholder="مثال: وزارة الاقتصاد" />
                     </div>
                 </div>
                 <div>
-                    <label class="label">رقم الهاتف</label>
+                    <label class="label text-sm font-medium mb-1.5 block text-[var(--color-text-3)]">رقم الهاتف</label>
                     <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">phone</span>
-                        <input type="text" name="PhoneNumber" value="@Model.PhoneNumber" class="input input-bordered w-full pr-10" placeholder="مثال: +966500000000" />
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-4)] pointer-events-none text-lg">phone</span>
+                        <input type="text" name="PhoneNumber" value="@Model.PhoneNumber"
+                               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                               style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
+                               placeholder="مثال: +966500000000" />
                     </div>
                 </div>
             </div>
             <div>
-                <label class="label">البريد الإلكتروني</label>
+                <label class="label text-sm font-medium mb-1.5 block text-[var(--color-text-3)]">البريد الإلكتروني</label>
                 <div class="relative">
-                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">email</span>
-                    <input type="email" name="EmailAddress" value="@Model.EmailAddress" class="input input-bordered w-full pr-10" placeholder="مثال: guest@example.com" />
+                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-4)] pointer-events-none text-lg">email</span>
+                    <input type="email" name="EmailAddress" value="@Model.EmailAddress"
+                           class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                           style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
+                           placeholder="مثال: guest@example.com" />
                 </div>
             </div>
             <div>
-                <label class="label">نبذة شخصية (Bio)</label>
+                <label class="label text-sm font-medium mb-1.5 block text-[var(--color-text-3)]">نبذة شخصية (Bio)</label>
                 <div class="relative">
-                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg" style="top:1rem;transform:none">info</span>
-                    <textarea name="Bio" rows="4" class="textarea textarea-bordered w-full pr-10" placeholder="أدخل نبذة مختصرة عن مؤهلات الضيف وخبراته المهنية...">@Model.Bio</textarea>
+                    <span class="material-symbols-rounded absolute right-3 pointer-events-none text-lg text-[var(--color-text-4)]" style="top:1rem;transform:none">info</span>
+                    <textarea name="Bio" rows="4"
+                              class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                              style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
+                              placeholder="أدخل نبذة مختصرة عن مؤهلات الضيف وخبراته المهنية...">@Model.Bio</textarea>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="flex items-center justify-end gap-2 mt-6">
-        <a href="/Guests" class="btn btn-ghost">
+        <a href="/Guests" class="btn btn-ghost rounded-xl gap-2">
             <span class="material-symbols-rounded">cancel</span>
             إلغاء
         </a>
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="btn btn-primary rounded-xl gap-2">
             <span class="material-symbols-rounded">save</span>
             حفظ البيانات
         </button>

@@ -12,7 +12,7 @@
     ViewBag.BackText = "الرجوع للمنصات";
 }
 
-<partial name="_CreateEditHeader" />
+<partial name="_PageHeader" />
 
 <form method="post" action="@(isEdit ? $"/SocialPlatforms/Edit/{Model.SocialMediaPlatformId}" : "/SocialPlatforms/Create")" class="max-w-2xl">
     @Html.AntiForgeryToken()
@@ -20,49 +20,61 @@
 
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="bg-error/10 border border-error/20 text-error rounded-xl p-4 mb-6 font-semibold text-sm"></div>
+        <div asp-validation-summary="All" class="rounded-xl p-4 mb-6 font-semibold text-sm"
+             style="background: color-mix(in srgb, var(--color-error) 10%, transparent); border: 1px solid color-mix(in srgb, var(--color-error) 20%, transparent); color: var(--color-error)"></div>
     }
 
-    <div class="wf-card">
-        <div class="card-body space-y-4">
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-rounded text-primary">share</span>
-                <h3 class="font-bold text-base-content text-base">بيانات المنصة</h3>
+    <div class="rounded-2xl border" style="background: var(--color-surface); border-color: var(--color-border)">
+        <div class="p-6 space-y-4">
+            <div class="flex items-center gap-2.5">
+                <span class="material-symbols-rounded" style="color: var(--color-primary)">share</span>
+                <h3 class="font-bold" style="color: var(--color-text)">بيانات المنصة</h3>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="label">اسم المنصة *</label>
+                    <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">اسم المنصة <span style="color: var(--color-error)">*</span></label>
                     <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">badge</span>
-                        <input type="text" name="Name" value="@Model.Name" class="input input-bordered w-full pr-10" required placeholder="مثال: YouTube" />
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">badge</span>
+                        <input type="text" name="Name" value="@Model.Name" required
+                               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                               style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
+                               placeholder="مثال: YouTube" />
                     </div>
                 </div>
                 <div>
-                    <label class="label">أيقونة (Material Icon)</label>
+                    <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">أيقونة (Material Icon)</label>
                     <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">image</span>
-                        <input type="text" name="Icon" value="@Model.Icon" class="input input-bordered w-full pr-10" placeholder="مثل: smart_display" />
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">image</span>
+                        <input type="text" name="Icon" value="@Model.Icon"
+                               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                               style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
+                               placeholder="مثل: smart_display" />
                     </div>
                 </div>
             </div>
             <div>
-                <label class="label">الرابط الأساسي (Base URL)</label>
-                    <div class="relative">
-                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-lg">link</span>
-                        <input type="url" name="BaseUrl" value="@Model.BaseUrl" class="input input-bordered w-full pr-10" dir="ltr" placeholder="https://www.youtube.com/watch?v=" />
+                <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">الرابط الأساسي (Base URL)</label>
+                <div class="relative">
+                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">link</span>
+                    <input type="url" name="BaseUrl" value="@Model.BaseUrl"
+                           class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                           style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
+                           dir="ltr" placeholder="https://www.youtube.com/watch?v=" />
                 </div>
-                <p class="text-xs text-base-content/60 mt-1">يُستخدم كبادئة عند إدخال رابط النشر — المستخدم يضيف فقط الـ ID أو username</p>
+                <p class="text-xs mt-1" style="color: var(--color-text-tertiary)">يُستخدم كبادئة عند إدخال رابط النشر — المستخدم يضيف فقط الـ ID أو username</p>
             </div>
         </div>
     </div>
 
     <div class="flex items-center justify-end gap-2 mt-6">
-        <a href="/SocialPlatforms" class="btn btn-ghost">
-            <span class="material-symbols-rounded">cancel</span>
+        <a href="/SocialPlatforms" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all"
+           style="color: var(--color-text-secondary)">
+            <span class="material-symbols-rounded text-lg">cancel</span>
             إلغاء
         </a>
-        <button type="submit" class="btn btn-primary">
-            <span class="material-symbols-rounded">save</span>
+        <button type="submit" class="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl font-bold text-sm shadow-sm transition-all"
+                style="background: var(--color-primary); color: white">
+            <span class="material-symbols-rounded text-lg">save</span>
             حفظ البيانات
         </button>
     </div>

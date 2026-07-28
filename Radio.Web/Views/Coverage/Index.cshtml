@@ -1,89 +1,85 @@
 @model CoverageListViewModel
 @{
     ViewData["Title"] = "التغطيات الميدانية";
+    ViewData["HeaderIcon"] = "edit_location_alt";
+    ViewData["HeaderDescription"] = "إدارة ومتابعة تغطيات المراسلين الميدانية للحلقات والفعاليات";
+    ViewBag.EntityName = "التغطيات الميدانية";
+
+    if (User.HasPermission(AppPermissions.CoordinationManage))
+    {
+        ViewData["HeaderActions"] = "<a href='/Coverage/Create' class='btn btn-primary rounded-xl px-5 shadow-lg gap-2'><span class='material-symbols-rounded'>add_circle</span>تغطية جديدة</a>";
+    }
 }
 
-<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-    <div>
-        <div class="breadcrumbs text-sm text-base-content/60">
-            <ul>
-                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
-                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">edit_location_alt</span>التغطيات الميدانية</span></li>
-            </ul>
-        </div>
-        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
-            <span class="material-symbols-rounded text-primary">edit_location_alt</span>
-            التغطيات الميدانية
-        </h1>
-        <p class="text-sm text-base-content/60 mt-0.5">إدارة ومتابعة تغطيات المراسلين الميدانية للحلقات والفعاليات</p>
-    </div>
-    <div class="flex items-center gap-2">
-        @if (User.HasPermission(AppPermissions.CoordinationManage))
-        {
-            <a href="/Coverage/Create" class="btn btn-primary">
-                <span class="material-symbols-rounded">add</span>
-                تغطية جديدة
-            </a>
-        }
-    </div>
-</div>
+<partial name="_PageHeader" />
 
 @if (!Model.Coverages.Any())
 {
-    <div class="wf-card">
-        <div class="card-body text-center py-12">
-            <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">edit_location_alt</span>
-            <h3 class="font-bold text-lg mb-2">لا تغطيات</h3>
-            <p class="text-sm text-base-content/60">لم تتم إضافة أي تغطيات ميدانية بعد. يمكنك إضافة تغطية جديدة بالضغط على الزر أعلاه.</p>
+    <div class="wf-card rounded-3xl p-12 text-center my-8">
+        <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style="background: var(--color-surface-3); color: var(--color-text-tertiary)">
+            <span class="material-symbols-rounded text-5xl">edit_location_alt</span>
         </div>
+        <h3 class="text-xl font-bold mb-2" style="color: var(--color-text)">لا تغطيات</h3>
+        <p class="text-sm max-w-md mx-auto mb-6" style="color: var(--color-text-3)">لم تتم إضافة أي تغطيات ميدانية بعد.</p>
+        @if (User.HasPermission(AppPermissions.CoordinationManage))
+        {
+            <div class="flex items-center justify-center gap-3">
+                <a href="/Coverage/Create" class="btn btn-primary rounded-xl gap-2">
+                    <span class="material-symbols-rounded">add</span>
+                    إضافة تغطية جديدة
+                </a>
+            </div>
+        }
     </div>
 }
 else
 {
     <div class="wf-card overflow-hidden">
         <div class="overflow-x-auto">
-        <table class="table table-zebra w-full text-sm">
-            <thead>
-                <tr>
-                    <th class="text-right font-semibold">المراسل</th>
-                    <th class="text-right font-semibold">الضيف</th>
-                    <th class="text-right font-semibold">الموقع</th>
-                    <th class="text-right font-semibold">الموضوع</th>
-                    <th class="text-right font-semibold">الوقت المجدول</th>
-                    <th class="text-right font-semibold">الوقت الفعلي</th>
-                    <th class="text-right font-semibold">إجراءات</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var c in Model.Coverages)
-                {
-                    <tr>
-                        <td class="font-semibold">@c.CorrespondentName</td>
-                        <td>@(c.GuestName ?? "—")</td>
-                        <td>@(c.Location ?? "—")</td>
-                        <td>@(c.Topic ?? "—")</td>
-                        <td>@(c.ScheduledTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
-                        <td>@(c.ActualTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
-                        <td>
-                            @if (User.HasPermission(AppPermissions.CoordinationManage))
-                            {
-                                <div class="flex items-center justify-center gap-1 whitespace-nowrap">
-                                    <a href="/Coverage/Edit/@c.CoverageId" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-0 bg-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 text-primary hover:bg-primary/10" title="تعديل" aria-label="تعديل">
-                                        <span class="material-symbols-rounded text-xl leading-none">edit</span>
-                                    </a>
-                                    <form method="post" action="/Coverage/Delete/@c.CoverageId" class="inline" data-confirm="هل أنت متأكد من حذف هذه التغطية؟">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-0 bg-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 text-danger hover:bg-danger/10 hover:text-danger focus-visible:ring-danger" title="حذف" aria-label="حذف">
-                                            <span class="material-symbols-rounded text-xl leading-none">delete</span>
-                                        </button>
-                                    </form>
-                                </div>
-                            }
-                        </td>
+            <table class="table w-full text-sm">
+                <thead>
+                    <tr style="background: var(--color-surface-3)">
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">المراسل</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">الضيف</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">الموقع</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">الموضوع</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">الوقت المجدول</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">الوقت الفعلي</th>
+                        <th class="px-6 py-4 text-center font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-3)">إجراءات</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model.Coverages)
+                    {
+                        <tr class="transition-colors duration-200" style="border-bottom: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent)">
+                            <td class="px-6 py-4 font-semibold" style="color: var(--color-text)">@c.CorrespondentName</td>
+                            <td class="px-6 py-4" style="color: var(--color-text-3)">@(c.GuestName ?? "—")</td>
+                            <td class="px-6 py-4" style="color: var(--color-text-3)">@(c.Location ?? "—")</td>
+                            <td class="px-6 py-4" style="color: var(--color-text-3)">@(c.Topic ?? "—")</td>
+                            <td class="px-6 py-4 font-semibold whitespace-nowrap" dir="ltr" style="color: var(--color-text-3)">@(c.ScheduledTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                            <td class="px-6 py-4 font-semibold whitespace-nowrap" dir="ltr" style="color: var(--color-text-3)">@(c.ActualTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                            <td class="px-6 py-4">
+                                @if (User.HasPermission(AppPermissions.CoordinationManage))
+                                {
+                                    <div class="flex items-center justify-center gap-1">
+                                        <a href="/Coverage/Edit/@c.CoverageId" class="btn btn-ghost btn-square btn-sm" title="تعديل"
+                                           style="color: var(--color-primary)">
+                                            <span class="material-symbols-rounded text-xl leading-none">edit</span>
+                                        </a>
+                                        <form method="post" action="/Coverage/Delete/@c.CoverageId" class="inline" data-confirm="هل أنت متأكد من حذف هذه التغطية؟">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-ghost btn-square btn-sm" title="حذف"
+                                                    style="color: var(--color-danger)">
+                                                <span class="material-symbols-rounded text-xl leading-none">delete</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 }

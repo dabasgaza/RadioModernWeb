@@ -3,21 +3,19 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --primary-hsl: 222 100% 59%;
-    --secondary-hsl: 149 77% 40%;
-    --accent-hsl: 189 95% 43%;
-    --purple-hsl: 262 47% 51%;     /* #6F42C1 */
-    --surface-hsl: 210 17% 97%;
-    --surface-2-hsl: 210 20% 94%;
-    --surface-3-hsl: 210 20% 89% / 0.2;
-  }
-
   body {
     background-attachment: fixed;
     background-image:
-      radial-gradient(at 0% 0%, color-mix(in srgb, var(--primary) 4%, transparent) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, color-mix(in srgb, var(--secondary) 3%, transparent) 0px, transparent 50%);
+      radial-gradient(
+        at 0% 0%,
+        color-mix(in srgb, var(--primary) 4%, transparent) 0px,
+        transparent 50%
+      ),
+      radial-gradient(
+        at 100% 100%,
+        color-mix(in srgb, var(--secondary) 3%, transparent) 0px,
+        transparent 50%
+      );
   }
 
   ::-webkit-scrollbar {
@@ -37,8 +35,9 @@
 }
 
 @layer components {
+  /* ── Glass Morphism ── */
   .glass-card {
-    background: color-mix(in srgb, var(--surface) 75%, transparent);
+    background: color-mix(in srgb, var(--surface) 80%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
@@ -46,31 +45,33 @@
   }
 
   .glass-sidebar {
-    background: color-mix(in srgb, var(--surface) 85%, transparent);
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-left: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
   }
 
   .glass-topbar {
-    background: color-mix(in srgb, var(--surface) 70%, transparent);
+    background: color-mix(in srgb, var(--surface) 75%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
   }
 
+  /* ── Navigation Links ── */
   .nav-link {
-    @apply flex items-center gap-3 px-4 py-3 text-ink-muted rounded-xl transition-all duration-300 ease-out font-medium;
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ease-out font-medium;
+    color: var(--ink-muted);
   }
   .nav-link:hover {
-    background-color: var(--hover);
+    background-color: color-mix(in srgb, var(--primary) 8%, transparent);
     color: var(--primary);
   }
 
   .nav-link.active {
     @apply text-white shadow-lg;
     background: var(--primary);
-    box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--primary) 15%, transparent);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 25%, transparent);
   }
   .nav-link.active:hover {
     background: var(--primary);
@@ -78,31 +79,38 @@
   }
 
   .nav-link .material-symbols-rounded {
-    @apply transition-transform duration-300;
+    @apply transition-transform duration-200;
   }
   .nav-link:hover .material-symbols-rounded {
     transform: scale(1.1);
   }
 
+  /* ── Shimmer / Skeleton ── */
   .shimmer {
     background: linear-gradient(
       90deg,
-      color-mix(in srgb, var(--color-neutral-200) 60%, transparent) 25%,
-      color-mix(in srgb, var(--color-neutral-300) 90%, transparent) 50%,
-      color-mix(in srgb, var(--color-neutral-200) 60%, transparent) 75%
+      color-mix(in srgb, var(--surface-3) 60%, transparent) 25%,
+      color-mix(in srgb, var(--surface-3) 90%, transparent) 50%,
+      color-mix(in srgb, var(--surface-3) 60%, transparent) 75%
     );
     background-size: 200% 100%;
     animation: shimmer-anim 1.6s infinite linear;
   }
 
+  /* ── Tabulator Overrides ── */
   .tabulator {
-    @apply border-0 bg-transparent text-ink !important;
+    @apply border-0 bg-transparent !important;
+    color: var(--ink);
   }
   .tabulator-header {
-    @apply bg-surface-2 border-b border-border/80 text-ink-muted font-bold text-xs uppercase !important;
+    @apply border-b font-bold text-xs uppercase !important;
+    background: var(--surface-2);
+    border-color: color-mix(in srgb, var(--border) 80%, transparent);
+    color: var(--ink-muted);
   }
   .tabulator-row {
-    @apply border-b border-border/40 transition-colors duration-200 !important;
+    @apply border-b transition-colors duration-200 !important;
+    border-color: color-mix(in srgb, var(--border) 40%, transparent);
   }
   .tabulator-row:hover {
     background-color: color-mix(in srgb, var(--primary) 6%, transparent) !important;

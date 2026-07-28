@@ -1,55 +1,43 @@
 @model SocialPublishingViewModel
 @{
     ViewData["Title"] = "تسجيل نشر رقمي";
+    ViewData["HeaderIcon"] = "share";
+    ViewData["HeaderDescription"] = "تسجيل عملية نشر حلقة على منصات السوشيال ميديا مع إرفاق الروابط والتفاصيل";
+    ViewBag.EntityName = "سجل النشر الموحد";
+    ViewBag.EntityUrl = "/Publishing";
+    ViewBag.BackUrl = "/Publishing";
+    ViewBag.BackText = "الرجوع للسجل الموحد";
     var episode = Model.Episode;
 }
 
-<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-    <div>
-        <div class="breadcrumbs text-sm text-base-content/60">
-            <ul>
-                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
-                <li><a href="/Publishing" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">share</span>سجل النشر الموحد</a></li>
-                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">add</span>تسجيل نشر رقمي</span></li>
-            </ul>
-        </div>
-        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
-            <span class="material-symbols-rounded text-primary">share</span>
-            تسجيل نشر رقمي
-        </h1>
-        <p class="text-sm text-base-content/60 mt-0.5">تسجيل عملية نشر حلقة على منصات السوشيال ميديا مع إرفاق الروابط والتفاصيل</p>
-    </div>
-    <div class="flex items-center gap-2">
-        <a href="/Publishing" class="btn btn-ghost">
-            <span class="material-symbols-rounded">arrow_forward</span>
-            الرجوع للسجل الموحد
-        </a>
-    </div>
-</div>
+<partial name="_PageHeader" />
 
 @if (episode == null)
 {
-    <div class="bg-error/10 border border-error/20 text-error rounded-lg p-4">الحلقة غير موجودة.</div>
+    <div class="rounded-xl p-4 font-semibold text-sm"
+         style="background: color-mix(in srgb, var(--color-error) 10%, transparent); border: 1px solid color-mix(in srgb, var(--color-error) 20%, transparent); color: var(--color-error)">الحلقة غير موجودة.</div>
     return;
 }
 
 <!-- Episode Info Header -->
-<div class="wf-card p-6 mb-6 relative overflow-hidden bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/20">
+<div class="rounded-2xl border p-6 mb-6 relative overflow-hidden" style="background: linear-gradient(135deg, color-mix(in srgb, var(--color-primary) 5%, transparent), color-mix(in srgb, var(--color-accent) 5%, transparent)); border-color: color-mix(in srgb, var(--color-primary) 20%, transparent)">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
         <div class="flex items-start gap-4">
-            <div class="p-3 bg-primary/10 text-primary rounded-2xl flex items-center justify-center">
+            <div class="p-3 rounded-2xl flex items-center justify-center" style="background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary)">
                 <span class="material-symbols-rounded text-3xl">radio</span>
             </div>
             <div>
-                <span class="text-xs font-bold text-primary bg-primary/10 px-2.5 py-0.5 rounded-full inline-block mb-1.5">الحلقة الحالية</span>
-                <h3 class="text-xl font-black text-ink">@episode.EpisodeName</h3>
-                <p class="text-sm text-ink-muted flex items-center gap-1.5 mt-0.5">
-                    <span class="material-symbols-rounded text-sm text-ink-soft">folder</span>
+                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full inline-block mb-1.5"
+                      style="background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary)">الحلقة الحالية</span>
+                <h3 class="text-xl font-black" style="color: var(--color-text)">@episode.EpisodeName</h3>
+                <p class="text-sm flex items-center gap-1.5 mt-0.5" style="color: var(--color-text-secondary)">
+                    <span class="material-symbols-rounded text-sm" style="color: var(--color-text-tertiary)">folder</span>
                     البرنامج: @episode.ProgramName
                 </p>
             </div>
         </div>
-        <a href="/Episodes/Details/@episode.EpisodeId" class="btn btn-outline btn-primary gap-2" target="_blank">
+        <a href="/Episodes/Details/@episode.EpisodeId" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-all" target="_blank"
+           style="border: 1px solid var(--color-primary); color: var(--color-primary)">
             <span class="material-symbols-rounded">open_in_new</span>
             تفاصيل الحلقة الكاملة
         </a>
@@ -65,19 +53,19 @@
             @for (int i = 0; i < Model.EpisodeGuests.Count; i++)
             {
                 var guest = Model.EpisodeGuests[i];
-                <div class="wf-card p-6 guest-card relative overflow-hidden group transition-all duration-300" data-index="@i">
+                <div class="rounded-2xl border p-6 guest-card relative overflow-hidden group transition-all duration-300" data-index="@i" style="background: var(--color-surface); border-color: var(--color-border)">
                     <!-- Guest Card Header -->
-                    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-border/60">
-                        <div class="p-2.5 bg-primary/10 rounded-xl text-primary flex items-center justify-center">
+                    <div class="flex items-center gap-3 mb-6 pb-4" style="border-bottom: 1px solid var(--color-border)">
+                        <div class="p-2.5 rounded-xl flex items-center justify-center" style="background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary)">
                             <span class="material-symbols-rounded">person</span>
                         </div>
                         <div>
-                            <h3 class="font-bold text-ink text-lg flex items-center gap-2">
+                            <h3 class="font-bold text-lg flex items-center gap-2" style="color: var(--color-text)">
                                 @guest.FullName
                             </h3>
                             @if (!string.IsNullOrWhiteSpace(guest.Topic))
                             {
-                                <p class="text-xs text-ink-muted mt-0.5">الموضوع: @guest.Topic</p>
+                                <p class="text-xs mt-0.5" style="color: var(--color-text-secondary)">الموضوع: @guest.Topic</p>
                             }
                         </div>
                     </div>
@@ -86,27 +74,35 @@
 
                     <!-- Form Inputs Row -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                        <div class="form-control">
-                            <label class="label font-bold text-xs text-ink-muted mb-1.5">عنوان المقطع المنشور</label>
+                        <div>
+                            <label class="text-xs font-bold mb-1.5 block" style="color: var(--color-text-secondary)">عنوان المقطع المنشور</label>
                             <div class="relative">
-                                <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft text-sm">title</span>
-                                <input type="text" name="GuestLogs[@i].ClipTitle" class="input input-bordered w-full pr-12" placeholder="عنوان المقطع المنشور للضيف" />
+                                <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-tertiary)">title</span>
+                                <input type="text" name="GuestLogs[@i].ClipTitle"
+                                       class="w-full rounded-xl py-2.5 pr-12 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                                       style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
+                                       placeholder="عنوان المقطع المنشور للضيف" />
                             </div>
                         </div>
 
-                        <div class="form-control">
-                            <label class="label font-bold text-xs text-ink-muted mb-1.5">المدة (بالدقائق)</label>
+                        <div>
+                            <label class="text-xs font-bold mb-1.5 block" style="color: var(--color-text-secondary)">المدة (بالدقائق)</label>
                             <div class="relative">
-                                <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft text-sm">hourglass_empty</span>
-                                <input type="number" name="GuestLogs[@i].DurationMinutes" class="input input-bordered w-full pr-12" placeholder="مدة المقطع" min="1" />
+                                <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-tertiary)">hourglass_empty</span>
+                                <input type="number" name="GuestLogs[@i].DurationMinutes"
+                                       class="w-full rounded-xl py-2.5 pr-12 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                                       style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
+                                       placeholder="مدة المقطع" min="1" />
                             </div>
                         </div>
 
-                        <div class="form-control">
-                            <label class="label font-bold text-xs text-ink-muted mb-1.5">نوع الوسائط</label>
+                        <div>
+                            <label class="text-xs font-bold mb-1.5 block" style="color: var(--color-text-secondary)">نوع الوسائط</label>
                             <div class="relative">
-                                <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft text-sm">video_library</span>
-                                <select name="GuestLogs[@i].MediaType" class="select select-bordered w-full pr-12">
+                                <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-tertiary)">video_library</span>
+                                <select name="GuestLogs[@i].MediaType"
+                                        class="w-full rounded-xl py-2.5 pr-12 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                                        style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)">
                                     <option value="1">صوت</option>
                                     <option value="2">فيديو</option>
                                     <option value="3">صوت وفيديو</option>
@@ -116,24 +112,26 @@
                     </div>
 
                     <!-- Platforms Section -->
-                    <div class="mt-6 pt-6 border-t border-border/60 pb-2">
+                    <div class="mt-6 pt-6 pb-2" style="border-top: 1px solid var(--color-border)">
                         <div class="flex items-center justify-between mb-4">
-                            <h4 class="font-bold text-sm text-ink flex items-center gap-2">
-                                <span class="material-symbols-rounded text-base text-primary">link</span>
+                            <h4 class="font-bold text-sm flex items-center gap-2" style="color: var(--color-text)">
+                                <span class="material-symbols-rounded text-base" style="color: var(--color-primary)">link</span>
                                 روابط ومنصات النشر للمقطع
                             </h4>
-                            <button type="button" class="btn btn-outline btn-primary btn-sm gap-1.5 rounded-xl" onclick="addPlatform(@i)">
+                            <button type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all" style="border: 1px solid var(--color-primary); color: var(--color-primary)" onclick="addPlatform(@i)">
                                 <span class="material-symbols-rounded text-sm">add</span>
                                 إضافة رابط منصة
                             </button>
                         </div>
                         
                         <div class="platforms-container space-y-3" id="platforms-@i">
-                            <div class="platform-row grid grid-cols-1 sm:grid-cols-12 gap-3 items-center bg-base-200/40 p-4 rounded-2xl border border-border/50 transition-all hover:border-primary/20">
+                            <div class="platform-row grid grid-cols-1 sm:grid-cols-12 gap-3 items-center p-4 rounded-2xl transition-all" style="background: var(--color-bg-alt); border: 1px solid var(--color-border)">
                                 <div class="sm:col-span-4">
                                     <div class="relative">
-                                        <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft text-sm">social_leaderboard</span>
-                                        <select name="GuestLogs[@i].Platforms[0].PlatformId" class="select select-bordered w-full pr-12">
+                                        <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-tertiary)">social_leaderboard</span>
+                                        <select name="GuestLogs[@i].Platforms[0].PlatformId"
+                                                class="w-full rounded-xl py-2.5 pr-12 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                                                style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)">
                                             <option value="">— اختر المنصة —</option>
                                             @foreach (var p in Model.Platforms)
                                             {
@@ -144,12 +142,15 @@
                                 </div>
                                 <div class="sm:col-span-7">
                                     <div class="relative">
-                                        <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft text-sm">link</span>
-                                        <input type="url" name="GuestLogs[@i].Platforms[0].Url" class="input input-bordered w-full pr-12" placeholder="رابط النشر (مثال: https://...)" dir="ltr" />
+                                        <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-tertiary)">link</span>
+                                        <input type="url" name="GuestLogs[@i].Platforms[0].Url"
+                                               class="w-full rounded-xl py-2.5 pr-12 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                                               style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
+                                               placeholder="رابط النشر (مثال: https://...)" dir="ltr" />
                                     </div>
                                 </div>
                                 <div class="sm:col-span-1 flex justify-end">
-                                    <button type="button" class="btn btn-ghost text-error btn-square btn-sm hover:bg-error/10" onclick="this.closest('.platform-row').remove()" title="حذف الرابط">
+                                    <button type="button" class="inline-flex items-center justify-center w-9 h-9 rounded-lg transition-all" style="color: var(--color-error)" onclick="this.closest('.platform-row').remove()" title="حذف الرابط">
                                         <span class="material-symbols-rounded text-lg">delete</span>
                                     </button>
                                 </div>
@@ -161,21 +162,23 @@
         }
         else
         {
-            <div class="wf-card p-12 text-center">
-                <span class="material-symbols-rounded text-5xl text-base-content/30 mb-2">people</span>
-                <p class="text-base-content/60 font-semibold">لا يوجد ضيوف مسجلين في هذه الحلقة.</p>
+            <div class="rounded-2xl border text-center py-12" style="background: var(--color-surface); border-color: var(--color-border)">
+                <span class="material-symbols-rounded text-5xl mb-2" style="color: var(--color-text-tertiary)">people</span>
+                <p class="font-semibold" style="color: var(--color-text-secondary)">لا يوجد ضيوف مسجلين في هذه الحلقة.</p>
             </div>
         }
     </div>
 
     <div class="flex items-center justify-end gap-3 mt-6">
-        <a href="/Publishing" class="btn btn-ghost">
+        <a href="/Publishing" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all"
+           style="color: var(--color-text-secondary)">
             <span class="material-symbols-rounded">cancel</span>
             إلغاء
         </a>
         @if (Model.EpisodeGuests.Any())
         {
-            <button type="submit" class="btn btn-primary px-6 gap-2">
+            <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm shadow-sm transition-all"
+                    style="background: var(--color-primary); color: white">
                 <span class="material-symbols-rounded">publish</span>
                 تسجيل النشر
             </button>
@@ -209,11 +212,13 @@
             const container = document.getElementById('platforms-' + guestIdx);
             const count = platformCounters[guestIdx] || container.querySelectorAll('.platform-row').length;
             const html = `
-                <div class="platform-row grid grid-cols-1 sm:grid-cols-12 gap-3 items-center bg-base-200/40 p-4 rounded-2xl border border-border/50 transition-all hover:border-primary/20 mt-3 animate-fadeIn">
+                <div class="platform-row grid grid-cols-1 sm:grid-cols-12 gap-3 items-center p-4 rounded-2xl transition-all mt-3" style="background: var(--color-bg-alt); border: 1px solid var(--color-border)">
                     <div class="sm:col-span-4">
                         <div class="relative">
-                            <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft text-sm">social_leaderboard</span>
-                            <select name="GuestLogs[${guestIdx}].Platforms[${count}].PlatformId" class="select select-bordered w-full pr-12">
+                            <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-tertiary)">social_leaderboard</span>
+                            <select name="GuestLogs[${guestIdx}].Platforms[${count}].PlatformId"
+                                    class="w-full rounded-xl py-2.5 pr-12 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                                    style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)">
                                 <option value="">— اختر المنصة —</option>
                                 @foreach (var p in Model.Platforms)
                                 {
@@ -224,12 +229,15 @@
                     </div>
                     <div class="sm:col-span-7">
                         <div class="relative">
-                            <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft text-sm">link</span>
-                            <input type="url" name="GuestLogs[${guestIdx}].Platforms[${count}].Url" class="input input-bordered w-full pr-12" placeholder="رابط النشر (مثال: https://...)" dir="ltr" />
+                            <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-tertiary)">link</span>
+                            <input type="url" name="GuestLogs[${guestIdx}].Platforms[${count}].Url"
+                                   class="w-full rounded-xl py-2.5 pr-12 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                                   style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
+                                   placeholder="رابط النشر (مثال: https://...)" dir="ltr" />
                         </div>
                     </div>
                     <div class="sm:col-span-1 flex justify-end">
-                        <button type="button" class="btn btn-ghost text-error btn-square btn-sm hover:bg-error/10" onclick="this.closest('.platform-row').remove()" title="حذف الرابط">
+                        <button type="button" class="inline-flex items-center justify-center w-9 h-9 rounded-lg transition-all" style="color: var(--color-error)" onclick="this.closest('.platform-row').remove()" title="حذف الرابط">
                             <span class="material-symbols-rounded text-lg">delete</span>
                         </button>
                     </div>

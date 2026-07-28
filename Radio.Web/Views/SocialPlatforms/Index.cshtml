@@ -1,67 +1,41 @@
 @model List<SocialMediaPlatformDto>
-@{ ViewData["Title"] = "منصات النشر"; }
+@{
+    ViewData["Title"] = "منصات النشر";
+    ViewData["HeaderIcon"] = "share";
+    ViewData["HeaderDescription"] = "إدارة منصات السوشيال ميديا المستخدمة في عمليات النشر الرقمي";
+    ViewBag.EntityName = "منصات النشر";
 
-<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-    <div>
-        <div class="breadcrumbs text-sm text-base-content/60">
-            <ul>
-                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
-                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">share</span>منصات النشر</span></li>
-            </ul>
-        </div>
-        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
-            <span class="material-symbols-rounded text-primary">share</span>
-            منصات النشر
-        </h1>
-        <p class="text-sm text-base-content/60 mt-0.5">إدارة منصات السوشيال ميديا المستخدمة في عمليات النشر الرقمي</p>
-    </div>
-    <div class="flex items-center gap-2">
-        @if (User.HasPermission(AppPermissions.StaffManage))
-        {
-            <a href="/SocialPlatforms/Create" class="btn btn-primary">
-                <span class="material-symbols-rounded">add</span>
-                منصة جديدة
-            </a>
-        }
-    </div>
-</div>
+    if (User.HasPermission(AppPermissions.StaffManage))
+    {
+        ViewData["HeaderActions"] = "<a href='/SocialPlatforms/Create' class='btn btn-primary rounded-xl gap-2'><span class='material-symbols-rounded text-lg'>add</span>منصة جديدة</a>";
+    }
+}
+
+<partial name="_PageHeader" />
 
 @if (!Model.Any())
 {
-    <div class="wf-card">
-        <div class="card-body text-center py-12">
-            <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">share</span>
-            <h3 class="font-bold text-lg mb-2">لا منصات</h3>
-            <p class="text-sm text-base-content/60 mb-4">لم تتم إضافة أي منصات نشر بعد.</p>
-            @if (User.HasPermission(AppPermissions.StaffManage))
-            {
-                <a href="/SocialPlatforms/Create" class="btn btn-primary">
-                    <span class="material-symbols-rounded">add</span>
-                    إضافة منصة جديدة
-                </a>
-            }
-        </div>
-    </div>
+    <partial name="_EmptyState" model='new { Icon = "share", Title = "لا منصات", Description = "لم تتم إضافة أي منصات نشر بعد.", ActionUrl = User.HasPermission(AppPermissions.StaffManage) ? "/SocialPlatforms/Create" : null, ActionText = "إضافة منصة جديدة", ActionIcon = "add" }' />
 }
 else
 {
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         @foreach (var p in Model)
         {
-            <div class="wf-card flex items-center gap-3 p-4">
-                <div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <div class="rounded-2xl border flex items-center gap-3 p-4" style="background: var(--color-surface); border-color: var(--color-border)">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style="background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary)">
                     <span class="material-symbols-rounded">@GetPlatformIcon(p.Name)</span>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <div class="font-bold">@p.Name</div>
+                    <div class="font-bold" style="color: var(--color-text)">@p.Name</div>
                 </div>
                 @if (User.HasPermission(AppPermissions.StaffManage))
                 {
                     <div class="flex items-center gap-1 whitespace-nowrap">
-                        <a href="/SocialPlatforms/Edit/@p.SocialMediaPlatformId" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-0 bg-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 text-primary hover:bg-primary/10" title="تعديل" aria-label="تعديل"><span class="material-symbols-rounded text-xl leading-none">edit</span></a>
+                        <a href="/SocialPlatforms/Edit/@p.SocialMediaPlatformId" class="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all" title="تعديل" aria-label="تعديل" style="color: var(--color-primary)"><span class="material-symbols-rounded text-xl leading-none">edit</span></a>
                         <form method="post" action="/SocialPlatforms/Delete/@p.SocialMediaPlatformId" class="inline" data-confirm="هل أنت متأكد من حذف منصة «@p.Name»؟">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-lg border-0 bg-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 text-danger hover:bg-danger/10 hover:text-danger focus-visible:ring-danger" title="حذف" aria-label="حذف"><span class="material-symbols-rounded text-xl leading-none">delete</span></button>
+                            <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all" title="حذف" aria-label="حذف" style="color: var(--color-error)"><span class="material-symbols-rounded text-xl leading-none">delete</span></button>
                         </form>
                     </div>
                 }

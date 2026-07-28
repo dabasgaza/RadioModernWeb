@@ -1,125 +1,106 @@
 @model DiagnosticsViewModel
 @{
     ViewData["Title"] = "تشخيص النظام";
+    ViewData["HeaderIcon"] = "monitor_heart";
+    ViewData["HeaderDescription"] = "مراقبة مؤشرات الأداء، الأخطاء، الاستعلامات البطيئة ومطالعة سجل النظام الفرعي";
 }
 
-<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-    <div>
-        <div class="breadcrumbs text-sm text-base-content/60">
-            <ul>
-                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
-                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">monitor_heart</span>تشخيص النظام</span></li>
-            </ul>
-        </div>
-        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
-            <span class="material-symbols-rounded text-primary">monitor_heart</span>
-            تشخيص وصحة النظام
-        </h1>
-        <p class="text-sm text-base-content/60 mt-0.5">مراقبة مؤشرات الأداء، الأخطاء، الاستعلامات البطيئة ومطالعة سجل النظام الفرعي</p>
-    </div>
-</div>
+<partial name="_PageHeader" />
 
 <!-- Diagnostics Stats -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-    <div class="wf-card p-6 text-primary">
-        <div class="card-body p-0">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-2xl font-black text-base-content">@Model.Summary.TotalLogs</div>
-                    <div class="text-xs font-bold text-base-content/60 mt-1">إجمالي السجلات</div>
-                </div>
-                <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                    <span class="material-symbols-rounded">list_alt</span>
-                </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="rounded-2xl border p-5" style="background: var(--color-surface); border-color: var(--color-border)">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="text-2xl font-black" style="color: var(--color-text)">@Model.Summary.TotalLogs</div>
+                <div class="text-xs font-bold mt-1" style="color: var(--color-text-tertiary)">إجمالي السجلات</div>
+            </div>
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary)">
+                <span class="material-symbols-rounded">list_alt</span>
             </div>
         </div>
     </div>
 
-    <div class="wf-card p-6 text-error">
-        <div class="card-body p-0">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-2xl font-black text-base-content">@Model.Summary.TotalErrors</div>
-                    <div class="text-xs font-bold text-base-content/60 mt-1">إجمالي الأخطاء</div>
-                </div>
-                <div class="w-12 h-12 rounded-xl bg-error/10 text-error flex items-center justify-center">
-                    <span class="material-symbols-rounded">error</span>
-                </div>
+    <div class="rounded-2xl border p-5" style="background: var(--color-surface); border-color: var(--color-border)">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="text-2xl font-black" style="color: var(--color-text)">@Model.Summary.TotalErrors</div>
+                <div class="text-xs font-bold mt-1" style="color: var(--color-text-tertiary)">إجمالي الأخطاء</div>
+            </div>
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: color-mix(in srgb, var(--color-error) 10%, transparent); color: var(--color-error)">
+                <span class="material-symbols-rounded">error</span>
             </div>
         </div>
     </div>
 
-    <div class="wf-card p-6 text-warning">
-        <div class="card-body p-0">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-2xl font-black text-base-content">@Model.Summary.TotalWarnings</div>
-                    <div class="text-xs font-bold text-base-content/60 mt-1">التحذيرات</div>
-                </div>
-                <div class="w-12 h-12 rounded-xl bg-warning/10 text-warning flex items-center justify-center">
-                    <span class="material-symbols-rounded">warning</span>
-                </div>
+    <div class="rounded-2xl border p-5" style="background: var(--color-surface); border-color: var(--color-border)">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="text-2xl font-black" style="color: var(--color-text)">@Model.Summary.TotalWarnings</div>
+                <div class="text-xs font-bold mt-1" style="color: var(--color-text-tertiary)">التحذيرات</div>
+            </div>
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: color-mix(in srgb, var(--color-warning) 10%, transparent); color: var(--color-warning)">
+                <span class="material-symbols-rounded">warning</span>
             </div>
         </div>
     </div>
 
-    <div class="wf-card p-6 text-accent">
-        <div class="card-body p-0">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-2xl font-black text-base-content">@Model.Summary.SlowQueriesCount</div>
-                    <div class="text-xs font-bold text-base-content/60 mt-1">استعلامات بطيئة</div>
-                </div>
-                <div class="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
-                    <span class="material-symbols-rounded">speed</span>
-                </div>
+    <div class="rounded-2xl border p-5" style="background: var(--color-surface); border-color: var(--color-border)">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="text-2xl font-black" style="color: var(--color-text)">@Model.Summary.SlowQueriesCount</div>
+                <div class="text-xs font-bold mt-1" style="color: var(--color-text-tertiary)">استعلامات بطيئة</div>
+            </div>
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: color-mix(in srgb, var(--color-accent) 10%, transparent); color: var(--color-accent)">
+                <span class="material-symbols-rounded">speed</span>
             </div>
         </div>
     </div>
 </div>
 
-<div class="wf-card overflow-hidden">
-    <div class="overflow-x-auto">
-    <div class="p-5 border-b border-base-200 flex items-center justify-between">
-        <h3 class="font-bold text-base-content flex items-center gap-2 text-base">
-            <span class="material-symbols-rounded text-primary">analytics</span>
+<div class="rounded-2xl border overflow-hidden" style="background: var(--color-surface); border-color: var(--color-border)">
+    <div class="p-5 border-b flex items-center justify-between" style="border-color: var(--color-border)">
+        <h3 class="font-bold flex items-center gap-2" style="color: var(--color-text)">
+            <span class="material-symbols-rounded" style="color: var(--color-primary)">analytics</span>
             أحدث 100 سجل مراقبة للعمليات والأخطاء
         </h3>
     </div>
-    <table class="table table-zebra w-full text-sm">
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm">
         <thead>
-            <tr>
-                <th class="text-right">طابع الوقت</th>
-                <th class="text-right">المستوى</th>
-                <th class="text-right">الرسالة</th>
-                <th class="text-right">السياق / المصدر</th>
+            <tr style="background: var(--color-bg-alt)">
+                <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">طابع الوقت</th>
+                <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">المستوى</th>
+                <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">الرسالة</th>
+                <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">السياق / المصدر</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var log in Model.Logs)
             {
-                <tr>
-                    <td class="text-base-content/60 text-xs font-semibold">@log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                    <td class="">
-                        <span class="badge @GetLevelBadgeClass(log.Level) font-bold text-[10px]">
+                <tr class="border-t transition-colors duration-200" style="border-color: var(--color-border)">
+                    <td class="px-6 py-4 text-xs font-semibold" style="color: var(--color-text-tertiary)">@log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 text-xs font-bold rounded-full"
+                              style="background: color-mix(in srgb, @GetLevelColor(log.Level) 10%, transparent); color: @GetLevelColor(log.Level)">
                             @log.Level
                         </span>
                     </td>
-                    <td class="text-base-content/60 font-medium text-xs">@log.Message</td>
-                    <td class="text-[11px] text-base-content/40 max-w-xs truncate" title="@log.SourceContext">@log.SourceContext</td>
+                    <td class="px-6 py-4 font-medium text-xs" style="color: var(--color-text-secondary)">@log.Message</td>
+                    <td class="px-6 py-4 text-xs max-w-xs truncate" style="color: var(--color-text-tertiary)" title="@log.SourceContext">@log.SourceContext</td>
                 </tr>
             }
         </tbody>
     </table>
-</div>
+    </div>
 </div>
 
 @functions {
-    string GetLevelBadgeClass(string level) => level switch
+    string GetLevelColor(string level) => level switch
     {
-        "Error" or "Fatal" => "badge-error",
-        "Warning" => "badge-warning",
-        "Information" => "badge-info",
-        _ => "badge-ghost"
+        "Error" or "Fatal" => "var(--color-error)",
+        "Warning" => "var(--color-warning)",
+        "Information" => "var(--color-info)",
+        _ => "var(--color-text-tertiary)"
     };
 }

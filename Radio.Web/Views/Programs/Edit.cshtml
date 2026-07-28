@@ -12,7 +12,7 @@
     ViewBag.BackText = "الرجوع للبرامج";
 }
 
-<partial name="_CreateEditHeader" />
+<partial name="_PageHeader" />
 
 <form method="post" action="@(isEdit ? $"/Programs/Edit/{Model.ProgramId}" : "/Programs/Create")" class="max-w-2xl">
     @Html.AntiForgeryToken()
@@ -20,45 +20,60 @@
 
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="bg-danger/10 border border-danger/20 text-danger rounded-xl p-4 mb-6 font-semibold text-sm"></div>
+        <div asp-validation-summary="All" class="rounded-xl p-4 mb-6 font-semibold text-sm"
+             style="background: color-mix(in srgb, var(--color-error) 10%, transparent); border: 1px solid color-mix(in srgb, var(--color-error) 20%, transparent); color: var(--color-error)"></div>
     }
 
-    <div class="wf-card">
-        <div class="card-body gap-6">
-            <h3 class="card-title">
-                <span class="material-symbols-rounded text-primary">radio</span>
-                بيانات البرنامج
-            </h3>
+    <div class="rounded-2xl border" style="background: var(--color-surface); border-color: var(--color-border)">
+        <div class="p-6 space-y-6">
+            <div class="flex items-center gap-2.5">
+                <span class="material-symbols-rounded" style="color: var(--color-primary)">radio</span>
+                <h3 class="font-bold" style="color: var(--color-text)">بيانات البرنامج</h3>
+            </div>
             <div class="space-y-4">
                 <div>
-                    <label class="label"><span class="label-text">اسم البرنامج <span class="text-error">*</span></span></label>
-                    <label class="input input-bordered flex items-center gap-2">
-                        <span class="material-symbols-rounded text-base-content/40">edit_note</span>
-                        <input type="text" name="ProgramName" value="@Model.ProgramName" class="grow" required placeholder="مثال: نبض الشارع" />
-                    </label>
+                    <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">اسم البرنامج <span style="color: var(--color-error)">*</span></label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">edit_note</span>
+                        <input type="text" name="ProgramName" value="@Model.ProgramName" required
+                               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                               style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
+                               placeholder="مثال: نبض الشارع" />
+                    </div>
                 </div>
                 <div>
-                    <label class="label"><span class="label-text">الفئة</span></label>
-                    <label class="input input-bordered flex items-center gap-2">
-                        <span class="material-symbols-rounded text-base-content/40">category</span>
-                        <input type="text" name="Category" value="@Model.Category" class="grow" placeholder="مثال: سياسي، ثقافي، اجتماعي" />
-                    </label>
+                    <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">الفئة</label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg" style="color: var(--color-text-tertiary)">category</span>
+                        <input type="text" name="Category" value="@Model.Category"
+                               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                               style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
+                               placeholder="مثال: سياسي، ثقافي، اجتماعي" />
+                    </div>
                 </div>
                 <div>
-                    <label class="label"><span class="label-text">الوصف</span></label>
-                    <textarea name="ProgramDescription" rows="5" class="textarea textarea-bordered w-full" placeholder="أدخل ملخصاً أو تفاصيل موجزة عن البرنامج الإذاعي ومواعيد بثه المقترحة...">@Model.ProgramDescription</textarea>
+                    <label class="text-sm font-medium mb-1.5 block" style="color: var(--color-text-secondary)">الوصف</label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute right-3 pointer-events-none text-lg" style="color: var(--color-text-tertiary); top: 1rem;">description</span>
+                        <textarea name="ProgramDescription" rows="5"
+                                  class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
+                                  style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
+                                  placeholder="أدخل ملخصاً أو تفاصيل موجزة عن البرنامج الإذاعي ومواعيد بثه المقترحة...">@Model.ProgramDescription</textarea>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="flex items-center justify-end gap-2 mt-6">
-        <a href="/Programs" class="btn btn-ghost">
-            <span class="material-symbols-rounded">cancel</span>
+        <a href="/Programs" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all"
+           style="color: var(--color-text-secondary)">
+            <span class="material-symbols-rounded text-lg">cancel</span>
             إلغاء
         </a>
-        <button type="submit" class="btn btn-primary">
-            <span class="material-symbols-rounded">save</span>
+        <button type="submit" class="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl font-bold text-sm shadow-sm transition-all"
+                style="background: var(--color-primary); color: white">
+            <span class="material-symbols-rounded text-lg">save</span>
             حفظ البيانات
         </button>
     </div>

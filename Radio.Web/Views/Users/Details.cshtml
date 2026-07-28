@@ -13,29 +13,29 @@
     ViewBag.BackText = "الرجوع للمستخدمين";
 }
 
-<partial name="_CreateEditHeader" />
+<partial name="_PageHeader" />
 
 <!-- User Profile Card -->
-<div class="wf-card p-6 mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="p-6 mb-8 grid grid-cols-1 md:grid-cols-3 gap-6" style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 1rem;">
     <div class="flex items-center gap-4 col-span-2">
-        <div class="w-16 h-16 rounded-2xl bg-primary/5 text-primary flex items-center justify-center font-bold text-2xl shadow-inner">
+        <div class="w-16 h-16 rounded-2xl text-primary flex items-center justify-center font-bold text-2xl shadow-inner" style="background: color-mix(in srgb, var(--color-primary) 5%, transparent);">
             @user.FullName.Substring(0, Math.Min(2, user.FullName.Length)).ToUpper()
         </div>
         <div>
-            <h3 class="font-extrabold text-base-content text-lg">@user.FullName</h3>
-            <p class="text-xs text-base-content/60 mt-1">اسم الدخول: <span class="font-mono">@user.Username</span> | البريد: @(string.IsNullOrWhiteSpace(user.EmailAddress) ? "غير محدد" : user.EmailAddress)</p>
-            <p class="text-xs text-base-content/60 mt-0.5">الهاتف: @(string.IsNullOrWhiteSpace(user.PhoneNumber) ? "غير محدد" : user.PhoneNumber)</p>
+            <h3 class="font-extrabold text-lg" style="color: var(--color-text);">@user.FullName</h3>
+            <p class="text-xs mt-1" style="color: var(--color-text-secondary);">اسم الدخول: <span class="font-mono">@user.Username</span> | البريد: @(string.IsNullOrWhiteSpace(user.EmailAddress) ? "غير محدد" : user.EmailAddress)</p>
+            <p class="text-xs mt-0.5" style="color: var(--color-text-secondary);">الهاتف: @(string.IsNullOrWhiteSpace(user.PhoneNumber) ? "غير محدد" : user.PhoneNumber)</p>
         </div>
     </div>
     
-    <div class="flex flex-col justify-center items-start md:items-end gap-2 border-t md:border-t-0 md:border-r border-base-200/20 pt-4 md:pt-0 pr-0 md:pr-6">
+    <div class="flex flex-col justify-center items-start md:items-end gap-2 border-t md:border-t-0 md:border-r pt-4 md:pt-0 pr-0 md:pr-6" style="border-color: var(--color-border);">
         <div>
-            <span class="text-xs text-base-content/60">الدور الوظيفي:</span>
-            <span class="badge badge-info py-1 px-3 text-xs font-bold rounded-full">@user.RoleName</span>
+            <span class="text-xs" style="color: var(--color-text-secondary);">الدور الوظيفي:</span>
+            <span style="display: inline-flex; align-items: center; gap: 0.125rem; background: color-mix(in srgb, var(--color-info) 10%, transparent); color: var(--color-info); padding: 0.125rem 0.5rem; font-size: 0.5rem; font-weight: 700; border-radius: 9999px; border: 1px solid color-mix(in srgb, var(--color-info) 20%, transparent);">@user.RoleName</span>
         </div>
         <div>
-            <span class="text-xs text-base-content/60">حالة الحساب:</span>
-            <span class="badge @(user.IsActive ? "badge-success" : "badge-error")">
+            <span class="text-xs" style="color: var(--color-text-secondary);">حالة الحساب:</span>
+            <span style="@(user.IsActive ? "display: inline-flex; align-items: center; gap: 0.125rem; background: color-mix(in srgb, var(--color-success) 10%, transparent); color: var(--color-success); padding: 0.125rem 0.5rem; font-size: 0.5rem; font-weight: 700; border-radius: 9999px; border: 1px solid color-mix(in srgb, var(--color-success) 20%, transparent);" : "display: inline-flex; align-items: center; gap: 0.125rem; background: color-mix(in srgb, var(--color-error) 10%, transparent); color: var(--color-error); padding: 0.125rem 0.5rem; font-size: 0.5rem; font-weight: 700; border-radius: 9999px; border: 1px solid color-mix(in srgb, var(--color-error) 20%, transparent);")">
                 @(user.IsActive ? "نشط ومفعل" : "معطّل")
             </span>
         </div>
@@ -43,22 +43,22 @@
 </div>
 
 <!-- Effective Permissions Matrix Card -->
-<div class="wf-card">
-    <div class="card-body p-0">
-        <div class="bg-base-200 p-6 border-b border-base-200/40 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+<div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 1rem;">
+    <div>
+        <div class="p-6 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4" style="background: var(--color-bg-alt); border-color: var(--color-border);">
             <div>
-                <h3 class="font-extrabold text-base-content text-base">الصلاحيات الفعالة (Effective Permissions)</h3>
-                <p class="text-xs text-base-content/60 mt-1">جدول يوضح الصلاحيات الفعلية الممنوحة والمحجوبة بناءً على دمج صلاحيات الدور الافتراضي والاستثناءات الفردية</p>
+                <h3 class="font-extrabold text-base" style="color: var(--color-text);">الصلاحيات الفعالة (Effective Permissions)</h3>
+                <p class="text-xs mt-1" style="color: var(--color-text-secondary);">جدول يوضح الصلاحيات الفعلية الممنوحة والمحجوبة بناءً على دمج صلاحيات الدور الافتراضي والاستثناءات الفردية</p>
             </div>
             
             <div class="flex items-center gap-2">
                 @if (User.HasPermission(AppPermissions.UserManage))
                 {
-                    <a href="/Users/Permissions/@user.UserId" class="btn btn-primary py-2 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all">
+                    <a href="/Users/Permissions/@user.UserId" class="py-2 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all" style="background: var(--color-primary); color: white; display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; border-radius: 0.75rem; font-size: 0.75rem; font-weight: 700; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                         <span class="material-symbols-rounded text-sm">admin_panel_settings</span>
                         تعديل الاستثناءات الفردية
                     </a>
-                    <a href="/Users/Edit/@user.UserId" class="btn btn-ghost py-2 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all">
+                    <a href="/Users/Edit/@user.UserId" class="py-2 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all" style="color: var(--color-text-secondary); display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; border-radius: 0.75rem; font-size: 0.75rem; font-weight: 700; transition: all 0.2s;">
                         <span class="material-symbols-rounded text-sm">edit</span>
                         تعديل الحساب
                     </a>
@@ -67,9 +67,9 @@
         </div>
 
     <!-- Quick Search -->
-    <div class="p-4 bg-base-200 border-b border-base-200/20">
+    <div class="p-4 border-b" style="background: var(--color-bg-alt); border-color: var(--color-border);">
         <div class="relative w-full">
-            <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-base-content/60 text-sm">search</span>
+            <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-secondary);">search</span>
             <input type="text" id="permSearch" placeholder="بحث سريع في الصلاحيات الفعالة..." 
                    class="input input-bordered pr-11 pl-4 py-2 text-xs rounded-xl w-full border border-base-200/60 focus:border-primary/50 transition-all" />
         </div>
@@ -79,8 +79,8 @@
         @foreach (var module in permissionsByModule)
         {
             <div class="module-section space-y-4" data-module="@module.Key.ToLower()">
-                <div class="flex items-center border-b border-base-200/40 pb-2">
-                    <h4 class="font-extrabold text-base-content text-sm flex items-center gap-2">
+                <div class="flex items-center border-b pb-2" style="border-color: var(--color-border);">
+                    <h4 class="font-extrabold text-sm flex items-center gap-2" style="color: var(--color-text);">
                         <span class="w-1.5 h-3.5 bg-primary rounded-full"></span>
                         @module.Key
                     </h4>
@@ -89,34 +89,34 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     @foreach (var p in module)
                     {
-                        <div class="perm-item wf-card flex items-center justify-between p-4 transition-all duration-200"
+                        <div class="perm-item flex items-center justify-between p-4 transition-all duration-200" style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 1rem;"
                              data-text="@p.DisplayName.ToLower() @p.SystemName.ToLower()">
                             
                             <div class="flex flex-col gap-1 pr-2">
                                 <div class="flex items-center gap-2 flex-wrap">
-                                    <span class="text-xs font-bold text-base-content">@p.DisplayName</span>
-                                    <span class="text-[9px] font-mono text-base-content/60 select-all">@p.SystemName</span>
+                                    <span class="text-xs font-bold" style="color: var(--color-text);">@p.DisplayName</span>
+                                    <span class="text-[9px] font-mono select-all" style="color: var(--color-text-secondary);">@p.SystemName</span>
                                 </div>
                                 <div class="flex items-center gap-2 mt-1">
                                     <!-- Source Indicator -->
-                                    <span class="text-[9px] text-base-content/60">المصدر:</span>
+                                    <span class="text-[9px]" style="color: var(--color-text-secondary);">المصدر:</span>
                                     @if (p.OverrideType == "Grant")
                                     {
-                                        <span class="badge bg-success/10 text-success py-0.5 px-2 text-[8px] font-bold rounded-full border border-success/20 flex items-center gap-0.5">
+                                        <span style="display: inline-flex; align-items: center; gap: 0.125rem; background: color-mix(in srgb, var(--color-success) 10%, transparent); color: var(--color-success); padding: 0.125rem 0.5rem; font-size: 0.5rem; font-weight: 700; border-radius: 9999px; border: 1px solid color-mix(in srgb, var(--color-success) 20%, transparent);">
                                             <span class="material-symbols-rounded text-[9px]">add_circle</span>
                                             استثناء (سماح فردي)
                                         </span>
                                     }
                                     else if (p.OverrideType == "Deny")
                                     {
-                                        <span class="badge bg-error/10 text-error py-0.5 px-2 text-[8px] font-bold rounded-full border border-error/20 flex items-center gap-0.5">
+                                        <span style="display: inline-flex; align-items: center; gap: 0.125rem; background: color-mix(in srgb, var(--color-error) 10%, transparent); color: var(--color-error); padding: 0.125rem 0.5rem; font-size: 0.5rem; font-weight: 700; border-radius: 9999px; border: 1px solid color-mix(in srgb, var(--color-error) 20%, transparent);">
                                             <span class="material-symbols-rounded text-[9px]">cancel</span>
                                             استثناء (حظر فردي)
                                         </span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-base-200 text-base-content/60 py-0.5 px-2 text-[8px] font-bold rounded-full border border-base-200 flex items-center gap-0.5">
+                                        <span style="display: inline-flex; align-items: center; gap: 0.125rem; background: var(--color-bg-alt); color: var(--color-text-secondary); padding: 0.125rem 0.5rem; font-size: 0.5rem; font-weight: 700; border-radius: 9999px; border: 1px solid var(--color-border);">
                                             <span class="material-symbols-rounded text-[9px]">group</span>
                                             موروث من الدور الافتراضي
                                         </span>
@@ -125,8 +125,8 @@
                             </div>
 
                             <!-- Final Access Status -->
-                            <div class="flex flex-col items-center shrink-0 pr-4 border-r border-base-200/20">
-                                <span class="badge @(p.EffectiveAccess ? "bg-success/15 text-success border-success/30" : "bg-error/15 text-error border-error/30") border text-[10px] font-black py-1 px-3.5 rounded-full shadow-sm">
+                            <div class="flex flex-col items-center shrink-0 pr-4 border-r" style="border-color: var(--color-border);">
+                                <span style="@(p.EffectiveAccess ? "display: inline-flex; align-items: center; gap: 0.125rem; background: color-mix(in srgb, var(--color-success) 15%, transparent); color: var(--color-success); padding: 0.25rem 0.875rem; font-size: 0.625rem; font-weight: 900; border-radius: 9999px; border: 1px solid color-mix(in srgb, var(--color-success) 30%, transparent); box-shadow: 0 1px 2px rgba(0,0,0,0.05);" : "display: inline-flex; align-items: center; gap: 0.125rem; background: color-mix(in srgb, var(--color-error) 15%, transparent); color: var(--color-error); padding: 0.25rem 0.875rem; font-size: 0.625rem; font-weight: 900; border-radius: 9999px; border: 1px solid color-mix(in srgb, var(--color-error) 30%, transparent); box-shadow: 0 1px 2px rgba(0,0,0,0.05);")">
                                     @(p.EffectiveAccess ? "مـصـرّح" : "مـحـظـور")
                                 </span>
                             </div>

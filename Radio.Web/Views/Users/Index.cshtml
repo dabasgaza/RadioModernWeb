@@ -1,122 +1,102 @@
 @model List<UserDto>
-@{ ViewData["Title"] = "المستخدمون"; }
+@{
+    ViewData["Title"] = "المستخدمون";
+    ViewData["HeaderIcon"] = "admin_panel_settings";
+    ViewData["HeaderDescription"] = "إدارة حسابات المستخدمين وأدوارهم وصلاحياتهم في النظام";
+    ViewBag.EntityName = "المستخدمون";
 
-<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-    <div>
-        <div class="breadcrumbs text-sm text-base-content/60">
-            <ul>
-                <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
-                <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">admin_panel_settings</span>المستخدمون</span></li>
-            </ul>
-        </div>
-        <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
-            <span class="material-symbols-rounded text-primary">admin_panel_settings</span>
-            المستخدمون
-        </h1>
-        <p class="text-sm text-base-content/60 mt-0.5">إدارة حسابات المستخدمين وأدوارهم وصلاحياتهم في النظام</p>
-    </div>
-    <div class="flex items-center gap-2">
-        @if (User.HasPermission(AppPermissions.UserManage))
-        {
-            <a href="/Users/Create" class="btn btn-primary">
-                <span class="material-symbols-rounded">add</span>
-                مستخدم جديد
-            </a>
-        }
-    </div>
-</div>
+    if (User.HasPermission(AppPermissions.UserManage))
+    {
+        ViewData["HeaderActions"] = "<a href='/Users/Create' class='btn btn-primary rounded-xl gap-2'><span class='material-symbols-rounded'>add</span>مستخدم جديد</a>";
+    }
+}
 
-<div class="wf-card mb-6">
-    <div class="card-body">
-        <form method="get" class="flex gap-3">
-            <div class="relative flex-1">
-                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40">search</span>
-                <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث باسم المستخدم أو البريد…" class="input input-bordered w-full pr-10" />
-            </div>
-            <button type="submit" class="btn btn-primary">
-                <span class="material-symbols-rounded">search</span>
-                بحث
-            </button>
-            <a href="/Users" class="btn btn-ghost" title="إعادة ضبط">
-                <span class="material-symbols-rounded">refresh</span>
-            </a>
-        </form>
-    </div>
-</div>
+<partial name="_PageHeader" />
+
+@{ ViewBag.SearchValue = ViewBag.Search; ViewBag.SearchPlaceholder = "بحث باسم المستخدم أو البريد…"; ViewBag.SearchAction = "/Users"; }
+<partial name="_SearchBar" />
 
 @if (!Model.Any())
 {
-    <div class="wf-card">
-        <div class="card-body text-center py-12">
-            <span class="material-symbols-rounded text-4xl text-base-content/30 mb-2">admin_panel_settings</span>
-            <h3 class="font-bold text-base-content text-lg mb-2">لا مستخدمين</h3>
-            <p class="text-base-content/60 text-sm mb-4">لم يتم العثور على أي مستخدمين تطابق البحث.</p>
-            @if (User.HasPermission(AppPermissions.UserManage))
-            {
-                <a href="/Users/Create" class="btn btn-primary">
-                    <span class="material-symbols-rounded">add</span>
-                    إضافة مستخدم جديد
-                </a>
-            }
-        </div>
-    </div>
+    <partial name="_EmptyState" model='new { Icon = "admin_panel_settings", Title = "لا مستخدمين", Description = "لم يتم العثور على أي مستخدمين تطابق البحث.", ActionUrl = User.HasPermission(AppPermissions.UserManage) ? "/Users/Create" : null, ActionText = "إضافة مستخدم جديد", ActionIcon = "add" }' />
 }
 else
 {
     <div class="wf-card overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="table table-zebra w-full text-sm">
-            <thead>
-                <tr>
-                    <th class="text-right font-semibold">الاسم</th>
-                    <th class="text-right font-semibold">اسم الدخول</th>
-                    <th class="text-right font-semibold">البريد</th>
-                    <th class="text-right font-semibold">الدور</th>
-                    <th class="text-right font-semibold">الحالة</th>
-                    <th class="text-right font-semibold">إجراءات</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var u in Model)
-                {
-                    <tr>
-                        <td class="font-semibold text-base-content">
-                            <a href="/Users/Details/@u.UserId" class="hover:text-primary hover:underline transition-colors flex items-center gap-1.5">
-                                <span class="material-symbols-rounded text-base text-base-content/60 group-hover:text-primary">account_box</span>
-                                @u.FullName
-                            </a>
-                        </td>
-                        <td class="text-base-content/60">@u.Username</td>
-                        <td class="text-base-content/60">@u.EmailAddress</td>
-                        <td><span class="badge badge-info">@u.RoleName</span></td>
-                        <td>
-                            <span class="badge @(u.IsActive ? "badge-success" : "badge-error")">
-                                @(u.IsActive ? "نشط" : "معطّل")
-                            </span>
-                        </td>
-                        <td>
-                            @if (User.HasPermission(AppPermissions.UserManage))
-                            {
-                                <div class="flex items-center justify-center gap-1 whitespace-nowrap">
-                                    <a href="/Users/Edit/@u.UserId" class="btn btn-ghost btn-square btn-sm text-primary" title="تعديل الحساب" aria-label="تعديل الحساب"><span class="material-symbols-rounded text-lg">edit</span></a>
-                                    <a href="/Users/Permissions/@u.UserId" class="btn btn-ghost btn-square btn-sm text-success" title="الاستثناءات والصلاحيات الفردية" aria-label="الاستثناءات والصلاحيات الفردية"><span class="material-symbols-rounded text-lg">admin_panel_settings</span></a>
-                                    <form method="post" action="/Users/ToggleStatus/@u.UserId" class="inline">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-ghost btn-square btn-sm @(u.IsActive ? "text-base-content/40" : "text-success")" title="@(u.IsActive ? "تعطيل" : "تفعيل")" aria-label="@(u.IsActive ? "تعطيل" : "تفعيل")">
-                                            <span class="material-symbols-rounded text-lg">@(u.IsActive ? "block" : "check_circle")</span>
-                                        </button>
-                                    </form>
-                                    <form method="post" action="/Users/Delete/@u.UserId" class="inline" data-confirm="هل أنت متأكد من حذف المستخدم «@u.FullName»؟">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-ghost btn-square btn-sm text-error" title="حذف" aria-label="حذف"><span class="material-symbols-rounded text-lg">delete</span></button>
-                                    </form>
-                                </div>
-                            }
-                        </td>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="text-xs font-semibold"
+                        style="color: var(--color-text-tertiary); background: var(--color-bg); border-bottom: 1px solid var(--color-border);">
+                        <th class="text-right py-3 px-4">الاسم</th>
+                        <th class="text-right py-3 px-4">اسم الدخول</th>
+                        <th class="text-right py-3 px-4">البريد</th>
+                        <th class="text-right py-3 px-4">الدور</th>
+                        <th class="text-right py-3 px-4">الحالة</th>
+                        <th class="text-center py-3 px-4">إجراءات</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach (var u in Model)
+                    {
+                        <tr class="transition-colors"
+                            style="border-bottom: 1px solid var(--color-border);">
+                            <td class="py-3 px-4">
+                                <a href="/Users/Details/@u.UserId" class="font-semibold inline-flex items-center gap-1.5 transition-colors"
+                                   style="color: var(--color-text);">
+                                    <span class="material-symbols-rounded text-base" style="color: var(--color-text-tertiary);">account_box</span>
+                                    <span class="hover:underline" style="color: var(--color-primary);">@u.FullName</span>
+                                </a>
+                            </td>
+                            <td class="py-3 px-4" style="color: var(--color-text-3);">@u.Username</td>
+                            <td class="py-3 px-4" style="color: var(--color-text-3);">@u.EmailAddress</td>
+                            <td class="py-3 px-4">
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg"
+                                      style="background: var(--color-info-container); color: var(--color-info);">@u.RoleName</span>
+                            </td>
+                            <td class="py-3 px-4">
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg"
+                                      style="background: @(u.IsActive ? "var(--color-success-container)" : "var(--color-danger-container)"); color: @(u.IsActive ? "var(--color-success)" : "var(--color-danger)");">
+                                    @(u.IsActive ? "نشط" : "معطّل")
+                                </span>
+                            </td>
+                            <td class="py-3 px-4">
+                                @if (User.HasPermission(AppPermissions.UserManage))
+                                {
+                                    <div class="flex items-center justify-center gap-1">
+                                        <a href="/Users/Edit/@u.UserId" class="inline-flex items-center justify-center w-9 h-9 rounded-lg transition-colors"
+                                           style="color: var(--color-primary);" title="تعديل الحساب"
+                                           onmouseover="this.style.background='var(--color-primary-light)'" onmouseout="this.style.background='transparent'">
+                                            <span class="material-symbols-rounded text-lg">edit</span>
+                                        </a>
+                                        <a href="/Users/Permissions/@u.UserId" class="inline-flex items-center justify-center w-9 h-9 rounded-lg transition-colors"
+                                           style="color: var(--color-success);" title="الاستثناءات والصلاحيات الفردية"
+                                           onmouseover="this.style.background='var(--color-success-container)'" onmouseout="this.style.background='transparent'">
+                                            <span class="material-symbols-rounded text-lg">admin_panel_settings</span>
+                                        </a>
+                                        <form method="post" action="/Users/ToggleStatus/@u.UserId" class="inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-lg transition-colors"
+                                                    style="color: @(u.IsActive ? "var(--color-text-tertiary)" : "var(--color-success)");" title="@(u.IsActive ? "تعطيل" : "تفعيل")"
+                                                    onmouseover="this.style.background='var(--color-surface-3)'" onmouseout="this.style.background='transparent'">
+                                                <span class="material-symbols-rounded text-lg">@(u.IsActive ? "block" : "check_circle")</span>
+                                            </button>
+                                        </form>
+                                        <form method="post" action="/Users/Delete/@u.UserId" class="inline" data-confirm="هل أنت متأكد من حذف المستخدم «@u.FullName»؟">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-lg transition-colors"
+                                                    style="color: var(--color-danger);" title="حذف"
+                                                    onmouseover="this.style.background='var(--color-danger-container)'" onmouseout="this.style.background='transparent'">
+                                                <span class="material-symbols-rounded text-lg">delete</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 }

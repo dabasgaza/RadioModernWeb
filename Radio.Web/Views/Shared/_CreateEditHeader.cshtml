@@ -10,24 +10,24 @@
 }
 
 <div class="mb-6">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-            <div class="breadcrumbs text-sm text-base-content/60">
-                <ul>
-                    <li><a href="/" class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">home</span>الرئيسية</a></li>
-                    <li><a href="@entityUrl" class="inline-flex items-center gap-1">@entityName</a></li>
-                    <li><span class="inline-flex items-center gap-1"><span class="material-symbols-rounded text-lg">@(isEdit ? "edit" : "add")</span>@(isEdit ? "تعديل" : "جديد")</span></li>
-                </ul>
+            <div class="text-xs font-medium text-sys-on-surface-variant mb-1 flex items-center gap-1.5">
+                <a href="/" class="hover:text-sys-primary transition-colors">الرئيسية</a>
+                <span class="text-sys-outline">·</span>
+                <a href="@entityUrl" class="hover:text-sys-primary transition-colors">@entityName</a>
+                <span class="text-sys-outline">·</span>
+                <span class="text-sys-on-surface">@(isEdit ? "تعديل" : "جديد")</span>
             </div>
-            <h1 class="text-2xl font-extrabold text-base-content mt-1 flex items-center gap-2">
-                <span class="material-symbols-rounded text-primary">@icon</span>
+            <h1 class="text-xl font-bold text-sys-on-surface flex items-center gap-2 mt-1">
+                <span class="material-symbols-rounded text-lg text-sys-primary">@icon</span>
                 @title
             </h1>
-            <p class="text-sm text-base-content/60 mt-0.5">@description</p>
+            <p class="text-sm text-sys-on-surface-variant mt-0.5">@description</p>
         </div>
         <div class="flex items-center gap-2">
-            <a href="@backUrl" class="btn btn-ghost">
-                <span class="material-symbols-rounded">arrow_forward</span>
+            <a href="@backUrl" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-sys-on-surface-variant hover:text-sys-on-surface hover:bg-sys-surface-container-high rounded-lg transition-colors">
+                <span class="material-symbols-rounded text-lg">arrow_forward</span>
                 @backText
             </a>
         </div>
