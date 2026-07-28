@@ -15,7 +15,13 @@
 
 @if (!Model.Any())
 {
-    <partial name="_EmptyState" model='new { Icon = "share", Title = "لا منصات", Description = "لم تتم إضافة أي منصات نشر بعد.", ActionUrl = User.HasPermission(AppPermissions.StaffManage) ? "/SocialPlatforms/Create" : null, ActionText = "إضافة منصة جديدة", ActionIcon = "add" }' />
+    ViewBag.EmptyIcon = "share";
+    ViewBag.EmptyTitle = "لا منصات";
+    ViewBag.EmptyDesc = "لم تتم إضافة أي منصات نشر بعد.";
+    ViewBag.EmptyActionUrl = User.HasPermission(AppPermissions.StaffManage) ? "/SocialPlatforms/Create" : null;
+    ViewBag.EmptyActionText = "إضافة منصة جديدة";
+    ViewBag.EmptyActionIcon = "add";
+    <partial name="_EmptyState" />
 }
 else
 {

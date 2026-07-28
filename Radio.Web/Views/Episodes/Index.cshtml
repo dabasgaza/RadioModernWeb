@@ -31,7 +31,13 @@
 @if (!Model.Episodes.Any())
 {
     <div class="glass-card rounded-xl p-12">
-        <partial name="_EmptyState" model='new { Icon = "podcasts_off", Title = "لا توجد حلقات مطابقة", Description = "لم يتم العثور على نتائج تطابق معايير البحث الحالية. يمكنك إعادة ضبط البحث أو إضافة حلقة جديدة.", ActionUrl = "/Episodes/Create", ActionText = "إضافة حلقة", ActionIcon = "add" }' />
+        ViewBag.EmptyIcon = "podcasts_off";
+        ViewBag.EmptyTitle = "لا توجد حلقات مطابقة";
+        ViewBag.EmptyDesc = "لم يتم العثور على نتائج تطابق معايير البحث الحالية. يمكنك إعادة ضبط البحث أو إضافة حلقة جديدة.";
+        ViewBag.EmptyActionUrl = "/Episodes/Create";
+        ViewBag.EmptyActionText = "إضافة حلقة";
+        ViewBag.EmptyActionIcon = "add";
+        <partial name="_EmptyState" />
     </div>
 }
 else
@@ -121,7 +127,7 @@ else
                     <div class="flex items-center gap-1">
                         @if (User.HasPermission(AppPermissions.EpisodeExecute) && ep.StatusId == 0)
                         {
-                            <button type="button" class="btn btn-success btn-xs rounded-lg gap-1 text-white"
+                            <button type="button" class="btn btn-success btn-xs rounded-lg gap-1"
                                     onclick="openExecuteModal(@ep.EpisodeId, '@JavaScriptEncoder.Default.Encode(ep.EpisodeName)')">
                                 <span class="material-symbols-rounded text-sm">play_circle</span>
                                 تنفيذ
@@ -179,7 +185,7 @@ else
             </div>
             <div class="flex items-center justify-end gap-2">
                 <button type="button" class="btn btn-ghost rounded-lg px-5" onclick="closeModal('executeModal')">إلغاء</button>
-                <button type="submit" class="btn btn-success text-white rounded-lg px-6">تأكيد التسجيل</button>
+                <button type="submit" class="btn btn-success rounded-lg px-6">تأكيد التسجيل</button>
             </div>
         </form>
     </div>
@@ -211,7 +217,7 @@ else
             </div>
             <div class="flex items-center justify-end gap-2">
                 <button type="button" class="btn btn-ghost rounded-lg px-5" onclick="closeModal('cancelModal')">تراجع</button>
-                <button type="submit" class="btn btn-error text-white rounded-lg px-6">تأكيد الإلغاء</button>
+                <button type="submit" class="btn btn-error rounded-lg px-6">تأكيد الإلغاء</button>
             </div>
         </form>
     </div>

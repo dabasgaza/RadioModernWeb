@@ -102,8 +102,8 @@
                 }
 
                 <div class="w-12 h-12 rounded-2xl flex items-center justify-center z-10 transition-all duration-300 border-2 shrink-0
-                    @(done && !isCancelled ? "bg-[var(--color-success)] text-white border-[var(--color-success)] shadow-lg" :
-                      current && !isCancelled ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)] shadow-xl scale-110" :
+                    @(done && !isCancelled ? "bg-[var(--color-success)]              border-[var(--color-success)] shadow-lg" :
+                      current && !isCancelled ? "bg-[var(--color-primary)]              border-[var(--color-primary)] shadow-xl scale-110" :
                       "bg-[var(--color-bg)] text-[var(--color-text-4)] border-[var(--color-border)]")"
                      @(done && !isCancelled ? "style=box-shadow:0 0 0 4px var(--color-success-light)" : "")>
                     <span class="material-symbols-rounded text-xl">@(done && !isCancelled ? "check" : s.Icon)</span>
@@ -155,8 +155,8 @@
                     <div class="absolute top-8 -right-[23px] w-0.5 h-full z-0 transition-all duration-500 @(lineActive && !isCancelled ? "bg-[var(--color-success)]" : "bg-[var(--color-bg)]")"></div>
                 }
                 <div class="w-10 h-10 rounded-2xl flex items-center justify-center z-10 transition-all duration-300 shrink-0 border-2
-                    @(done && !isCancelled ? "bg-[var(--color-success)] text-white border-[var(--color-success)]" :
-                      current && !isCancelled ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)] shadow-lg scale-110" :
+                    @(done && !isCancelled ? "bg-[var(--color-success)]              border-[var(--color-success)]" :
+                      current && !isCancelled ? "bg-[var(--color-primary)]              border-[var(--color-primary)] shadow-lg scale-110" :
                       "bg-[var(--color-bg)] text-[var(--color-text-4)] border-[var(--color-border)]")">
                     <span class="material-symbols-rounded text-lg">@(done && !isCancelled ? "check" : s.Icon)</span>
                 </div>

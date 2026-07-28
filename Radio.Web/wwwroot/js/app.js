@@ -1,7 +1,6 @@
 (function () {
     'use strict';
 
-    /* ─── RadioWeb Namespace ─── */
     window.RadioWeb = {
         copyToClipboard: async function (text) {
             try { await navigator.clipboard.writeText(text); return true; }
@@ -12,40 +11,38 @@
             const a = document.createElement('a');
             a.href = url; a.download = filename;
             document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        },
-        printElement: function (elementId) {
-            const el = document.getElementById(elementId);
-            if (!el) return;
-            const w = window.open('', '_blank');
-            if (!w) return;
-            w.document.write(`
-                <html dir="rtl" lang="ar">
-                <head><title>طباعة</title>
-                <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-                <style>
-                    body { font-family: 'Cairo', sans-serif; padding: 20px; }
-                    table { width: 100%; border-collapse: collapse; }
-                    th, td { padding: 8px; border: 1px solid #CBD5E1; text-align: right; }
-                </style>
-                </head>
-                <body>${el.innerHTML}</body>
-                </html>`);
-            w.document.close(); w.focus();
-            setTimeout(() => { w.print(); w.close(); }, 500);
         }
     };
+
+    /* ─── NProgress ─── */
+    if (typeof NProgress !== 'undefined') {
+        NProgress.configure({ showSpinner: false, minimum: 0.15, speed: 300 });
+        let nprogressTimeout;
+        document.addEventListener('submit', function (e) {
+            const form = e.target;
+            if (!form.hasAttribute('data-ignore-loading') && !form.querySelector('[type="submit"]:disabled')) {
+                clearTimeout(nprogressTimeout);
+                nprogressTimeout = setTimeout(function () { NProgress.start(); }, 150);
+            }
+        });
+        window.addEventListener('beforeunload', function () {
+            clearTimeout(nprogressTimeout);
+            NProgress.start();
+        });
+        window.addEventListener('pageshow', function (e) {
+            if (e.persisted) { NProgress.done(); }
+        });
+    }
 
     /* ─── Modal Helpers ─── */
     function openModal(id) {
         const m = document.getElementById(id);
-        if (m) { m.classList.remove('hidden'); m.classList.add('flex'); }
+        if (m) { m.showModal ? m.showModal() : (m.classList.remove('hidden'), m.classList.add('flex')); }
     }
-
     function closeModal(id) {
         const m = document.getElementById(id);
-        if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }
+        if (m) { m.close ? m.close() : (m.classList.add('hidden'), m.classList.remove('flex')); }
     }
-
     window.openModal = openModal;
     window.closeModal = closeModal;
 
@@ -54,7 +51,6 @@
         e.stopPropagation();
         document.getElementById('user-menu')?.classList.toggle('hidden');
     };
-
     window.toggleNotifications = function (e) {
         e.stopPropagation();
         document.getElementById('notifications-dropdown')?.classList.toggle('hidden');
@@ -68,6 +64,14 @@
         }
         if (notifDropdown && !notifDropdown.contains(e.target) && !e.target.closest('[onclick*="toggleNotifications"]')) {
             notifDropdown.classList.add('hidden');
+        }
+    });
+
+    /* ─── Close dropdowns on Escape ─── */
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            document.getElementById('user-menu')?.classList.add('hidden');
+            document.getElementById('notifications-dropdown')?.classList.add('hidden');
         }
     });
 
@@ -87,10 +91,8 @@
 
     /* ─── DOM Ready ─── */
     document.addEventListener('DOMContentLoaded', function () {
-        /* Init Preline */
         if (window.HSStaticMethods) HSStaticMethods.autoInit();
 
-        /* Back-to-top */
         const backToTop = document.getElementById('back-to-top');
         if (backToTop) {
             window.addEventListener('scroll', function () {
@@ -98,9 +100,9 @@
             }, { passive: true });
         }
 
-        /* Form loading state */
         document.addEventListener('submit', function (e) {
             const form = e.target;
+
             if (form.hasAttribute('data-confirm')) {
                 e.preventDefault();
                 const message = form.getAttribute('data-confirm');
@@ -132,6 +134,18 @@
                 btn.classList.add('btn-loading');
                 btn.disabled = true;
             }
+        });
+
+        /* ─── Copy code blocks ─── */
+        document.querySelectorAll('[data-copy]').forEach(function (el) {
+            el.addEventListener('click', function () {
+                const text = this.getAttribute('data-copy');
+                RadioWeb.copyToClipboard(text).then(function (ok) {
+                    if (ok && typeof toastr !== 'undefined') {
+                        toastr.success('تم النسخ', '', { timeOut: 1500 });
+                    }
+                });
+            });
         });
 
         console.log('✓ Radio Web initialized');

@@ -22,7 +22,10 @@
 
 @if (!Model.Any())
 {
-    <partial name="_EmptyState" model='new { Icon = "cancel", Title = "لا توجد حلقات ملغاة", Description = "لم يتم إلغاء أي حلقات في الفترة المحددة." }' />
+    ViewBag.EmptyIcon = "cancel";
+    ViewBag.EmptyTitle = "لا توجد حلقات ملغاة";
+    ViewBag.EmptyDesc = "لم يتم إلغاء أي حلقات في الفترة المحددة.";
+    <partial name="_EmptyState" />
 }
 else
 {

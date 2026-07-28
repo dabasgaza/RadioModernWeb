@@ -29,7 +29,13 @@
 
 @if (!Model.Any())
 {
-    <partial name="_EmptyState" model='new { Icon = "group_work", Title = "لا توجد أدوار وظيفية", Description = "لم يتم إنشاء أي أدوار وظيفية في النظام بعد. ابدأ بإضافة أول دور لتخصيص الصلاحيات.", ActionUrl = User.HasPermission(AppPermissions.UserManage) ? "/Roles/Create" : null, ActionText = "إضافة دور جديد", ActionIcon = "add" }' />
+    ViewBag.EmptyIcon = "group_work";
+    ViewBag.EmptyTitle = "لا توجد أدوار وظيفية";
+    ViewBag.EmptyDesc = "لم يتم إنشاء أي أدوار وظيفية في النظام بعد. ابدأ بإضافة أول دور لتخصيص الصلاحيات.";
+    ViewBag.EmptyActionUrl = User.HasPermission(AppPermissions.UserManage) ? "/Roles/Create" : null;
+    ViewBag.EmptyActionText = "إضافة دور جديد";
+    ViewBag.EmptyActionIcon = "add";
+    <partial name="_EmptyState" />
 }
 else
 {

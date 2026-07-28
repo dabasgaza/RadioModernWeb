@@ -6,65 +6,62 @@
   } else {
     theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
-  applyTheme(theme);
+  var hc = false;
+  try { hc = localStorage.getItem('high-contrast') === 'true'; } catch (e) {}
+  document.documentElement.classList.toggle('dark', theme === 'dark');
+  document.documentElement.classList.toggle('high-contrast', hc);
 })();
 
-function applyTheme(theme) {
-  var html = document.documentElement;
-  var isDark = theme === 'dark';
-  html.setAttribute('data-theme', isDark ? 'tvprodDark' : 'tvprod');
-  html.classList.toggle('dark', isDark);
-}
-
-var TvProdTheme = {
+var RadioTheme = {
   current: function () {
     return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
   },
-
+  isHighContrast: function () {
+    return document.documentElement.classList.contains('high-contrast');
+  },
   apply: function (theme) {
-    applyTheme(theme);
+    document.documentElement.classList.toggle('dark', theme === 'dark');
     try { localStorage.setItem('theme', theme); } catch (e) {}
-    document.dispatchEvent(new CustomEvent('tvprod:theme-change', { detail: { theme: theme } }));
+    document.dispatchEvent(new CustomEvent('radio:theme-change', { detail: { theme: theme } }));
     updateThemeToggleButton();
   },
-
   toggle: function () {
     this.apply(this.current() === 'dark' ? 'light' : 'dark');
   },
-
+  toggleHighContrast: function () {
+    var hc = !this.isHighContrast();
+    document.documentElement.classList.toggle('high-contrast', hc);
+    try { localStorage.setItem('high-contrast', hc); } catch (e) {}
+    document.dispatchEvent(new CustomEvent('radio:contrast-change', { detail: { highContrast: hc } }));
+  },
   useSystem: function () {
     try { localStorage.removeItem('theme'); } catch (e) {}
     var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    var theme = prefersDark ? 'dark' : 'light';
-    applyTheme(theme);
+    document.documentElement.classList.toggle('dark', prefersDark);
     updateThemeToggleButton();
   }
 };
 
-function toggleTheme() {
-  TvProdTheme.toggle();
-}
+function toggleTheme() { RadioTheme.toggle(); }
+function toggleHighContrast() { RadioTheme.toggleHighContrast(); }
 
 function updateThemeToggleButton() {
   var btn = document.getElementById('theme-toggle-btn');
   if (!btn) return;
-  var isDark = TvProdTheme.current() === 'dark';
   var icon = btn.querySelector('.material-symbols-rounded');
-  if (icon) icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+  if (icon) icon.textContent = RadioTheme.current() === 'dark' ? 'light_mode' : 'dark_mode';
 }
 
 document.addEventListener('DOMContentLoaded', function () {
   updateThemeToggleButton();
-  window
-    .matchMedia('(prefers-color-scheme: dark)')
-    .addEventListener('change', function (e) {
-      var saved = null;
-      try { saved = localStorage.getItem('theme'); } catch (err) {}
-      if (!saved) {
-        applyTheme(e.matches ? 'dark' : 'light');
-        updateThemeToggleButton();
-      }
-    });
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (err) {}
+    if (!saved) {
+      document.documentElement.classList.toggle('dark', e.matches);
+      updateThemeToggleButton();
+    }
+  });
 });
 
-window.TvProdTheme = TvProdTheme;
+window.RadioTheme = RadioTheme;

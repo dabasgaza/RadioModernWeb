@@ -1,65 +1,73 @@
 @inject ICurrentUserService CurrentUser
 
-<header class="sticky top-0 z-30 h-16 flex items-center px-6 gap-4 bg-sys-surface-bright/80 backdrop-blur-xl border-b border-sys-outline-variant shadow-sm transition-all duration-200">
-    <label for="sidebar-drawer" class="lg:hidden p-2 rounded-xl text-sys-on-surface-variant hover:bg-sys-surface-container-high cursor-pointer transition-colors">
+<header class="sticky top-0 z-30 h-16 flex items-center px-6 gap-4 transition-all duration-200" style="background:color-mix(in srgb, var(--color-surface) 85%, transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--color-border)">
+    <label for="sidebar-drawer" class="lg:hidden p-2 rounded-xl cursor-pointer transition-colors" style="color:var(--color-text-variant)" onmouseover="this.style.background='var(--color-bg-hover-high)'" onmouseout="this.style.background='transparent'">
         <span class="material-symbols-rounded text-2xl">menu</span>
     </label>
 
     <div class="flex-1 max-w-md hidden md:block">
         <form action="/Search" method="get" class="relative">
-            <span class="material-symbols-rounded absolute right-3.5 top-1/2 -translate-y-1/2 text-sys-outline text-xl">search</span>
+            <span class="material-symbols-rounded absolute right-3.5 top-1/2 -translate-y-1/2 text-lg pointer-events-none" style="color:var(--color-text-muted)">search</span>
             <input type="text" name="q" placeholder="بحث سريع في الحلقات، الضيوف، والبرامج..."
-                   class="w-full h-10 bg-sys-surface-container-low border border-sys-outline-variant rounded-xl pr-11 pl-4 text-xs font-medium text-sys-on-surface placeholder:text-sys-outline focus:outline-none focus:border-sys-primary focus:ring-2 focus:ring-sys-primary/20 transition-all duration-200" />
+                   class="w-full h-10 rounded-xl pr-11 pl-4 text-xs font-medium transition-all duration-200"
+                   style="background:var(--color-bg-hover-low);border:1px solid var(--color-border);color:var(--color-text)"
+                   onfocus="this.style.borderColor='var(--color-primary)';this.style.boxShadow='0 0 0 2px color-mix(in srgb, var(--color-primary) 15%, transparent)'"
+                   onblur="this.style.borderColor='var(--color-border)';this.style.boxShadow='none'" />
         </form>
     </div>
 
     <div class="flex items-center gap-2 mr-auto">
-        <button class="p-2.5 rounded-xl text-sys-on-surface-variant hover:bg-sys-surface-container-high transition-colors" onclick="toggleTheme()" id="theme-toggle-btn" aria-label="تبديل السمة">
+        <button class="p-2.5 rounded-xl transition-colors" id="theme-toggle-btn" aria-label="تبديل السمة"
+                style="color:var(--color-text-variant)" onmouseover="this.style.background='var(--color-bg-hover-high)'" onmouseout="this.style.background='transparent'">
             <span class="material-symbols-rounded text-xl" id="theme-icon">dark_mode</span>
         </button>
 
         <div class="relative">
-            <button class="relative p-2.5 rounded-xl text-sys-on-surface-variant hover:bg-sys-surface-container-high transition-colors" onclick="toggleNotifications(event)">
+            <button class="relative p-2.5 rounded-xl transition-colors" onclick="toggleNotifications(event)"
+                    style="color:var(--color-text-variant)" onmouseover="this.style.background='var(--color-bg-hover-high)'" onmouseout="this.style.background='transparent'">
                 <span class="material-symbols-rounded text-xl">notifications</span>
-                <span id="notification-badge-ping" class="hidden absolute top-1.5 left-1.5 w-2.5 h-2.5 bg-sys-error rounded-full animate-ping"></span>
-                <span id="notification-badge" class="hidden absolute top-1 left-1 bg-sys-error text-sys-on-error text-[9px] rounded-full w-4 h-4 flex items-center justify-center font-bold ring-2 ring-sys-surface-bright">0</span>
+                <span id="notification-badge-ping" class="hidden absolute top-1.5 left-1.5 w-2.5 h-2.5 rounded-full animate-ping" style="background:var(--color-danger)"></span>
+                <span id="notification-badge" class="hidden absolute top-1 left-1 text-[9px] rounded-full w-4 h-4 flex items-center justify-center font-bold ring-2" style="background:var(--color-danger);color:var(--color-danger-foreground);ring-color:var(--color-surface)">0</span>
             </button>
-            <div id="notifications-dropdown" class="hidden absolute left-0 mt-3 w-80 bg-sys-surface-bright rounded-2xl shadow-2xl border border-sys-outline-variant z-50 max-h-96 overflow-y-auto">
-                <div class="p-4 border-b border-sys-outline-variant flex items-center justify-between">
-                    <span class="font-bold text-xs text-sys-on-surface">مركز الإشعارات</span>
-                    <button class="text-xs text-sys-primary font-semibold hover:underline" onclick="clearNotifications()">مسح الكل</button>
+            <div id="notifications-dropdown" class="hidden absolute left-0 mt-3 w-80 rounded-2xl z-50 max-h-96 overflow-y-auto" style="background:var(--color-surface);border:1px solid var(--color-border);box-shadow:var(--shadow-float)">
+                <div class="p-4 flex items-center justify-between" style="border-bottom:1px solid var(--color-border)">
+                    <span class="font-bold text-xs" style="color:var(--color-text)">مركز الإشعارات</span>
+                    <button class="text-xs font-semibold hover:underline" style="color:var(--color-primary)" onclick="clearNotifications()">مسح الكل</button>
                 </div>
-                <div id="notifications-list" class="divide-y divide-sys-outline-variant">
-                    <div class="p-6 text-xs text-sys-on-surface-variant text-center">لا توجد إشعارات حالية</div>
+                <div id="notifications-list" style="border-color:var(--color-border)">
+                    <div class="p-6 text-xs text-center" style="color:var(--color-text-variant)">لا توجد إشعارات حالية</div>
                 </div>
             </div>
         </div>
 
         <div class="relative">
-            <button class="flex items-center gap-3 p-1.5 pr-3 bg-sys-surface-container-low hover:bg-sys-surface-container-high rounded-xl border border-sys-outline-variant transition-all duration-200" onclick="toggleUserMenu(event)">
-                <div class="w-8 h-8 rounded-lg bg-sys-primary text-sys-on-primary flex items-center justify-center font-bold text-xs shadow-md shrink-0">
+            <button class="flex items-center gap-3 p-1.5 pr-3 rounded-xl transition-all duration-200" onclick="toggleUserMenu(event)"
+                    style="background:var(--color-bg-hover-low);border:1px solid var(--color-border)"
+                    onmouseover="this.style.background='var(--color-bg-hover-high)'"
+                    onmouseout="this.style.background='var(--color-bg-hover-low)'">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs shrink-0" style="background:var(--color-primary);color:var(--color-primary-foreground)">
                     @(CurrentUser.FullName?.Substring(0, 1) ?? "U")
                 </div>
                 <div class="hidden md:block text-right">
-                    <div class="text-xs font-bold text-sys-on-surface leading-tight">@(CurrentUser.FullName ?? "مستخدم النظام")</div>
-                    <div class="text-[10px] text-sys-on-surface-variant font-medium">@CurrentUser.PrimaryRole</div>
+                    <div class="text-xs font-bold leading-tight" style="color:var(--color-text)">@(CurrentUser.FullName ?? "مستخدم النظام")</div>
+                    <div class="text-[10px] font-medium" style="color:var(--color-text-variant)">@CurrentUser.PrimaryRole</div>
                 </div>
-                <span class="material-symbols-rounded text-lg text-sys-outline hidden md:inline">expand_more</span>
+                <span class="material-symbols-rounded text-lg hidden md:inline" style="color:var(--color-text-muted)">expand_more</span>
             </button>
-            <div id="user-menu" class="hidden absolute left-0 mt-3 w-60 bg-sys-surface-bright rounded-2xl border border-sys-outline-variant z-50 shadow-2xl overflow-hidden">
-                <a href="/Account/Profile" class="flex items-center gap-3 px-4 py-3 hover:bg-sys-surface-container-high text-xs font-semibold text-sys-on-surface transition-colors">
-                    <span class="material-symbols-rounded text-lg text-sys-outline">person</span>
+            <div id="user-menu" class="hidden absolute left-0 mt-3 w-60 rounded-2xl z-50 overflow-hidden" style="background:var(--color-surface);border:1px solid var(--color-border);box-shadow:var(--shadow-float)">
+                <a href="/Account/Profile" class="flex items-center gap-3 px-4 py-3 text-xs font-semibold transition-colors" style="color:var(--color-text)" onmouseover="this.style.background='var(--color-bg-hover-high)'" onmouseout="this.style.background='transparent'">
+                    <span class="material-symbols-rounded text-lg" style="color:var(--color-text-muted)">person</span>
                     <span>الملف الشخصي</span>
                 </a>
-                <a href="/Account/Settings" class="flex items-center gap-3 px-4 py-3 hover:bg-sys-surface-container-high text-xs font-semibold text-sys-on-surface transition-colors">
-                    <span class="material-symbols-rounded text-lg text-sys-outline">settings</span>
+                <a href="/Account/Settings" class="flex items-center gap-3 px-4 py-3 text-xs font-semibold transition-colors" style="color:var(--color-text)" onmouseover="this.style.background='var(--color-bg-hover-high)'" onmouseout="this.style.background='transparent'">
+                    <span class="material-symbols-rounded text-lg" style="color:var(--color-text-muted)">settings</span>
                     <span>تفضيلات الإعدادات</span>
                 </a>
-                <div class="border-t border-sys-outline-variant"></div>
+                <div style="border-top:1px solid var(--color-border)"></div>
                 <form action="/Account/Logout" method="post">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 hover:bg-sys-error-container/20 text-xs font-semibold text-sys-error transition-colors">
-                        <span class="material-symbols-rounded text-lg text-sys-error">logout</span>
+                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold transition-colors" style="color:var(--color-danger)" onmouseover="this.style.background='color-mix(in srgb, var(--color-danger) 10%, transparent)'" onmouseout="this.style.background='transparent'">
+                        <span class="material-symbols-rounded text-lg">logout</span>
                         <span>تسجيل الخروج</span>
                     </button>
                 </form>
@@ -67,4 +75,3 @@
         </div>
     </div>
 </header>
-

@@ -20,32 +20,35 @@
     <!-- Guests Grid -->
     @if (!Model.Any())
     {
-        <partial name="_EmptyState" model='new { Icon = "people_alt", Title = "لا يوجد ضيوف مسجلين", Description = "لم نتمكن من العثور على أي ضيوف تطابق البحث الحالي" }' />
+        ViewBag.EmptyIcon = "people_alt";
+        ViewBag.EmptyTitle = "لا يوجد ضيوف مسجلين";
+        ViewBag.EmptyDesc = "لم نتمكن من العثور على أي ضيوف تطابق البحث الحالي";
+        <partial name="_EmptyState" />
     }
     else
     {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach (var g in Model)
             {
-                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden group hover:border-blue-500/50 hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+                <div class="bg-white rounded-2xl border border-border/80 shadow-sm overflow-hidden group hover:border-primary/40 hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
                     <div class="p-6 space-y-4">
                         <div class="flex items-center gap-3.5">
-                            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0">
+                            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary to-primary-hover text-white font-bold text-sm flex items-center justify-center shadow-md shadow-primary/20 shrink-0">
                                 @(g.FullName.Length > 0 ? g.FullName[0].ToString() : "G")
                             </div>
                             <div class="min-w-0">
-                                <h3 class="font-bold text-sm text-slate-900 dark:text-white truncate group-hover:text-blue-600 transition-colors">@g.FullName</h3>
-                                <p class="text-[11px] text-slate-400 truncate mt-0.5">@(g.Organization ?? "ضيف مستقل / غير محدد")</p>
+                                <h3 class="font-bold text-sm text-text truncate group-hover:text-primary transition-colors">@g.FullName</h3>
+                                <p class="text-[11px] text-text-muted truncate mt-0.5">@(g.Organization ?? "ضيف مستقل / غير محدد")</p>
                             </div>
                         </div>
 
-                        <div class="space-y-2 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
-                            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-                                <span class="material-symbols-rounded text-sm text-slate-400">phone</span>
+                        <div class="space-y-2 pt-3 border-t border-border-light text-xs">
+                            <div class="flex items-center gap-2 text-text-secondary">
+                                <span class="material-symbols-rounded text-sm text-text-muted">phone</span>
                                 <span class="font-semibold">@(g.PhoneNumber ?? "—")</span>
                             </div>
-                            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-                                <span class="material-symbols-rounded text-sm text-slate-400">email</span>
+                            <div class="flex items-center gap-2 text-text-secondary">
+                                <span class="material-symbols-rounded text-sm text-text-muted">email</span>
                                 <span class="truncate">@(g.EmailAddress ?? "—")</span>
                             </div>
                         </div>
@@ -53,8 +56,8 @@
 
                     @if (User.HasPermission(AppPermissions.GuestManage))
                     {
-                        <div class="px-6 py-3 bg-slate-50/70 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-1.5">
-                            <a href="/Guests/Edit/@g.GuestId" class="p-2 rounded-xl text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors" title="تعديل">
+                        <div class="px-6 py-3 bg-surface/70 border-t border-border-light flex items-center justify-end gap-1.5">
+                            <a href="/Guests/Edit/@g.GuestId" class="p-2 rounded-xl text-primary hover:bg-primary-subtle transition-colors" title="تعديل">
                                 <span class="material-symbols-rounded text-lg">edit</span>
                             </a>
                         </div>

@@ -44,7 +44,10 @@
 
 @if (!Model.Any())
 {
-    <partial name="_EmptyState" model='new { Icon = "date_range", Title = "لا توجد حلقات في هذه الفترة", Description = "لا توجد حلقات ضمن النطاق الزمني المحدد." }' />
+    ViewBag.EmptyIcon = "date_range";
+    ViewBag.EmptyTitle = "لا توجد حلقات في هذه الفترة";
+    ViewBag.EmptyDesc = "لا توجد حلقات ضمن النطاق الزمني المحدد.";
+    <partial name="_EmptyState" />
 }
 else
 {

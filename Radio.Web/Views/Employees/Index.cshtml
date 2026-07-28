@@ -20,7 +20,15 @@
 <!-- Employees Content -->
 @if (!Model.Any())
 {
-    <partial name="_EmptyState" model='new { Icon = "badge", Title = "لا موظفين", Description = "لم يتم العثور على أي موظفين تطابق البحث.", SecondaryUrl = "/Employees", SecondaryText = "إعادة ضبط البحث", ActionUrl = User.HasPermission(AppPermissions.StaffManage) ? "/Employees/Create" : null, ActionText = "إضافة موظف جديد", ActionIcon = "add" }' />
+    ViewBag.EmptyIcon = "badge";
+    ViewBag.EmptyTitle = "لا موظفين";
+    ViewBag.EmptyDesc = "لم يتم العثور على أي موظفين تطابق البحث.";
+    ViewBag.EmptySecondaryUrl = "/Employees";
+    ViewBag.EmptySecondaryText = "إعادة ضبط البحث";
+    ViewBag.EmptyActionUrl = User.HasPermission(AppPermissions.StaffManage) ? "/Employees/Create" : null;
+    ViewBag.EmptyActionText = "إضافة موظف جديد";
+    ViewBag.EmptyActionIcon = "add";
+    <partial name="_EmptyState" />
 }
 else
 {

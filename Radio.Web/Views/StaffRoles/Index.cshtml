@@ -15,7 +15,13 @@
 
 @if (!Model.Any())
 {
-    <partial name="_EmptyState" model='new { Icon = "work", Title = "لا أدوار", Description = "لم تتم إضافة أي مسميات وظيفية بعد.", ActionUrl = User.HasPermission(AppPermissions.StaffManage) ? "/StaffRoles/Create" : null, ActionText = "دور جديد", ActionIcon = "add" }' />
+    ViewBag.EmptyIcon = "work";
+    ViewBag.EmptyTitle = "لا أدوار";
+    ViewBag.EmptyDesc = "لم تتم إضافة أي مسميات وظيفية بعد.";
+    ViewBag.EmptyActionUrl = User.HasPermission(AppPermissions.StaffManage) ? "/StaffRoles/Create" : null;
+    ViewBag.EmptyActionText = "دور جديد";
+    ViewBag.EmptyActionIcon = "add";
+    <partial name="_EmptyState" />
 }
 else
 {

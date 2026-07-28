@@ -1,35 +1,34 @@
-@model dynamic
 @{
-    string icon = Model.Icon ?? "inbox";
-    string title = Model.Title ?? "لا توجد نتائج";
-    string description = Model.Description ?? "";
-    string? actionUrl = Model.ActionUrl;
-    string? actionText = Model.ActionText;
-    string? actionIcon = Model.ActionIcon ?? "add";
-    string? secondaryUrl = Model.SecondaryUrl;
-    string? secondaryText = Model.SecondaryText;
+    string icon = ViewBag.EmptyIcon ?? "inbox";
+    string title = ViewBag.EmptyTitle ?? "لا توجد نتائج";
+    string description = ViewBag.EmptyDesc ?? "";
+    string? actionUrl = ViewBag.EmptyActionUrl;
+    string? actionText = ViewBag.EmptyActionText;
+    string? actionIcon = ViewBag.EmptyActionIcon ?? "add";
+    string? secondaryUrl = ViewBag.EmptySecondaryUrl;
+    string? secondaryText = ViewBag.EmptySecondaryText;
 }
 
-<div class="rounded-2xl border text-center py-12" style="background: var(--color-surface); border-color: var(--color-border)">
-    <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style="background: var(--color-bg-alt); color: var(--color-text-tertiary)">
-        <span class="material-symbols-rounded text-3xl">@icon</span>
+<div class="empty-state">
+    <div class="empty-state-icon">
+        <span class="material-symbols-rounded">@icon</span>
     </div>
-    <h3 class="font-bold text-lg mb-2" style="color: var(--color-text)">@title</h3>
+    <h3 class="empty-state-title">@title</h3>
     @if (!string.IsNullOrEmpty(description))
     {
-        <p class="text-sm mb-4" style="color: var(--color-text-secondary)">@description</p>
+        <p class="empty-state-desc">@description</p>
     }
-    <div class="flex items-center justify-center gap-3">
+    <div class="empty-state-actions">
         @if (!string.IsNullOrEmpty(actionUrl) && !string.IsNullOrEmpty(actionText))
         {
-            <a href="@actionUrl" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-sm shadow-md transition-all" style="background: var(--color-primary); color: white">
+            <a href="@actionUrl" class="btn btn-primary gap-1.5">
                 <span class="material-symbols-rounded text-lg">@actionIcon</span>
                 @actionText
             </a>
         }
         @if (!string.IsNullOrEmpty(secondaryUrl) && !string.IsNullOrEmpty(secondaryText))
         {
-            <a href="@secondaryUrl" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-sm transition-all" style="color: var(--color-text-secondary)">
+            <a href="@secondaryUrl" class="btn btn-ghost">
                 @secondaryText
             </a>
         }

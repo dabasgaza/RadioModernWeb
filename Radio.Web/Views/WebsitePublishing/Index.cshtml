@@ -43,7 +43,13 @@
 <!-- Records -->
 @if (!Model.Any())
 {
-    <partial name="_EmptyState" model='new { Icon = "public", Title = "لا توجد سجلات نشر موقع", Description = "لم يتم نشر أي حلقات على الموقع بعد.", ActionUrl = User.HasPermission(AppPermissions.EpisodeWebPublish) ? "/Episodes" : null, ActionText = "نشر حلقة", ActionIcon = "add" }' />
+    ViewBag.EmptyIcon = "public";
+    ViewBag.EmptyTitle = "لا توجد سجلات نشر موقع";
+    ViewBag.EmptyDesc = "لم يتم نشر أي حلقات على الموقع بعد.";
+    ViewBag.EmptyActionUrl = User.HasPermission(AppPermissions.EpisodeWebPublish) ? "/Episodes" : null;
+    ViewBag.EmptyActionText = "نشر حلقة";
+    ViewBag.EmptyActionIcon = "add";
+    <partial name="_EmptyState" />
 }
 else
 {

@@ -6,11 +6,12 @@
     "build": "npm run build:css"
   },
   "dependencies": {
+    "@formkit/auto-animate": "^0.10.0",
     "@microsoft/signalr": "8.0.7",
     "chart.js": "4.4.4",
-    "daisyui": "^4.12.24",
     "flatpickr": "^4.6.13",
     "jquery": "3.7.1",
+    "nprogress": "^0.2.0",
     "preline": "^4.2.0",
     "sweetalert2": "11",
     "tabulator-tables": "6.3.1",

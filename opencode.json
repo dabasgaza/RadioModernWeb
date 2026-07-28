@@ -16,6 +16,55 @@
       "type": "remote",
       "url": "https://mcp.context7.com/mcp",
       "enabled": true
+    },
+    "framelink-figma": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "figma-developer-mcp",
+        "--figma-api-key=${FIGMA_API_KEY}",
+        "--stdio"
+      ],
+      "enabled": false,
+      "description": "Needs FIGMA_API_KEY env var - https://github.com/GLips/Figma-Context-MCP"
+    },
+    "21st-mcp": {
+      "type": "remote",
+      "url": "https://21st.dev/api/mcp",
+      "headers": {
+        "x-api-key": "${TWENTY_FIRST_API_KEY}"
+      },
+      "enabled": false,
+      "description": "Needs API key from https://21st.dev/mcp"
+    },
+    "augments": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@augmnt-sh/augments-mcp-server"
+      ],
+      "enabled": true
+    },
+    "brandkit": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "brandkit-mcp",
+        "serve"
+      ],
+      "enabled": true
+    },
+    "shadcn-ui": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "shadcn-ui-server"
+      ],
+      "enabled": true
     }
   }
 }

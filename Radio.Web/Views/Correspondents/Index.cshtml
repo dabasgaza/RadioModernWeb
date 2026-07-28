@@ -18,7 +18,13 @@
 
 @if (!Model.Any())
 {
-    <partial name="_EmptyState" model='new { Icon = "map", Title = "لا يوجد مراسلون", Description = "لم يتم العثور على أي مراسلين تطابق البحث.", ActionUrl = User.HasPermission(AppPermissions.CoordinationManage) ? "/Correspondents/Create" : null, ActionText = "إضافة مراسل جديد", ActionIcon = "add" }' />
+    ViewBag.EmptyIcon = "map";
+    ViewBag.EmptyTitle = "لا يوجد مراسلون";
+    ViewBag.EmptyDesc = "لم يتم العثور على أي مراسلين تطابق البحث.";
+    ViewBag.EmptyActionUrl = User.HasPermission(AppPermissions.CoordinationManage) ? "/Correspondents/Create" : null;
+    ViewBag.EmptyActionText = "إضافة مراسل جديد";
+    ViewBag.EmptyActionIcon = "add";
+    <partial name="_EmptyState" />
 }
 else
 {

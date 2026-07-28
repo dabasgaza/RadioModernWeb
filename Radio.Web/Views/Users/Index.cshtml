@@ -18,7 +18,13 @@
 
 @if (!Model.Any())
 {
-    <partial name="_EmptyState" model='new { Icon = "admin_panel_settings", Title = "لا مستخدمين", Description = "لم يتم العثور على أي مستخدمين تطابق البحث.", ActionUrl = User.HasPermission(AppPermissions.UserManage) ? "/Users/Create" : null, ActionText = "إضافة مستخدم جديد", ActionIcon = "add" }' />
+    ViewBag.EmptyIcon = "admin_panel_settings";
+    ViewBag.EmptyTitle = "لا مستخدمين";
+    ViewBag.EmptyDesc = "لم يتم العثور على أي مستخدمين تطابق البحث.";
+    ViewBag.EmptyActionUrl = User.HasPermission(AppPermissions.UserManage) ? "/Users/Create" : null;
+    ViewBag.EmptyActionText = "إضافة مستخدم جديد";
+    ViewBag.EmptyActionIcon = "add";
+    <partial name="_EmptyState" />
 }
 else
 {

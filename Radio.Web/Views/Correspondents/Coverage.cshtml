@@ -13,7 +13,10 @@
 
 @if (!Model.Any())
 {
-    <partial name="_EmptyState" model='new { Icon = "list_alt", Title = "لا تغطيات", Description = "لم تتم إضافة تغطيات لهذا المراسل بعد." }' />
+    ViewBag.EmptyIcon = "list_alt";
+    ViewBag.EmptyTitle = "لا تغطيات";
+    ViewBag.EmptyDesc = "لم تتم إضافة تغطيات لهذا المراسل بعد.";
+    <partial name="_EmptyState" />
 }
 else
 {

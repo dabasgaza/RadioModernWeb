@@ -6,29 +6,31 @@
 }
 @if (!hideCard)
 {
-    @:<div class="rounded-xl p-5 mb-8" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
+    @:<div class="rounded-xl p-5 mb-8" style="background:var(--color-surface);border:1px solid var(--color-border)">
 }
 <form method="get" class="flex gap-3">
     <div class="relative flex-1">
-        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style="color: var(--color-text-tertiary);">search</span>
+        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style="color:var(--color-text-muted)">search</span>
         <input type="text" name="search" value="@searchValue" placeholder="@searchPlaceholder"
-               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
-               style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);" />
+               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium transition-all"
+               style="background:var(--color-bg);border:1px solid var(--color-border);color:var(--color-text)"
+               onfocus="this.style.borderColor='var(--color-primary)';this.style.boxShadow='0 0 0 2px color-mix(in srgb, var(--color-primary) 15%, transparent)'"
+               onblur="this.style.borderColor='var(--color-border)';this.style.boxShadow='none'" />
         @if (!string.IsNullOrWhiteSpace(searchValue))
         {
-            <a href="@searchAction" class="absolute left-3 top-1/2 -translate-y-1/2" style="color: var(--color-text-tertiary)" title="مسح البحث">
+            <a href="@searchAction" class="absolute left-3 top-1/2 -translate-y-1/2" style="color:var(--color-text-muted)" title="مسح البحث">
                 <span class="material-symbols-rounded text-lg">close</span>
             </a>
         }
     </div>
     <div class="flex items-center gap-2 shrink-0">
-        <button type="submit" class="btn btn-primary rounded-xl gap-2">
+        <button type="submit" class="btn btn-primary gap-2">
             <span class="material-symbols-rounded">search</span>
             بحث
         </button>
         @if (!string.IsNullOrWhiteSpace(searchValue))
         {
-            <a href="@searchAction" class="btn btn-ghost rounded-xl" title="إعادة ضبط">
+            <a href="@searchAction" class="btn btn-ghost" title="إعادة ضبط">
                 <span class="material-symbols-rounded">restart_alt</span>
             </a>
         }
@@ -38,3 +40,4 @@
 {
     @:</div>
 }
+
