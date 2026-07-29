@@ -2,90 +2,57 @@
 @{
     ViewData["Title"] = Model.Episode.EpisodeName;
     var ep = Model.Episode;
+
+    ViewBag.Title = ep.EpisodeName;
+    ViewBag.Icon = "podcasts";
+    ViewBag.Description = $"البرنامج الإذاعي: {ep.ProgramName}";
+    ViewBag.EntityName = "الحلقات";
+    ViewBag.EntityUrl = "/Episodes";
+
+    var stages = new[] {
+        new { Id = 0, Name = "مجدولة",       Icon = "calendar_today" },
+        new { Id = 1, Name = "منفّذة",        Icon = "play_circle" },
+        new { Id = 2, Name = "منشورة رقمياً", Icon = "share" },
+        new { Id = 3, Name = "منشورة على الموقع", Icon = "public" }
+    };
+    var isCancelled = ep.StatusId == 4;
+    bool IsDone(int i) { if (isCancelled) return i == 0; return ep.StatusId > stages[i].Id; }
+    bool IsCurrent(int i) { if (isCancelled) return false; return ep.StatusId == stages[i].Id; }
+
+    var socialRecords = Model.PublishingRecords.Where(r => r.RecordType == "SocialMedia").ToList();
+    var websiteRecords = Model.PublishingRecords.Where(r => r.RecordType == "Website").ToList();
+
+    void CStageIcon(string icon, string color)
+    {
+        <span class="material-symbols-rounded p-1 rounded-lg text-lg" style="background:color-mix(in srgb,var(--color-@(color)) 15%,transparent);color:var(--color-@(color))">@icon</span>
+    }
 }
 
-<div class="animate-slide-up mb-8">
-    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-        <div>
-            <div class="text-xs font-medium text-[var(--color-text-muted)] mb-1.5 flex items-center gap-1.5">
-                <a href="/" class="hover:text-[var(--color-primary)] transition-colors inline-flex items-center gap-1">
-                    <span class="material-symbols-rounded text-sm">home</span>
-                    الرئيسية
-                </a>
-                <span class="text-[var(--color-text-muted)]">·</span>
-                <a href="/Episodes" class="hover:text-[var(--color-primary)] transition-colors inline-flex items-center gap-1">
-                    <span class="material-symbols-rounded text-sm">podcasts</span>
-                    الحلقات
-                </a>
-                <span class="text-[var(--color-text-muted)]">·</span>
-                <span class="text-[var(--color-text)] font-semibold">تفاصيل الحلقة</span>
-            </div>
-            <div class="flex items-center gap-3 mt-1">
-                <h1 class="text-xl font-bold text-[var(--color-text)]">@ep.EpisodeName</h1>
-                <partial name="_StatusBadge" model='new StatusBadgeViewModel { Type = "episode", Status = ep.StatusText, Label = ep.StatusText }' />
-            </div>
-            <p class="text-sm text-[var(--color-text-secondary)] mt-0.5 flex items-center gap-2">
-                <span class="material-symbols-rounded text-base text-[var(--color-primary)]">radio</span>
-                البرنامج الإذاعي: <strong>@ep.ProgramName</strong>
-            </p>
-        </div>
-        <a href="/Episodes" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-hover)] rounded-lg transition-colors">
-            <span class="material-symbols-rounded text-base">arrow_forward</span>
-            الرجوع للحلقات
-        </a>
-    </div>
+<partial name="_PageHeader" />
+
+<div class="flex items-center gap-3 mb-6">
+    <partial name="_StatusBadge" model='new StatusBadgeViewModel { Type = "episode", Status = ep.StatusText, Label = ep.StatusText }' />
+    @if (!isCancelled)
+    {
+        <span class="text-xs text-text-secondary">المرحلة الحالية: @ep.StatusText</span>
+    }
+    else
+    {
+        <span class="text-xs text-danger font-semibold">ملغاة</span>
+    }
 </div>
 
-<div class="rounded-xl p-6 lg:p-8 mb-8 relative overflow-hidden" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
-    <div class="flex items-center justify-between mb-6 pb-4 relative z-10" style="border-bottom: 1px solid var(--color-border);">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: var(--color-primary-subtle); color: var(--color-primary);">
-                <span class="material-symbols-rounded text-xl">timeline</span>
-            </div>
-            <div>
-                <h3 class="font-bold text-[var(--color-text)]">مسار ودورة عمل الحلقة</h3>
-                <p class="text-xs text-[var(--color-text-muted)]">متابعة مراحل التنفيذ والنشر من الإعداد حتى البث الفعلي</p>
-            </div>
+<!-- Timeline -->
+<div class="rounded-xl p-6 lg:p-8 mb-8 bg-surface border border-border relative overflow-hidden">
+    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-border">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary-subtle text-primary shrink-0">
+            <span class="material-symbols-rounded text-xl">timeline</span>
         </div>
-        @if (ep.StatusId == 4)
-        {
-            <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg" style="background: var(--color-danger-light); color: var(--color-danger);">
-                <span class="material-symbols-rounded text-sm">cancel</span>
-                حلقة ملغاة
-            </span>
-        }
-        else
-        {
-            <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg" style="background: var(--color-primary-subtle); color: var(--color-primary);">
-                <span class="material-symbols-rounded text-sm">sync</span>
-                المرحلة الحالية: @ep.StatusText
-            </span>
-        }
+        <div>
+            <h3 class="font-bold text-text">مسار ودورة عمل الحلقة</h3>
+            <p class="text-xs text-text-muted">متابعة مراحل التنفيذ والنشر من الإعداد حتى البث الفعلي</p>
+        </div>
     </div>
-
-    @{
-        var stages = new[] {
-            new { Id = 0, Name = "مجدولة",       Icon = "calendar_today" },
-            new { Id = 1, Name = "منفّذة",        Icon = "play_circle" },
-            new { Id = 2, Name = "منشورة رقمياً", Icon = "share" },
-            new { Id = 3, Name = "منشورة على الموقع", Icon = "public" }
-        };
-        var isCancelled = ep.StatusId == 4;
-
-        bool IsDone(int i)
-        {
-            if (isCancelled) return i == 0;
-            return ep.StatusId > stages[i].Id;
-        }
-
-        bool IsCurrent(int i)
-        {
-            if (isCancelled) return false;
-            return ep.StatusId == stages[i].Id;
-        }
-
-        var currentStageIndex = isCancelled ? -1 : Array.FindIndex(stages, s => s.Id == ep.StatusId);
-    }
 
     <div class="relative space-y-0" style="padding-inline-start:2rem">
         @for (int i = 0; i < stages.Length; i++)
@@ -96,23 +63,19 @@
             var lineActive = i < stages.Length - 1 && (IsDone(i + 1) || IsCurrent(i + 1));
 
             <div class="flex items-start gap-4 pb-2 relative">
-                <div class="absolute -right-[18px] top-10 w-0.5 h-[calc(100%-2rem)] z-0 transition-all duration-500"
-                     style="background:@(lineActive && !isCancelled ? "var(--color-success)" : "var(--color-bg)")"></div>
-
-                <div class="w-12 h-12 rounded-2xl flex items-center justify-center z-10 shrink-0 border-2 transition-all duration-300"
-                     style="background:@(done && !isCancelled ? "var(--color-success)" : current && !isCancelled ? "var(--color-primary)" : "var(--color-bg)");color:@(done || current ? "white" : "var(--color-text-muted)");border-color:@(done && !isCancelled ? "var(--color-success)" : current && !isCancelled ? "var(--color-primary)" : "var(--color-border)");@(done && !isCancelled ? "box-shadow:0 0 0 4px color-mix(in srgb,var(--color-success) 25%,transparent)" : current && !isCancelled ? "box-shadow:var(--shadow-float);transform:scale(1.1)" : "")">
+                <div class="absolute -right-[18px] top-10 w-0.5 h-[calc(100%-2rem)] z-0 transition-all duration-500" style="background:@(lineActive && !isCancelled ? "var(--color-success)" : "var(--color-bg)")"></div>
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center z-10 shrink-0 border-2 transition-all duration-300" style="background:@(done && !isCancelled ? "var(--color-success)" : current && !isCancelled ? "var(--color-primary)" : "var(--color-bg)");color:@(done || current ? "white" : "var(--color-text-muted)");border-color:@(done && !isCancelled ? "var(--color-success)" : current && !isCancelled ? "var(--color-primary)" : "var(--color-border)");@(done && !isCancelled ? "box-shadow:0 0 0 4px color-mix(in srgb,var(--color-success) 25%,transparent)" : current && !isCancelled ? "box-shadow:var(--shadow-float);transform:scale(1.1)" : "")">
                     <span class="material-symbols-rounded text-xl">@(done && !isCancelled ? "check" : s.Icon)</span>
                 </div>
-
                 <div class="flex-1 py-2">
                     <div class="text-sm font-bold" style="color:@(done && !isCancelled ? "var(--color-success)" : current && !isCancelled ? "var(--color-primary)" : "var(--color-text-muted)")">@s.Name</div>
                     @if (current && !isCancelled)
                     {
-                        <span class="text-[10px] font-bold mt-1 inline-block px-2.5 py-0.5 rounded-full animate-pulse" style="background:var(--color-primary-subtle);color:var(--color-primary)">المرحلة النشطة</span>
+                        <span class="text-[10px] font-bold mt-1 inline-block px-2.5 py-0.5 rounded-full animate-pulse bg-primary-subtle text-primary">المرحلة النشطة</span>
                     }
                     @if (done && !isCancelled && !current)
                     {
-                        <span class="text-[10px] mt-0.5 block font-medium" style="color:var(--color-success)">✓ تم</span>
+                        <span class="text-[10px] mt-0.5 block font-medium text-success">✓ تم</span>
                     }
                 </div>
             </div>
@@ -124,7 +87,7 @@
                     <span class="material-symbols-rounded text-xl">cancel</span>
                 </div>
                 <div class="flex-1 py-2">
-                    <div class="text-sm font-bold" style="color:var(--color-danger)">ملغاة</div>
+                    <div class="text-sm font-bold text-danger">ملغاة</div>
                     <span class="text-[10px] font-bold mt-1 inline-block px-2.5 py-0.5 rounded-full" style="background:color-mix(in srgb,var(--color-danger) 15%,transparent);color:var(--color-danger)">نهائية</span>
                 </div>
             </div>
@@ -134,414 +97,362 @@
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <div class="lg:col-span-2 space-y-6">
-        <div class="rounded-xl p-6" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
-            <div class="flex items-center gap-2 mb-4 pb-3" style="border-bottom: 1px solid var(--color-border);">
-                <span class="material-symbols-rounded text-[var(--color-primary)] p-1 rounded-lg text-lg" style="background: var(--color-primary-subtle);">info</span>
-                <h3 class="font-bold text-[var(--color-text)]">معلومات الحلقة الأساسية</h3>
-            </div>
-            <div class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="p-3 rounded-xl" style="background: var(--color-bg); border: 1px solid var(--color-border);">
-                        <div class="text-[10px] font-bold text-[var(--color-text-muted)] mb-1">البرنامج الإذاعي</div>
-                        <div class="font-bold text-[var(--color-text)] text-sm flex items-center gap-1">
-                            <span class="material-symbols-rounded text-sm text-[var(--color-primary)]">radio</span>
-                            @ep.ProgramName
-                        </div>
-                    </div>
-                    <div class="p-3 rounded-xl" style="background: var(--color-bg); border: 1px solid var(--color-border);">
-                        <div class="text-[10px] font-bold text-[var(--color-text-muted)] mb-1">حالة الحلقة الحالية</div>
-                        <partial name="_StatusBadge" model='new StatusBadgeViewModel { Type = "episode", Status = ep.StatusText, Label = ep.StatusText }' />
+
+        <!-- Basic info -->
+        <div class="rounded-xl p-6 bg-surface border border-border">
+            @{
+                ViewBag.SectionIcon = "info";
+                ViewBag.SectionTitle = "معلومات الحلقة الأساسية";
+                ViewBag.SectionSubtitle = null;
+                ViewBag.SectionAction = null;
+            }
+            <partial name="_SectionHeader" />
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-3 rounded-xl bg-bg border border-border">
+                    <div class="text-[10px] font-bold text-text-muted mb-1">البرنامج الإذاعي</div>
+                    <div class="font-bold text-text text-sm flex items-center gap-1">
+                        <span class="material-symbols-rounded text-sm text-primary">radio</span>
+                        @ep.ProgramName
                     </div>
                 </div>
-
-                @if (!string.IsNullOrWhiteSpace(ep.EpisodeDescription))
-                {
-                    <div class="p-4 rounded-xl" style="border-right: 4px solid var(--color-primary); background: var(--color-primary-subtle);">
-                        <div class="text-[10px] font-bold text-[var(--color-primary)] mb-1">وصف ومحتوى الحلقة</div>
-                        <div class="text-[var(--color-text)] text-sm leading-relaxed whitespace-pre-line font-medium">@ep.EpisodeDescription</div>
-                    </div>
-                }
-
-                @if (!string.IsNullOrWhiteSpace(ep.SpecialNotes))
-                {
-                    <div class="p-4 rounded-xl" style="border-right: 4px solid var(--color-warning); background: var(--color-warning-light);">
-                        <div class="text-[10px] font-bold text-[var(--color-warning)] mb-1">ملاحظات وتوجيهات خاصة</div>
-                        <div class="text-[var(--color-text)] text-sm font-medium">@ep.SpecialNotes</div>
-                    </div>
-                }
-
-                @if (!string.IsNullOrWhiteSpace(ep.CancellationReason))
-                {
-                    <div class="p-4 rounded-xl" style="border-right: 4px solid var(--color-danger); background: var(--color-danger-light);">
-                        <div class="text-[10px] font-bold text-[var(--color-danger)] mb-1 flex items-center gap-1">
-                            <span class="material-symbols-rounded text-xs">warning</span>
-                            سبب إلغاء وجدولة الحلقة
-                        </div>
-                        <div class="text-[var(--color-text)] text-sm font-medium">@ep.CancellationReason</div>
-                    </div>
-                }
+                <div class="p-3 rounded-xl bg-bg border border-border">
+                    <div class="text-[10px] font-bold text-text-muted mb-1">حالة الحلقة الحالية</div>
+                    <partial name="_StatusBadge" model='new StatusBadgeViewModel { Type = "episode", Status = ep.StatusText, Label = ep.StatusText }' />
+                </div>
             </div>
+
+            @if (!string.IsNullOrWhiteSpace(ep.EpisodeDescription))
+            {
+                <div class="mt-4 p-4 rounded-xl" style="border-right:4px solid var(--color-primary);background:var(--color-primary-subtle)">
+                    <div class="text-[10px] font-bold text-primary mb-1">وصف ومحتوى الحلقة</div>
+                    <div class="text-text text-sm leading-relaxed whitespace-pre-line font-medium">@ep.EpisodeDescription</div>
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(ep.SpecialNotes))
+            {
+                <div class="mt-4 p-4 rounded-xl" style="border-right:4px solid var(--color-warning);background:color-mix(in srgb,var(--color-warning) 10%,transparent)">
+                    <div class="text-[10px] font-bold text-warning mb-1">ملاحظات وتوجيهات خاصة</div>
+                    <div class="text-text text-sm font-medium">@ep.SpecialNotes</div>
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(ep.CancellationReason))
+            {
+                <div class="mt-4 p-4 rounded-xl" style="border-right:4px solid var(--color-danger);background:color-mix(in srgb,var(--color-danger) 10%,transparent)">
+                    <div class="text-[10px] font-bold text-danger mb-1 flex items-center gap-1">
+                        <span class="material-symbols-rounded text-xs">warning</span>
+                        سبب إلغاء وجدولة الحلقة
+                    </div>
+                    <div class="text-text text-sm font-medium">@ep.CancellationReason</div>
+                </div>
+            }
         </div>
 
-        <div class="rounded-xl p-6 @(ep.StatusId < 1 ? "ring-2" : "")" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border); @(ep.StatusId < 1 ? "--tw-ring-color: var(--color-primary);" : "")">
-            <div class="flex items-center gap-2 mb-4 pb-3" style="border-bottom: 1px solid var(--color-border);">
-                <span class="material-symbols-rounded text-[var(--color-primary)] p-1 rounded-lg text-lg" style="background: var(--color-primary-subtle);">calendar_today</span>
-                <h3 class="font-bold text-[var(--color-text)] flex-1">تفاصيل مرحلة التخطيط</h3>
-                @if (ep.StatusId == 0)
-                {
-                    <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full" style="background: var(--color-primary-subtle); color: var(--color-primary); border: 1px solid var(--color-border);">المرحلة الحالية</span>
-                }
-            </div>
-            <div class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="p-3 rounded-xl" style="background: var(--color-bg); border: 1px solid var(--color-border);">
-                        <div class="text-[10px] font-bold text-[var(--color-text-muted)] mb-1">الموعد المجدول للبث</div>
-                        <div class="font-bold text-[var(--color-text)] text-sm flex items-center gap-1.5">
-                            <span class="material-symbols-rounded text-sm text-[var(--color-primary)]">schedule</span>
-                            @(ep.ScheduledExecutionTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")
-                        </div>
-                    </div>
-                    <div class="p-3 rounded-xl" style="background: var(--color-bg); border: 1px solid var(--color-border);">
-                        <div class="text-[10px] font-bold text-[var(--color-text-muted)] mb-1">البرنامج</div>
-                        <div class="font-bold text-[var(--color-text)] text-sm flex items-center gap-1.5">
-                            <span class="material-symbols-rounded text-sm text-[var(--color-primary)]">radio</span>
-                            @ep.ProgramName
-                        </div>
+        <!-- Planning -->
+        <div class="rounded-xl p-6 bg-surface border border-border @(ep.StatusId < 1 ? "ring-2" : "")" style="@(ep.StatusId < 1 ? "--tw-ring-color:var(--color-primary)" : "")">
+            @{
+                ViewBag.SectionIcon = "calendar_today";
+                ViewBag.SectionTitle = "تفاصيل مرحلة التخطيط";
+                ViewBag.SectionSubtitle = null;
+                ViewBag.SectionAction = ep.StatusId == 0 ? new Microsoft.AspNetCore.Html.HtmlString("<span class=\"text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-primary-subtle text-primary border border-border\">المرحلة الحالية</span>") : null;
+            }
+            <partial name="_SectionHeader" />
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-3 rounded-xl bg-bg border border-border">
+                    <div class="text-[10px] font-bold text-text-muted mb-1">الموعد المجدول للبث</div>
+                    <div class="font-bold text-text text-sm flex items-center gap-1.5">
+                        <span class="material-symbols-rounded text-sm text-primary">schedule</span>
+                        @(ep.ScheduledExecutionTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")
                     </div>
                 </div>
-
-                @if (ep.GuestItems.Any())
-                {
-                    <div>
-                        <div class="text-xs font-bold text-[var(--color-text)] mb-3 flex items-center gap-1">
-                            <span class="material-symbols-rounded text-sm text-[var(--color-primary)]">groups</span>
-                            الضيوف المشاركون (@ep.GuestItems.Count)
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach (var g in ep.GuestItems)
-                            {
-                                <div class="flex items-center gap-2.5 rounded-xl px-3 py-2 transition-all duration-200 hover:shadow-sm"
-                                     style="background: var(--color-bg); border: 1px solid var(--color-border);">
-                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-                                         style="background: var(--color-primary-subtle); color: var(--color-primary);">
-                                        @(g.Name?.Length > 0 ? g.Name.Substring(0, 1) : "?")
-                                    </div>
-                                    <div class="min-w-0">
-                                        <div class="text-xs font-bold text-[var(--color-text)] truncate max-w-[130px]">@g.Name</div>
-                                        @if (!string.IsNullOrWhiteSpace(g.Topic))
-                                        {
-                                            <div class="text-[10px] text-[var(--color-text-muted)] truncate max-w-[130px] flex items-center gap-0.5">
-                                                <span class="material-symbols-rounded text-[10px]">topic</span>
-                                                @g.Topic
-                                            </div>
-                                        }
-                                    </div>
-                                    @if (g.HostingTime.HasValue)
-                                    {
-                                        <div class="text-[10px] text-[var(--color-text-muted)] font-semibold whitespace-nowrap" dir="ltr" style="border-right: 1px solid var(--color-border); padding-right: 0.5rem;">
-                                            @g.HostingTime.Value.ToString(@"hh\:mm")
-                                        </div>
-                                    }
-                                </div>
-                            }
-                        </div>
+                <div class="p-3 rounded-xl bg-bg border border-border">
+                    <div class="text-[10px] font-bold text-text-muted mb-1">البرنامج</div>
+                    <div class="font-bold text-text text-sm flex items-center gap-1.5">
+                        <span class="material-symbols-rounded text-sm text-primary">radio</span>
+                        @ep.ProgramName
                     </div>
-                }
-
-                @if (ep.CorrespondentItems.Any())
-                {
-                    <div>
-                        <div class="text-xs font-bold text-[var(--color-text)] mb-3 flex items-center gap-1">
-                            <span class="material-symbols-rounded text-sm text-[var(--color-warning)]">map</span>
-                            المراسلون الميدانيون (@ep.CorrespondentItems.Count)
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach (var c in ep.CorrespondentItems)
-                            {
-                                <div class="flex items-center gap-2.5 rounded-xl px-3 py-2 transition-all duration-200 hover:shadow-sm"
-                                     style="background: var(--color-bg); border: 1px solid var(--color-border);">
-                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-                                         style="background: var(--color-warning-light); color: var(--color-warning);">
-                                        @(c.FullName?.Length > 0 ? c.FullName.Substring(0, 1) : "?")
-                                    </div>
-                                    <div class="min-w-0">
-                                        <div class="text-xs font-bold text-[var(--color-text)] truncate max-w-[130px]">@c.FullName</div>
-                                        @if (!string.IsNullOrWhiteSpace(c.Topic))
-                                        {
-                                            <div class="text-[10px] text-[var(--color-text-muted)] truncate max-w-[130px]">@c.Topic</div>
-                                        }
-                                    </div>
-                                    @if (c.HostingTime.HasValue)
-                                    {
-                                        <div class="text-[10px] text-[var(--color-text-muted)] font-semibold whitespace-nowrap" dir="ltr" style="border-right: 1px solid var(--color-border); padding-right: 0.5rem;">
-                                            @c.HostingTime.Value.ToString(@"hh\:mm")
-                                        </div>
-                                    }
-                                </div>
-                            }
-                        </div>
-                    </div>
-                }
-
-                @if (ep.EmployeeItems.Any())
-                {
-                    <div>
-                        <div class="text-xs font-bold text-[var(--color-text)] mb-3 flex items-center gap-1">
-                            <span class="material-symbols-rounded text-sm text-[var(--color-text-muted)]">badge</span>
-                            طاقم العمل والإنتاج (@ep.EmployeeItems.Count)
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach (var e in ep.EmployeeItems)
-                            {
-                                <div class="flex items-center gap-2.5 rounded-xl px-3 py-2 transition-all duration-200 hover:shadow-sm"
-                                     style="background: var(--color-bg); border: 1px solid var(--color-border);">
-                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-                                         style="background: var(--color-primary-subtle); color: var(--color-primary);">
-                                        @(e.FullName?.Length > 0 ? e.FullName.Substring(0, 1) : "?")
-                                    </div>
-                                    <div class="min-w-0">
-                                        <div class="text-xs font-bold text-[var(--color-text)] truncate max-w-[130px]">@e.FullName</div>
-                                        @if (!string.IsNullOrWhiteSpace(e.StaffRoleName))
-                                        {
-                                            <div class="text-[10px] text-[var(--color-text-muted)] truncate max-w-[130px] flex items-center gap-0.5">
-                                                <span class="material-symbols-rounded text-[10px]">badge</span>
-                                                @e.StaffRoleName
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                }
+                </div>
             </div>
+
+            @if (ep.GuestItems.Any())
+            {
+                <div class="mt-6">
+                    <div class="text-xs font-bold text-text mb-3 flex items-center gap-1">
+                        <span class="material-symbols-rounded text-sm text-primary">groups</span>
+                        الضيوف المشاركون (@ep.GuestItems.Count)
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach (var g in ep.GuestItems)
+                        {
+                            ViewBag.ChipName = g.Name;
+                            ViewBag.ChipSubtitle = g.Topic;
+                            ViewBag.ChipSubtitleIcon = "topic";
+                            ViewBag.ChipTime = g.HostingTime?.ToString(@"hh\:mm");
+                            ViewBag.ChipColor = "primary";
+                            <partial name="_PersonChip" />
+                        }
+                    </div>
+                </div>
+            }
+
+            @if (ep.CorrespondentItems.Any())
+            {
+                <div class="mt-6">
+                    <div class="text-xs font-bold text-text mb-3 flex items-center gap-1">
+                        <span class="material-symbols-rounded text-sm text-warning">map</span>
+                        المراسلون الميدانيون (@ep.CorrespondentItems.Count)
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach (var c in ep.CorrespondentItems)
+                        {
+                            ViewBag.ChipName = c.FullName;
+                            ViewBag.ChipSubtitle = c.Topic;
+                            ViewBag.ChipSubtitleIcon = null;
+                            ViewBag.ChipTime = c.HostingTime?.ToString(@"hh\:mm");
+                            ViewBag.ChipColor = "warning";
+                            <partial name="_PersonChip" />
+                        }
+                    </div>
+                </div>
+            }
+
+            @if (ep.EmployeeItems.Any())
+            {
+                <div class="mt-6">
+                    <div class="text-xs font-bold text-text mb-3 flex items-center gap-1">
+                        <span class="material-symbols-rounded text-sm">badge</span>
+                        طاقم العمل والإنتاج (@ep.EmployeeItems.Count)
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach (var e in ep.EmployeeItems)
+                        {
+                            ViewBag.ChipName = e.FullName;
+                            ViewBag.ChipSubtitle = e.StaffRoleName;
+                            ViewBag.ChipSubtitleIcon = "badge";
+                            ViewBag.ChipTime = null;
+                            ViewBag.ChipColor = "primary";
+                            <partial name="_PersonChip" />
+                        }
+                    </div>
+                </div>
+            }
         </div>
 
+        <!-- Execution stage -->
         @if (ep.StatusId >= 1)
         {
-            <div class="rounded-xl p-6 @(ep.StatusId == 1 ? "ring-2" : "")" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border); @(ep.StatusId == 1 ? "--tw-ring-color: var(--color-success);" : "")">
-                <div class="flex items-center gap-2 mb-4 pb-3" style="border-bottom: 1px solid var(--color-border);">
-                    <span class="material-symbols-rounded text-[var(--color-success)] p-1 rounded-lg text-lg" style="background: var(--color-success-light);">play_circle</span>
-                    <h3 class="font-bold text-[var(--color-text)] flex-1">تفاصيل مرحلة التنفيذ (الإنتاج)</h3>
+            <div class="rounded-xl p-6 bg-surface border border-border @(ep.StatusId == 1 ? "ring-2" : "")" style="@(ep.StatusId == 1 ? "--tw-ring-color:var(--color-success)" : "")">
+                <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
+                    @{ CStageIcon("play_circle", "success"); }
+                    <h3 class="font-bold text-text flex-1">تفاصيل مرحلة التنفيذ (الإنتاج)</h3>
                     @if (ep.StatusId == 1)
                     {
-                        <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full" style="background: var(--color-success-light); color: var(--color-success); border: 1px solid var(--color-border);">المرحلة الحالية</span>
+                        <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full" style="background:color-mix(in srgb,var(--color-success) 15%,transparent);color:var(--color-success);border:1px solid var(--color-border)">المرحلة الحالية</span>
                     }
                 </div>
-                <div class="space-y-3">
-                    @if (ep.ActualExecutionTime.HasValue)
-                    {
-                        var execLog = Model.PublishingRecords.FirstOrDefault(r => r.RecordType == "Execution");
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="p-3 rounded-xl" style="background: var(--color-bg); border: 1px solid var(--color-border);">
-                                <div class="text-[10px] font-bold text-[var(--color-text-muted)] mb-1">وقت التنفيذ الفعلي للبث</div>
-                                <div class="font-bold text-[var(--color-text)] text-sm flex items-center gap-1.5">
-                                    <span class="material-symbols-rounded text-sm text-[var(--color-success)]">event_available</span>
-                                    @ep.ActualExecutionTime.Value.ToString("yyyy-MM-dd HH:mm")
+
+                @if (ep.ActualExecutionTime.HasValue)
+                {
+                    var execLog = Model.PublishingRecords.FirstOrDefault(r => r.RecordType == "Execution");
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-3 rounded-xl bg-bg border border-border">
+                            <div class="text-[10px] font-bold text-text-muted mb-1">وقت التنفيذ الفعلي للبث</div>
+                            <div class="font-bold text-text text-sm flex items-center gap-1.5">
+                                <span class="material-symbols-rounded text-sm text-success">event_available</span>
+                                @ep.ActualExecutionTime.Value.ToString("yyyy-MM-dd HH:mm")
+                            </div>
+                        </div>
+                        @if (execLog != null)
+                        {
+                            <div class="p-3 rounded-xl bg-bg border border-border">
+                                <div class="text-[10px] font-bold text-text-muted mb-1">الملخص والمدة</div>
+                                <div class="font-bold text-text text-sm flex items-center gap-1.5">
+                                    <span class="material-symbols-rounded text-sm text-success">hourglass_empty</span>
+                                    @execLog.Summary
                                 </div>
                             </div>
-                            @if (execLog != null)
-                            {
-                                <div class="p-3 rounded-xl" style="background: var(--color-bg); border: 1px solid var(--color-border);">
-                                    <div class="text-[10px] font-bold text-[var(--color-text-muted)] mb-1">الملخص والمدة</div>
-                                    <div class="font-bold text-[var(--color-text)] text-sm flex items-center gap-1.5">
-                                        <span class="material-symbols-rounded text-sm text-[var(--color-success)]">hourglass_empty</span>
-                                        @execLog.Summary
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                        if (User.HasPermission(AppPermissions.EpisodeExecute) && execLog != null)
-                        {
-                            <a href="/ExecutionLogs/Edit/@execLog.RecordId" class="inline-flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-xs font-semibold transition-all"
-                               style="background: var(--color-success-light); color: var(--color-success); border: 1px solid var(--color-border); hover:opacity-80;">
-                                <span class="material-symbols-rounded text-sm">edit</span>
-                                تعديل بيانات التنفيذ
-                            </a>
                         }
-                    }
-                    else
+                    </div>
+                    if (User.HasPermission(AppPermissions.EpisodeExecute) && execLog != null)
                     {
-                        <div class="text-[var(--color-text-muted)] text-sm flex items-center gap-2 py-2">
-                            <span class="material-symbols-rounded text-[var(--color-text-muted)]">help_outline</span>
-                            لم يتم تسجيل وقت التنفيذ الفعلي بعد.
-                        </div>
+                        <a href="/ExecutionLogs/Edit/@execLog.RecordId" class="mt-4 inline-flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-xs font-semibold transition-all" style="background:color-mix(in srgb,var(--color-success) 15%,transparent);color:var(--color-success);border:1px solid var(--color-border)">
+                            <span class="material-symbols-rounded text-sm">edit</span>
+                            تعديل بيانات التنفيذ
+                        </a>
                     }
-                </div>
+                }
+                else
+                {
+                    <div class="text-text-muted text-sm flex items-center gap-2 py-2">
+                        <span class="material-symbols-rounded text-text-muted">help_outline</span>
+                        لم يتم تسجيل وقت التنفيذ الفعلي بعد.
+                    </div>
+                }
             </div>
         }
 
+        <!-- Social stage -->
         @if (ep.StatusId >= 2)
         {
-            <div class="rounded-xl p-6 @(ep.StatusId == 2 ? "ring-2" : "")" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border); @(ep.StatusId == 2 ? "--tw-ring-color: var(--color-success);" : "")">
-                <div class="flex items-center gap-2 mb-4 pb-3" style="border-bottom: 1px solid var(--color-border);">
-                    <span class="material-symbols-rounded text-[var(--color-success)] p-1 rounded-lg text-lg" style="background: var(--color-success-light);">share</span>
-                    <h3 class="font-bold text-[var(--color-text)] flex-1">تفاصيل النشر الرقمي (سوشال)</h3>
+            <div class="rounded-xl p-6 bg-surface border border-border @(ep.StatusId == 2 ? "ring-2" : "")" style="@(ep.StatusId == 2 ? "--tw-ring-color:var(--color-success)" : "")">
+                <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
+                    @{ CStageIcon("share", "success"); }
+                    <h3 class="font-bold text-text flex-1">تفاصيل النشر الرقمي (سوشال)</h3>
                     @if (ep.StatusId == 2)
                     {
-                        <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full" style="background: var(--color-success-light); color: var(--color-success); border: 1px solid var(--color-border);">المرحلة الحالية</span>
+                        <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full" style="background:color-mix(in srgb,var(--color-success) 15%,transparent);color:var(--color-success);border:1px solid var(--color-border)">المرحلة الحالية</span>
                     }
                 </div>
-                <div class="space-y-3">
-                    @{
-                        var socialRecords = Model.PublishingRecords.Where(r => r.RecordType == "SocialMedia").ToList();
-                    }
-                    @if (socialRecords.Any())
-                    {
-                        <div class="space-y-3">
-                            @foreach (var sr in socialRecords)
-                            {
-                                <div class="rounded-xl p-4 transition" style="background: var(--color-bg); border: 1px solid var(--color-border);">
-                                    <div class="flex items-center justify-between mb-2 pb-2" style="border-bottom: 1px solid var(--color-border);">
-                                        <span class="font-bold text-[var(--color-text)] text-sm flex items-center gap-1.5">
-                                            <span class="material-symbols-rounded text-sm text-[var(--color-primary)]">person_pin</span>
-                                            @sr.Summary
-                                        </span>
-                                        <span class="text-xs text-[var(--color-text-muted)] font-medium flex items-center gap-1">
-                                            <span class="material-symbols-rounded text-xs">schedule</span>
-                                            @sr.RecordDate.ToString("yyyy-MM-dd HH:mm")
-                                        </span>
-                                    </div>
-                                    <div class="text-xs text-[var(--color-text-muted)] flex items-center gap-1">
-                                        <span class="material-symbols-rounded text-xs text-[var(--color-text-muted)]">account_circle</span>
-                                        المسؤول عن النشر: @(sr.RecordedBy ?? "تلقائي")
-                                    </div>
-                                    @if (User.HasPermission(AppPermissions.EpisodePublish))
-                                    {
-                                        <a href="/Publishing/Edit/@sr.RecordId" class="inline-flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-xs font-semibold mt-3 transition-all"
-                                           style="background: var(--color-primary-subtle); color: var(--color-primary); border: 1px solid var(--color-border);">
-                                            <span class="material-symbols-rounded text-sm">edit</span>
-                                            تعديل النشر الرقمي
-                                        </a>
-                                    }
+
+                @if (socialRecords.Any())
+                {
+                    <div class="space-y-3">
+                        @foreach (var sr in socialRecords)
+                        {
+                            <div class="rounded-xl p-4 bg-bg border border-border">
+                                <div class="flex items-center justify-between mb-2 pb-2 border-b border-border">
+                                    <span class="font-bold text-text text-sm flex items-center gap-1.5">
+                                        <span class="material-symbols-rounded text-sm text-primary">person_pin</span>
+                                        @sr.Summary
+                                    </span>
+                                    <span class="text-xs text-text-muted font-medium flex items-center gap-1">
+                                        <span class="material-symbols-rounded text-xs">schedule</span>
+                                        @sr.RecordDate.ToString("yyyy-MM-dd HH:mm")
+                                    </span>
                                 </div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="text-[var(--color-text-muted)] text-sm flex items-center gap-2 py-2">
-                            <span class="material-symbols-rounded text-[var(--color-text-muted)]">help_outline</span>
-                            لا توجد سجلات نشر رقمي مسجلة بعد.
-                        </div>
-                    }
-                </div>
+                                <div class="text-xs text-text-muted flex items-center gap-1">
+                                    <span class="material-symbols-rounded text-xs text-text-muted">account_circle</span>
+                                    المسؤول عن النشر: @(sr.RecordedBy ?? "تلقائي")
+                                </div>
+                                @if (User.HasPermission(AppPermissions.EpisodePublish))
+                                {
+                                    <a href="/Publishing/Edit/@sr.RecordId" class="mt-3 inline-flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-xs font-semibold transition-all" style="background:var(--color-primary-subtle);color:var(--color-primary);border:1px solid var(--color-border)">
+                                        <span class="material-symbols-rounded text-sm">edit</span>
+                                        تعديل النشر الرقمي
+                                    </a>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-text-muted text-sm flex items-center gap-2 py-2">
+                        <span class="material-symbols-rounded text-text-muted">help_outline</span>
+                        لا توجد سجلات نشر رقمي مسجلة بعد.
+                    </div>
+                }
             </div>
         }
 
+        <!-- Website stage -->
         @if (ep.StatusId >= 3)
         {
-            <div class="rounded-xl p-6 @(ep.StatusId == 3 ? "ring-2" : "")" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border); @(ep.StatusId == 3 ? "--tw-ring-color: var(--color-accent);" : "")">
-                <div class="flex items-center gap-2 mb-4 pb-3" style="border-bottom: 1px solid var(--color-border);">
-                    <span class="material-symbols-rounded text-[var(--color-accent)] p-1 rounded-lg text-lg" style="background: var(--color-accent-light);">public</span>
-                    <h3 class="font-bold text-[var(--color-text)] flex-1">تفاصيل النشر على الموقع الرسمي</h3>
+            <div class="rounded-xl p-6 bg-surface border border-border @(ep.StatusId == 3 ? "ring-2" : "")" style="@(ep.StatusId == 3 ? "--tw-ring-color:var(--color-accent)" : "")">
+                <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
+                    @{ CStageIcon("public", "accent"); }
+                    <h3 class="font-bold text-text flex-1">تفاصيل النشر على الموقع الرسمي</h3>
                     @if (ep.StatusId == 3)
                     {
-                        <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full" style="background: var(--color-accent-light); color: var(--color-accent); border: 1px solid var(--color-border);">المرحلة الحالية</span>
+                        <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full" style="background:color-mix(in srgb,var(--color-accent) 15%,transparent);color:var(--color-accent);border:1px solid var(--color-border)">المرحلة الحالية</span>
                     }
                 </div>
-                <div class="space-y-3">
-                    @{
-                        var websiteRecords = Model.PublishingRecords.Where(r => r.RecordType == "Website").ToList();
-                    }
-                    @if (websiteRecords.Any())
-                    {
-                        <div class="space-y-3">
-                            @foreach (var wr in websiteRecords)
-                            {
-                                <div class="rounded-xl p-4 transition" style="background: var(--color-bg); border: 1px solid var(--color-border);">
-                                    <div class="flex items-center justify-between mb-2 pb-2" style="border-bottom: 1px solid var(--color-border);">
-                                        <span class="font-bold text-[var(--color-text)] text-sm flex items-center gap-1.5">
-                                            <span class="material-symbols-rounded text-sm text-[var(--color-accent)]">language</span>
-                                            @wr.Summary
-                                        </span>
-                                        <span class="text-xs text-[var(--color-text-muted)] font-medium flex items-center gap-1">
-                                            <span class="material-symbols-rounded text-xs">schedule</span>
-                                            @wr.RecordDate.ToString("yyyy-MM-dd HH:mm")
-                                        </span>
-                                    </div>
-                                    <div class="text-xs text-[var(--color-text-muted)] flex items-center gap-1">
-                                        <span class="material-symbols-rounded text-xs text-[var(--color-text-muted)]">account_circle</span>
-                                        المسؤول عن النشر: @(wr.RecordedBy ?? "تلقائي")
-                                    </div>
-                                    @if (User.HasPermission(AppPermissions.EpisodeWebPublish))
-                                    {
-                                        <a href="/WebsitePublishing/Edit/@wr.RecordId" class="inline-flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-xs font-semibold mt-3 transition-all"
-                                           style="background: var(--color-accent-light); color: var(--color-accent); border: 1px solid var(--color-border);">
-                                            <span class="material-symbols-rounded text-sm">edit</span>
-                                            تعديل النشر على الموقع
-                                        </a>
-                                    }
+
+                @if (websiteRecords.Any())
+                {
+                    <div class="space-y-3">
+                        @foreach (var wr in websiteRecords)
+                        {
+                            <div class="rounded-xl p-4 bg-bg border border-border">
+                                <div class="flex items-center justify-between mb-2 pb-2 border-b border-border">
+                                    <span class="font-bold text-text text-sm flex items-center gap-1.5">
+                                        <span class="material-symbols-rounded text-sm text-accent">language</span>
+                                        @wr.Summary
+                                    </span>
+                                    <span class="text-xs text-text-muted font-medium flex items-center gap-1">
+                                        <span class="material-symbols-rounded text-xs">schedule</span>
+                                        @wr.RecordDate.ToString("yyyy-MM-dd HH:mm")
+                                    </span>
                                 </div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="text-[var(--color-text-muted)] text-sm flex items-center gap-2 py-2">
-                            <span class="material-symbols-rounded text-[var(--color-text-muted)]">help_outline</span>
-                            لا توجد سجلات نشر موقع مسجلة بعد.
-                        </div>
-                    }
-                </div>
+                                <div class="text-xs text-text-muted flex items-center gap-1">
+                                    <span class="material-symbols-rounded text-xs text-text-muted">account_circle</span>
+                                    المسؤول عن النشر: @(wr.RecordedBy ?? "تلقائي")
+                                </div>
+                                @if (User.HasPermission(AppPermissions.EpisodeWebPublish))
+                                {
+                                    <a href="/WebsitePublishing/Edit/@wr.RecordId" class="mt-3 inline-flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-xs font-semibold transition-all" style="background:color-mix(in srgb,var(--color-accent) 15%,transparent);color:var(--color-accent);border:1px solid var(--color-border)">
+                                        <span class="material-symbols-rounded text-sm">edit</span>
+                                        تعديل النشر على الموقع
+                                    </a>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-text-muted text-sm flex items-center gap-2 py-2">
+                        <span class="material-symbols-rounded text-text-muted">help_outline</span>
+                        لا توجد سجلات نشر موقع مسجلة بعد.
+                    </div>
+                }
             </div>
         }
     </div>
 
+    <!-- Right sidebar -->
     <div class="space-y-6">
-        <div class="rounded-xl p-6" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
-            <div class="flex items-center gap-2 mb-4 pb-3" style="border-bottom: 1px solid var(--color-border);">
-                <span class="material-symbols-rounded text-[var(--color-primary)] p-1.5 rounded-lg text-lg" style="background: var(--color-primary-subtle);">bolt</span>
-                <h3 class="font-bold text-[var(--color-text)]">إجراءات الحلقة</h3>
+
+        <!-- Actions -->
+        <div class="rounded-xl p-6 bg-surface border border-border">
+            <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary-subtle text-primary shrink-0">
+                    <span class="material-symbols-rounded text-lg">bolt</span>
+                </div>
+                <h3 class="font-bold text-text">إجراءات الحلقة</h3>
             </div>
             <div class="space-y-3">
                 @if (User.HasPermission(AppPermissions.EpisodeEdit) && ep.StatusId != 4)
                 {
-                    <a href="/Episodes/Edit/@ep.EpisodeId" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all"
-                       style="background: var(--color-primary-subtle); color: var(--color-primary); border: 1px solid var(--color-border);">
+                    <a href="/Episodes/Edit/@ep.EpisodeId" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all bg-primary-subtle text-primary border border-border">
                         <span class="material-symbols-rounded text-lg">edit</span>
                         تعديل خصائص الحلقة
                     </a>
                 }
                 @if (User.HasPermission(AppPermissions.EpisodeExecute) && ep.StatusId == 0)
                 {
-                    <button type="button" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-right"
-                            style="background: var(--color-success-light); color: var(--color-success); border: 1px solid var(--color-border);"
-                            onclick="openExecuteModal(@ep.EpisodeId, '@ep.EpisodeName')">
+                    <button type="button" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-right" style="background:color-mix(in srgb,var(--color-success) 15%,transparent);color:var(--color-success);border:1px solid var(--color-border)" onclick="document.getElementById('executeModal').showModal()">
                         <span class="material-symbols-rounded text-lg">play_circle</span>
                         تسجيل وتوثيق التنفيذ
                     </button>
                 }
                 @if (User.HasPermission(AppPermissions.EpisodePublish) && ep.StatusId == 1)
                 {
-                    <a href="/Publishing/LogSocial/@ep.EpisodeId" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all"
-                       style="background: var(--color-info-light); color: var(--color-info); border: 1px solid var(--color-border);">
+                    <a href="/Publishing/LogSocial/@ep.EpisodeId" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all" style="background:color-mix(in srgb,var(--color-info) 15%,transparent);color:var(--color-info);border:1px solid var(--color-border)">
                         <span class="material-symbols-rounded text-lg">share</span>
                         البدء بالنشر الرقمي (سوشال)
                     </a>
                 }
                 @if (User.HasPermission(AppPermissions.EpisodeWebPublish) && (ep.StatusId == 1 || ep.StatusId == 2))
                 {
-                    <a href="/WebsitePublishing/Publish/@ep.EpisodeId" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all"
-                       style="background: var(--color-accent-light); color: var(--color-accent); border: 1px solid var(--color-border);">
+                    <a href="/WebsitePublishing/Publish/@ep.EpisodeId" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all" style="background:color-mix(in srgb,var(--color-accent) 15%,transparent);color:var(--color-accent);border:1px solid var(--color-border)">
                         <span class="material-symbols-rounded text-lg">public</span>
                         النشر على الموقع الرسمي
                     </a>
                 }
                 @if (User.HasPermission(AppPermissions.EpisodeRevert) && ep.StatusId is 1 or 2 or 3)
                 {
-                    <button type="button" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-right"
-                            style="background: var(--color-warning-light); color: var(--color-warning); border: 1px solid var(--color-border);"
-                            onclick="openRevertModal(@ep.EpisodeId, '@ep.EpisodeName')">
+                    <button type="button" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-right" style="background:color-mix(in srgb,var(--color-warning) 15%,transparent);color:var(--color-warning);border:1px solid var(--color-border)" onclick="document.getElementById('revertModal').showModal()">
                         <span class="material-symbols-rounded text-lg">undo</span>
                         التراجع عن الحالة السابقة
                     </button>
                 }
                 @if (User.HasPermission(AppPermissions.EpisodeDelete) && ep.StatusId != 4)
                 {
-                    <button type="button" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-right"
-                            style="background: var(--color-danger-light); color: var(--color-danger); border: 1px solid var(--color-border);"
-                            onclick="openCancelModal(@ep.EpisodeId, '@ep.EpisodeName')">
+                    <button type="button" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-right" style="background:color-mix(in srgb,var(--color-danger) 15%,transparent);color:var(--color-danger);border:1px solid var(--color-border)" onclick="document.getElementById('cancelModal').showModal()">
                         <span class="material-symbols-rounded text-lg">cancel</span>
                         إلغاء الحلقة
                     </button>
@@ -549,15 +460,17 @@
             </div>
         </div>
 
-        <div class="rounded-xl p-6" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
-            <div class="flex items-center gap-2 mb-4 pb-3" style="border-bottom: 1px solid var(--color-border);">
-                <span class="material-symbols-rounded text-[var(--color-primary)] p-1.5 rounded-lg text-lg" style="background: var(--color-primary-subtle);">attach_file</span>
-                <h3 class="font-bold text-[var(--color-text)]">المرفقات</h3>
+        <!-- Attachments -->
+        <div class="rounded-xl p-6 bg-surface border border-border">
+            <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary-subtle text-primary shrink-0">
+                    <span class="material-symbols-rounded text-lg">attach_file</span>
+                </div>
+                <h3 class="font-bold text-text">المرفقات</h3>
             </div>
             <form method="post" action="/Upload/Episode/@Model.Episode.EpisodeId" enctype="multipart/form-data" class="mb-3">
                 <div class="flex items-center gap-2">
-                    <input type="file" name="files" multiple class="w-full rounded-xl py-2 px-3 text-sm focus:outline-none focus:ring-2 transition-all flex-1 min-w-0"
-                           style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);" />
+                    <input type="file" name="files" multiple class="w-full rounded-xl py-2 px-3 text-sm focus:outline-none focus:ring-2 transition-all flex-1 min-w-0 bg-bg border border-border text-text" style="--tw-ring-color:var(--color-primary)" />
                     <button type="submit" class="btn btn-primary btn-sm rounded-xl whitespace-nowrap gap-1">
                         <span class="material-symbols-rounded text-sm">upload</span>
                         رفع
@@ -565,27 +478,30 @@
                 </div>
             </form>
             <div id="attachmentList" class="space-y-1">
-                <div class="text-center py-4 text-[var(--color-text-muted)] text-xs">
-                    <span class="material-symbols-rounded text-lg block mb-1 text-[var(--color-text-muted)]">cloud_upload</span>
+                <div class="text-center py-4 text-text-muted text-xs">
+                    <span class="material-symbols-rounded text-lg block mb-1 text-text-muted">cloud_upload</span>
                     جاري تحميل المرفقات…
                 </div>
             </div>
         </div>
 
-        <div class="rounded-xl p-6" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
-            <div class="flex items-center gap-2 mb-4 pb-3" style="border-bottom: 1px solid var(--color-border);">
-                <span class="material-symbols-rounded text-[var(--color-accent)] p-1.5 rounded-lg text-lg" style="background: var(--color-accent-light);">history</span>
-                <h3 class="font-bold text-[var(--color-text)] flex-1">السجل الزمني للعمليات</h3>
+        <!-- Audit log -->
+        <div class="rounded-xl p-6 bg-surface border border-border">
+            <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:color-mix(in srgb,var(--color-accent) 15%,transparent);color:var(--color-accent)">
+                    <span class="material-symbols-rounded text-lg">history</span>
+                </div>
+                <h3 class="font-bold text-text flex-1">السجل الزمني للعمليات</h3>
                 @if (Model.PublishingRecords.Any())
                 {
-                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg" style="background: var(--color-bg); color: var(--color-text-muted);">@Model.PublishingRecords.Count</span>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-bg text-text-muted">@Model.PublishingRecords.Count</span>
                 }
             </div>
-            <div class="space-y-4 relative pr-4 mr-2" style="border-right: 2px solid var(--color-border);">
+            <div class="space-y-4 relative" style="padding-right:1.25rem;border-right:2px solid var(--color-border)">
                 @if (!Model.PublishingRecords.Any())
                 {
-                    <div class="text-center py-6 text-[var(--color-text-muted)] text-xs">
-                        <span class="material-symbols-rounded text-lg block mb-1 text-[var(--color-text-muted)]">history_toggle_off</span>
+                    <div class="text-center py-6 text-text-muted text-xs">
+                        <span class="material-symbols-rounded text-lg block mb-1 text-text-muted">history_toggle_off</span>
                         لا توجد عمليات مسجلة بعد.
                     </div>
                 }
@@ -599,20 +515,19 @@
                         _ => "circle"
                     };
                     <div class="relative flex items-start gap-3 group/timeline-item">
-                        <div class="absolute -right-[22px] top-1.5 w-3 h-3 rounded-full border-2 transition-transform duration-200 group-hover/timeline-item:scale-125"
-                             style="background: @r.RecordColor; border-color: var(--color-bg-elevated);">
+                        <div class="absolute -right-[17px] top-1.5 w-3 h-3 rounded-full border-2 transition-transform duration-200 group-hover/timeline-item:scale-125" style="background:@r.RecordColor;border-color:var(--color-surface)">
                         </div>
-                        <div class="flex-1 min-w-0 rounded-xl p-3 transition-all duration-200" style="background: var(--color-bg);">
+                        <div class="flex-1 min-w-0 rounded-xl p-3 bg-bg">
                             <div class="flex items-center gap-1.5 mb-1">
-                                <span class="material-symbols-rounded text-xs" style="color: @r.RecordColor">@typeIcon</span>
-                                <div class="text-xs font-bold text-[var(--color-text)] truncate">@r.Summary</div>
+                                <span class="material-symbols-rounded text-xs" style="color:@r.RecordColor">@typeIcon</span>
+                                <div class="text-xs font-bold text-text truncate">@r.Summary</div>
                             </div>
-                            <div class="text-[10px] text-[var(--color-text-muted)] flex items-center gap-1">
+                            <div class="text-[10px] text-text-muted flex items-center gap-1">
                                 <span class="material-symbols-rounded text-[10px]">schedule</span>
                                 @r.RecordDate.ToString("yyyy-MM-dd HH:mm")
                                 @if (!string.IsNullOrEmpty(r.RecordedBy))
                                 {
-                                    <span class="flex items-center gap-0.5" style="border-right: 1px solid var(--color-border); padding-right: 0.25rem; margin-right: 0.25rem;">
+                                    <span class="flex items-center gap-0.5" style="border-right:1px solid var(--color-border);padding-right:0.25rem;margin-right:0.25rem">
                                         <span class="material-symbols-rounded text-[10px]">person</span>
                                         @r.RecordedBy
                                     </span>
@@ -624,9 +539,8 @@
             </div>
             @if (Model.PublishingRecords.Any())
             {
-                <div class="mt-4 pt-3" style="border-top: 1px solid var(--color-border);">
-                    <a href="/Publishing?episodeId=@ep.EpisodeId" class="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-xs font-semibold text-center transition-all"
-                       style="background: var(--color-bg); color: var(--color-text-muted); border: 1px solid var(--color-border);">
+                <div class="mt-4 pt-3 border-t border-border">
+                    <a href="/Publishing?episodeId=@ep.EpisodeId" class="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-xs font-semibold text-center transition-all bg-bg text-text-muted border border-border">
                         <span class="material-symbols-rounded text-sm">list_alt</span>
                         عرض كافة سجلات النشر والإنتاج
                     </a>
@@ -636,43 +550,38 @@
     </div>
 </div>
 
+<!-- Execute modal (inline — unique 3-field form) -->
 <dialog id="executeModal" class="modal backdrop:bg-black/50 p-0 bg-transparent">
-    <div class="rounded-xl p-6 max-w-md w-full mx-auto" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
+    <div class="rounded-xl p-6 max-w-md w-full mx-auto bg-surface border border-border">
         <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-2">
-                <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background: var(--color-success-light); color: var(--color-success);">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:color-mix(in srgb,var(--color-success) 15%,transparent);color:var(--color-success)">
                     <span class="material-symbols-rounded">play_circle</span>
                 </div>
-                <h3 class="text-lg font-bold text-[var(--color-text)]">تسجيل تنفيذ الحلقة</h3>
+                <h3 class="text-lg font-bold text-text">تسجيل تنفيذ الحلقة</h3>
             </div>
-            <button type="button" class="btn btn-ghost btn-square btn-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] rounded-xl" onclick="closeModal('executeModal')">
+            <button type="button" class="btn btn-ghost btn-square btn-sm text-text-muted hover:text-text rounded-xl" onclick="document.getElementById('executeModal').close()">
                 <span class="material-symbols-rounded">close</span>
             </button>
         </div>
-        <form id="executeForm" method="post" action="">
+        <form method="post" action="/Episodes/Execute/@ep.EpisodeId">
             @Html.AntiForgeryToken()
             <div class="space-y-4">
                 <div>
-                    <label class="label text-sm font-medium text-[var(--color-text)] mb-1.5 flex items-center gap-1"><span class="material-symbols-rounded text-sm text-[var(--color-text-muted)]">notes</span>ملاحظات التنفيذ</label>
-                    <textarea name="executionNotes" rows="3" class="w-full rounded-xl py-2.5 px-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
-                              style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
-                              placeholder="سجل ملاحظات حول عملية التنفيذ والمحتوى..."></textarea>
+                    <label class="block mb-1.5 text-label font-semibold text-text-muted flex items-center gap-1"><span class="material-symbols-rounded text-sm text-text-muted">notes</span>ملاحظات التنفيذ</label>
+                    <textarea name="executionNotes" rows="3" class="input" placeholder="سجل ملاحظات حول عملية التنفيذ والمحتوى..."></textarea>
                 </div>
                 <div>
-                    <label class="label text-sm font-medium text-[var(--color-text)] mb-1.5 flex items-center gap-1"><span class="material-symbols-rounded text-sm text-[var(--color-warning)]">warning</span>مشكلات واجهت التنفيذ</label>
-                    <textarea name="issuesEncountered" rows="2" class="w-full rounded-xl py-2.5 px-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
-                              style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
-                              placeholder="أي مشكلات فنية أو تشغيلية ظهرت أثناء البث..."></textarea>
+                    <label class="block mb-1.5 text-label font-semibold text-text-muted flex items-center gap-1"><span class="material-symbols-rounded text-sm text-warning">warning</span>مشكلات واجهت التنفيذ</label>
+                    <textarea name="issuesEncountered" rows="2" class="input" placeholder="أي مشكلات فنية أو تشغيلية ظهرت أثناء البث..."></textarea>
                 </div>
                 <div>
-                    <label class="label text-sm font-medium text-[var(--color-text)] mb-1.5 flex items-center gap-1"><span class="material-symbols-rounded text-sm text-[var(--color-text-muted)]">timer</span>المدة (دقيقة) *</label>
-                    <input type="number" name="durationMinutes" min="1" max="720" value="60"
-                           class="w-full rounded-xl py-2.5 px-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
-                           style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);" required />
+                    <label class="block mb-1.5 text-label font-semibold text-text-muted flex items-center gap-1"><span class="material-symbols-rounded text-sm text-text-muted">timer</span>المدة (دقيقة) *</label>
+                    <input type="number" name="durationMinutes" min="1" max="720" value="60" class="input" required />
                 </div>
             </div>
-            <div class="flex gap-2 justify-end mt-6 pt-4" style="border-top: 1px solid var(--color-border);">
-                <button type="button" class="btn btn-ghost rounded-xl" onclick="closeModal('executeModal')">إلغاء</button>
+            <div class="flex gap-2 justify-end mt-6 pt-4 border-t border-border">
+                <button type="button" class="btn btn-ghost rounded-xl" onclick="document.getElementById('executeModal').close()">إلغاء</button>
                 <button type="submit" class="btn btn-success rounded-xl gap-2">
                     <span class="material-symbols-rounded text-sm">check</span>
                     تسجيل التنفيذ
@@ -682,136 +591,84 @@
     </div>
 </dialog>
 
-<dialog id="cancelModal" class="modal backdrop:bg-black/50 p-0 bg-transparent">
-    <div class="rounded-xl p-6 max-w-md w-full mx-auto" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
-        <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-2">
-                <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background: var(--color-danger-light); color: var(--color-danger);">
-                    <span class="material-symbols-rounded">cancel</span>
-                </div>
-                <h3 class="text-lg font-bold text-[var(--color-text)]">إلغاء الحلقة</h3>
-            </div>
-            <button type="button" class="btn btn-ghost btn-square btn-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] rounded-xl" onclick="closeModal('cancelModal')">
-                <span class="material-symbols-rounded">close</span>
-            </button>
-        </div>
-        <form id="cancelForm" method="post" action="">
-            @Html.AntiForgeryToken()
-            <div class="rounded-xl p-4 mb-4" style="background: var(--color-danger-light); border: 1px solid var(--color-border);">
-                <p class="text-sm text-[var(--color-text)] font-medium">هل أنت متأكد من إلغاء هذه الحلقة؟</p>
-                <p class="text-xs text-[var(--color-text-muted)] mt-1">لا يمكن التراجع عن هذا الإجراء بعد تنفيذه.</p>
-            </div>
-            <div>
-                <label class="label text-sm font-medium text-[var(--color-text)] mb-1.5 flex items-center gap-1"><span class="material-symbols-rounded text-sm text-[var(--color-danger)]">edit_note</span>سبب الإلغاء *</label>
-                <textarea name="reason" rows="3" class="w-full rounded-xl py-2.5 px-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
-                          style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
-                          required placeholder="اذكر السبب الرئيسي لإلغاء الحلقة..."></textarea>
-            </div>
-            <div class="flex gap-2 justify-end mt-6 pt-4" style="border-top: 1px solid var(--color-border);">
-                <button type="button" class="btn btn-ghost rounded-xl" onclick="closeModal('cancelModal')">رجوع</button>
-                <button type="submit" class="btn btn-danger rounded-xl gap-2">
-                    <span class="material-symbols-rounded text-sm">block</span>
-                    تأكيد الإلغاء
-                </button>
-            </div>
-        </form>
-    </div>
-</dialog>
+<!-- Cancel modal -->
+@{
+    var cancelBody = @"<div class=""rounded-xl p-4 mb-4"" style=""background:var(--color-danger-light);border:1px solid var(--color-border)"">
+    <p class=""text-sm text-text font-medium"">هل أنت متأكد من إلغاء هذه الحلقة؟</p>
+    <p class=""text-xs text-text-muted mt-1"">لا يمكن التراجع عن هذا الإجراء بعد تنفيذه.</p>
+</div>
+<div>
+    <label class=""block mb-1.5 text-label font-semibold text-text-muted flex items-center gap-1""><span class=""material-symbols-rounded text-sm text-danger"">edit_note</span>سبب الإلغاء *</label>
+    <textarea name=""reason"" rows=""3"" class=""input"" required placeholder=""اذكر السبب الرئيسي لإلغاء الحلقة...""></textarea>
+</div>";
+    ViewBag.ModalId = "cancelModal";
+    ViewBag.ModalTitle = "إلغاء الحلقة";
+    ViewBag.ModalMessage = "لا يمكن التراجع عن هذا الإجراء بعد تنفيذه.";
+    ViewBag.ModalIcon = "cancel";
+    ViewBag.ModalIconBg = "var(--color-danger-light)";
+    ViewBag.ModalIconColor = "var(--color-danger)";
+    ViewBag.ModalConfirmText = "تأكيد الإلغاء";
+    ViewBag.ModalCancelText = "رجوع";
+    ViewBag.ModalDestructive = true;
+    ViewBag.ModalFormAction = Url.Action("Cancel", "Episodes", new { id = ep.EpisodeId });
+    ViewBag.ModalBody = new Microsoft.AspNetCore.Html.HtmlString(cancelBody);
+    ViewBag.ModalShowClose = true;
+}
+<partial name="_ConfirmModal" />
 
-<dialog id="revertModal" class="modal backdrop:bg-black/50 p-0 bg-transparent">
-    <div class="rounded-xl p-6 max-w-md w-full mx-auto" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
-        <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-2">
-                <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background: var(--color-warning-light); color: var(--color-warning);">
-                    <span class="material-symbols-rounded">undo</span>
-                </div>
-                <h3 class="text-lg font-bold text-[var(--color-text)]">التراجع عن الحالة السابقة</h3>
-            </div>
-            <button type="button" class="btn btn-ghost btn-square btn-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] rounded-xl" onclick="closeModal('revertModal')">
-                <span class="material-symbols-rounded">close</span>
-            </button>
-        </div>
-        <form id="revertForm" method="post" action="">
-            @Html.AntiForgeryToken()
-            <div class="rounded-xl p-4 mb-4" style="background: var(--color-warning-light); border: 1px solid var(--color-border);">
-                <p class="text-sm text-[var(--color-text)] font-medium">سيتم إعادة الحلقة إلى المرحلة السابقة.</p>
-                <p class="text-xs text-[var(--color-text-muted)] mt-1">يرجى توثيق سبب التراجع للرجوع إليه لاحقاً في سجل التدقيق.</p>
-            </div>
-            <div>
-                <label class="label text-sm font-medium text-[var(--color-text)] mb-1.5 flex items-center gap-1"><span class="material-symbols-rounded text-sm text-[var(--color-warning)]">edit_note</span>سبب التراجع *</label>
-                <textarea name="reason" rows="3" class="w-full rounded-xl py-2.5 px-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
-                          style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
-                          required placeholder="سبب التراجع عن الحالة..."></textarea>
-            </div>
-            <div class="flex gap-2 justify-end mt-6 pt-4" style="border-top: 1px solid var(--color-border);">
-                <button type="button" class="btn btn-ghost rounded-xl" onclick="closeModal('revertModal')">إلغاء</button>
-                <button type="submit" class="btn btn-warning rounded-xl gap-2">
-                    <span class="material-symbols-rounded text-sm">undo</span>
-                    تأكيد التراجع
-                </button>
-            </div>
-        </form>
-    </div>
-</dialog>
+<!-- Revert modal -->
+@{
+    var revertBody = @"<div class=""rounded-xl p-4 mb-4"" style=""background:color-mix(in srgb,var(--color-warning) 15%,transparent);border:1px solid var(--color-border)"">
+    <p class=""text-sm text-text font-medium"">سيتم إعادة الحلقة إلى المرحلة السابقة.</p>
+    <p class=""text-xs text-text-muted mt-1"">يرجى توثيق سبب التراجع للرجوع إليه لاحقاً في سجل التدقيق.</p>
+</div>
+<div>
+    <label class=""block mb-1.5 text-label font-semibold text-text-muted flex items-center gap-1""><span class=""material-symbols-rounded text-sm text-warning"">edit_note</span>سبب التراجع *</label>
+    <textarea name=""reason"" rows=""3"" class=""input"" required placeholder=""سبب التراجع عن الحالة...""></textarea>
+</div>";
+    ViewBag.ModalId = "revertModal";
+    ViewBag.ModalTitle = "التراجع عن الحالة السابقة";
+    ViewBag.ModalMessage = "سيتم إعادة الحلقة إلى المرحلة السابقة.";
+    ViewBag.ModalIcon = "undo";
+    ViewBag.ModalIconBg = "color-mix(in srgb,var(--color-warning) 15%,transparent)";
+    ViewBag.ModalIconColor = "var(--color-warning)";
+    ViewBag.ModalConfirmText = "تأكيد التراجع";
+    ViewBag.ModalCancelText = "إلغاء";
+    ViewBag.ModalDestructive = false;
+    ViewBag.ModalFormAction = Url.Action("Revert", "Episodes", new { id = ep.EpisodeId });
+    ViewBag.ModalBody = new Microsoft.AspNetCore.Html.HtmlString(revertBody);
+    ViewBag.ModalShowClose = true;
+}
+<partial name="_ConfirmModal" />
 
 @section Scripts {
     <script>
-        function openExecuteModal(id, name) {
-            document.getElementById('executeForm').action = '/Episodes/Execute/' + id;
-            document.getElementById('executeModal').showModal();
-        }
-        function openCancelModal(id, name) {
-            document.getElementById('cancelForm').action = '/Episodes/Cancel/' + id;
-            document.getElementById('cancelModal').showModal();
-        }
-        function openRevertModal(id, name) {
-            document.getElementById('revertForm').action = '/Episodes/Revert/' + id;
-            document.getElementById('revertModal').showModal();
-        }
-        function closeModal(id) {
-            document.getElementById(id).close();
-        }
-        ['executeModal', 'cancelModal', 'revertModal'].forEach(function (id) {
-            var el = document.getElementById(id);
-            if (el) {
-                el.addEventListener('click', function (e) {
-                    var rect = this.getBoundingClientRect();
-                    if (e.clientX < rect.left || e.clientX > rect.right ||
-                        e.clientY < rect.top || e.clientY > rect.bottom) {
-                        this.close();
-                    }
-                });
-            }
-        });
-
         function loadAttachments() {
             fetch('/Upload/Episode/@Model.Episode.EpisodeId')
                 .then(r => r.json())
                 .then(files => {
-                    const container = document.getElementById('attachmentList');
+                    var c = document.getElementById('attachmentList');
                     if (!files || files.length === 0) {
-                        container.innerHTML = '<div class="text-center py-4 text-[var(--color-text-muted)] text-xs"><span class="material-symbols-rounded text-lg block mb-1 text-[var(--color-text-muted)]">cloud_off</span>لا توجد مرفقات</div>';
+                        c.innerHTML = '<div class="text-center py-4 text-text-muted text-xs"><span class="material-symbols-rounded text-lg block mb-1 text-text-muted">cloud_off</span>لا توجد مرفقات</div>';
                         return;
                     }
-                    container.innerHTML = files.map(f =>
-                        '<div class="flex items-center gap-2 p-2 rounded-lg hover:bg-[var(--color-bg-hover)] transition-colors">' +
-                            '<span class="material-symbols-rounded text-sm text-[var(--color-primary)]">description</span>' +
-                            '<a href="/uploads/' + @Model.Episode.EpisodeId + '/' + f.storedName + '" target="_blank" class="flex-1 text-sm text-[var(--color-primary)] hover:underline truncate">' + f.fileName + '</a>' +
-                            '<span class="text-xs text-[var(--color-text-muted)]" dir="ltr">' + formatSize(f.sizeBytes) + '</span>' +
+                    c.innerHTML = files.map(function(f) {
+                        return '<div class="flex items-center gap-2 p-2 rounded-lg hover:bg-surface-hover transition-colors">' +
+                            '<span class="material-symbols-rounded text-sm text-primary">description</span>' +
+                            '<a href="/uploads/' + @Model.Episode.EpisodeId + '/' + f.storedName + '" target="_blank" class="flex-1 text-sm text-primary hover:underline truncate">' + f.fileName + '</a>' +
+                            '<span class="text-xs text-text-muted" dir="ltr">' + formatSize(f.sizeBytes) + '</span>' +
                             '<form method="post" action="/Upload/Delete/' + @Model.Episode.EpisodeId + '/' + f.storedName + '" class="inline" onsubmit="return confirm(\'حذف الملف؟\')">' +
-                                '<button class="btn btn-ghost btn-xs text-[var(--color-danger)]"><span class="material-symbols-rounded text-sm">delete</span></button>' +
+                                '<button class="btn btn-ghost btn-xs text-danger"><span class="material-symbols-rounded text-sm">delete</span></button>' +
                             '</form>' +
-                        '</div>'
-                    ).join('');
+                        '</div>';
+                    }).join('');
                 });
         }
-
-        function formatSize(bytes) {
-            if (bytes < 1024) return bytes + ' B';
-            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-            return (bytes / 1048576).toFixed(1) + ' MB';
+        function formatSize(b) {
+            if (b < 1024) return b + ' B';
+            if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+            return (b / 1048576).toFixed(1) + ' MB';
         }
-
         document.addEventListener('DOMContentLoaded', loadAttachments);
     </script>
 }

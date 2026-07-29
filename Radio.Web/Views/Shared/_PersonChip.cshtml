@@ -1,0 +1,34 @@
+@* _PersonChip — compact repeatable person display chip for guests/correspondents/employees *@
+@{
+    var name = ViewBag.ChipName as string ?? "";
+    var subtitle = ViewBag.ChipSubtitle as string;
+    var subtitleIcon = ViewBag.ChipSubtitleIcon as string;
+    var time = ViewBag.ChipTime as string;
+    var color = ViewBag.ChipColor as string ?? "primary";
+    var initial = name?.Length > 0 ? name.Substring(0, 1) : "?";
+    var bgVar = color == "primary" ? "var(--color-primary-subtle)" : $"color-mix(in srgb, var(--color-{color}) 15%, transparent)";
+}
+<div class="flex items-center gap-2.5 rounded-xl px-3 py-2 transition-all bg-bg border border-border hover:shadow-sm">
+    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0" style="background:@bgVar;color:var(--color-@(color))">
+        @initial
+    </div>
+    <div class="min-w-0">
+        <div class="text-xs font-bold text-text truncate max-w-[130px]">@name</div>
+        @if (!string.IsNullOrWhiteSpace(subtitle))
+        {
+            <div class="text-[10px] text-text-muted truncate max-w-[130px] flex items-center gap-0.5">
+                @if (!string.IsNullOrEmpty(subtitleIcon))
+                {
+                    <span class="material-symbols-rounded text-[10px]">@subtitleIcon</span>
+                }
+                @subtitle
+            </div>
+        }
+    </div>
+    @if (!string.IsNullOrEmpty(time))
+    {
+        <div class="text-[10px] text-text-muted font-semibold whitespace-nowrap" dir="ltr" style="border-right:1px solid var(--color-border);padding-right:0.5rem">
+            @time
+        </div>
+    }
+</div>
