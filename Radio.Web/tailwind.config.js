@@ -11,6 +11,17 @@ module.exports = {
     './wwwroot/js/**/*.js',
   ],
   theme: {
+    /* Production rhythm: only reference-palette increments are generated. */
+    spacing: {
+      px: '1px', 0: '0px', '0.5': '2px', 1: '4px', '1.5': '6px', 2: '8px',
+      '2.5': '10px', 3: '12px', 4: '16px', '3.5': '16px', 5: '20px', 6: '24px', 7: '32px', 8: '32px', 9: '40px',
+      10: '40px', 11: '48px', 12: '48px', 14: '64px', 16: '64px', 20: '80px', 24: '96px', 28: '128px', 32: '128px', 44: '128px', 60: '128px', 72: '128px', 80: '128px', 96: '128px',
+    },
+    borderRadius: {
+      none: '0px', xs: 'var(--radius-xs)', sm: 'var(--radius-sm)', md: 'var(--radius-md)',
+      lg: 'var(--radius-lg)', xl: 'var(--radius-xl)', '2xl': 'var(--radius-2xl)',
+      '3xl': 'var(--radius-3xl)', full: '9999px',
+    },
     extend: {
       colors: {
         /* ── Surface Hierarchy ── */
@@ -193,24 +204,6 @@ module.exports = {
         'label': ['var(--text-label-size)', { lineHeight: 'var(--text-label-lh)', fontWeight: 'var(--text-label-weight)' }],
         'caption': ['var(--text-caption-size)', { lineHeight: 'var(--text-caption-lh)', fontWeight: 'var(--text-caption-weight)' }],
         'micro': ['var(--text-micro-size)', { lineHeight: 'var(--text-micro-lh)', letterSpacing: 'var(--text-micro-ls)', fontWeight: 'var(--text-micro-weight)' }],
-      },
-
-      spacing: {
-        '0.5': 'var(--space-1)',
-        '1.5': 'var(--space-2)',
-        '2.5': 'var(--space-3)',
-        '3.5': 'var(--space-4)',
-      },
-
-      borderRadius: {
-        xs: 'var(--radius-xs)',
-        sm: 'var(--radius-sm)',
-        md: 'var(--radius-md)',
-        lg: 'var(--radius-lg)',
-        xl: 'var(--radius-xl)',
-        '2xl': 'var(--radius-2xl)',
-        '3xl': 'var(--radius-3xl)',
-        '4xl': 'var(--radius-4xl)',
       },
 
       boxShadow: {

@@ -7,171 +7,314 @@
     var action = ViewContext.RouteData.Values["Action"]?.ToString();
     bool IsActive(string c, string? a = null) => controller == c && (a == null || action == a);
     bool HasAny(params string[] perms) => perms.Any(p => CurrentUser.HasPermission(p));
-    Func<string, IHtmlContent> SectionHeader = (label) =>
-    {
-        var html = $"<div class=\"sidebar-section-label\">{label}</div>";
-        return new HtmlString(html);
-    };
-    Func<bool, string> NavLinkClass = (active) => active
-        ? "sidebar-link active"
-        : "sidebar-link";
+    Func<bool, string> NavLinkClass = (active) => active ? "sidebar-link active" : "sidebar-link";
 }
 <div class="flex flex-col h-full select-none">
-    <a href="/" class="flex items-center gap-3 h-16 px-5 shrink-0 border-b border-border bg-bg-hover">
-        <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary text-primary-foreground">
+    <!-- Brand Header -->
+    <a href="/" class="flex items-center gap-3 h-16 px-4 shrink-0 border-b border-border bg-surface transition-colors hover:bg-surface-hover">
+        <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary text-primary-foreground font-bold shadow-sm shrink-0">
             <span class="material-symbols-rounded text-xl">live_tv</span>
         </div>
-        <div class="flex flex-col">
-            <span class="font-bold text-label tracking-wide text-text">نظام إدارة البث الإذاعي</span>
-            <span class="text-micro font-medium text-accent">برامج — حلقات — بث مباشر</span>
+        <div class="flex flex-col min-w-0">
+            <span class="font-extrabold text-sm tracking-tight text-text truncate">نظام إدارة البث الإذاعي</span>
+            <span class="text-[11px] font-medium text-accent truncate">برامج — حلقات — بث مباشر</span>
         </div>
     </a>
 
-    <!-- On Air Now -->
-    <div class="mx-3 mt-3 p-3 rounded-xl bg-live-subtle border border-live-border flex items-center gap-3">
-        <span class="relative flex h-3 w-3 shrink-0">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-live opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-3 w-3 bg-live"></span>
-        </span>
-        <div class="flex-1 min-w-0">
-            <div class="text-caption font-bold text-live truncate">على الهواء الآن</div>
-            <div class="text-micro text-live truncate opacity-80" id="sidebar-onair-name">—</div>
+    <!-- On Air Now Card -->
+    <div class="mx-3 mt-3 p-3 rounded-xl border transition-all duration-300 shrink-0 bg-live-subtle border-live-border" id="sidebar-onair-card">
+        <div class="flex items-center gap-3">
+            <span class="relative flex h-3 w-3 shrink-0" id="sidebar-onair-badge">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-live opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-live"></span>
+            </span>
+            <div class="flex-1 min-w-0">
+                <div class="text-caption font-bold text-live truncate" id="sidebar-onair-status">على الهواء الآن</div>
+                <div class="text-micro text-live truncate font-medium mt-0.5" id="sidebar-onair-name">—</div>
+            </div>
         </div>
     </div>
 
-    <nav class="flex-1 overflow-y-auto p-3 space-y-0.5" aria-label="التنقل الرئيسي">
-        @* ── القائمة الأساسية ── *@
+    <!-- Scrollable Nav List -->
+    <nav class="flex-1 overflow-y-auto p-3 space-y-1" aria-label="التنقل الرئيسي">
+        @* ── القائمة الأساسية الثابتة ── *@
         <a href="/" class="@NavLinkClass(IsActive("Home"))">
-            <span class="material-symbols-rounded text-lg">dashboard</span>لوحة التحكم الرئيسية
+            <span class="material-symbols-rounded">dashboard</span>
+            <span>لوحة التحكم الرئيسية</span>
         </a>
         <a href="/Search" class="@NavLinkClass(IsActive("Search"))">
-            <span class="material-symbols-rounded text-lg">search</span>البحث العام
+            <span class="material-symbols-rounded">search</span>
+            <span>البحث العام</span>
         </a>
         <a href="/Calendar" class="@NavLinkClass(IsActive("Calendar"))">
-            <span class="material-symbols-rounded text-lg">calendar_month</span>جدول البث والإعادة
+            <span class="material-symbols-rounded">calendar_month</span>
+            <span>جدول البث والإعادة</span>
         </a>
 
-        @* ── البث والإنتاج ── *@
+        @* ── المجموعة 1: البث والإنتاج ── *@
         @if (HasAny(AppPermissions.EpisodesView, AppPermissions.EpisodesCreate, AppPermissions.EpisodesEdit, AppPermissions.ExecutionExecute))
         {
-            @SectionHeader("البث والإنتاج")
-            <a href="/Episodes/LiveBoard" class="@NavLinkClass(IsActive("Episodes", "LiveBoard"))">
-                <span class="material-symbols-rounded text-lg text-live">live_tv</span>شاشة البث المباشر
-            </a>
-            <a href="/Episodes" class="@NavLinkClass(IsActive("Episodes", "Index"))">
-                <span class="material-symbols-rounded text-lg">tv</span>سجل الحلقات
-            </a>
-            <a href="/Production" class="@NavLinkClass(IsActive("Production"))">
-                <span class="material-symbols-rounded text-lg">view_column</span>لوحة سير الإنتاج
-            </a>
+            var isBroadcastActive = IsActive("Episodes") || IsActive("Production");
+            <button type="button" class="sidebar-group-toggle" data-sidebar-toggle="group-broadcast" aria-expanded="@(isBroadcastActive ? "true" : "false")" aria-controls="sidebar-group-broadcast">
+                <span class="flex items-center gap-2">
+                    <span class="material-symbols-rounded text-base text-primary">live_tv</span>
+                    <span>البث والإنتاج</span>
+                </span>
+                <span class="material-symbols-rounded sidebar-group-chevron">expand_more</span>
+            </button>
+            <div id="sidebar-group-broadcast" data-sidebar-content="group-broadcast" class="sidebar-group-content @(isBroadcastActive ? "" : "hidden")">
+                <a href="/Episodes/LiveBoard" class="@NavLinkClass(IsActive("Episodes", "LiveBoard"))">
+                    <span class="material-symbols-rounded text-live">live_tv</span>
+                    <span>شاشة البث المباشر</span>
+                </a>
+                <a href="/Episodes" class="@NavLinkClass(IsActive("Episodes", "Index"))">
+                    <span class="material-symbols-rounded">tv</span>
+                    <span>سجل الحلقات</span>
+                </a>
+                <a href="/Production" class="@NavLinkClass(IsActive("Production"))">
+                    <span class="material-symbols-rounded">view_column</span>
+                    <span>لوحة سير الإنتاج</span>
+                </a>
+            </div>
         }
 
-        @* ── البرامج والمحتوى ── *@
+        @* ── المجموعة 2: البرامج والمحتوى ── *@
         @if (HasAny(AppPermissions.ProgramsView, AppPermissions.ProgramsManage, AppPermissions.GuestsView, AppPermissions.GuestsManage, AppPermissions.CoordinationView, AppPermissions.CoordinationManage))
         {
-            @SectionHeader("البرامج والمحتوى")
-            @if (HasAny(AppPermissions.ProgramsView, AppPermissions.ProgramsManage))
-            {
-                <a href="/Programs" class="@NavLinkClass(IsActive("Programs"))">
-                    <span class="material-symbols-rounded text-lg">radio</span>دليل البرامج
-                </a>
-            }
-            @if (HasAny(AppPermissions.GuestsView, AppPermissions.GuestsManage))
-            {
-                <a href="/Guests" class="@NavLinkClass(IsActive("Guests"))">
-                    <span class="material-symbols-rounded text-lg">people_alt</span>سجل الضيوف
-                </a>
-            }
-            @if (HasAny(AppPermissions.CoordinationView, AppPermissions.CoordinationManage))
-            {
-                <a href="/Correspondents" class="@NavLinkClass(IsActive("Correspondents"))">
-                    <span class="material-symbols-rounded text-lg">map</span>المراسلون الميدانيون
-                </a>
-                <a href="/Coverage" class="@NavLinkClass(IsActive("Coverage"))">
-                    <span class="material-symbols-rounded text-lg">edit_location_alt</span>التغطيات الميدانية
-                </a>
-            }
+            var isContentActive = IsActive("Programs") || IsActive("Guests") || IsActive("Correspondents") || IsActive("Coverage");
+            <button type="button" class="sidebar-group-toggle" data-sidebar-toggle="group-content" aria-expanded="@(isContentActive ? "true" : "false")" aria-controls="sidebar-group-content">
+                <span class="flex items-center gap-2">
+                    <span class="material-symbols-rounded text-base text-accent">radio</span>
+                    <span>البرامج والمحتوى</span>
+                </span>
+                <span class="material-symbols-rounded sidebar-group-chevron">expand_more</span>
+            </button>
+            <div id="sidebar-group-content" data-sidebar-content="group-content" class="sidebar-group-content @(isContentActive ? "" : "hidden")">
+                @if (HasAny(AppPermissions.ProgramsView, AppPermissions.ProgramsManage))
+                {
+                    <a href="/Programs" class="@NavLinkClass(IsActive("Programs"))">
+                        <span class="material-symbols-rounded">radio</span>
+                        <span>دليل البرامج</span>
+                    </a>
+                }
+                @if (HasAny(AppPermissions.GuestsView, AppPermissions.GuestsManage))
+                {
+                    <a href="/Guests" class="@NavLinkClass(IsActive("Guests"))">
+                        <span class="material-symbols-rounded">people_alt</span>
+                        <span>سجل الضيوف</span>
+                    </a>
+                }
+                @if (HasAny(AppPermissions.CoordinationView, AppPermissions.CoordinationManage))
+                {
+                    <a href="/Correspondents" class="@NavLinkClass(IsActive("Correspondents"))">
+                        <span class="material-symbols-rounded">map</span>
+                        <span>المراسلون الميدانيون</span>
+                    </a>
+                    <a href="/Coverage" class="@NavLinkClass(IsActive("Coverage"))">
+                        <span class="material-symbols-rounded">edit_location_alt</span>
+                        <span>التغطيات الميدانية</span>
+                    </a>
+                }
+            </div>
         }
 
-        @* ── النشر والتوزيع ── *@
+        @* ── المجموعة 3: النشر والتوزيع ── *@
         @if (HasAny(AppPermissions.SocialPublishingPublish, AppPermissions.SocialPublishingView, AppPermissions.WebsitePublishingPublish, AppPermissions.WebsitePublishingView, AppPermissions.ExecutionExecute, AppPermissions.ExecutionView))
         {
-            @SectionHeader("النشر والتوزيع")
-            if (HasAny(AppPermissions.SocialPublishingPublish, AppPermissions.SocialPublishingView))
-            {
-                <a href="/Publishing" class="@NavLinkClass(IsActive("Publishing"))">
-                    <span class="material-symbols-rounded text-lg">rss_feed</span>سجل النشر الرقمي
-                </a>
-            }
-            if (HasAny(AppPermissions.WebsitePublishingPublish, AppPermissions.WebsitePublishingView))
-            {
-                <a href="/WebsitePublishing" class="@NavLinkClass(IsActive("WebsitePublishing"))">
-                    <span class="material-symbols-rounded text-lg">public</span>نشر البوابة الرقمية
-                </a>
-            }
-            if (HasAny(AppPermissions.ExecutionExecute, AppPermissions.ExecutionView))
-            {
-                <a href="/ExecutionLogs" class="@NavLinkClass(IsActive("ExecutionLogs"))">
-                    <span class="material-symbols-rounded text-lg">assignment</span>سجلات التنفيذ والإعادة
-                </a>
-            }
+            var isPublishingActive = IsActive("Publishing") || IsActive("WebsitePublishing") || IsActive("ExecutionLogs");
+            <button type="button" class="sidebar-group-toggle" data-sidebar-toggle="group-publishing" aria-expanded="@(isPublishingActive ? "true" : "false")" aria-controls="sidebar-group-publishing">
+                <span class="flex items-center gap-2">
+                    <span class="material-symbols-rounded text-base text-success">rss_feed</span>
+                    <span>النشر والتوزيع</span>
+                </span>
+                <span class="material-symbols-rounded sidebar-group-chevron">expand_more</span>
+            </button>
+            <div id="sidebar-group-publishing" data-sidebar-content="group-publishing" class="sidebar-group-content @(isPublishingActive ? "" : "hidden")">
+                @if (HasAny(AppPermissions.SocialPublishingPublish, AppPermissions.SocialPublishingView))
+                {
+                    <a href="/Publishing" class="@NavLinkClass(IsActive("Publishing"))">
+                        <span class="material-symbols-rounded">rss_feed</span>
+                        <span>سجل النشر الرقمي</span>
+                    </a>
+                }
+                @if (HasAny(AppPermissions.WebsitePublishingPublish, AppPermissions.WebsitePublishingView))
+                {
+                    <a href="/WebsitePublishing" class="@NavLinkClass(IsActive("WebsitePublishing"))">
+                        <span class="material-symbols-rounded">public</span>
+                        <span>نشر البوابة الرقمية</span>
+                    </a>
+                }
+                @if (HasAny(AppPermissions.ExecutionExecute, AppPermissions.ExecutionView))
+                {
+                    <a href="/ExecutionLogs" class="@NavLinkClass(IsActive("ExecutionLogs"))">
+                        <span class="material-symbols-rounded">assignment</span>
+                        <span>سجلات التنفيذ والإعادة</span>
+                    </a>
+                }
+            </div>
         }
 
-        @* ── التقارير ── *@
+        @* ── المجموعة 4: التقارير والتحليلات ── *@
         @if (CurrentUser.HasPermission(AppPermissions.ReportsView))
         {
-            @SectionHeader("التقارير")
-            <a href="/Reports" class="@NavLinkClass(IsActive("Reports"))">
-                <span class="material-symbols-rounded text-lg">assessment</span>تقارير الإنتاج والأداء
-            </a>
+            var isReportsActive = IsActive("Reports");
+            <button type="button" class="sidebar-group-toggle" data-sidebar-toggle="group-reports" aria-expanded="@(isReportsActive ? "true" : "false")" aria-controls="sidebar-group-reports">
+                <span class="flex items-center gap-2">
+                    <span class="material-symbols-rounded text-base text-info">assessment</span>
+                    <span>التقارير والإحصائيات</span>
+                </span>
+                <span class="material-symbols-rounded sidebar-group-chevron">expand_more</span>
+            </button>
+            <div id="sidebar-group-reports" data-sidebar-content="group-reports" class="sidebar-group-content @(isReportsActive ? "" : "hidden")">
+                <a href="/Reports" class="@NavLinkClass(IsActive("Reports"))">
+                    <span class="material-symbols-rounded">assessment</span>
+                    <span>تقارير الإنتاج والأداء</span>
+                </a>
+            </div>
         }
 
-        @* ── الإدارة ── *@
-        @if (HasAny(AppPermissions.StaffView, AppPermissions.StaffManage, AppPermissions.AdminUsersManage, AppPermissions.AdminRolesManage))
+        @* ── المجموعة 5: الإدارة والكوادر ── *@
+        @if (HasAny(AppPermissions.StaffView, AppPermissions.StaffManage, AppPermissions.AdminUsersManage, AppPermissions.AdminRolesManage, AppPermissions.SystemViewAuditLogs, AppPermissions.SystemDatabaseManage))
         {
-            @SectionHeader("الإدارة")
-            @if (HasAny(AppPermissions.StaffView, AppPermissions.StaffManage))
-            {
-                <a href="/Employees" class="@NavLinkClass(IsActive("Employees"))">
-                    <span class="material-symbols-rounded text-lg">badge</span>الموظفون والكادر
+            var isAdminActive = IsActive("Employees") || IsActive("StaffRoles") || IsActive("SocialPlatforms") || IsActive("Users") || IsActive("Roles") || IsActive("Permissions") || IsActive("AuditLogs") || IsActive("Database") || IsActive("Diagnostics") || IsActive("Settings");
+            <button type="button" class="sidebar-group-toggle" data-sidebar-toggle="group-admin" aria-expanded="@(isAdminActive ? "true" : "false")" aria-controls="sidebar-group-admin">
+                <span class="flex items-center gap-2">
+                    <span class="material-symbols-rounded text-base text-primary">admin_panel_settings</span>
+                    <span>الإدارة والكوادر</span>
+                </span>
+                <span class="material-symbols-rounded sidebar-group-chevron">expand_more</span>
+            </button>
+            <div id="sidebar-group-admin" data-sidebar-content="group-admin" class="sidebar-group-content @(isAdminActive ? "" : "hidden")">
+                @if (HasAny(AppPermissions.StaffView, AppPermissions.StaffManage))
+                {
+                    <a href="/Employees" class="@NavLinkClass(IsActive("Employees"))">
+                        <span class="material-symbols-rounded">badge</span>
+                        <span>الموظفون والكادر</span>
+                    </a>
+                    <a href="/StaffRoles" class="@NavLinkClass(IsActive("StaffRoles"))">
+                        <span class="material-symbols-rounded">work_history</span>
+                        <span>المسميات الوظيفية</span>
+                    </a>
+                    <a href="/SocialPlatforms" class="@NavLinkClass(IsActive("SocialPlatforms"))">
+                        <span class="material-symbols-rounded">share</span>
+                        <span>منصات النشر الرقمي</span>
+                    </a>
+                }
+                @if (HasAny(AppPermissions.AdminUsersManage, AppPermissions.AdminRolesManage))
+                {
+                    <a href="/Users" class="@NavLinkClass(IsActive("Users"))">
+                        <span class="material-symbols-rounded">group</span>
+                        <span>المستخدمون</span>
+                    </a>
+                    <a href="/Roles" class="@NavLinkClass(IsActive("Roles"))">
+                        <span class="material-symbols-rounded">group_work</span>
+                        <span>الأدوار والصلاحيات</span>
+                    </a>
+                    <a href="/Permissions" class="@NavLinkClass(IsActive("Permissions"))">
+                        <span class="material-symbols-rounded">admin_panel_settings</span>
+                        <span>جدول الصلاحيات</span>
+                    </a>
+                }
+                @if (CurrentUser.HasPermission(AppPermissions.SystemViewAuditLogs))
+                {
+                    <a href="/AuditLogs" class="@NavLinkClass(IsActive("AuditLogs"))">
+                        <span class="material-symbols-rounded">history</span>
+                        <span>سجل التدقيق</span>
+                    </a>
+                }
+                @if (CurrentUser.HasPermission(AppPermissions.SystemDatabaseManage))
+                {
+                    <a href="/Database" class="@NavLinkClass(IsActive("Database"))">
+                        <span class="material-symbols-rounded">storage</span>
+                        <span>إدارة قاعدة البيانات</span>
+                    </a>
+                    <a href="/Diagnostics" class="@NavLinkClass(IsActive("Diagnostics"))">
+                        <span class="material-symbols-rounded">monitor_heart</span>
+                        <span>تشخيص النظام</span>
+                    </a>
+                }
+                <a href="/Settings" class="@NavLinkClass(IsActive("Settings"))">
+                    <span class="material-symbols-rounded">settings</span>
+                    <span>إعدادات النظام</span>
                 </a>
-                <a href="/StaffRoles" class="@NavLinkClass(IsActive("StaffRoles"))">
-                    <span class="material-symbols-rounded text-lg">work_history</span>المسميات الوظيفية
-                </a>
-                <a href="/SocialPlatforms" class="@NavLinkClass(IsActive("SocialPlatforms"))">
-                    <span class="material-symbols-rounded text-lg">share</span>منصات النشر الرقمي
-                </a>
-            }
-            @if (HasAny(AppPermissions.AdminUsersManage, AppPermissions.AdminRolesManage))
-            {
-                <a href="/Users" class="@NavLinkClass(IsActive("Users"))">
-                    <span class="material-symbols-rounded text-lg">group</span>المستخدمون
-                </a>
-                <a href="/Roles" class="@NavLinkClass(IsActive("Roles"))">
-                    <span class="material-symbols-rounded text-lg">group_work</span>الأدوار والصلاحيات
-                </a>
-                <a href="/Permissions" class="@NavLinkClass(IsActive("Permissions"))">
-                    <span class="material-symbols-rounded text-lg">admin_panel_settings</span>جدول الصلاحيات
-                </a>
-            }
-            @if (CurrentUser.HasPermission(AppPermissions.SystemViewAuditLogs))
-            {
-                <a href="/AuditLogs" class="@NavLinkClass(IsActive("AuditLogs"))">
-                    <span class="material-symbols-rounded text-lg">history</span>سجل التدقيق
-                </a>
-            }
-            @if (CurrentUser.HasPermission(AppPermissions.SystemDatabaseManage))
-            {
-                <a href="/Database" class="@NavLinkClass(IsActive("Database"))">
-                    <span class="material-symbols-rounded text-lg">storage</span>إدارة قاعدة البيانات
-                </a>
-                <a href="/Diagnostics" class="@NavLinkClass(IsActive("Diagnostics"))">
-                    <span class="material-symbols-rounded text-lg">monitor_heart</span>تشخيص النظام
-                </a>
-            }
-            <a href="/Settings" class="@NavLinkClass(IsActive("Settings"))">
-                <span class="material-symbols-rounded text-lg">settings</span>إعدادات النظام
-            </a>
+            </div>
         }
     </nav>
 </div>
+
+<script>
+    (function() {
+        const STORAGE_KEY = 'radio_sidebar_collapsed_groups';
+
+        function getSavedState() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+            catch(e) { return {}; }
+        }
+
+        function saveState(state) {
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+            catch(e) {}
+        }
+
+        function initSidebar() {
+            const toggles = document.querySelectorAll('[data-sidebar-toggle]');
+            if (!toggles.length) return;
+            const saved = getSavedState();
+
+            toggles.forEach(function(toggle) {
+                const groupId = toggle.getAttribute('data-sidebar-toggle');
+                const content = document.querySelector('[data-sidebar-content="' + groupId + '"]');
+                if (!content) return;
+
+                const hasActive = content.querySelector('.sidebar-link.active') !== null;
+                let isOpen = hasActive ? true : (saved[groupId] !== undefined ? saved[groupId] : false);
+
+                setGroupState(toggle, content, isOpen);
+
+                toggle.addEventListener('click', function() {
+                    const currentState = toggle.getAttribute('aria-expanded') === 'true';
+                    const newState = !currentState;
+                    setGroupState(toggle, content, newState);
+
+                    if (!hasActive) {
+                        saved[groupId] = newState;
+                        saveState(saved);
+                    }
+                });
+
+                toggle.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggle.click();
+                    }
+                });
+            });
+
+            function setGroupState(toggle, content, isOpen) {
+                toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                if (isOpen) {
+                    content.classList.remove('hidden');
+                } else {
+                    content.classList.add('hidden');
+                }
+            }
+
+            // Mobile drawer link click handler
+            const drawerToggle = document.getElementById('sidebar-drawer');
+            const links = document.querySelectorAll('.sidebar-link');
+            links.forEach(function(link) {
+                link.addEventListener('click', function() {
+                    if (drawerToggle && window.innerWidth < 1024) {
+                        drawerToggle.checked = false;
+                    }
+                });
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initSidebar);
+        } else {
+            initSidebar();
+        }
+    })();
+</script>
