@@ -54,14 +54,58 @@
         </div>
     </div>
 
-    <div class="relative space-y-0" style="padding-inline-start:2rem">
+    <!-- Desktop: horizontal stepper -->
+    <div class="hidden lg:flex items-start justify-between relative pt-4 pb-2">
+        <div class="absolute top-7 left-8 right-8 h-1 rounded-full z-0 bg-border transition-all duration-500"></div>
+        @for (int i = 0; i < stages.Length; i++)
+        {
+            var s = stages[i];
+            var done = IsDone(i);
+            var current = IsCurrent(i);
+            var lineActive = i > 0 && (IsDone(i) || IsCurrent(i));
+            <div class="flex flex-col items-center relative z-10 flex-1">
+                @if (i > 0)
+                {
+                    <div class="absolute top-7 -right-1/2 w-full h-1 z-0 transition-all duration-700 rounded-full @(lineActive && !isCancelled ? "bg-success" : "bg-transparent")"></div>
+                }
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center border-2 transition-all duration-300 @(done && !isCancelled ? "bg-success text-white border-success shadow-lg" : current && !isCancelled ? "bg-primary text-white border-primary shadow-xl scale-110" : "bg-bg text-text-muted border-border")" style="@(done && !isCancelled ? "box-shadow:0 0 0 4px color-mix(in srgb,var(--color-success) 25%,transparent)" : current && !isCancelled ? "box-shadow:var(--shadow-float)" : "")">
+                    <span class="material-symbols-rounded text-2xl">@(done && !isCancelled ? "check" : s.Icon)</span>
+                </div>
+                <div class="mt-3 text-center px-1 z-10">
+                    <div class="text-xs font-bold leading-tight @(done && !isCancelled ? "text-success" : current && !isCancelled ? "text-primary" : "text-text-muted")">@s.Name</div>
+                    @if (current && !isCancelled)
+                    {
+                        <span class="text-[10px] font-bold mt-1.5 inline-block px-2.5 py-0.5 rounded-full animate-pulse bg-primary-subtle text-primary border border-border">المرحلة النشطة</span>
+                    }
+                    @if (done && !isCancelled && !current)
+                    {
+                        <span class="text-[10px] text-success mt-0.5 block font-medium">✓ تم</span>
+                    }
+                </div>
+            </div>
+        }
+        @if (isCancelled)
+        {
+            <div class="flex flex-col items-center relative z-10 flex-[0.6]">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center bg-danger text-white border-2 border-danger shadow-lg" style="box-shadow:0 0 0 4px color-mix(in srgb,var(--color-danger) 25%,transparent)">
+                    <span class="material-symbols-rounded text-2xl">cancel</span>
+                </div>
+                <div class="mt-3 text-center">
+                    <div class="text-xs font-bold text-danger">ملغاة</div>
+                    <span class="text-[10px] font-bold mt-1.5 inline-block px-2.5 py-0.5 rounded-full" style="background:color-mix(in srgb,var(--color-danger) 15%,transparent);color:var(--color-danger);border:1px solid var(--color-border)">نهائية</span>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Mobile/tablet: vertical stepper -->
+    <div class="lg:hidden relative space-y-0" style="padding-inline-start:2rem">
         @for (int i = 0; i < stages.Length; i++)
         {
             var s = stages[i];
             var done = IsDone(i);
             var current = IsCurrent(i);
             var lineActive = i < stages.Length - 1 && (IsDone(i + 1) || IsCurrent(i + 1));
-
             <div class="flex items-start gap-4 pb-2 relative">
                 <div class="absolute -right-[18px] top-10 w-0.5 h-[calc(100%-2rem)] z-0 transition-all duration-500" style="background:@(lineActive && !isCancelled ? "var(--color-success)" : "var(--color-bg)")"></div>
                 <div class="w-12 h-12 rounded-2xl flex items-center justify-center z-10 shrink-0 border-2 transition-all duration-300" style="background:@(done && !isCancelled ? "var(--color-success)" : current && !isCancelled ? "var(--color-primary)" : "var(--color-bg)");color:@(done || current ? "white" : "var(--color-text-muted)");border-color:@(done && !isCancelled ? "var(--color-success)" : current && !isCancelled ? "var(--color-primary)" : "var(--color-border)");@(done && !isCancelled ? "box-shadow:0 0 0 4px color-mix(in srgb,var(--color-success) 25%,transparent)" : current && !isCancelled ? "box-shadow:var(--shadow-float);transform:scale(1.1)" : "")">
