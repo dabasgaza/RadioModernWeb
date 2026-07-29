@@ -50,40 +50,42 @@
    LAYER 2A — SEMANTIC TOKENS (LIGHT THEME)
    ═══════════════════════════════════════════════════════════════ */
 :root {
-  /* ── Surface Hierarchy (8 levels) ── */
+  /* ── Surface Hierarchy (6 levels) ── */
   --color-bg: var(--color-gray-50);
   --color-bg-elevated: #FFFFFF;
   --color-bg-hover: var(--color-gray-100);
   --color-bg-active: var(--color-gray-200);
   --color-surface: #FFFFFF;
   --color-surface-hover: var(--color-gray-100);
+  --color-surface-inset: var(--color-gray-100);
   --color-surface-elevated: #FFFFFF;
   --color-popover: #FFFFFF;
   --color-popover-foreground: var(--color-gray-900);
   --color-muted: var(--color-gray-100);
-  --color-muted-foreground: var(--color-gray-500);
+  --color-muted-foreground: var(--color-gray-600);
   --color-sidebar: #FFFFFF;
   --color-sidebar-foreground: var(--color-gray-900);
   --color-sidebar-hover: var(--color-gray-100);
-  --color-topbar: color-mix(in srgb, var(--color-surface) 85%, transparent);
+  --color-topbar: color-mix(in srgb, var(--color-surface) 88%, transparent);
 
   /* ── Text (5 levels) ── */
-  --color-text: var(--color-gray-900);
-  --color-text-secondary: var(--color-gray-600);
+  --color-text: var(--color-gray-950);
+  --color-text-secondary: var(--color-gray-700);
   --color-text-muted: var(--color-gray-500);
   --color-text-disabled: var(--color-gray-400);
   --color-text-inverse: #FFFFFF;
 
-  /* ── Border (4 levels) ── */
+  /* ── Border Hierarchy (4 levels) ── */
+  --color-border-subtle: var(--color-gray-100);
   --color-border: var(--color-gray-200);
   --color-border-light: var(--color-gray-100);
   --color-border-strong: var(--color-gray-300);
-  --color-border-focus: var(--color-blue-500);
+  --color-border-focus: var(--color-blue-600);
 
-  /* ── Input ── */
+  /* ── Input Controls ── */
   --color-input: var(--color-gray-200);
   --color-input-hover: var(--color-gray-300);
-  --color-input-focus: var(--color-blue-500);
+  --color-input-focus: var(--color-blue-600);
 
   /* ── Primary ── */
   --color-primary: var(--color-blue-600);
@@ -101,7 +103,7 @@
   --color-secondary-foreground: var(--color-gray-900);
   --color-secondary-subtle: var(--color-gray-50);
 
-  /* ── Accent (radio flavor) ── */
+  /* ── Accent (Radio Broadcast Flavor) ── */
   --color-accent: var(--color-amber-500);
   --color-accent-hover: var(--color-amber-600);
   --color-accent-active: var(--color-amber-700);
@@ -148,7 +150,7 @@
   --color-live-border: var(--color-red-200);
 
   /* ── Ring / Focus ── */
-  --color-ring: var(--color-blue-500);
+  --color-ring: var(--color-blue-600);
   --color-ring-focus: var(--color-blue-200);
 
   /* ── Selection / Link / Overlay ── */
@@ -157,12 +159,12 @@
   --color-link: var(--color-blue-600);
   --color-link-hover: var(--color-blue-800);
   --color-link-visited: var(--color-blue-900);
-  --color-overlay: rgba(0, 0, 0, 0.5);
+  --color-overlay: rgba(15, 23, 42, 0.5);
   --color-skeleton: var(--color-gray-200);
   --color-tooltip: var(--color-gray-900);
   --color-tooltip-foreground: var(--color-gray-50);
 
-  /* ── Sidebar semantic ── */
+  /* ── Sidebar Semantic ── */
   --color-sidebar-primary: var(--color-blue-600);
   --color-sidebar-primary-foreground: #FFFFFF;
   --color-sidebar-accent: var(--color-amber-500);
@@ -170,7 +172,7 @@
   --color-sidebar-border: var(--color-gray-200);
   --color-sidebar-ring: var(--color-blue-500);
 
-  /* ── Status Badges (9 states) ── */
+  /* ── Status Badges ── */
   --color-status-planned-bg: var(--color-info-subtle);
   --color-status-planned-text: var(--color-info);
   --color-status-executed-bg: var(--color-success-subtle);
@@ -205,37 +207,39 @@
    LAYER 2B — SEMANTIC TOKENS (DARK THEME)
    ═══════════════════════════════════════════════════════════════ */
 html.dark {
-  /* ── Surface Hierarchy ── */
-  --color-bg: var(--color-gray-950);
-  --color-bg-elevated: var(--color-gray-900);
-  --color-bg-hover: var(--color-gray-800);
+  /* ── Surface Hierarchy (6 levels - Enhanced Contrast Delta) ── */
+  --color-bg: var(--color-gray-950);            /* Level 0: #0D1116 */
+  --color-bg-elevated: var(--color-gray-900);   /* Level 1: #1C2127 */
+  --color-bg-hover: var(--color-gray-800);      /* Level 2: #353A40 */
   --color-bg-active: var(--color-gray-700);
-  --color-surface: var(--color-gray-900);
+  --color-surface: var(--color-gray-900);       /* Level 1: #1C2127 */
   --color-surface-hover: var(--color-gray-800);
-  --color-surface-elevated: var(--color-gray-800);
-  --color-popover: var(--color-gray-800);
+  --color-surface-inset: #14191F;               /* Level 2 Inset */
+  --color-surface-elevated: var(--color-gray-850); /* Level 4 Modal */
+  --color-popover: var(--color-gray-800);       /* Level 3 Floating */
   --color-popover-foreground: var(--color-gray-100);
   --color-muted: var(--color-gray-800);
-  --color-muted-foreground: var(--color-gray-400);
+  --color-muted-foreground: var(--color-gray-300);
   --color-sidebar: var(--color-gray-900);
   --color-sidebar-foreground: var(--color-gray-100);
   --color-sidebar-hover: var(--color-gray-800);
-  --color-topbar: color-mix(in srgb, var(--color-gray-900) 85%, transparent);
+  --color-topbar: color-mix(in srgb, var(--color-gray-900) 88%, transparent);
 
   /* ── Text ── */
-  --color-text: var(--color-gray-100);
-  --color-text-secondary: var(--color-gray-400);
-  --color-text-muted: var(--color-gray-500);
+  --color-text: var(--color-gray-50);
+  --color-text-secondary: var(--color-gray-300);
+  --color-text-muted: var(--color-gray-400);
   --color-text-disabled: var(--color-gray-600);
   --color-text-inverse: var(--color-gray-950);
 
-  /* ── Border ── */
-  --color-border: var(--color-gray-800);
+  /* ── Border Hierarchy (Enhanced 3.1:1+ Contrast Delta) ── */
+  --color-border-subtle: #262B33;
+  --color-border: var(--color-gray-700);        /* Crisp #4E5359 vs #1C2127 */
   --color-border-light: var(--color-gray-800);
-  --color-border-strong: var(--color-gray-700);
+  --color-border-strong: var(--color-gray-600); /* High contrast control border */
   --color-border-focus: var(--color-blue-400);
 
-  /* ── Input ── */
+  /* ── Input Controls ── */
   --color-input: var(--color-gray-700);
   --color-input-hover: var(--color-gray-600);
   --color-input-focus: var(--color-blue-400);
@@ -245,9 +249,9 @@ html.dark {
   --color-primary-hover: var(--color-blue-300);
   --color-primary-active: var(--color-blue-200);
   --color-primary-foreground: var(--color-blue-950);
-  --color-primary-subtle: color-mix(in srgb, var(--color-blue-400) 12%, transparent);
-  --color-primary-border: color-mix(in srgb, var(--color-blue-400) 25%, transparent);
-  --color-primary-light: color-mix(in srgb, var(--color-blue-400) 18%, transparent);
+  --color-primary-subtle: color-mix(in srgb, var(--color-blue-400) 15%, transparent);
+  --color-primary-border: color-mix(in srgb, var(--color-blue-400) 30%, transparent);
+  --color-primary-light: color-mix(in srgb, var(--color-blue-400) 20%, transparent);
 
   /* ── Secondary ── */
   --color-secondary: var(--color-gray-800);
@@ -261,46 +265,46 @@ html.dark {
   --color-accent-hover: var(--color-amber-300);
   --color-accent-active: var(--color-amber-200);
   --color-accent-foreground: var(--color-amber-950);
-  --color-accent-subtle: color-mix(in srgb, var(--color-amber-400) 12%, transparent);
-  --color-accent-border: color-mix(in srgb, var(--color-amber-400) 25%, transparent);
+  --color-accent-subtle: color-mix(in srgb, var(--color-amber-400) 15%, transparent);
+  --color-accent-border: color-mix(in srgb, var(--color-amber-400) 30%, transparent);
 
   /* ── Success ── */
   --color-success: var(--color-green-400);
   --color-success-hover: var(--color-green-300);
   --color-success-active: var(--color-green-200);
   --color-success-foreground: var(--color-green-950);
-  --color-success-subtle: color-mix(in srgb, var(--color-green-400) 12%, transparent);
-  --color-success-border: color-mix(in srgb, var(--color-green-400) 25%, transparent);
+  --color-success-subtle: color-mix(in srgb, var(--color-green-400) 15%, transparent);
+  --color-success-border: color-mix(in srgb, var(--color-green-400) 30%, transparent);
 
   /* ── Warning ── */
   --color-warning: var(--color-amber-400);
   --color-warning-hover: var(--color-amber-300);
   --color-warning-active: var(--color-amber-200);
   --color-warning-foreground: var(--color-amber-950);
-  --color-warning-subtle: color-mix(in srgb, var(--color-amber-400) 12%, transparent);
-  --color-warning-border: color-mix(in srgb, var(--color-amber-400) 25%, transparent);
+  --color-warning-subtle: color-mix(in srgb, var(--color-amber-400) 15%, transparent);
+  --color-warning-border: color-mix(in srgb, var(--color-amber-400) 30%, transparent);
 
   /* ── Danger ── */
   --color-danger: var(--color-red-400);
   --color-danger-hover: var(--color-red-300);
   --color-danger-active: var(--color-red-200);
   --color-danger-foreground: var(--color-red-950);
-  --color-danger-subtle: color-mix(in srgb, var(--color-red-400) 12%, transparent);
-  --color-danger-border: color-mix(in srgb, var(--color-red-400) 25%, transparent);
+  --color-danger-subtle: color-mix(in srgb, var(--color-red-400) 15%, transparent);
+  --color-danger-border: color-mix(in srgb, var(--color-red-400) 30%, transparent);
 
   /* ── Info ── */
   --color-info: var(--color-sky-400);
   --color-info-hover: var(--color-sky-300);
   --color-info-active: var(--color-sky-200);
   --color-info-foreground: var(--color-sky-950);
-  --color-info-subtle: color-mix(in srgb, var(--color-sky-400) 12%, transparent);
-  --color-info-border: color-mix(in srgb, var(--color-sky-400) 25%, transparent);
+  --color-info-subtle: color-mix(in srgb, var(--color-sky-400) 15%, transparent);
+  --color-info-border: color-mix(in srgb, var(--color-sky-400) 30%, transparent);
 
   /* ── Live ── */
   --color-live: var(--color-red-400);
   --color-live-foreground: var(--color-red-950);
-  --color-live-subtle: color-mix(in srgb, var(--color-red-400) 14%, transparent);
-  --color-live-border: color-mix(in srgb, var(--color-red-400) 28%, transparent);
+  --color-live-subtle: color-mix(in srgb, var(--color-red-400) 15%, transparent);
+  --color-live-border: color-mix(in srgb, var(--color-red-400) 30%, transparent);
 
   /* ── Ring / Selection / Link / Overlay ── */
   --color-ring: var(--color-blue-400);
@@ -310,12 +314,12 @@ html.dark {
   --color-link: var(--color-blue-400);
   --color-link-hover: var(--color-blue-300);
   --color-link-visited: var(--color-blue-300);
-  --color-overlay: rgba(0, 0, 0, 0.7);
+  --color-overlay: rgba(0, 0, 0, 0.75);
   --color-skeleton: var(--color-gray-800);
   --color-tooltip: var(--color-gray-100);
   --color-tooltip-foreground: var(--color-gray-900);
 
-  /* ── Sidebar semantic ── */
+  /* ── Sidebar Semantic ── */
   --color-sidebar-primary: var(--color-blue-400);
   --color-sidebar-primary-foreground: var(--color-blue-950);
   --color-sidebar-accent: var(--color-amber-400);
