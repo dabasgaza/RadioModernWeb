@@ -17,6 +17,7 @@ public class EpisodeListViewModel
     public string SearchTerm { get; set; } = string.Empty;
     public byte? StatusFilter { get; set; }
     public int? ProgramFilter { get; set; }
+    public List<KpiItem> KpiItems { get; set; } = new();
 }
 
 /// <summary>

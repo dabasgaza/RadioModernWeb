@@ -12,30 +12,26 @@
 
 <partial name="_PageHeader" />
 
-<div class="rounded-2xl border mb-6" style="background: var(--color-surface); border-color: var(--color-border)">
+<div class="card mb-6">
     <div class="p-5">
-        <form method="get" class="flex gap-3">
+        <form method="get" class="flex gap-3" role="search" aria-label="تصفية حسب النطاق الزمني">
             <div class="relative flex-1">
-                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style="color: var(--color-text-muted)">calendar_month</span>
+                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted" aria-hidden="true">calendar_month</span>
                 <input type="text" name="from" value="@ViewBag.From"
-                       class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all datepicker"
-                       style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
-                       placeholder="من تاريخ" />
+                       class="input pr-10 datepicker"
+                       placeholder="من تاريخ" aria-label="من تاريخ" />
             </div>
             <div class="relative flex-1">
-                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style="color: var(--color-text-muted)">calendar_month</span>
+                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted" aria-hidden="true">calendar_month</span>
                 <input type="text" name="to" value="@ViewBag.To"
-                       class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all datepicker"
-                       style="background: var(--color-bg-alt); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary)"
-                       placeholder="إلى تاريخ" />
+                       class="input pr-10 datepicker"
+                       placeholder="إلى تاريخ" aria-label="إلى تاريخ" />
             </div>
-            <button type="submit" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-sm shadow-sm transition-all"
-                    style="background: var(--color-primary); color: white">
-                <span class="material-symbols-rounded text-lg">search</span>
+            <button type="submit" class="btn btn-primary">
+                <span class="material-symbols-rounded text-lg" aria-hidden="true">search</span>
                 تطبيق
             </button>
-            <a href="/Reports/ByDateRange" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-sm transition-all" title="إعادة ضبط"
-               style="color: var(--color-text-secondary)">
+            <a href="/Reports/ByDateRange" class="btn btn-ghost btn-icon" title="إعادة ضبط" aria-label="إعادة ضبط">
                 <span class="material-symbols-rounded text-lg">refresh</span>
             </a>
         </form>
@@ -51,27 +47,27 @@
 }
 else
 {
-    <div class="rounded-2xl border overflow-hidden" style="background: var(--color-surface); border-color: var(--color-border)">
+    <div class="card overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+            <table class="data-table">
                 <thead>
-                    <tr style="background: var(--color-bg-alt)">
-                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">الحلقة</th>
-                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">البرنامج</th>
-                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">الضيوف</th>
-                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">الموعد</th>
-                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">الحالة</th>
+                    <tr>
+                        <th>الحلقة</th>
+                        <th>البرنامج</th>
+                        <th>الضيوف</th>
+                        <th>الموعد</th>
+                        <th>الحالة</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var ep in Model)
                     {
-                        <tr class="border-t transition-colors duration-200" style="border-color: var(--color-border)">
-                            <td class="px-6 py-4 font-semibold" style="color: var(--color-text)">@ep.EpisodeName</td>
-                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@ep.ProgramName</td>
-                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@ep.GuestsDisplay</td>
-                            <td class="px-6 py-4 whitespace-nowrap" dir="ltr" style="color: var(--color-text-secondary)">@(ep.ScheduledExecutionTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
-                            <td class="px-6 py-4">@await Html.PartialAsync("_StatusBadge", new StatusBadgeViewModel { Type = "episode", Status = ep.StatusText.ToLower(), Label = ep.StatusText })</td>
+                        <tr>
+                            <td class="font-semibold text-text">@ep.EpisodeName</td>
+                            <td class="text-text-secondary">@ep.ProgramName</td>
+                            <td class="text-text-secondary">@ep.GuestsDisplay</td>
+                            <td class="whitespace-nowrap text-text-secondary" dir="ltr">@(ep.ScheduledExecutionTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                            <td>@await Html.PartialAsync("_StatusBadge", new StatusBadgeViewModel { Type = "episode", Status = ep.StatusText.ToLower(), Label = ep.StatusText })</td>
                         </tr>
                     }
                 </tbody>

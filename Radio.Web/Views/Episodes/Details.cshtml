@@ -39,92 +39,94 @@
     <partial name="_StatusBadge" model='new StatusBadgeViewModel { Type = "episode", Status = ep.StatusText, Label = ep.StatusText }' />
     @if (!isCancelled)
     {
-        <span class="text-xs text-text-secondary">المرحلة الحالية: @ep.StatusText</span>
+        <span class="text-caption text-text-secondary font-semibold">المرحلة الحالية: @ep.StatusText</span>
     }
     else
     {
-        <span class="text-xs text-danger font-semibold">ملغاة</span>
+        <span class="text-caption text-danger font-semibold">ملغاة</span>
     }
 </div>
 
 <!-- Timeline -->
-<div class="rounded-xl p-6 lg:p-8 mb-8 bg-surface border border-border relative overflow-hidden">
-    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-border">
-        <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary-subtle text-primary shrink-0">
-            <span class="material-symbols-rounded text-xl">timeline</span>
-        </div>
-        <div>
-            <h3 class="font-bold text-text">مسار ودورة عمل الحلقة</h3>
-            <p class="text-xs text-text-muted">متابعة مراحل التنفيذ والنشر من الإعداد حتى البث الفعلي</p>
-        </div>
-    </div>
+<div class="card p-6 lg:p-8 mb-8 relative overflow-hidden">
+    @{
+        ViewBag.SectionIcon = "timeline";
+        ViewBag.SectionTitle = "مسار ودورة عمل الحلقة";
+        ViewBag.SectionSubtitle = "متابعة مراحل التنفيذ والنشر من الإعداد حتى البث الفعلي";
+        ViewBag.SectionAction = null;
+    }
+    <partial name="_SectionHeader" />
 
     <!-- Desktop: horizontal stepper -->
     <div class="hidden lg:flex items-start justify-between relative pt-4 pb-2">
-        <div class="absolute top-7 left-8 right-8 h-1 rounded-full z-0 bg-border transition-all duration-500"></div>
         @for (int i = 0; i < stages.Length; i++)
         {
             var s = stages[i];
             var done = IsDone(i);
             var current = IsCurrent(i);
-            var lineActive = i > 0 && (IsDone(i) || IsCurrent(i));
-            <div class="flex flex-col items-center relative z-10 flex-1">
-                @if (i > 0)
+            var isLastStage = i == stages.Length - 1;
+            var lineActive = !isLastStage && (IsDone(i + 1) || IsCurrent(i + 1));
+            <div class="flex flex-col items-center flex-1 relative">
+                @if (!isLastStage || isCancelled)
                 {
-                    <div class="absolute top-7 -right-1/2 w-full h-1 z-0 transition-all duration-700 rounded-full @(lineActive && !isCancelled ? "bg-success" : "bg-transparent")"></div>
+                    var connectionActive = !isLastStage ? (lineActive && !isCancelled) : isCancelled;
+                    <div class="absolute top-7 left-[-50%] right-[50%] h-1 z-0 rounded-full transition-all duration-500 @(connectionActive ? (isLastStage && isCancelled ? "bg-danger" : "bg-success") : "bg-border")"></div>
                 }
-                <div class="w-14 h-14 rounded-2xl flex items-center justify-center border-2 transition-all duration-300 @(done && !isCancelled ? "bg-success text-white border-success shadow-lg" : current && !isCancelled ? "bg-primary text-white border-primary shadow-xl scale-110" : "bg-bg text-text-muted border-border")" style="@(done && !isCancelled ? "box-shadow:0 0 0 4px color-mix(in srgb,var(--color-success) 25%,transparent)" : current && !isCancelled ? "box-shadow:var(--shadow-float)" : "")">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center border-2 transition-all duration-300 relative z-10 @(done && !isCancelled ? "bg-success text-white border-success shadow-lg" : current && !isCancelled ? "bg-primary text-white border-primary shadow-xl scale-110" : "bg-bg text-text-muted border-border")" style="@(done && !isCancelled ? "box-shadow:0 0 0 4px color-mix(in srgb,var(--color-success) 25%,transparent)" : current && !isCancelled ? "box-shadow:var(--shadow-float)" : "")">
                     <span class="material-symbols-rounded text-2xl">@(done && !isCancelled ? "check" : s.Icon)</span>
                 </div>
-                <div class="mt-3 text-center px-1 z-10">
+                <div class="mt-3 text-center px-1 relative z-10">
                     <div class="text-xs font-bold leading-tight @(done && !isCancelled ? "text-success" : current && !isCancelled ? "text-primary" : "text-text-muted")">@s.Name</div>
                     @if (current && !isCancelled)
                     {
-                        <span class="text-[10px] font-bold mt-1.5 inline-block px-2.5 py-0.5 rounded-full animate-pulse bg-primary-subtle text-primary border border-border">المرحلة النشطة</span>
+                        <span class="text-caption font-bold mt-1.5 inline-block px-2.5 py-0.5 rounded-full animate-pulse bg-primary-subtle text-primary border border-border">المرحلة النشطة</span>
                     }
                     @if (done && !isCancelled && !current)
                     {
-                        <span class="text-[10px] text-success mt-0.5 block font-medium">✓ تم</span>
+                        <span class="text-caption text-success mt-0.5 block font-medium">✓ تم</span>
                     }
                 </div>
             </div>
         }
         @if (isCancelled)
         {
-            <div class="flex flex-col items-center relative z-10 flex-[0.6]">
-                <div class="w-14 h-14 rounded-2xl flex items-center justify-center bg-danger text-white border-2 border-danger shadow-lg" style="box-shadow:0 0 0 4px color-mix(in srgb,var(--color-danger) 25%,transparent)">
+            <div class="flex flex-col items-center flex-1 relative">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center bg-danger text-white border-2 border-danger shadow-lg relative z-10" style="box-shadow:0 0 0 4px color-mix(in srgb,var(--color-danger) 25%,transparent)">
                     <span class="material-symbols-rounded text-2xl">cancel</span>
                 </div>
-                <div class="mt-3 text-center">
+                <div class="mt-3 text-center relative z-10">
                     <div class="text-xs font-bold text-danger">ملغاة</div>
-                    <span class="text-[10px] font-bold mt-1.5 inline-block px-2.5 py-0.5 rounded-full" style="background:color-mix(in srgb,var(--color-danger) 15%,transparent);color:var(--color-danger);border:1px solid var(--color-border)">نهائية</span>
+                    <span class="text-caption font-bold mt-1.5 inline-block px-2.5 py-0.5 rounded-full bg-danger-subtle text-danger border border-border">نهائية</span>
                 </div>
             </div>
         }
     </div>
 
     <!-- Mobile/tablet: vertical stepper -->
-    <div class="lg:hidden relative space-y-0" style="padding-inline-start:2rem">
+    <div class="lg:hidden relative space-y-0 pr-8">
         @for (int i = 0; i < stages.Length; i++)
         {
             var s = stages[i];
             var done = IsDone(i);
             var current = IsCurrent(i);
             var lineActive = i < stages.Length - 1 && (IsDone(i + 1) || IsCurrent(i + 1));
-            <div class="flex items-start gap-4 pb-2 relative">
-                <div class="absolute -right-[18px] top-10 w-0.5 h-[calc(100%-2rem)] z-0 transition-all duration-500" style="background:@(lineActive && !isCancelled ? "var(--color-success)" : "var(--color-bg)")"></div>
-                <div class="w-12 h-12 rounded-2xl flex items-center justify-center z-10 shrink-0 border-2 transition-all duration-300" style="background:@(done && !isCancelled ? "var(--color-success)" : current && !isCancelled ? "var(--color-primary)" : "var(--color-bg)");color:@(done || current ? "white" : "var(--color-text-muted)");border-color:@(done && !isCancelled ? "var(--color-success)" : current && !isCancelled ? "var(--color-primary)" : "var(--color-border)");@(done && !isCancelled ? "box-shadow:0 0 0 4px color-mix(in srgb,var(--color-success) 25%,transparent)" : current && !isCancelled ? "box-shadow:var(--shadow-float);transform:scale(1.1)" : "")">
+            <div class="flex items-start gap-4 pb-6 relative">
+                @if (i < stages.Length - 1 || isCancelled)
+                {
+                    <div class="absolute right-[23px] top-12 bottom-0 w-0.5 z-0 transition-all duration-500 @(lineActive && !isCancelled ? "bg-success" : "bg-border")"></div>
+                }
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border-2 transition-all duration-300 relative z-10 @(done && !isCancelled ? "bg-success text-white border-success shadow-lg" : current && !isCancelled ? "bg-primary text-white border-primary shadow-xl scale-110" : "bg-bg text-text-muted border-border")" style="@(done && !isCancelled ? "box-shadow:0 0 0 4px color-mix(in srgb,var(--color-success) 25%,transparent)" : current && !isCancelled ? "box-shadow:var(--shadow-float)" : "")">
                     <span class="material-symbols-rounded text-xl">@(done && !isCancelled ? "check" : s.Icon)</span>
                 </div>
-                <div class="flex-1 py-2">
-                    <div class="text-sm font-bold" style="color:@(done && !isCancelled ? "var(--color-success)" : current && !isCancelled ? "var(--color-primary)" : "var(--color-text-muted)")">@s.Name</div>
+                <div class="flex-1 py-2 relative z-10">
+                    <div class="text-sm font-bold @(done && !isCancelled ? "text-success" : current && !isCancelled ? "text-primary" : "text-text-muted")">@s.Name</div>
                     @if (current && !isCancelled)
                     {
-                        <span class="text-[10px] font-bold mt-1 inline-block px-2.5 py-0.5 rounded-full animate-pulse bg-primary-subtle text-primary">المرحلة النشطة</span>
+                        <span class="text-caption font-bold mt-1 inline-block px-2.5 py-0.5 rounded-full animate-pulse bg-primary-subtle text-primary">المرحلة النشطة</span>
                     }
                     @if (done && !isCancelled && !current)
                     {
-                        <span class="text-[10px] mt-0.5 block font-medium text-success">✓ تم</span>
+                        <span class="text-caption mt-0.5 block font-medium text-success">✓ تم</span>
                     }
                 </div>
             </div>
@@ -132,12 +134,12 @@
         @if (isCancelled)
         {
             <div class="flex items-start gap-4 pb-2 relative">
-                <div class="w-12 h-12 rounded-2xl flex items-center justify-center z-10 shrink-0 border-2" style="background:var(--color-danger);color:white;border-color:var(--color-danger);box-shadow:0 0 0 4px color-mix(in srgb,var(--color-danger) 25%,transparent)">
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border-2 bg-danger text-white border-danger relative z-10" style="box-shadow:0 0 0 4px color-mix(in srgb,var(--color-danger) 25%,transparent)">
                     <span class="material-symbols-rounded text-xl">cancel</span>
                 </div>
-                <div class="flex-1 py-2">
+                <div class="flex-1 py-2 relative z-10">
                     <div class="text-sm font-bold text-danger">ملغاة</div>
-                    <span class="text-[10px] font-bold mt-1 inline-block px-2.5 py-0.5 rounded-full" style="background:color-mix(in srgb,var(--color-danger) 15%,transparent);color:var(--color-danger)">نهائية</span>
+                    <span class="text-caption font-bold mt-1 inline-block px-2.5 py-0.5 rounded-full bg-danger-subtle text-danger">نهائية</span>
                 </div>
             </div>
         }
@@ -148,7 +150,7 @@
     <div class="lg:col-span-2 space-y-6">
 
         <!-- Basic info -->
-        <div class="rounded-xl p-6 bg-surface border border-border">
+        <div class="card p-6">
             @{
                 ViewBag.SectionIcon = "info";
                 ViewBag.SectionTitle = "معلومات الحلقة الأساسية";
@@ -159,39 +161,39 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="p-3 rounded-xl bg-bg border border-border">
-                    <div class="text-[10px] font-bold text-text-muted mb-1">البرنامج الإذاعي</div>
+                    <div class="text-caption font-bold text-text-muted mb-1">البرنامج الإذاعي</div>
                     <div class="font-bold text-text text-sm flex items-center gap-1">
-                        <span class="material-symbols-rounded text-sm text-primary">radio</span>
+                        <span class="material-symbols-rounded text-sm text-primary" aria-hidden="true">radio</span>
                         @ep.ProgramName
                     </div>
                 </div>
                 <div class="p-3 rounded-xl bg-bg border border-border">
-                    <div class="text-[10px] font-bold text-text-muted mb-1">حالة الحلقة الحالية</div>
+                    <div class="text-caption font-bold text-text-muted mb-1">حالة الحلقة الحالية</div>
                     <partial name="_StatusBadge" model='new StatusBadgeViewModel { Type = "episode", Status = ep.StatusText, Label = ep.StatusText }' />
                 </div>
             </div>
 
             @if (!string.IsNullOrWhiteSpace(ep.EpisodeDescription))
             {
-                <div class="mt-4 p-4 rounded-xl" style="border-right:4px solid var(--color-primary);background:var(--color-primary-subtle)">
-                    <div class="text-[10px] font-bold text-primary mb-1">وصف ومحتوى الحلقة</div>
+                <div class="mt-4 p-4 rounded-xl border-r-4 border-primary bg-primary-subtle">
+                    <div class="text-caption font-bold text-primary mb-1">وصف ومحتوى الحلقة</div>
                     <div class="text-text text-sm leading-relaxed whitespace-pre-line font-medium">@ep.EpisodeDescription</div>
                 </div>
             }
 
             @if (!string.IsNullOrWhiteSpace(ep.SpecialNotes))
             {
-                <div class="mt-4 p-4 rounded-xl" style="border-right:4px solid var(--color-warning);background:color-mix(in srgb,var(--color-warning) 10%,transparent)">
-                    <div class="text-[10px] font-bold text-warning mb-1">ملاحظات وتوجيهات خاصة</div>
+                <div class="mt-4 p-4 rounded-xl border-r-4 border-warning bg-warning-subtle">
+                    <div class="text-caption font-bold text-warning mb-1">ملاحظات وتوجيهات خاصة</div>
                     <div class="text-text text-sm font-medium">@ep.SpecialNotes</div>
                 </div>
             }
 
             @if (!string.IsNullOrWhiteSpace(ep.CancellationReason))
             {
-                <div class="mt-4 p-4 rounded-xl" style="border-right:4px solid var(--color-danger);background:color-mix(in srgb,var(--color-danger) 10%,transparent)">
-                    <div class="text-[10px] font-bold text-danger mb-1 flex items-center gap-1">
-                        <span class="material-symbols-rounded text-xs">warning</span>
+                <div class="mt-4 p-4 rounded-xl border-r-4 border-danger bg-danger-subtle">
+                    <div class="text-caption font-bold text-danger mb-1 flex items-center gap-1">
+                        <span class="material-symbols-rounded text-xs" aria-hidden="true">warning</span>
                         سبب إلغاء وجدولة الحلقة
                     </div>
                     <div class="text-text text-sm font-medium">@ep.CancellationReason</div>
@@ -200,27 +202,27 @@
         </div>
 
         <!-- Planning -->
-        <div class="rounded-xl p-6 bg-surface border border-border @(ep.StatusId < 1 ? "ring-2" : "")" style="@(ep.StatusId < 1 ? "--tw-ring-color:var(--color-primary)" : "")">
+        <div class="card p-6 @(ep.StatusId < 1 ? "ring-2 ring-primary" : "")">
             @{
                 ViewBag.SectionIcon = "calendar_today";
                 ViewBag.SectionTitle = "تفاصيل مرحلة التخطيط";
                 ViewBag.SectionSubtitle = null;
-                ViewBag.SectionAction = ep.StatusId == 0 ? new Microsoft.AspNetCore.Html.HtmlString("<span class=\"text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-primary-subtle text-primary border border-border\">المرحلة الحالية</span>") : null;
+                ViewBag.SectionAction = ep.StatusId == 0 ? new Microsoft.AspNetCore.Html.HtmlString("<span class=\"text-caption font-bold px-2.5 py-0.5 rounded-full bg-primary-subtle text-primary border border-border\">المرحلة الحالية</span>") : null;
             }
             <partial name="_SectionHeader" />
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="p-3 rounded-xl bg-bg border border-border">
-                    <div class="text-[10px] font-bold text-text-muted mb-1">الموعد المجدول للبث</div>
+                    <div class="text-caption font-bold text-text-muted mb-1">الموعد المجدول للبث</div>
                     <div class="font-bold text-text text-sm flex items-center gap-1.5">
-                        <span class="material-symbols-rounded text-sm text-primary">schedule</span>
+                        <span class="material-symbols-rounded text-sm text-primary" aria-hidden="true">schedule</span>
                         @(ep.ScheduledExecutionTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")
                     </div>
                 </div>
                 <div class="p-3 rounded-xl bg-bg border border-border">
-                    <div class="text-[10px] font-bold text-text-muted mb-1">البرنامج</div>
+                    <div class="text-caption font-bold text-text-muted mb-1">البرنامج</div>
                     <div class="font-bold text-text text-sm flex items-center gap-1.5">
-                        <span class="material-symbols-rounded text-sm text-primary">radio</span>
+                        <span class="material-symbols-rounded text-sm text-primary" aria-hidden="true">radio</span>
                         @ep.ProgramName
                     </div>
                 </div>
@@ -230,7 +232,7 @@
             {
                 <div class="mt-6">
                     <div class="text-xs font-bold text-text mb-3 flex items-center gap-1">
-                        <span class="material-symbols-rounded text-sm text-primary">groups</span>
+                        <span class="material-symbols-rounded text-sm text-primary" aria-hidden="true">groups</span>
                         الضيوف المشاركون (@ep.GuestItems.Count)
                     </div>
                     <div class="flex flex-wrap gap-2">
@@ -251,7 +253,7 @@
             {
                 <div class="mt-6">
                     <div class="text-xs font-bold text-text mb-3 flex items-center gap-1">
-                        <span class="material-symbols-rounded text-sm text-warning">map</span>
+                        <span class="material-symbols-rounded text-sm text-warning" aria-hidden="true">map</span>
                         المراسلون الميدانيون (@ep.CorrespondentItems.Count)
                     </div>
                     <div class="flex flex-wrap gap-2">
@@ -272,7 +274,7 @@
             {
                 <div class="mt-6">
                     <div class="text-xs font-bold text-text mb-3 flex items-center gap-1">
-                        <span class="material-symbols-rounded text-sm">badge</span>
+                        <span class="material-symbols-rounded text-sm" aria-hidden="true">badge</span>
                         طاقم العمل والإنتاج (@ep.EmployeeItems.Count)
                     </div>
                     <div class="flex flex-wrap gap-2">
@@ -293,7 +295,7 @@
         <!-- Execution stage -->
         @if (ep.StatusId >= 1)
         {
-            <div class="rounded-xl p-6 bg-surface border border-border @(ep.StatusId == 1 ? "ring-2" : "")" style="@(ep.StatusId == 1 ? "--tw-ring-color:var(--color-success)" : "")">
+            <div class="card p-6 @(ep.StatusId == 1 ? "ring-2 ring-success" : "")">
                 <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
                     <span class="material-symbols-rounded p-1 rounded-lg text-lg @StageIconBg("success")" aria-hidden="true">play_circle</span>
                     <h3 class="font-bold text-text flex-1">تفاصيل مرحلة التنفيذ (الإنتاج)</h3>
@@ -308,27 +310,27 @@
                     var execLog = Model.PublishingRecords.FirstOrDefault(r => r.RecordType == "Execution");
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="p-3 rounded-xl bg-bg border border-border">
-                            <div class="text-[10px] font-bold text-text-muted mb-1">وقت التنفيذ الفعلي للبث</div>
+                            <div class="text-caption font-bold text-text-muted mb-1">وقت التنفيذ الفعلي للبث</div>
                             <div class="font-bold text-text text-sm flex items-center gap-1.5">
-                                <span class="material-symbols-rounded text-sm text-success">event_available</span>
+                                <span class="material-symbols-rounded text-sm text-success" aria-hidden="true">event_available</span>
                                 @ep.ActualExecutionTime.Value.ToString("yyyy-MM-dd HH:mm")
                             </div>
                         </div>
                         @if (execLog != null)
                         {
                             <div class="p-3 rounded-xl bg-bg border border-border">
-                                <div class="text-[10px] font-bold text-text-muted mb-1">الملخص والمدة</div>
+                                <div class="text-caption font-bold text-text-muted mb-1">الملخص والمدة</div>
                                 <div class="font-bold text-text text-sm flex items-center gap-1.5">
-                                    <span class="material-symbols-rounded text-sm text-success">hourglass_empty</span>
+                                    <span class="material-symbols-rounded text-sm text-success" aria-hidden="true">hourglass_empty</span>
                                     @execLog.Summary
                                 </div>
                             </div>
                         }
                     </div>
-                    if (User.HasPermission(AppPermissions.EpisodeExecute) && execLog != null)
+                    if (User.HasPermission(AppPermissions.ExecutionExecute) && execLog != null)
                     {
-                        <a href="/ExecutionLogs/Edit/@execLog.RecordId" class="mt-4 inline-flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-xs font-semibold transition-all" style="background:color-mix(in srgb,var(--color-success) 15%,transparent);color:var(--color-success);border:1px solid var(--color-border)">
-                            <span class="material-symbols-rounded text-sm">edit</span>
+                        <a href="/ExecutionLogs/Edit/@execLog.RecordId" class="mt-4 inline-flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-caption font-semibold transition-all bg-success-subtle text-success border border-border">
+                            <span class="material-symbols-rounded text-sm" aria-hidden="true">edit</span>
                             تعديل بيانات التنفيذ
                         </a>
                     }
@@ -336,7 +338,7 @@
                 else
                 {
                     <div class="text-text-muted text-sm flex items-center gap-2 py-2">
-                        <span class="material-symbols-rounded text-text-muted">help_outline</span>
+                        <span class="material-symbols-rounded text-text-muted" aria-hidden="true">help_outline</span>
                         لم يتم تسجيل وقت التنفيذ الفعلي بعد.
                     </div>
                 }
@@ -346,7 +348,7 @@
         <!-- Social stage -->
         @if (ep.StatusId >= 2)
         {
-            <div class="rounded-xl p-6 bg-surface border border-border @(ep.StatusId == 2 ? "ring-2" : "")" style="@(ep.StatusId == 2 ? "--tw-ring-color:var(--color-success)" : "")">
+            <div class="card p-6 @(ep.StatusId == 2 ? "ring-2 ring-success" : "")">
                 <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
                     <span class="material-symbols-rounded p-1 rounded-lg text-lg @StageIconBg("success")" aria-hidden="true">share</span>
                     <h3 class="font-bold text-text flex-1">تفاصيل النشر الرقمي (سوشال)</h3>
@@ -364,22 +366,22 @@
                             <div class="rounded-xl p-4 bg-bg border border-border">
                                 <div class="flex items-center justify-between mb-2 pb-2 border-b border-border">
                                     <span class="font-bold text-text text-sm flex items-center gap-1.5">
-                                        <span class="material-symbols-rounded text-sm text-primary">person_pin</span>
+                                        <span class="material-symbols-rounded text-sm text-primary" aria-hidden="true">person_pin</span>
                                         @sr.Summary
                                     </span>
-                                    <span class="text-xs text-text-muted font-medium flex items-center gap-1">
-                                        <span class="material-symbols-rounded text-xs">schedule</span>
+                                    <span class="text-caption text-text-muted font-medium flex items-center gap-1">
+                                        <span class="material-symbols-rounded text-xs" aria-hidden="true">schedule</span>
                                         @sr.RecordDate.ToString("yyyy-MM-dd HH:mm")
                                     </span>
                                 </div>
-                                <div class="text-xs text-text-muted flex items-center gap-1">
-                                    <span class="material-symbols-rounded text-xs text-text-muted">account_circle</span>
+                                <div class="text-caption text-text-muted flex items-center gap-1">
+                                    <span class="material-symbols-rounded text-xs text-text-muted" aria-hidden="true">account_circle</span>
                                     المسؤول عن النشر: @(sr.RecordedBy ?? "تلقائي")
                                 </div>
-                                @if (User.HasPermission(AppPermissions.EpisodePublish))
+                                @if (User.HasPermission(AppPermissions.SocialPublishingPublish))
                                 {
-                                    <a href="/Publishing/Edit/@sr.RecordId" class="mt-3 inline-flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-xs font-semibold transition-all" style="background:var(--color-primary-subtle);color:var(--color-primary);border:1px solid var(--color-border)">
-                                        <span class="material-symbols-rounded text-sm">edit</span>
+                                    <a href="/Publishing/Edit/@sr.RecordId" class="mt-3 inline-flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-caption font-semibold transition-all bg-primary-subtle text-primary border border-border">
+                                        <span class="material-symbols-rounded text-sm" aria-hidden="true">edit</span>
                                         تعديل النشر الرقمي
                                     </a>
                                 }
@@ -390,7 +392,7 @@
                 else
                 {
                     <div class="text-text-muted text-sm flex items-center gap-2 py-2">
-                        <span class="material-symbols-rounded text-text-muted">help_outline</span>
+                        <span class="material-symbols-rounded text-text-muted" aria-hidden="true">help_outline</span>
                         لا توجد سجلات نشر رقمي مسجلة بعد.
                     </div>
                 }
@@ -400,7 +402,7 @@
         <!-- Website stage -->
         @if (ep.StatusId >= 3)
         {
-            <div class="rounded-xl p-6 bg-surface border border-border @(ep.StatusId == 3 ? "ring-2" : "")" style="@(ep.StatusId == 3 ? "--tw-ring-color:var(--color-accent)" : "")">
+            <div class="card p-6 @(ep.StatusId == 3 ? "ring-2 ring-accent" : "")">
                 <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
                     <span class="material-symbols-rounded p-1 rounded-lg text-lg @StageIconBg("accent")" aria-hidden="true">public</span>
                     <h3 class="font-bold text-text flex-1">تفاصيل النشر على الموقع الرسمي</h3>
@@ -418,22 +420,22 @@
                             <div class="rounded-xl p-4 bg-bg border border-border">
                                 <div class="flex items-center justify-between mb-2 pb-2 border-b border-border">
                                     <span class="font-bold text-text text-sm flex items-center gap-1.5">
-                                        <span class="material-symbols-rounded text-sm text-accent">language</span>
+                                        <span class="material-symbols-rounded text-sm text-accent" aria-hidden="true">language</span>
                                         @wr.Summary
                                     </span>
-                                    <span class="text-xs text-text-muted font-medium flex items-center gap-1">
-                                        <span class="material-symbols-rounded text-xs">schedule</span>
+                                    <span class="text-caption text-text-muted font-medium flex items-center gap-1">
+                                        <span class="material-symbols-rounded text-xs" aria-hidden="true">schedule</span>
                                         @wr.RecordDate.ToString("yyyy-MM-dd HH:mm")
                                     </span>
                                 </div>
-                                <div class="text-xs text-text-muted flex items-center gap-1">
-                                    <span class="material-symbols-rounded text-xs text-text-muted">account_circle</span>
+                                <div class="text-caption text-text-muted flex items-center gap-1">
+                                    <span class="material-symbols-rounded text-xs text-text-muted" aria-hidden="true">account_circle</span>
                                     المسؤول عن النشر: @(wr.RecordedBy ?? "تلقائي")
                                 </div>
-                                @if (User.HasPermission(AppPermissions.EpisodeWebPublish))
+                                @if (User.HasPermission(AppPermissions.WebsitePublishingPublish))
                                 {
-                                    <a href="/WebsitePublishing/Edit/@wr.RecordId" class="mt-3 inline-flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-xs font-semibold transition-all" style="background:color-mix(in srgb,var(--color-accent) 15%,transparent);color:var(--color-accent);border:1px solid var(--color-border)">
-                                        <span class="material-symbols-rounded text-sm">edit</span>
+                                    <a href="/WebsitePublishing/Edit/@wr.RecordId" class="mt-3 inline-flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-caption font-semibold transition-all bg-accent-subtle text-accent border border-border">
+                                        <span class="material-symbols-rounded text-sm" aria-hidden="true">edit</span>
                                         تعديل النشر على الموقع
                                     </a>
                                 }
@@ -444,7 +446,7 @@
                 else
                 {
                     <div class="text-text-muted text-sm flex items-center gap-2 py-2">
-                        <span class="material-symbols-rounded text-text-muted">help_outline</span>
+                        <span class="material-symbols-rounded text-text-muted" aria-hidden="true">help_outline</span>
                         لا توجد سجلات نشر موقع مسجلة بعد.
                     </div>
                 }
@@ -456,53 +458,53 @@
     <div class="space-y-6">
 
         <!-- Actions -->
-        <div class="rounded-xl p-6 bg-surface border border-border">
-            <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
+        <div class="card p-6">
+            <div class="flex items-center gap-3 mb-4 pb-3 border-b border-border">
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary-subtle text-primary shrink-0">
-                    <span class="material-symbols-rounded text-lg">bolt</span>
+                    <span class="material-symbols-rounded text-lg" aria-hidden="true">bolt</span>
                 </div>
                 <h3 class="font-bold text-text">إجراءات الحلقة</h3>
             </div>
             <div class="space-y-3">
-                @if (User.HasPermission(AppPermissions.EpisodeEdit) && ep.StatusId != 4)
+                @if (User.HasPermission(AppPermissions.EpisodesEdit) && ep.StatusId != 4)
                 {
                     <a href="/Episodes/Edit/@ep.EpisodeId" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all bg-primary-subtle text-primary border border-border">
-                        <span class="material-symbols-rounded text-lg">edit</span>
+                        <span class="material-symbols-rounded text-lg" aria-hidden="true">edit</span>
                         تعديل خصائص الحلقة
                     </a>
                 }
-                @if (User.HasPermission(AppPermissions.EpisodeExecute) && ep.StatusId == 0)
+                @if (User.HasPermission(AppPermissions.ExecutionExecute) && ep.StatusId == 0)
                 {
-                    <button type="button" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-right" style="background:color-mix(in srgb,var(--color-success) 15%,transparent);color:var(--color-success);border:1px solid var(--color-border)" onclick="document.getElementById('executeModal').showModal()">
-                        <span class="material-symbols-rounded text-lg">play_circle</span>
+                    <button type="button" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all bg-success-subtle text-success border border-border text-right" onclick="document.getElementById('executeModal').showModal()">
+                        <span class="material-symbols-rounded text-lg" aria-hidden="true">play_circle</span>
                         تسجيل وتوثيق التنفيذ
                     </button>
                 }
-                @if (User.HasPermission(AppPermissions.EpisodePublish) && ep.StatusId == 1)
+                @if (User.HasPermission(AppPermissions.SocialPublishingPublish) && ep.StatusId == 1)
                 {
-                    <a href="/Publishing/LogSocial/@ep.EpisodeId" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all" style="background:color-mix(in srgb,var(--color-info) 15%,transparent);color:var(--color-info);border:1px solid var(--color-border)">
-                        <span class="material-symbols-rounded text-lg">share</span>
+                    <a href="/Publishing/LogSocial/@ep.EpisodeId" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all bg-info-subtle text-info border border-border">
+                        <span class="material-symbols-rounded text-lg" aria-hidden="true">share</span>
                         البدء بالنشر الرقمي (سوشال)
                     </a>
                 }
-                @if (User.HasPermission(AppPermissions.EpisodeWebPublish) && (ep.StatusId == 1 || ep.StatusId == 2))
+                @if (User.HasPermission(AppPermissions.WebsitePublishingPublish) && (ep.StatusId == 1 || ep.StatusId == 2))
                 {
-                    <a href="/WebsitePublishing/Publish/@ep.EpisodeId" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all" style="background:color-mix(in srgb,var(--color-accent) 15%,transparent);color:var(--color-accent);border:1px solid var(--color-border)">
-                        <span class="material-symbols-rounded text-lg">public</span>
+                    <a href="/WebsitePublishing/Publish/@ep.EpisodeId" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all bg-accent-subtle text-accent border border-border">
+                        <span class="material-symbols-rounded text-lg" aria-hidden="true">public</span>
                         النشر على الموقع الرسمي
                     </a>
                 }
-                @if (User.HasPermission(AppPermissions.EpisodeRevert) && ep.StatusId is 1 or 2 or 3)
+                @if (User.HasPermission(AppPermissions.ExecutionCancel) && ep.StatusId is 1 or 2 or 3)
                 {
-                    <button type="button" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-right" style="background:color-mix(in srgb,var(--color-warning) 15%,transparent);color:var(--color-warning);border:1px solid var(--color-border)" onclick="document.getElementById('revertModal').showModal()">
-                        <span class="material-symbols-rounded text-lg">undo</span>
+                    <button type="button" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all bg-warning-subtle text-warning border border-border text-right" onclick="document.getElementById('revertModal').showModal()">
+                        <span class="material-symbols-rounded text-lg" aria-hidden="true">undo</span>
                         التراجع عن الحالة السابقة
                     </button>
                 }
-                @if (User.HasPermission(AppPermissions.EpisodeDelete) && ep.StatusId != 4)
+                @if (User.HasPermission(AppPermissions.EpisodesDelete) && ep.StatusId != 4)
                 {
-                    <button type="button" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all text-right" style="background:color-mix(in srgb,var(--color-danger) 15%,transparent);color:var(--color-danger);border:1px solid var(--color-border)" onclick="document.getElementById('cancelModal').showModal()">
-                        <span class="material-symbols-rounded text-lg">cancel</span>
+                    <button type="button" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all bg-danger-subtle text-danger border border-border text-right" onclick="document.getElementById('cancelModal').showModal()">
+                        <span class="material-symbols-rounded text-lg" aria-hidden="true">cancel</span>
                         إلغاء الحلقة
                     </button>
                 }
@@ -510,47 +512,47 @@
         </div>
 
         <!-- Attachments -->
-        <div class="rounded-xl p-6 bg-surface border border-border">
-            <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
+        <div class="card p-6">
+            <div class="flex items-center gap-3 mb-4 pb-3 border-b border-border">
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary-subtle text-primary shrink-0">
-                    <span class="material-symbols-rounded text-lg">attach_file</span>
+                    <span class="material-symbols-rounded text-lg" aria-hidden="true">attach_file</span>
                 </div>
                 <h3 class="font-bold text-text">المرفقات</h3>
             </div>
             <form method="post" action="/Upload/Episode/@Model.Episode.EpisodeId" enctype="multipart/form-data" class="mb-3">
                 <div class="flex items-center gap-2">
-                    <input type="file" name="files" multiple class="w-full rounded-xl py-2 px-3 text-sm focus:outline-none focus:ring-2 transition-all flex-1 min-w-0 bg-bg border border-border text-text" style="--tw-ring-color:var(--color-primary)" />
-                    <button type="submit" class="btn btn-primary btn-sm rounded-xl whitespace-nowrap gap-1">
-                        <span class="material-symbols-rounded text-sm">upload</span>
+                    <input type="file" name="files" multiple class="w-full rounded-xl py-2 px-3 text-sm focus:outline-none focus:ring-2 transition-all flex-1 min-w-0 bg-bg border border-border text-text ring-ring" aria-label="اختيار ملفات للرفع" />
+                    <button type="submit" class="btn btn-primary btn-sm rounded-xl whitespace-nowrap gap-1" aria-label="رفع الملفات">
+                        <span class="material-symbols-rounded text-sm" aria-hidden="true">upload</span>
                         رفع
                     </button>
                 </div>
             </form>
             <div id="attachmentList" class="space-y-1">
                 <div class="text-center py-4 text-text-muted text-xs">
-                    <span class="material-symbols-rounded text-lg block mb-1 text-text-muted">cloud_upload</span>
+                    <span class="material-symbols-rounded text-lg block mb-1 text-text-muted" aria-hidden="true">cloud_upload</span>
                     جاري تحميل المرفقات…
                 </div>
             </div>
         </div>
 
         <!-- Audit log -->
-        <div class="rounded-xl p-6 bg-surface border border-border">
-            <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:color-mix(in srgb,var(--color-accent) 15%,transparent);color:var(--color-accent)">
-                    <span class="material-symbols-rounded text-lg">history</span>
+        <div class="card p-6">
+            <div class="flex items-center gap-3 mb-4 pb-3 border-b border-border">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-accent-subtle text-accent">
+                    <span class="material-symbols-rounded text-lg" aria-hidden="true">history</span>
                 </div>
                 <h3 class="font-bold text-text flex-1">السجل الزمني للعمليات</h3>
                 @if (Model.PublishingRecords.Any())
                 {
-                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-bg text-text-muted">@Model.PublishingRecords.Count</span>
+                    <span class="text-caption font-bold px-2 py-0.5 rounded-lg bg-bg text-text-muted">@Model.PublishingRecords.Count</span>
                 }
             </div>
-            <div class="space-y-4 relative" style="padding-right:1.25rem;border-right:2px solid var(--color-border)">
+            <div class="space-y-4 relative pr-5 border-r-2 border-border">
                 @if (!Model.PublishingRecords.Any())
                 {
                     <div class="text-center py-6 text-text-muted text-xs">
-                        <span class="material-symbols-rounded text-lg block mb-1 text-text-muted">history_toggle_off</span>
+                        <span class="material-symbols-rounded text-lg block mb-1 text-text-muted" aria-hidden="true">history_toggle_off</span>
                         لا توجد عمليات مسجلة بعد.
                     </div>
                 }
@@ -568,16 +570,16 @@
                         </div>
                         <div class="flex-1 min-w-0 rounded-xl p-3 bg-bg">
                             <div class="flex items-center gap-1.5 mb-1">
-                                <span class="material-symbols-rounded text-xs" style="color:@r.RecordColor">@typeIcon</span>
+                                <span class="material-symbols-rounded text-xs" style="color:@r.RecordColor" aria-hidden="true">@typeIcon</span>
                                 <div class="text-xs font-bold text-text truncate">@r.Summary</div>
                             </div>
-                            <div class="text-[10px] text-text-muted flex items-center gap-1">
-                                <span class="material-symbols-rounded text-[10px]">schedule</span>
+                            <div class="text-caption text-text-muted flex items-center gap-1">
+                                <span class="material-symbols-rounded text-caption" aria-hidden="true">schedule</span>
                                 @r.RecordDate.ToString("yyyy-MM-dd HH:mm")
                                 @if (!string.IsNullOrEmpty(r.RecordedBy))
                                 {
-                                    <span class="flex items-center gap-0.5" style="border-right:1px solid var(--color-border);padding-right:0.25rem;margin-right:0.25rem">
-                                        <span class="material-symbols-rounded text-[10px]">person</span>
+                                    <span class="flex items-center gap-0.5 border-r border-border pr-1 mr-1">
+                                        <span class="material-symbols-rounded text-caption" aria-hidden="true">person</span>
                                         @r.RecordedBy
                                     </span>
                                 }
@@ -589,8 +591,8 @@
             @if (Model.PublishingRecords.Any())
             {
                 <div class="mt-4 pt-3 border-t border-border">
-                    <a href="/Publishing?episodeId=@ep.EpisodeId" class="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-xs font-semibold text-center transition-all bg-bg text-text-muted border border-border">
-                        <span class="material-symbols-rounded text-sm">list_alt</span>
+                    <a href="/Publishing?episodeId=@ep.EpisodeId" class="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-caption font-semibold text-center transition-all bg-bg text-text-muted border border-border">
+                        <span class="material-symbols-rounded text-sm" aria-hidden="true">list_alt</span>
                         عرض كافة سجلات النشر والإنتاج
                     </a>
                 </div>
@@ -599,7 +601,7 @@
     </div>
 </div>
 
-<dialog id="executeModal" class="modal modal-bottom sm:modal-middle">
+<dialog id="executeModal" class="modal modal-bottom sm:modal-middle" aria-labelledby="executeModalTitle" aria-describedby="executeModalDesc">
     <div class="modal-box rounded-2xl p-6 border border-border max-w-lg bg-surface shadow-modal">
         <form method="dialog">
             <button class="btn btn-sm btn-circle btn-ghost absolute left-4 top-4" aria-label="إغلاق">
@@ -611,8 +613,8 @@
                 <span class="material-symbols-rounded text-xl" aria-hidden="true">play_circle</span>
             </div>
             <div>
-                <h3 class="font-bold text-text">تسجيل تنفيذ الحلقة</h3>
-                <p class="text-caption text-text-muted">تأكيد تنفيذ البث وإدخال الملاحظات الفنية</p>
+                <h3 class="font-bold text-text" id="executeModalTitle">تسجيل تنفيذ الحلقة</h3>
+                <p class="text-caption text-text-muted" id="executeModalDesc">تأكيد تنفيذ البث وإدخال الملاحظات الفنية</p>
             </div>
         </div>
         <form method="post" action="/Episodes/Execute/@ep.EpisodeId">
@@ -628,12 +630,12 @@
                 </div>
                 <div>
                     <label class="block mb-1.5 text-label font-semibold text-text-muted flex items-center gap-1" for="execDuration"><span class="material-symbols-rounded text-sm text-text-muted" aria-hidden="true">timer</span>المدة (دقيقة) *</label>
-                    <input id="execDuration" type="number" name="durationMinutes" min="1" max="720" value="60" class="input" required />
+                    <input id="execDuration" type="number" name="durationMinutes" min="1" max="720" value="60" class="input" required aria-required="true" />
                 </div>
             </div>
             <div class="flex gap-2 justify-end mt-6 pt-4 border-t border-border">
                 <button type="button" class="btn btn-ghost" onclick="document.getElementById('executeModal').close()">إلغاء</button>
-                <button type="submit" class="btn btn-success gap-2">
+                <button type="submit" class="btn btn-success gap-2" aria-label="تسجيل التنفيذ">
                     <span class="material-symbols-rounded text-sm" aria-hidden="true">check</span>
                     تسجيل التنفيذ
                 </button>
@@ -645,12 +647,12 @@
 
 <!-- Cancel modal -->
 @{
-    var cancelBody = @"<div class=""rounded-xl p-4 mb-4"" style=""background:var(--color-danger-light);border:1px solid var(--color-border)"">
+    var cancelBody = @"<div class=""rounded-xl p-4 mb-4 bg-danger-subtle border border-border"">
     <p class=""text-sm text-text font-medium"">هل أنت متأكد من إلغاء هذه الحلقة؟</p>
     <p class=""text-xs text-text-muted mt-1"">لا يمكن التراجع عن هذا الإجراء بعد تنفيذه.</p>
 </div>
 <div>
-    <label class=""block mb-1.5 text-label font-semibold text-text-muted flex items-center gap-1""><span class=""material-symbols-rounded text-sm text-danger"">edit_note</span>سبب الإلغاء *</label>
+    <label class=""block mb-1.5 text-label font-semibold text-text-muted flex items-center gap-1""><span class=""material-symbols-rounded text-sm text-danger"" aria-hidden=""true"">edit_note</span>سبب الإلغاء *</label>
     <textarea name=""reason"" rows=""3"" class=""input"" required placeholder=""اذكر السبب الرئيسي لإلغاء الحلقة...""></textarea>
 </div>";
     ViewBag.ModalId = "cancelModal";
@@ -670,12 +672,12 @@
 
 <!-- Revert modal -->
 @{
-    var revertBody = @"<div class=""rounded-xl p-4 mb-4"" style=""background:color-mix(in srgb,var(--color-warning) 15%,transparent);border:1px solid var(--color-border)"">
+    var revertBody = @"<div class=""rounded-xl p-4 mb-4 bg-warning-subtle border border-border"">
     <p class=""text-sm text-text font-medium"">سيتم إعادة الحلقة إلى المرحلة السابقة.</p>
     <p class=""text-xs text-text-muted mt-1"">يرجى توثيق سبب التراجع للرجوع إليه لاحقاً في سجل التدقيق.</p>
 </div>
 <div>
-    <label class=""block mb-1.5 text-label font-semibold text-text-muted flex items-center gap-1""><span class=""material-symbols-rounded text-sm text-warning"">edit_note</span>سبب التراجع *</label>
+    <label class=""block mb-1.5 text-label font-semibold text-text-muted flex items-center gap-1""><span class=""material-symbols-rounded text-sm text-warning"" aria-hidden=""true"">edit_note</span>سبب التراجع *</label>
     <textarea name=""reason"" rows=""3"" class=""input"" required placeholder=""سبب التراجع عن الحالة...""></textarea>
 </div>";
     ViewBag.ModalId = "revertModal";
@@ -701,16 +703,16 @@
                 .then(files => {
                     var c = document.getElementById('attachmentList');
                     if (!files || files.length === 0) {
-                        c.innerHTML = '<div class="text-center py-4 text-text-muted text-xs"><span class="material-symbols-rounded text-lg block mb-1 text-text-muted">cloud_off</span>لا توجد مرفقات</div>';
+                        c.innerHTML = '<div class="text-center py-4 text-text-muted text-xs"><span class="material-symbols-rounded text-lg block mb-1 text-text-muted" aria-hidden="true">cloud_off</span>لا توجد مرفقات</div>';
                         return;
                     }
                     c.innerHTML = files.map(function(f) {
                         return '<div class="flex items-center gap-2 p-2 rounded-lg hover:bg-surface-hover transition-colors">' +
-                            '<span class="material-symbols-rounded text-sm text-primary">description</span>' +
+                            '<span class="material-symbols-rounded text-sm text-primary" aria-hidden="true">description</span>' +
                             '<a href="/uploads/' + @Model.Episode.EpisodeId + '/' + f.storedName + '" target="_blank" class="flex-1 text-sm text-primary hover:underline truncate">' + f.fileName + '</a>' +
                             '<span class="text-xs text-text-muted" dir="ltr">' + formatSize(f.sizeBytes) + '</span>' +
                             '<form method="post" action="/Upload/Delete/' + @Model.Episode.EpisodeId + '/' + f.storedName + '" class="inline" onsubmit="return confirm(\'حذف الملف؟\')">' +
-                                '<button class="btn btn-ghost btn-xs text-danger"><span class="material-symbols-rounded text-sm">delete</span></button>' +
+                                '<button class="btn btn-ghost btn-xs text-danger" aria-label="حذف المرفق"><span class="material-symbols-rounded text-sm" aria-hidden="true">delete</span></button>' +
                             '</form>' +
                         '</div>';
                     }).join('');

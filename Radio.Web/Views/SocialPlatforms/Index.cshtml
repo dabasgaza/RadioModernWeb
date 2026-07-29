@@ -28,20 +28,24 @@ else
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         @foreach (var p in Model)
         {
-            <div class="rounded-2xl border flex items-center gap-3 p-4" style="background: var(--color-surface); border-color: var(--color-border)">
-                <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style="background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary)">
+            <div class="card flex items-center gap-3 p-4">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 bg-primary-subtle text-primary">
                     <span class="material-symbols-rounded">@GetPlatformIcon(p.Name)</span>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <div class="font-bold" style="color: var(--color-text)">@p.Name</div>
+                    <div class="font-bold text-text">@p.Name</div>
                 </div>
                 @if (User.HasPermission(AppPermissions.StaffManage))
                 {
                     <div class="flex items-center gap-1 whitespace-nowrap">
-                        <a href="/SocialPlatforms/Edit/@p.SocialMediaPlatformId" class="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all" title="تعديل" aria-label="تعديل" style="color: var(--color-primary)"><span class="material-symbols-rounded text-xl leading-none">edit</span></a>
+                        <a href="/SocialPlatforms/Edit/@p.SocialMediaPlatformId" class="btn btn-ghost btn-icon btn-sm text-primary" title="تعديل" aria-label="تعديل">
+                            <span class="material-symbols-rounded text-xl leading-none">edit</span>
+                        </a>
                         <form method="post" action="/SocialPlatforms/Delete/@p.SocialMediaPlatformId" class="inline" data-confirm="هل أنت متأكد من حذف منصة «@p.Name»؟">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all" title="حذف" aria-label="حذف" style="color: var(--color-error)"><span class="material-symbols-rounded text-xl leading-none">delete</span></button>
+                            <button type="submit" class="btn btn-ghost btn-icon btn-sm text-danger" title="حذف" aria-label="حذف">
+                                <span class="material-symbols-rounded text-xl leading-none">delete</span>
+                            </button>
                         </form>
                     </div>
                 }

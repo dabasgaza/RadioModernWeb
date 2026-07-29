@@ -3,16 +3,9 @@
     ViewData["Title"] = "لوحة التحكم الرئيسية";
     ViewData["HeaderIcon"] = "dashboard";
     ViewData["HeaderDescription"] = "ملخص فوري ومؤشرات أداء الجدولة والبث الإذاعي اليوم";
-    ViewData["HeaderActions"] = "<a href='/Episodes/LiveBoard' class='btn btn-sm btn-destructive'><span class='w-2 h-2 rounded-full bg-primary-foreground animate-ping'></span><span class='material-symbols-rounded text-base'>live_tv</span><span>شاشة العرض المباشر</span></a><a href='/Episodes' class='btn btn-primary btn-sm'><span class='material-symbols-rounded text-base'>add_circle</span><span>حلقة جديدة</span></a>";
+    ViewData["HeaderActions"] = "<a href='/Episodes/LiveBoard' class='btn btn-sm btn-destructive'><span class='w-2 h-2 rounded-full bg-primary-foreground animate-ping'></span><span class='material-symbols-rounded text-base'>live_tv</span><span>شاشة العرض المباشر</span></a><a href='/Episodes/Create' class='btn btn-primary btn-sm'><span class='material-symbols-rounded text-base'>add_circle</span><span>حلقة جديدة</span></a>";
 
-    var kpiItems = new List<KpiItem>
-    {
-        new() { Label = "حلقات البث اليوم", Value = Model.TodayEpisodes.Count.ToString(), Subtitle = "مجدولة لليوم", Icon = "live_tv", Color = "var(--color-primary)", IconBg = "color-mix(in srgb, var(--color-primary) 10%, transparent)", IconColor = "var(--color-primary)" },
-        new() { Label = "إجمالي الحلقات", Value = Model.TotalEpisodes.ToString(), Subtitle = "الأرشيف والتنفيذ", Icon = "analytics", Color = "var(--color-accent)", IconBg = "color-mix(in srgb, var(--color-accent) 10%, transparent)", IconColor = "var(--color-accent)" },
-        new() { Label = "البرامج النشطة", Value = Model.TotalPrograms.ToString(), Subtitle = "الدورة البرامجية", Icon = "tv", Color = "var(--color-warning)", IconBg = "color-mix(in srgb, var(--color-warning) 10%, transparent)", IconColor = "var(--color-warning)" },
-        new() { Label = "حلقات ملغاة", Value = Model.CancelledEpisodes.Count.ToString(), Subtitle = "موقوفة أو مستبعدة", Icon = "cancel", Color = "var(--color-danger)", IconBg = "color-mix(in srgb, var(--color-danger) 10%, transparent)", IconColor = "var(--color-danger)" }
-    };
-    ViewBag.KpiItems = kpiItems;
+    ViewBag.KpiItems = Model.KpiItems;
 }
 <div class="max-w-7xl mx-auto space-y-6">
     <partial name="_PageHeader" />
@@ -20,58 +13,49 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="card p-6">
-            <div class="flex items-center justify-between mb-4 pb-3 border-b border-border">
-                <div class="flex items-center gap-2">
-                    <div class="p-2 rounded-lg bg-primary-subtle text-primary">
-                        <span class="material-symbols-rounded text-lg">donut_large</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-body text-text">توزيع حالات الحلقات</h3>
-                        <p class="text-micro text-text-secondary">نسب الجدولة، التنفيذ والنشر الرقمي</p>
-                    </div>
-                </div>
-            </div>
+            @{
+                ViewBag.SectionIcon = "donut_large";
+                ViewBag.SectionTitle = "توزيع حالات الحلقات";
+                ViewBag.SectionSubtitle = "نسب الجدولة، التنفيذ والنشر الرقمي";
+                ViewBag.SectionAction = null;
+            }
+            <partial name="_SectionHeader" />
             <div class="relative h-64">
                 <canvas id="statusChart"></canvas>
             </div>
         </div>
         <div class="card p-6">
-            <div class="flex items-center justify-between mb-4 pb-3 border-b border-border">
-                <div class="flex items-center gap-2">
-                    <div class="p-2 rounded-lg bg-warning-subtle text-warning">
-                        <span class="material-symbols-rounded text-lg">bar_chart</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-body text-text">البرامج الأكثر إنتاجاً</h3>
-                        <p class="text-micro text-text-secondary">عدد الحلقات المنفذة لكل برنامج</p>
-                    </div>
-                </div>
-            </div>
+            @{
+                ViewBag.SectionIcon = "bar_chart";
+                ViewBag.SectionTitle = "البرامج الأكثر إنتاجاً";
+                ViewBag.SectionSubtitle = "عدد الحلقات المنفذة لكل برنامج";
+                ViewBag.SectionAction = null;
+            }
+            <partial name="_SectionHeader" />
             <div class="relative h-64">
                 <canvas id="programsChart"></canvas>
             </div>
         </div>
     </div>
 
-    <div class="card overflow-hidden">
-        <div class="flex items-center justify-between p-5 border-b border-border bg-bg-hover">
-            <div class="flex items-center gap-2.5">
-                <span class="material-symbols-rounded text-xl text-primary">today</span>
-                <div>
-                    <h3 class="font-bold text-body text-text">جدول حلقات البث لليوم</h3>
-                    <p class="text-micro text-text-secondary">قائمة الحلقات والمواعيد المجدولة للبث الفوري</p>
-                </div>
-            </div>
-            <a href="/Episodes" class="text-caption font-semibold flex items-center gap-1 text-primary hover:underline">
-                <span>عرض أرشيف الحلقات</span>
-                <span class="material-symbols-rounded text-sm">chevron_left</span>
-            </a>
-        </div>
+    @{
+        var todayEpisodes = Model.TodayEpisodes.ToList();
+    }
+    <div class="card">
+        @{
+            ViewBag.SectionIcon = "today";
+            ViewBag.SectionTitle = "جدول حلقات البث لليوم";
+            ViewBag.SectionSubtitle = "قائمة الحلقات والمواعيد المجدولة للبث الفوري";
+            ViewBag.SectionAction = new Microsoft.AspNetCore.Html.HtmlString(
+                "<a href='/Episodes' class='text-caption font-semibold flex items-center gap-1 text-primary hover:underline'><span>عرض أرشيف الحلقات</span><span class='material-symbols-rounded text-sm'>chevron_left</span></a>"
+            );
+        }
+        <partial name="_SectionHeader" />
 
-        @if (Model.TodayEpisodes.Any())
+        @if (todayEpisodes.Any())
         {
             <div class="divide-y divide-border-light">
-                @foreach (var ep in Model.TodayEpisodes)
+                @foreach (var ep in todayEpisodes)
                 {
                     <div class="flex items-center gap-4 p-4 transition-colors hover:bg-bg-hover">
                         <div class="w-3 h-3 rounded-full shrink-0 ring-4 bg-primary" style="--tw-ring-color:color-mix(in srgb, var(--color-primary) 15%, transparent)"></div>
@@ -106,16 +90,19 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="card p-6">
-            <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
-                <span class="material-symbols-rounded text-lg text-primary">trending_up</span>
-                <h3 class="font-bold text-body text-text">البرامج الأكثر نشاطاً</h3>
-            </div>
+            @{
+                ViewBag.SectionIcon = "trending_up";
+                ViewBag.SectionTitle = "البرامج الأكثر نشاطاً";
+                ViewBag.SectionSubtitle = "";
+                ViewBag.SectionAction = null;
+            }
+            <partial name="_SectionHeader" />
             @if (Model.TopPrograms.Any())
             {
-                <div class="space-y-1 divide-y divide-border-light">
+                <div class="divide-y divide-border-light">
                     @foreach (var p in Model.TopPrograms.Take(5))
                     {
-                        <div class="flex items-center justify-between py-3 first:pt-0 last:pb-0">
+                        <div class="flex items-center justify-between py-3">
                             <div>
                                 <div class="font-bold text-caption text-text">@p.ProgramName</div>
                                 <div class="text-micro mt-0.5 text-text-secondary">@(p.Category ?? "برنامج عام")</div>
@@ -130,24 +117,27 @@
             }
             else
             {
-                <div class="flex flex-col items-center py-8 text-center">
-                    <span class="material-symbols-rounded text-3xl mb-2 text-text-muted">live_tv</span>
-                    <p class="text-caption text-text-secondary">لا تتوفر بيانات كافية حالياً</p>
-                </div>
+                ViewBag.EmptyIcon = "live_tv";
+                ViewBag.EmptyTitle = "لا توجد بيانات كافية";
+                ViewBag.EmptyDesc = "لم يتم تسجيل أي برامج نشطة بعد";
+                <partial name="_EmptyState" />
             }
         </div>
 
         <div class="card p-6">
-            <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
-                <span class="material-symbols-rounded text-lg text-accent">people_alt</span>
-                <h3 class="font-bold text-body text-text">الضيوف الأكثر استضافة</h3>
-            </div>
+            @{
+                ViewBag.SectionIcon = "people_alt";
+                ViewBag.SectionTitle = "الضيوف الأكثر استضافة";
+                ViewBag.SectionSubtitle = "";
+                ViewBag.SectionAction = null;
+            }
+            <partial name="_SectionHeader" />
             @if (Model.TopGuests.Any())
             {
-                <div class="space-y-1 divide-y divide-border-light">
+                <div class="divide-y divide-border-light">
                     @foreach (var g in Model.TopGuests.Take(5))
                     {
-                        <div class="flex items-center justify-between py-3 first:pt-0 last:pb-0">
+                        <div class="flex items-center justify-between py-3">
                             <div class="flex items-center gap-3">
                                 <div class="w-8 h-8 rounded-xl text-caption font-bold flex items-center justify-center shrink-0 bg-primary-subtle text-primary">@g.Rank</div>
                                 <div>
@@ -165,10 +155,10 @@
             }
             else
             {
-                <div class="flex flex-col items-center py-8 text-center">
-                    <span class="material-symbols-rounded text-3xl mb-2 text-text-muted">group</span>
-                    <p class="text-caption text-text-secondary">لا توجد سجلات استضافة بعد</p>
-                </div>
+                ViewBag.EmptyIcon = "group";
+                ViewBag.EmptyTitle = "لا توجد سجلات استضافة";
+                ViewBag.EmptyDesc = "لم يتم تسجيل أي ضيوف بعد";
+                <partial name="_EmptyState" />
             }
         </div>
     </div>
@@ -179,14 +169,15 @@
         const css = getComputedStyle(document.documentElement);
         const token = name => css.getPropertyValue(name).trim();
 
+        const chartTokens = ['--color-chart-1','--color-chart-2','--color-chart-2','--color-chart-3','--color-chart-5'];
+
         const statusChart = new Chart(document.getElementById('statusChart'), {
             type: 'doughnut',
             data: {
                 labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(new[] { "مجدولة", "منفّذة", "منشورة رقمياً", "منشورة على الموقع", "ملغاة" })),
                 datasets: [{
                     data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.StatusStats)),
-                    // FIX: use --color-chart-* tokens (was --chart-* which returned empty)
-                    backgroundColor: ['--color-chart-1', '--color-chart-2', '--color-chart-2', '--color-chart-3', '--color-chart-5'].map(n => token(n)),
+                    backgroundColor: chartTokens.map(n => token(n)),
                     borderWidth: 3,
                     borderColor: token('--color-surface'),
                     hoverOffset: 8
@@ -209,7 +200,6 @@
                 datasets: [{
                     label: 'عدد الحلقات',
                     data: programsData.map(p => p.total),
-                    // FIX: use --color-chart-* tokens
                     backgroundColor: token('--color-chart-4'),
                     borderColor: token('--color-chart-1'),
                     borderWidth: 2,
@@ -228,11 +218,10 @@
             }
         });
 
-        // Re-render charts on theme change so colors track tokens
         document.addEventListener('radio:theme-change', function () {
             setTimeout(function () {
                 const t = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-                statusChart.data.datasets[0].backgroundColor = ['--color-chart-1','--color-chart-2','--color-chart-2','--color-chart-3','--color-chart-5'].map(n => t(n));
+                statusChart.data.datasets[0].backgroundColor = chartTokens.map(n => t(n));
                 statusChart.data.datasets[0].borderColor = t('--color-surface');
                 statusChart.options.plugins.legend.labels.color = t('--color-text-secondary');
                 statusChart.update();

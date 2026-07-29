@@ -14,7 +14,7 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
                 <label class="text-xs font-semibold mb-1.5 block text-text-secondary">الجدول</label>
-                <select name="table" class="w-full bg-surface border border-border rounded-xl py-2.5 px-3 text-sm font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none">
+                <select name="table" class="input">
                     <option value="">الكل</option>
                     @foreach (var t in tables ?? Array.Empty<string>())
                     {
@@ -24,7 +24,7 @@
             </div>
             <div>
                 <label class="text-xs font-semibold mb-1.5 block text-text-secondary">العملية</label>
-                <select name="action" class="w-full bg-surface border border-border rounded-xl py-2.5 px-3 text-sm font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none">
+                <select name="action" class="input">
                     <option value="">الكل</option>
                     @foreach (var a in actions ?? Array.Empty<string>())
                     {
@@ -35,13 +35,13 @@
             <div>
                 <label class="text-xs font-semibold mb-1.5 block text-text-secondary">من تاريخ</label>
                 <input type="text" name="fromDate" value="@ViewBag.FromDate"
-                       class="w-full bg-surface border border-border rounded-xl py-2.5 px-3 text-sm font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all datepicker"
+                       class="input datepicker"
                        placeholder="اختر تاريخ البداية" />
             </div>
             <div>
                 <label class="text-xs font-semibold mb-1.5 block text-text-secondary">إلى تاريخ</label>
                 <input type="text" name="toDate" value="@ViewBag.ToDate"
-                       class="w-full bg-surface border border-border rounded-xl py-2.5 px-3 text-sm font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all datepicker"
+                       class="input datepicker"
                        placeholder="اختر تاريخ النهاية" />
             </div>
             <div class="md:col-span-4 flex justify-end gap-2 mt-2">
@@ -99,21 +99,21 @@ else
 }
 
 <dialog id="diffModal" class="modal backdrop:bg-black/50 p-0 bg-transparent">
-    <div class="rounded-xl p-6 max-w-3xl w-full mx-auto" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
+    <div class="card p-6 max-w-3xl w-full mx-auto">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="font-bold text-[var(--color-text)]" id="diffTitle">تفاصيل التغيير</h3>
-            <button type="button" class="btn btn-ghost btn-square btn-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] rounded-xl" onclick="document.getElementById('diffModal').close()">
+            <h3 class="font-bold text-text" id="diffTitle">تفاصيل التغيير</h3>
+            <button type="button" class="btn btn-ghost btn-square btn-sm text-text-muted hover:text-text rounded-xl" onclick="document.getElementById('diffModal').close()">
                 <span class="material-symbols-rounded">close</span>
             </button>
         </div>
         <div id="diffContent" class="space-y-4">
             <div>
-                <h4 class="font-bold text-xs text-[var(--color-text-muted)] mb-1">القيم القديمة</h4>
-                <pre id="diffOld" class="text-xs p-3 rounded-xl overflow-x-auto max-h-48" style="background: var(--color-bg); color: var(--color-text);" dir="ltr"></pre>
+                <h4 class="font-bold text-xs text-text-muted mb-1">القيم القديمة</h4>
+                <pre id="diffOld" class="text-xs p-3 rounded-xl overflow-x-auto max-h-48 bg-bg text-text" dir="ltr"></pre>
             </div>
             <div>
-                <h4 class="font-bold text-xs text-[var(--color-text-muted)] mb-1">القيم الجديدة</h4>
-                <pre id="diffNew" class="text-xs p-3 rounded-xl overflow-x-auto max-h-48" style="background: var(--color-bg); color: var(--color-text);" dir="ltr"></pre>
+                <h4 class="font-bold text-xs text-text-muted mb-1">القيم الجديدة</h4>
+                <pre id="diffNew" class="text-xs p-3 rounded-xl overflow-x-auto max-h-48 bg-bg text-text" dir="ltr"></pre>
             </div>
         </div>
     </div>
@@ -154,21 +154,3 @@ else
         }
     });
 </script>
-
-@functions {
-    string GetActionBadgeColor(string action) => action switch
-    {
-        "ADDED" => "var(--color-success-light)",
-        "MODIFIED" => "var(--color-warning-light)",
-        "DELETED" or "SOFT_DELETED" => "var(--color-danger-light)",
-        _ => "var(--color-bg)"
-    };
-
-    string GetActionBadgeText(string action) => action switch
-    {
-        "ADDED" => "var(--color-success)",
-        "MODIFIED" => "var(--color-warning)",
-        "DELETED" or "SOFT_DELETED" => "var(--color-danger)",
-        _ => "var(--color-text-secondary)"
-    };
-}

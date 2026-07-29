@@ -3,32 +3,35 @@
     var searchPlaceholder = ViewBag.SearchPlaceholder as string ?? "بحث...";
     var searchAction = ViewBag.SearchAction as string ?? Context.Request.Path;
     var hideCard = ViewBag.SearchHideCard as bool? ?? false;
+    var autoFocus = ViewBag.SearchAutoFocus as bool? ?? false;
 }
 @if (!hideCard)
 {
     @:<div class="card p-5 mb-6">
 }
-<form method="get" class="flex gap-3">
+<form method="get" class="flex gap-3" role="search">
     <div class="relative flex-1">
-        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted">search</span>
+        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted" aria-hidden="true">search</span>
         <input type="text" name="search" value="@searchValue" placeholder="@searchPlaceholder"
-               class="input pr-10 pl-3 text-body font-medium" />
+               class="input pr-10 pl-3 text-body font-medium"
+               @Html.Raw(autoFocus ? "autofocus" : "")
+               aria-label="@searchPlaceholder" />
         @if (!string.IsNullOrWhiteSpace(searchValue))
         {
-            <a href="@searchAction" class="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text" title="مسح البحث">
-                <span class="material-symbols-rounded text-lg">close</span>
+            <a href="@searchAction" class="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text" title="مسح البحث" aria-label="مسح البحث">
+                <span class="material-symbols-rounded text-lg" aria-hidden="true">close</span>
             </a>
         }
     </div>
     <div class="flex items-center gap-2 shrink-0">
         <button type="submit" class="btn btn-primary">
-            <span class="material-symbols-rounded">search</span>
+            <span class="material-symbols-rounded" aria-hidden="true">search</span>
             بحث
         </button>
         @if (!string.IsNullOrWhiteSpace(searchValue))
         {
-            <a href="@searchAction" class="btn btn-ghost" title="إعادة ضبط">
-                <span class="material-symbols-rounded">restart_alt</span>
+            <a href="@searchAction" class="btn btn-ghost" title="إعادة ضبط" aria-label="إعادة ضبط البحث">
+                <span class="material-symbols-rounded" aria-hidden="true">restart_alt</span>
             </a>
         }
     </div>

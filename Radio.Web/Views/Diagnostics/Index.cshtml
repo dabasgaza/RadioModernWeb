@@ -7,87 +7,86 @@
 
 <partial name="_PageHeader" />
 
-<!-- Diagnostics Stats -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-    <div class="rounded-2xl border p-5" style="background: var(--color-surface); border-color: var(--color-border)">
+    <div class="card p-5">
         <div class="flex items-center justify-between">
             <div>
-                <div class="text-2xl font-black" style="color: var(--color-text)">@Model.Summary.TotalLogs</div>
-                <div class="text-xs font-bold mt-1" style="color: var(--color-text-muted)">إجمالي السجلات</div>
+                <div class="text-2xl font-black text-text">@Model.Summary.TotalLogs</div>
+                <div class="text-xs font-bold mt-1 text-text-muted">إجمالي السجلات</div>
             </div>
-            <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary)">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-primary-subtle text-primary">
                 <span class="material-symbols-rounded">list_alt</span>
             </div>
         </div>
     </div>
 
-    <div class="rounded-2xl border p-5" style="background: var(--color-surface); border-color: var(--color-border)">
+    <div class="card p-5">
         <div class="flex items-center justify-between">
             <div>
-                <div class="text-2xl font-black" style="color: var(--color-text)">@Model.Summary.TotalErrors</div>
-                <div class="text-xs font-bold mt-1" style="color: var(--color-text-muted)">إجمالي الأخطاء</div>
+                <div class="text-2xl font-black text-text">@Model.Summary.TotalErrors</div>
+                <div class="text-xs font-bold mt-1 text-text-muted">إجمالي الأخطاء</div>
             </div>
-            <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: color-mix(in srgb, var(--color-error) 10%, transparent); color: var(--color-error)">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-danger-subtle text-danger">
                 <span class="material-symbols-rounded">error</span>
             </div>
         </div>
     </div>
 
-    <div class="rounded-2xl border p-5" style="background: var(--color-surface); border-color: var(--color-border)">
+    <div class="card p-5">
         <div class="flex items-center justify-between">
             <div>
-                <div class="text-2xl font-black" style="color: var(--color-text)">@Model.Summary.TotalWarnings</div>
-                <div class="text-xs font-bold mt-1" style="color: var(--color-text-muted)">التحذيرات</div>
+                <div class="text-2xl font-black text-text">@Model.Summary.TotalWarnings</div>
+                <div class="text-xs font-bold mt-1 text-text-muted">التحذيرات</div>
             </div>
-            <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: color-mix(in srgb, var(--color-warning) 10%, transparent); color: var(--color-warning)">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-warning-subtle text-warning">
                 <span class="material-symbols-rounded">warning</span>
             </div>
         </div>
     </div>
 
-    <div class="rounded-2xl border p-5" style="background: var(--color-surface); border-color: var(--color-border)">
+    <div class="card p-5">
         <div class="flex items-center justify-between">
             <div>
-                <div class="text-2xl font-black" style="color: var(--color-text)">@Model.Summary.SlowQueriesCount</div>
-                <div class="text-xs font-bold mt-1" style="color: var(--color-text-muted)">استعلامات بطيئة</div>
+                <div class="text-2xl font-black text-text">@Model.Summary.SlowQueriesCount</div>
+                <div class="text-xs font-bold mt-1 text-text-muted">استعلامات بطيئة</div>
             </div>
-            <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: color-mix(in srgb, var(--color-accent) 10%, transparent); color: var(--color-accent)">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-accent-subtle text-accent">
                 <span class="material-symbols-rounded">speed</span>
             </div>
         </div>
     </div>
 </div>
 
-<div class="rounded-2xl border overflow-hidden" style="background: var(--color-surface); border-color: var(--color-border)">
-    <div class="p-5 border-b flex items-center justify-between" style="border-color: var(--color-border)">
-        <h3 class="font-bold flex items-center gap-2" style="color: var(--color-text)">
-            <span class="material-symbols-rounded" style="color: var(--color-primary)">analytics</span>
+<div class="card overflow-hidden">
+    <div class="p-5 border-b border-border flex items-center justify-between bg-surface">
+        <h3 class="font-bold flex items-center gap-2 text-text">
+            <span class="material-symbols-rounded text-primary">analytics</span>
             أحدث 100 سجل مراقبة للعمليات والأخطاء
         </h3>
     </div>
     <div class="overflow-x-auto">
     <table class="w-full text-sm">
         <thead>
-            <tr style="background: var(--color-bg-alt)">
-                <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">طابع الوقت</th>
-                <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">المستوى</th>
-                <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">الرسالة</th>
-                <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">السياق / المصدر</th>
+            <tr class="bg-surface-hover border-b border-border">
+                <th class="text-right font-semibold px-6 py-3.5 text-text">طابع الوقت</th>
+                <th class="text-right font-semibold px-6 py-3.5 text-text">المستوى</th>
+                <th class="text-right font-semibold px-6 py-3.5 text-text">الرسالة</th>
+                <th class="text-right font-semibold px-6 py-3.5 text-text">السياق / المصدر</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var log in Model.Logs)
             {
-                <tr class="border-t transition-colors duration-200" style="border-color: var(--color-border)">
-                    <td class="px-6 py-4 text-xs font-semibold" style="color: var(--color-text-muted)">@log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <tr class="border-t border-border hover:bg-surface-hover/50 transition-colors">
+                    <td class="px-6 py-4 text-xs font-semibold text-text-muted">@log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
                     <td class="px-6 py-4">
                         <span class="inline-flex items-center px-2.5 py-0.5 text-xs font-bold rounded-full"
                               style="background: color-mix(in srgb, @GetLevelColor(log.Level) 10%, transparent); color: @GetLevelColor(log.Level)">
                             @log.Level
                         </span>
                     </td>
-                    <td class="px-6 py-4 font-medium text-xs" style="color: var(--color-text-secondary)">@log.Message</td>
-                    <td class="px-6 py-4 text-xs max-w-xs truncate" style="color: var(--color-text-muted)" title="@log.SourceContext">@log.SourceContext</td>
+                    <td class="px-6 py-4 font-medium text-xs text-text-secondary">@log.Message</td>
+                    <td class="px-6 py-4 text-xs max-w-xs truncate text-text-muted" title="@log.SourceContext">@log.SourceContext</td>
                 </tr>
             }
         </tbody>
@@ -95,12 +94,10 @@
     </div>
 </div>
 
-@functions {
-    string GetLevelColor(string level) => level switch
+@{ string GetLevelColor(string level) => level switch
     {
         "Error" or "Fatal" => "var(--color-error)",
         "Warning" => "var(--color-warning)",
         "Information" => "var(--color-info)",
         _ => "var(--color-text-muted)"
-    };
-}
+    }; }

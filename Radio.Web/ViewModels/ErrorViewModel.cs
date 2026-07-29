@@ -27,4 +27,5 @@ public class DashboardViewModel
     public List<DataAccess.DTOs.CancelledEpisodeDto> CancelledEpisodes { get; set; } = new();
     public int TotalEpisodes { get; set; }
     public int TotalPrograms { get; set; }
+    public List<KpiItem> KpiItems { get; set; } = new();
 }

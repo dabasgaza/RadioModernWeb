@@ -5,7 +5,7 @@
     ViewData["HeaderDescription"] = "إدارة مجموعات صلاحيات المستخدمين والتحكم في مستويات الوصول للنظام";
     ViewBag.EntityName = "الأدوار الوظيفية";
 
-    if (User.HasPermission(AppPermissions.UserManage))
+    if (User.HasPermission(AppPermissions.AdminUsersManage))
     {
         ViewData["HeaderActions"] = "<a href='/Roles/Create' class='btn btn-primary rounded-xl gap-2'><span class='material-symbols-rounded'>add</span>إضافة دور جديد</a>";
     }
@@ -23,7 +23,7 @@
             }
             <partial name="_SearchBar" />
         </div>
-        <div class="text-xs font-semibold text-text-secondary whitespace-nowrap shrink-0">
+        <div class="text-xs font-semibold text-text-secondary whitespace-nowrap shrink-0" role="status" aria-live="polite">
             إجمالي الأدوار: <span class="font-bold text-primary" id="roleCount">@Model.Count</span>
         </div>
     </div>
@@ -34,7 +34,7 @@
     ViewBag.EmptyIcon = "group_work";
     ViewBag.EmptyTitle = "لا توجد أدوار وظيفية";
     ViewBag.EmptyDesc = "لم يتم إنشاء أي أدوار وظيفية في النظام بعد. ابدأ بإضافة أول دور لتخصيص الصلاحيات.";
-    ViewBag.EmptyActionUrl = User.HasPermission(AppPermissions.UserManage) ? "/Roles/Create" : null;
+    ViewBag.EmptyActionUrl = User.HasPermission(AppPermissions.AdminUsersManage) ? "/Roles/Create" : null;
     ViewBag.EmptyActionText = "إضافة دور جديد";
     ViewBag.EmptyActionIcon = "add";
     <partial name="_EmptyState" />
@@ -88,7 +88,7 @@ else
 
                 <div class="px-6 py-3.5 flex items-center justify-between gap-2 border-t border-border-light bg-surface-hover/50">
                     <div class="flex items-center gap-1">
-                        @if (User.HasPermission(AppPermissions.UserManage))
+                        @if (User.HasPermission(AppPermissions.AdminUsersManage))
                         {
                             <a href="/Roles/Clone/@r.RoleId" class="btn btn-icon btn-sm btn-ghost text-text-secondary hover:text-text" title="نسخ الدور وصلاحياته" aria-label="نسخ الدور وصلاحياته">
                                 <span class="material-symbols-rounded text-lg">content_copy</span>
@@ -101,7 +101,7 @@ else
                             }
                         }
                     </div>
-                    @if (User.HasPermission(AppPermissions.UserManage) && !isAdmin)
+                    @if (User.HasPermission(AppPermissions.AdminUsersManage) && !isAdmin)
                     {
                         <form method="post" action="/Roles/Delete/@r.RoleId" class="inline" data-confirm="هل أنت متأكد من حذف هذا الدور «@r.RoleName» نهائياً؟ لا يمكن التراجع عن هذا الإجراء وسيتم سحب صلاحيات جميع الموظفين المرتبطين به.">
                             @Html.AntiForgeryToken()

@@ -1,14 +1,15 @@
 @* _SectionHeader — icon + title header for form sections *@
+@using Microsoft.AspNetCore.Html
 @{
     var icon = ViewBag.SectionIcon as string ?? "info";
     var title = ViewBag.SectionTitle as string ?? "";
     var subtitle = ViewBag.SectionSubtitle as string;
-    var action = (Microsoft.AspNetCore.Html.IHtmlContent)ViewBag.SectionAction;
+    var action = ViewBag.SectionAction as IHtmlContent;
 }
 
 <div class="flex items-center gap-3 mb-5">
     <div class="w-10 h-10 rounded-xl bg-primary-subtle text-primary flex items-center justify-center shrink-0">
-        <span class="material-symbols-rounded text-xl">@icon</span>
+        <span class="material-symbols-rounded text-xl" aria-hidden="true">@icon</span>
     </div>
     <div class="flex-1 min-w-0">
         <h3 class="font-bold text-text truncate">@title</h3>

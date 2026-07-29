@@ -12,57 +12,53 @@
 
 @if (!Model.Any())
 {
-    <div class="rounded-2xl border text-center py-12 my-8" style="background: var(--color-surface); border-color: var(--color-border)">
-        <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style="background: var(--color-bg-alt); color: var(--color-text-muted)">
-            <span class="material-symbols-rounded text-5xl">play_circle</span>
-        </div>
-        <h3 class="text-xl font-bold mb-2" style="color: var(--color-text)">لا سجلات تنفيذ</h3>
-        <p class="text-sm max-w-md mx-auto" style="color: var(--color-text-secondary)">لم يتم تسجيل أي عمليات تنفيذ للحلقات بعد.</p>
-    </div>
+    ViewBag.EmptyIcon = "play_circle";
+    ViewBag.EmptyTitle = "لا سجلات تنفيذ";
+    ViewBag.EmptyDesc = "لم يتم تسجيل أي عمليات تنفيذ للحلقات بعد.";
+    <partial name="_EmptyState" />
 }
 else
 {
     var canEdit = CurrentUser.HasPermission(AppPermissions.ExecutionExecute) || CurrentUser.HasPermission(AppPermissions.ExecutionEdit);
-    <div class="rounded-2xl border overflow-hidden" style="background: var(--color-surface); border-color: var(--color-border)">
+    <div class="card overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
-                    <tr style="background: var(--color-bg-alt)">
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">الحلقة</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">البرنامج</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">الملخص</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">بواسطة</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">التاريخ</th>
+                    <tr class="text-xs font-semibold text-text-secondary bg-surface-hover border-b border-border">
+                        <th class="px-6 py-4 text-right">الحلقة</th>
+                        <th class="px-6 py-4 text-right">البرنامج</th>
+                        <th class="px-6 py-4 text-right">الملخص</th>
+                        <th class="px-6 py-4 text-right hidden md:table-cell">بواسطة</th>
+                        <th class="px-6 py-4 text-right hidden md:table-cell">التاريخ</th>
                         @if (canEdit)
                         {
-                            <th class="px-6 py-4 text-center font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">الإجراءات</th>
+                            <th class="px-6 py-4 text-center">الإجراءات</th>
                         }
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-border">
                     @foreach (var r in Model)
                     {
-                        <tr class="transition-colors duration-200" style="border-bottom: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent)">
+                        <tr class="hover:bg-surface-hover/50 transition-colors">
                             <td class="px-6 py-4">
-                                <a href="/Episodes/Details/@r.EpisodeId" class="font-semibold hover:underline"
-                                   style="color: var(--color-primary)" target="_blank">
-                                    @(r.EpisodeName ?? "—")
+                                <a href="/Episodes/Details/@r.EpisodeId" class="font-semibold inline-flex items-center gap-2 text-text hover:text-primary transition-colors" target="_blank">
+                                    <span class="material-symbols-rounded text-lg text-text-muted">play_circle</span>
+                                    <span>@(r.EpisodeName ?? "—")</span>
                                 </a>
                             </td>
-                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@r.ProgramName</td>
-                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@r.Summary</td>
-                            <td class="px-6 py-4 font-semibold" style="color: var(--color-text)">@r.RecordedBy</td>
-                            <td class="px-6 py-4 whitespace-nowrap" dir="ltr">
-                                <span style="color: var(--color-text-secondary)">@r.RecordDate.ToString("yyyy-MM-dd HH:mm")</span>
+                            <td class="px-6 py-4 text-text-secondary">@r.ProgramName</td>
+                            <td class="px-6 py-4 text-text-secondary">@r.Summary</td>
+                            <td class="px-6 py-4 font-semibold text-text hidden md:table-cell">@r.RecordedBy</td>
+                            <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell text-text-secondary" dir="ltr">
+                                @r.RecordDate.ToString("yyyy-MM-dd HH:mm")
                             </td>
                             @if (canEdit)
                             {
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center justify-center gap-1">
                                         <a href="/ExecutionLogs/Edit/@r.RecordId"
-                                           class="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all" title="تعديل سجل التنفيذ" aria-label="تعديل سجل التنفيذ"
-                                           style="color: var(--color-primary)">
-                                            <span class="material-symbols-rounded text-xl leading-none">edit</span>
+                                           class="btn btn-icon btn-sm btn-ghost text-primary" title="تعديل سجل التنفيذ" aria-label="تعديل سجل التنفيذ">
+                                            <span class="material-symbols-rounded text-lg">edit</span>
                                         </a>
                                     </div>
                                 </td>

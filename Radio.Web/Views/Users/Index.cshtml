@@ -5,7 +5,7 @@
     ViewData["HeaderDescription"] = "إدارة حسابات المستخدمين وأدوارهم وصلاحياتهم في النظام";
     ViewBag.EntityName = "المستخدمون";
 
-    if (User.HasPermission(AppPermissions.UserManage))
+    if (User.HasPermission(AppPermissions.AdminUsersManage))
     {
         ViewData["HeaderActions"] = "<a href='/Users/Create' class='btn btn-primary rounded-xl gap-2'><span class='material-symbols-rounded'>add</span>مستخدم جديد</a>";
     }
@@ -21,7 +21,7 @@
     ViewBag.EmptyIcon = "admin_panel_settings";
     ViewBag.EmptyTitle = "لا مستخدمين";
     ViewBag.EmptyDesc = "لم يتم العثور على أي مستخدمين تطابق البحث.";
-    ViewBag.EmptyActionUrl = User.HasPermission(AppPermissions.UserManage) ? "/Users/Create" : null;
+    ViewBag.EmptyActionUrl = User.HasPermission(AppPermissions.AdminUsersManage) ? "/Users/Create" : null;
     ViewBag.EmptyActionText = "إضافة مستخدم جديد";
     ViewBag.EmptyActionIcon = "add";
     <partial name="_EmptyState" />
@@ -30,15 +30,15 @@ else
 {
     <div class="card overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+            <table class="w-full text-sm" aria-label="قائمة المستخدمين">
                 <thead>
                     <tr class="text-xs font-semibold text-text-secondary bg-surface-hover border-b border-border">
-                        <th class="text-right py-3 px-4">الاسم</th>
-                        <th class="text-right py-3 px-4 hidden md:table-cell">اسم الدخول</th>
-                        <th class="text-right py-3 px-4 hidden md:table-cell">البريد</th>
-                        <th class="text-right py-3 px-4">الدور</th>
-                        <th class="text-right py-3 px-4">الحالة</th>
-                        <th class="text-center py-3 px-4">إجراءات</th>
+                        <th scope="col" class="text-right py-3 px-4">الاسم</th>
+                        <th scope="col" class="text-right py-3 px-4 hidden md:table-cell">اسم الدخول</th>
+                        <th scope="col" class="text-right py-3 px-4 hidden md:table-cell">البريد</th>
+                        <th scope="col" class="text-right py-3 px-4">الدور</th>
+                        <th scope="col" class="text-right py-3 px-4">الحالة</th>
+                        <th scope="col" class="text-center py-3 px-4">إجراءات</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-border">
@@ -47,7 +47,7 @@ else
                         <tr class="hover:bg-surface-hover/50 transition-colors">
                             <td class="py-3 px-4">
                                 <a href="/Users/Details/@u.UserId" class="font-semibold inline-flex items-center gap-2 text-text hover:text-primary transition-colors">
-                                    <span class="material-symbols-rounded text-lg text-text-muted">account_box</span>
+                                    <span class="material-symbols-rounded text-lg text-text-muted" aria-hidden="true">account_box</span>
                                     <span>@u.FullName</span>
                                 </a>
                             </td>
@@ -62,25 +62,25 @@ else
                                 </span>
                             </td>
                             <td class="py-3 px-4">
-                                @if (User.HasPermission(AppPermissions.UserManage))
+                                @if (User.HasPermission(AppPermissions.AdminUsersManage))
                                 {
                                     <div class="flex items-center justify-center gap-1">
-                                        <a href="/Users/Edit/@u.UserId" class="btn btn-icon btn-sm btn-ghost text-primary" title="تعديل الحساب">
-                                            <span class="material-symbols-rounded text-lg">edit</span>
+                                        <a href="/Users/Edit/@u.UserId" class="btn btn-icon btn-sm btn-ghost text-primary" title="تعديل الحساب" aria-label="تعديل حساب @u.FullName">
+                                            <span class="material-symbols-rounded text-lg" aria-hidden="true">edit</span>
                                         </a>
-                                        <a href="/Users/Permissions/@u.UserId" class="hidden md:inline-flex btn btn-icon btn-sm btn-ghost text-success" title="الاستثناءات والصلاحيات الفردية">
-                                            <span class="material-symbols-rounded text-lg">admin_panel_settings</span>
+                                        <a href="/Users/Permissions/@u.UserId" class="hidden md:inline-flex btn btn-icon btn-sm btn-ghost text-success" title="الاستثناءات والصلاحيات الفردية" aria-label="الصلاحيات الفردية لـ @u.FullName">
+                                            <span class="material-symbols-rounded text-lg" aria-hidden="true">admin_panel_settings</span>
                                         </a>
                                         <form method="post" action="/Users/ToggleStatus/@u.UserId" class="hidden md:inline">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn btn-icon btn-sm btn-ghost text-text-secondary hover:text-success" title="@(u.IsActive ? "تعطيل" : "تفعيل")">
-                                                <span class="material-symbols-rounded text-lg">@(u.IsActive ? "block" : "check_circle")</span>
+                                            <button type="submit" class="btn btn-icon btn-sm btn-ghost text-text-secondary hover:text-success" title="@(u.IsActive ? "تعطيل" : "تفعيل")" aria-label="@(u.IsActive ? "تعطيل" : "تفعيل") حساب @u.FullName">
+                                                <span class="material-symbols-rounded text-lg" aria-hidden="true">@(u.IsActive ? "block" : "check_circle")</span>
                                             </button>
                                         </form>
-                                        <form method="post" action="/Users/Delete/@u.UserId" class="inline" data-confirm="هل أنت متأكد من حذف المستخدم «@u.FullName»؟">
+                                        <form method="post" action="/Users/Delete/@u.UserId" class="inline" data-confirm="هل أنت متأكد من حذف المستخدم «@u.FullName»？">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn btn-icon btn-sm btn-ghost text-danger" title="حذف">
-                                                <span class="material-symbols-rounded text-lg">delete</span>
+                                            <button type="submit" class="btn btn-icon btn-sm btn-ghost text-danger" title="حذف" aria-label="حذف حساب @u.FullName">
+                                                <span class="material-symbols-rounded text-lg" aria-hidden="true">delete</span>
                                             </button>
                                         </form>
                                     </div>

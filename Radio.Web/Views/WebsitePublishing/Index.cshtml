@@ -7,7 +7,7 @@
     var todayCount = Model.Count(r => r.RecordDate.Date == DateTime.UtcNow.Date);
     var thisMonth = Model.Count(r => r.RecordDate.Year == DateTime.UtcNow.Year && r.RecordDate.Month == DateTime.UtcNow.Month);
 
-    if (User.HasPermission(AppPermissions.EpisodeWebPublish))
+    if (User.HasPermission(AppPermissions.WebsitePublishingPublish))
     {
         ViewData["HeaderActions"] = "<a href='/Episodes' class='btn btn-primary rounded-xl gap-2'><span class='material-symbols-rounded text-lg'>add_circle</span>نشر حلقة</a>";
     }
@@ -17,26 +17,26 @@
 
 <!-- KPI Cards -->
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-    <div class="rounded-2xl border border-sys-outline-variant bg-sys-surface-bright p-5">
+    <div class="card p-5">
         <div class="flex items-center gap-2.5">
-            <span class="material-symbols-rounded text-sys-info">language</span>
-            <span class="text-2xl font-black tabular-nums text-sys-info">@Model.Count</span>
+            <span class="material-symbols-rounded text-info">language</span>
+            <span class="text-2xl font-black tabular-nums text-info">@Model.Count</span>
         </div>
-        <span class="text-sm text-sys-on-surface-variant">إجمالي النشر</span>
+        <span class="text-sm text-text-secondary">إجمالي النشر</span>
     </div>
-    <div class="rounded-2xl border border-sys-outline-variant bg-sys-surface-bright p-5">
+    <div class="card p-5">
         <div class="flex items-center gap-2.5">
-            <span class="material-symbols-rounded text-sys-success">today</span>
-            <span class="text-2xl font-black tabular-nums text-sys-success">@todayCount</span>
+            <span class="material-symbols-rounded text-success">today</span>
+            <span class="text-2xl font-black tabular-nums text-success">@todayCount</span>
         </div>
-        <span class="text-sm text-sys-on-surface-variant">نشر اليوم</span>
+        <span class="text-sm text-text-secondary">نشر اليوم</span>
     </div>
-    <div class="rounded-2xl border border-sys-outline-variant bg-sys-surface-bright p-5">
+    <div class="card p-5">
         <div class="flex items-center gap-2.5">
-            <span class="material-symbols-rounded text-sys-primary">date_range</span>
-            <span class="text-2xl font-black tabular-nums text-sys-primary">@thisMonth</span>
+            <span class="material-symbols-rounded text-primary">date_range</span>
+            <span class="text-2xl font-black tabular-nums text-primary">@thisMonth</span>
         </div>
-        <span class="text-sm text-sys-on-surface-variant">نشر هذا الشهر</span>
+        <span class="text-sm text-text-secondary">نشر هذا الشهر</span>
     </div>
 </div>
 
@@ -46,64 +46,64 @@
     ViewBag.EmptyIcon = "public";
     ViewBag.EmptyTitle = "لا توجد سجلات نشر موقع";
     ViewBag.EmptyDesc = "لم يتم نشر أي حلقات على الموقع بعد.";
-    ViewBag.EmptyActionUrl = User.HasPermission(AppPermissions.EpisodeWebPublish) ? "/Episodes" : null;
+    ViewBag.EmptyActionUrl = User.HasPermission(AppPermissions.WebsitePublishingPublish) ? "/Episodes" : null;
     ViewBag.EmptyActionText = "نشر حلقة";
     ViewBag.EmptyActionIcon = "add";
     <partial name="_EmptyState" />
 }
 else
 {
-    <div class="rounded-2xl border border-sys-outline-variant bg-sys-surface-bright overflow-hidden">
+    <div class="card overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
-                    <tr class="bg-sys-surface-container-low border-b border-sys-outline-variant">
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider text-sys-on-surface-variant">الحلقة</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider text-sys-on-surface-variant">البرنامج</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider text-sys-on-surface-variant">العنوان</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider text-sys-on-surface-variant">نوع الوسائط</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider text-sys-on-surface-variant">بواسطة</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider text-sys-on-surface-variant">التاريخ</th>
-                        @if (User.HasPermission(AppPermissions.EpisodeWebPublish))
+                    <tr class="bg-bg-hover border-b border-border">
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider text-text-secondary">الحلقة</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider text-text-secondary">البرنامج</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider text-text-secondary">العنوان</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider text-text-secondary">نوع الوسائط</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider text-text-secondary">بواسطة</th>
+                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider text-text-secondary">التاريخ</th>
+                        @if (User.HasPermission(AppPermissions.WebsitePublishingPublish))
                         {
-                            <th class="px-6 py-4 text-center font-bold text-xs uppercase tracking-wider text-sys-on-surface-variant">إجراءات</th>
+                            <th class="px-6 py-4 text-center font-bold text-xs uppercase tracking-wider text-text-secondary">إجراءات</th>
                         }
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var r in Model)
                     {
-                        <tr class="transition-colors duration-200 border-b border-sys-outline-variant/60 hover:bg-sys-surface-container-low/50">
+                        <tr class="transition-colors duration-200 border-b border-border hover:bg-bg-hover">
                             <td class="px-6 py-4">
-                                <a href="/Episodes/Details/@r.EpisodeId" class="font-semibold hover:underline text-sys-primary" target="_blank">
+                                <a href="/Episodes/Details/@r.EpisodeId" class="font-semibold hover:underline text-primary" target="_blank">
                                     @(r.EpisodeName ?? "—")
                                 </a>
-                                <div class="text-xs mt-0.5 text-sys-outline">@r.ProgramName</div>
+                                <div class="text-xs mt-0.5 text-text-muted">@r.ProgramName</div>
                             </td>
-                            <td class="px-6 py-4 text-sys-on-surface-variant">@r.ProgramName</td>
-                            <td class="px-6 py-4 max-w-xs truncate text-sys-on-surface-variant">@r.Summary</td>
+                            <td class="px-6 py-4 text-text-secondary">@r.ProgramName</td>
+                            <td class="px-6 py-4 max-w-xs truncate text-text-secondary">@r.Summary</td>
                             <td class="px-6 py-4">
-                                <span class="inline-flex items-center justify-center font-bold text-xs rounded-lg px-3 py-1.5 bg-sys-info-container text-sys-on-info-container">
+                                <span class="inline-flex items-center justify-center font-bold text-xs rounded-lg px-3 py-1.5 bg-info-subtle text-info">
                                     @GetMediaTypeText(r.Summary)
                                 </span>
                             </td>
-                            <td class="px-6 py-4 font-semibold text-sys-on-surface">@r.RecordedBy</td>
+                            <td class="px-6 py-4 font-semibold text-text">@r.RecordedBy</td>
                             <td class="px-6 py-4 whitespace-nowrap" dir="ltr">
-                                <span class="text-sys-on-surface-variant">@r.RecordDate.ToString("yyyy-MM-dd")</span>
-                                <span class="text-sys-outline">@r.RecordDate.ToString("HH:mm")</span>
+                                <span class="text-text-secondary">@r.RecordDate.ToString("yyyy-MM-dd")</span>
+                                <span class="text-text-muted">@r.RecordDate.ToString("HH:mm")</span>
                             </td>
-                            @if (User.HasPermission(AppPermissions.EpisodeWebPublish))
+                            @if (User.HasPermission(AppPermissions.WebsitePublishingPublish))
                             {
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center justify-center gap-1">
-                                        <a href="/WebsitePublishing/Edit/@r.RecordId" class="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all text-sys-primary hover:bg-sys-primary-container/20"
+                                        <a href="/WebsitePublishing/Edit/@r.RecordId" class="btn btn-ghost btn-icon btn-sm text-primary"
                                            title="تعديل" aria-label="تعديل">
-                                            <span class="material-symbols-rounded text-xl leading-none">edit</span>
+                                            <span class="material-symbols-rounded text-lg">edit</span>
                                         </a>
-                                        <button type="button" class="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all text-sys-error hover:bg-sys-error-container/20"
+                                        <button type="button" class="btn btn-ghost btn-icon btn-sm text-danger"
                                                 title="حذف" aria-label="حذف"
                                                 onclick="confirmDelete(@r.RecordId, '@(r.EpisodeName ?? "سجل")')">
-                                            <span class="material-symbols-rounded text-xl leading-none">delete</span>
+                                            <span class="material-symbols-rounded text-lg">delete</span>
                                         </button>
                                     </div>
                                 </td>
@@ -117,21 +117,19 @@ else
 }
 
 <!-- Delete Modal -->
-<dialog id="deleteModal" class="p-0 bg-transparent border-0" style="max-width: 24rem;">
-    <div class="rounded-2xl border w-full p-6 shadow-2xl" style="background: var(--color-surface); border-color: var(--color-border)">
+<dialog id="deleteModal" class="p-0 bg-transparent border-0 max-w-sm">
+    <div class="rounded-2xl border border-border w-full p-6 shadow-2xl bg-surface">
         <div class="text-center">
-            <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background: color-mix(in srgb, var(--color-error) 10%, transparent); color: var(--color-error)">
+            <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 bg-danger-subtle text-danger">
                 <span class="material-symbols-rounded text-3xl">delete_forever</span>
             </div>
-            <h3 class="text-base font-bold mb-2" style="color: var(--color-text)">حذف سجل نشر الموقع</h3>
-            <p class="text-sm mb-5" id="deleteMessage" style="color: var(--color-text-secondary)">هل أنت متأكد من حذف هذا السجل؟</p>
+            <h3 class="text-base font-bold mb-2 text-text">حذف سجل نشر الموقع</h3>
+            <p class="text-sm mb-5 text-text-secondary" id="deleteMessage">هل أنت متأكد من حذف هذا السجل؟</p>
             <form id="deleteForm" method="post" action="">
                 @Html.AntiForgeryToken()
                 <div class="flex gap-2 justify-center">
-                    <button type="button" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-bold rounded-xl transition-all"
-                            style="color: var(--color-text-secondary)" onclick="closeDeleteModal()">إلغاء</button>
-                    <button type="submit" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-bold rounded-xl shadow-md transition-all"
-                            style="background: var(--color-error); color: white">
+                    <button type="button" class="btn btn-ghost btn-sm" onclick="closeDeleteModal()">إلغاء</button>
+                    <button type="submit" class="btn btn-destructive gap-1.5">
                         <span class="material-symbols-rounded text-lg">delete</span>
                         حذف
                     </button>

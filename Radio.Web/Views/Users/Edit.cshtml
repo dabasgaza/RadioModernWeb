@@ -26,7 +26,7 @@
         <div asp-validation-summary="All" class="rounded-xl p-4 mb-6 font-semibold text-sm bg-danger-subtle text-danger border border-danger-subtle"></div>
     }
 
-    <div class="bg-surface border border-border rounded-2xl p-6" style="border-color:var(--color-border)">
+    <div class="card p-6">
         @{
             ViewBag.SectionIcon = "person"; ViewBag.SectionTitle = "الملف التعريفي للمستخدم";
         }
@@ -101,17 +101,20 @@
         @if (isEdit)
         {
             <a href="/Users/Permissions/@Model.UserId" class="btn btn-ghost rounded-xl gap-2 text-success">
-                <span class="material-symbols-rounded text-lg">admin_panel_settings</span>
+                <span class="material-symbols-rounded text-lg" aria-hidden="true">admin_panel_settings</span>
                 تعديل الصلاحيات الاستثنائية الفردية
             </a>
         }
-        else { <div></div> }
+        else
+        {
+            <div></div>
+        }
         <div class="flex items-center gap-2">
             <a href="/Users" class="btn btn-ghost rounded-xl gap-2">
-                <span class="material-symbols-rounded">cancel</span>إلغاء
+                <span class="material-symbols-rounded" aria-hidden="true">cancel</span>إلغاء
             </a>
             <button type="submit" class="btn btn-primary rounded-xl gap-2">
-                <span class="material-symbols-rounded">save</span>حفظ البيانات
+                <span class="material-symbols-rounded" aria-hidden="true">save</span>حفظ البيانات
             </button>
         </div>
     </div>

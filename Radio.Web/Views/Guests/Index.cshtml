@@ -5,66 +5,62 @@
     ViewData["HeaderDescription"] = "إدارة بيانات الضيوف المشاركين وتفاصيل الاتصال الخاصة بهم";
     ViewBag.EntityName = "الضيوف";
 
-    if (User.HasPermission(AppPermissions.GuestManage))
+    if (User.HasPermission(AppPermissions.GuestsManage))
     {
         ViewData["HeaderActions"] = "<a href='/Guests/Create' class='btn btn-primary'><span class='material-symbols-rounded text-base'>person_add</span><span>إضافة ضيف جديد</span></a>";
     }
 }
 
-<div class="max-w-7xl mx-auto space-y-6">
-    <partial name="_PageHeader" />
+<partial name="_PageHeader" />
 
-    @{ ViewBag.SearchValue = ViewBag.Search; ViewBag.SearchPlaceholder = "بحث باسم الضيف، الجهة، أو المسمّى الوظيفي..."; ViewBag.SearchAction = "/Guests"; }
-    <partial name="_SearchBar" />
+@{ ViewBag.SearchValue = ViewBag.Search; ViewBag.SearchPlaceholder = "بحث باسم الضيف، الجهة، أو المسمّى الوظيفي..."; ViewBag.SearchAction = "/Guests"; }
+<partial name="_SearchBar" />
 
-    <!-- Guests Grid -->
-    @if (!Model.Any())
-    {
-        ViewBag.EmptyIcon = "people_alt";
-        ViewBag.EmptyTitle = "لا يوجد ضيوف مسجلين";
-        ViewBag.EmptyDesc = "لم نتمكن من العثور على أي ضيوف تطابق البحث الحالي";
-        <partial name="_EmptyState" />
-    }
-    else
-    {
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @foreach (var g in Model)
-            {
-                <div class="card card-interactive overflow-hidden flex flex-col justify-between">
-                    <div class="p-6 space-y-4">
-                        <div class="flex items-center gap-3.5">
-                            <div class="w-12 h-12 rounded-2xl bg-primary-subtle text-primary font-bold text-sm flex items-center justify-center shrink-0">
-                                @(g.FullName.Length > 0 ? g.FullName[0].ToString() : "G")
-                            </div>
-                            <div class="min-w-0">
-                                <h3 class="font-bold text-body text-text truncate group-hover:text-primary transition-colors">@g.FullName</h3>
-                                <p class="text-caption text-text-muted truncate mt-0.5">@(g.Organization ?? "ضيف مستقل / غير محدد")</p>
-                            </div>
+@if (!Model.Any())
+{
+    ViewBag.EmptyIcon = "people_alt";
+    ViewBag.EmptyTitle = "لا يوجد ضيوف مسجلين";
+    ViewBag.EmptyDesc = "لم نتمكن من العثور على أي ضيوف تطابق البحث الحالي";
+    <partial name="_EmptyState" />
+}
+else
+{
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @foreach (var g in Model)
+        {
+            <div class="card card-interactive overflow-hidden flex flex-col justify-between">
+                <div class="p-6 space-y-4">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-12 h-12 rounded-2xl bg-primary-subtle text-primary font-bold text-sm flex items-center justify-center shrink-0">
+                            @(g.FullName.Length > 0 ? g.FullName[0].ToString() : "G")
                         </div>
-
-                        <div class="space-y-2 pt-3 border-t border-border-light text-caption">
-                            <div class="flex items-center gap-2 text-text-secondary">
-                                <span class="material-symbols-rounded text-sm text-text-muted">phone</span>
-                                <span class="font-semibold">@(g.PhoneNumber ?? "—")</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-text-secondary">
-                                <span class="material-symbols-rounded text-sm text-text-muted">email</span>
-                                <span class="truncate">@(g.EmailAddress ?? "—")</span>
-                            </div>
+                        <div class="min-w-0">
+                            <h3 class="font-bold text-body text-text truncate">@g.FullName</h3>
+                            <p class="text-caption text-text-muted truncate mt-0.5">@(g.Organization ?? "ضيف مستقل / غير محدد")</p>
                         </div>
                     </div>
 
-                    @if (User.HasPermission(AppPermissions.GuestManage))
-                    {
-                        <div class="px-6 py-3 bg-surface-hover/50 border-t border-border-light flex items-center justify-end gap-1.5">
-                            <a href="/Guests/Edit/@g.GuestId" class="btn btn-icon btn-sm btn-ghost text-primary" title="تعديل">
-                                <span class="material-symbols-rounded text-lg">edit</span>
-                            </a>
+                    <div class="space-y-2 pt-3 border-t border-border-light text-caption">
+                        <div class="flex items-center gap-2 text-text-secondary">
+                            <span class="material-symbols-rounded text-sm text-text-muted">phone</span>
+                            <span class="font-semibold">@(g.PhoneNumber ?? "—")</span>
                         </div>
-                    }
+                        <div class="flex items-center gap-2 text-text-secondary">
+                            <span class="material-symbols-rounded text-sm text-text-muted">email</span>
+                            <span class="truncate">@(g.EmailAddress ?? "—")</span>
+                        </div>
+                    </div>
                 </div>
-            }
-        </div>
-    }
-</div>
 
+                @if (User.HasPermission(AppPermissions.GuestsManage))
+                {
+                    <div class="px-6 py-3 bg-surface-hover/50 border-t border-border-light flex items-center justify-end gap-1.5">
+                        <a href="/Guests/Edit/@g.GuestId" class="btn btn-icon btn-sm btn-ghost text-primary" title="تعديل" aria-label="تعديل @g.FullName">
+                            <span class="material-symbols-rounded text-lg">edit</span>
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+}

@@ -9,16 +9,6 @@
 }
 
 <partial name="_PageHeader" />
-                style="color: var(--color-text-secondary)">
-            <span class="material-symbols-rounded text-lg">print</span>
-        </button>
-        <a href="/Reports" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-sm transition-all"
-           style="color: var(--color-text-secondary)">
-            <span class="material-symbols-rounded">arrow_forward</span>
-            الرجوع للتقارير
-        </a>
-    </div>
-</div>
 
 @if (!Model.Any())
 {
@@ -29,35 +19,34 @@
 }
 else
 {
-    <div class="rounded-2xl border overflow-hidden" style="background: var(--color-surface); border-color: var(--color-border)">
+    <div class="card overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+            <table class="data-table">
                 <thead>
-                    <tr style="background: var(--color-bg-alt)">
-                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">الحلقة</th>
-                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">البرنامج</th>
-                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">الموعد</th>
-                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">السبب</th>
-                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">بواسطة</th>
-                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">تاريخ الإلغاء</th>
+                    <tr>
+                        <th>الحلقة</th>
+                        <th>البرنامج</th>
+                        <th>الموعد</th>
+                        <th>السبب</th>
+                        <th>بواسطة</th>
+                        <th>تاريخ الإلغاء</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var c in Model)
                     {
-                        <tr class="border-t transition-colors duration-200" style="border-color: var(--color-border)">
-                            <td class="px-6 py-4 font-semibold">
-                                <span class="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-bold rounded-full"
-                                      style="background: color-mix(in srgb, var(--color-error) 10%, transparent); color: var(--color-error)">
-                                    <span class="material-symbols-rounded text-xs">cancel</span>
+                        <tr>
+                            <td>
+                                <span class="badge badge-danger">
+                                    <span class="material-symbols-rounded text-xs" aria-hidden="true">cancel</span>
                                     @c.EpisodeName
                                 </span>
                             </td>
-                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@c.ProgramName</td>
-                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@(c.ScheduledExecutionTime?.ToString("yyyy-MM-dd") ?? "—")</td>
-                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@c.CancellationReason</td>
-                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@(c.CancelledBy ?? "—")</td>
-                            <td class="px-6 py-4 whitespace-nowrap" dir="ltr" style="color: var(--color-text-secondary)">@c.CancelledAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td class="text-text-secondary">@c.ProgramName</td>
+                            <td class="text-text-secondary">@(c.ScheduledExecutionTime?.ToString("yyyy-MM-dd") ?? "—")</td>
+                            <td class="text-text-secondary">@c.CancellationReason</td>
+                            <td class="text-text-secondary">@(c.CancelledBy ?? "—")</td>
+                            <td class="whitespace-nowrap text-text-secondary" dir="ltr">@c.CancelledAt.ToString("yyyy-MM-dd HH:mm")</td>
                         </tr>
                     }
                 </tbody>

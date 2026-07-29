@@ -6,33 +6,31 @@
 
 <partial name="_PageHeader" />
 
-<div class="rounded-2xl border max-w-2xl" style="background: var(--color-surface); border-color: var(--color-border)">
+<div class="card max-w-2xl">
     <div class="p-6">
         <div class="flex items-center gap-4 mb-6">
-            <div class="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold shrink-0"
-                 style="background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); color: white">
+            <div class="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold shrink-0 bg-primary text-primary-foreground">
                 @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
             </div>
             <div>
-                <h2 class="text-xl font-bold" style="color: var(--color-text)">@User.FindFirst("FullName")?.Value</h2>
-                <p class="text-sm" style="color: var(--color-text-secondary)">@User.Identity?.Name</p>
-                <span class="inline-flex items-center px-2.5 py-0.5 text-xs font-bold rounded-full mt-1"
-                      style="background: color-mix(in srgb, var(--color-info) 10%, transparent); color: var(--color-info)">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
+                <h2 class="text-title font-bold text-text">@User.FindFirst("FullName")?.Value</h2>
+                <p class="text-body text-text-secondary">@User.Identity?.Name</p>
+                <span class="badge badge-info mt-1">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
             </div>
         </div>
 
-        <div class="space-y-3 pt-4" style="border-top: 1px solid var(--color-border)">
+        <div class="space-y-3 pt-4 border-t border-border">
             <div class="flex items-center justify-between py-2">
-                <span style="color: var(--color-text-secondary)">البريد الإلكتروني</span>
-                <span class="font-semibold" style="color: var(--color-text)">@User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value</span>
+                <span class="text-text-secondary">البريد الإلكتروني</span>
+                <span class="font-semibold text-text">@User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value</span>
             </div>
-            <div class="flex items-center justify-between py-2" style="border-top: 1px solid var(--color-border)">
-                <span style="color: var(--color-text-secondary)">رقم الهاتف</span>
-                <span class="font-semibold" style="color: var(--color-text)">@User.FindFirst("Phone")?.Value</span>
+            <div class="flex items-center justify-between py-2 border-t border-border">
+                <span class="text-text-secondary">رقم الهاتف</span>
+                <span class="font-semibold text-text">@User.FindFirst("Phone")?.Value</span>
             </div>
-            <div class="flex items-center justify-between py-2" style="border-top: 1px solid var(--color-border)">
-                <span style="color: var(--color-text-secondary)">معرّف المستخدم</span>
-                <span class="font-semibold" style="color: var(--color-text)">@User.FindFirst("DomainUserId")?.Value</span>
+            <div class="flex items-center justify-between py-2 border-t border-border">
+                <span class="text-text-secondary">معرّف المستخدم</span>
+                <span class="font-semibold text-text">@User.FindFirst("DomainUserId")?.Value</span>
             </div>
         </div>
     </div>

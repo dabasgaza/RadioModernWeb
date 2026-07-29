@@ -7,7 +7,7 @@
 
     if (User.HasPermission(AppPermissions.CoordinationManage))
     {
-        ViewData["HeaderActions"] = "<a href='/Coverage/Create' class='btn btn-primary rounded-xl px-5 shadow-lg gap-2'><span class='material-symbols-rounded'>add_circle</span>تغطية جديدة</a>";
+        ViewData["HeaderActions"] = "<a href='/Coverage/Create' class='btn btn-primary gap-2'><span class='material-symbols-rounded'>add_circle</span>تغطية جديدة</a>";
     }
 }
 
@@ -28,43 +28,41 @@
 }
 else
 {
-    <div class="wf-card overflow-hidden">
+    <div class="card overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="table w-full text-sm">
+            <table class="data-table">
                 <thead>
-                    <tr style="background: var(--color-bg-hover)">
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">المراسل</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider hidden md:table-cell" style="color: var(--color-text-secondary)">الضيف</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider hidden md:table-cell" style="color: var(--color-text-secondary)">الموقع</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">الموضوع</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider hidden lg:table-cell" style="color: var(--color-text-secondary)">الوقت المجدول</th>
-                        <th class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider hidden lg:table-cell" style="color: var(--color-text-secondary)">الوقت الفعلي</th>
-                        <th class="px-6 py-4 text-center font-bold text-xs uppercase tracking-wider" style="color: var(--color-text-secondary)">إجراءات</th>
+                    <tr>
+                        <th class="px-6 py-4">المراسل</th>
+                        <th class="px-6 py-4 hidden md:table-cell">الضيف</th>
+                        <th class="px-6 py-4 hidden md:table-cell">الموقع</th>
+                        <th class="px-6 py-4">الموضوع</th>
+                        <th class="px-6 py-4 hidden lg:table-cell">الوقت المجدول</th>
+                        <th class="px-6 py-4 hidden lg:table-cell">الوقت الفعلي</th>
+                        <th class="px-6 py-4 text-center">إجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var c in Model.Coverages)
                     {
-                        <tr class="transition-colors duration-200" style="border-bottom: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent)">
-                            <td class="px-6 py-4 font-semibold" style="color: var(--color-text)">@c.CorrespondentName</td>
-                            <td class="px-6 py-4 hidden md:table-cell" style="color: var(--color-text-secondary)">@(c.GuestName ?? "—")</td>
-                            <td class="px-6 py-4 hidden md:table-cell" style="color: var(--color-text-secondary)">@(c.Location ?? "—")</td>
-                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@(c.Topic ?? "—")</td>
-                            <td class="px-6 py-4 font-semibold whitespace-nowrap hidden lg:table-cell" dir="ltr" style="color: var(--color-text-secondary)">@(c.ScheduledTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
-                            <td class="px-6 py-4 font-semibold whitespace-nowrap hidden lg:table-cell" dir="ltr" style="color: var(--color-text-secondary)">@(c.ActualTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                        <tr class="border-b border-border-light transition-colors hover:bg-bg-hover">
+                            <td class="px-6 py-4 font-semibold text-text">@c.CorrespondentName</td>
+                            <td class="px-6 py-4 hidden md:table-cell text-text-secondary">@(c.GuestName ?? "—")</td>
+                            <td class="px-6 py-4 hidden md:table-cell text-text-secondary">@(c.Location ?? "—")</td>
+                            <td class="px-6 py-4 text-text-secondary">@(c.Topic ?? "—")</td>
+                            <td class="px-6 py-4 font-semibold whitespace-nowrap hidden lg:table-cell text-text-secondary" dir="ltr">@(c.ScheduledTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                            <td class="px-6 py-4 font-semibold whitespace-nowrap hidden lg:table-cell text-text-secondary" dir="ltr">@(c.ActualTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
                             <td class="px-6 py-4">
                                 @if (User.HasPermission(AppPermissions.CoordinationManage))
                                 {
                                     <div class="flex items-center justify-center gap-1">
-                                        <a href="/Coverage/Edit/@c.CoverageId" class="btn btn-ghost btn-square btn-sm" title="تعديل"
-                                           style="color: var(--color-primary)">
-                                            <span class="material-symbols-rounded text-xl leading-none">edit</span>
+                                        <a href="/Coverage/Edit/@c.CoverageId" class="btn btn-ghost btn-icon btn-sm text-primary" title="تعديل">
+                                            <span class="material-symbols-rounded text-lg">edit</span>
                                         </a>
                                         <form method="post" action="/Coverage/Delete/@c.CoverageId" class="inline" data-confirm="هل أنت متأكد من حذف هذه التغطية؟">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn btn-ghost btn-square btn-sm" title="حذف"
-                                                    style="color: var(--color-danger)">
-                                                <span class="material-symbols-rounded text-xl leading-none">delete</span>
+                                            <button type="submit" class="btn btn-ghost btn-icon btn-sm text-danger" title="حذف">
+                                                <span class="material-symbols-rounded text-lg">delete</span>
                                             </button>
                                         </form>
                                     </div>

@@ -44,6 +44,9 @@ public class HomeController : Controller
             var topGuests = await _reports.GetTopGuestsAsync(10, cancellationToken: HttpContext?.RequestAborted ?? default);
             var cancelledEpisodes = await _reports.GetCancelledEpisodesAsync(cancellationToken: HttpContext?.RequestAborted ?? default);
 
+            var totalEpisodes = statusStats.Values.Sum();
+            var totalPrograms = topPrograms.Count;
+
             var vm = new DashboardViewModel
             {
                 TodayEpisodes = todayEpisodes,
@@ -51,8 +54,15 @@ public class HomeController : Controller
                 TopPrograms = topPrograms,
                 TopGuests = topGuests,
                 CancelledEpisodes = cancelledEpisodes,
-                TotalEpisodes = statusStats.Values.Sum(),
-                TotalPrograms = topPrograms.Count
+                TotalEpisodes = totalEpisodes,
+                TotalPrograms = totalPrograms,
+                KpiItems =
+                [
+                    new() { Label = "حلقات البث اليوم", Value = todayEpisodes.Count.ToString(), Subtitle = "مجدولة لليوم", Icon = "live_tv", Color = "var(--color-primary)" },
+                    new() { Label = "إجمالي الحلقات", Value = totalEpisodes.ToString(), Subtitle = "الأرشيف والتنفيذ", Icon = "analytics", Color = "var(--color-accent)" },
+                    new() { Label = "البرامج النشطة", Value = totalPrograms.ToString(), Subtitle = "الدورة البرامجية", Icon = "tv", Color = "var(--color-warning)" },
+                    new() { Label = "حلقات ملغاة", Value = cancelledEpisodes.Count.ToString(), Subtitle = "موقوفة أو مستبعدة", Icon = "cancel", Color = "var(--color-danger)" }
+                ]
             };
             return View(vm);
         }

@@ -1,0 +1,27 @@
+@{
+    var modalId = ViewBag.DeleteModalId as string ?? "deleteModal";
+    var title = ViewBag.DeleteModalTitle as string ?? "حذف السجل";
+    var message = ViewBag.DeleteModalMessage as string ?? "هل أنت متأكد من حذف هذا السجل؟";
+    var messageId = $"{modalId}Message";
+    var formId = $"{modalId}Form";
+}
+<dialog id="@modalId" class="modal modal-bottom sm:modal-middle" aria-labelledby="@(modalId)Title" aria-describedby="@messageId">
+    <div class="modal-box rounded-2xl p-6 border border-border max-w-sm bg-surface shadow-modal text-center">
+        <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 bg-danger-subtle text-danger">
+            <span class="material-symbols-rounded text-3xl" aria-hidden="true">delete_forever</span>
+        </div>
+        <h3 id="@(modalId)Title" class="text-title font-bold mb-2 text-text">@title</h3>
+        <p id="@messageId" class="text-body mb-5 text-text-secondary">@message</p>
+        <form id="@formId" method="post" action="">
+            @Html.AntiForgeryToken()
+            <div class="flex gap-2 justify-center">
+                <button type="button" class="btn btn-ghost rounded-xl" onclick="document.getElementById('@modalId').close()">إلغاء</button>
+                <button type="submit" class="btn btn-destructive gap-1.5">
+                    <span class="material-symbols-rounded text-lg" aria-hidden="true">delete</span>
+                    نعم، احذف
+                </button>
+            </div>
+        </form>
+    </div>
+    <form method="dialog" class="modal-backdrop"><button>إلغاء</button></form>
+</dialog>

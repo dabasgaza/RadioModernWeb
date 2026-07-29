@@ -13,10 +13,10 @@
 
     var kpiItems = new List<KpiItem>
     {
-        new() { Label = "سجلات الإنتاج", Value = executionCount.ToString(), Icon = "check_circle", Color = "var(--color-success)", IconBg = "color-mix(in srgb, var(--color-success) 10%, transparent)", IconColor = "var(--color-success)", Subtitle = "منفذة ومسجلة" },
-        new() { Label = "النشر الرقمي", Value = socialCount.ToString(), Icon = "rss_feed", Color = "var(--color-primary)", IconBg = "color-mix(in srgb, var(--color-primary) 10%, transparent)", IconColor = "var(--color-primary)", Subtitle = "وسائل التواصل الاجتماعي" },
-        new() { Label = "الموقع الرسمي", Value = websiteCount.ToString(), Icon = "public", Color = "var(--color-info)", IconBg = "color-mix(in srgb, var(--color-info) 10%, transparent)", IconColor = "var(--color-info)", Subtitle = "نشر على البوابة" },
-        new() { Label = "نشاط اليوم", Value = todayCount.ToString(), Icon = "today", Color = "var(--color-warning)", IconBg = "color-mix(in srgb, var(--color-warning) 10%, transparent)", IconColor = "var(--color-warning)", Subtitle = "سجلات منشورة اليوم" }
+        new() { Label = "سجلات الإنتاج", Value = executionCount.ToString(), Icon = "check_circle", Subtitle = "منفذة ومسجلة" },
+        new() { Label = "النشر الرقمي", Value = socialCount.ToString(), Icon = "rss_feed", Subtitle = "وسائل التواصل الاجتماعي" },
+        new() { Label = "الموقع الرسمي", Value = websiteCount.ToString(), Icon = "public", Subtitle = "نشر على البوابة" },
+        new() { Label = "نشاط اليوم", Value = todayCount.ToString(), Icon = "today", Subtitle = "سجلات منشورة اليوم" }
     };
     ViewBag.KpiItems = kpiItems;
 }
@@ -26,19 +26,19 @@
     <partial name="_KpiCards" />
 
     <!-- Filters Section -->
-    <div class="bg-surface p-5 rounded-2xl border border-border/80 shadow-sm">
+    <div class="card p-5">
         <form method="get" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
                 <label class="text-xs font-semibold text-text-secondary mb-1.5 block">البحث باسم الحلقة</label>
                 <div class="relative">
-                    <span class="material-symbols-rounded absolute right-3.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none text-base">search</span>
+                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none text-base" aria-hidden="true">search</span>
                     <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث باسم الحلقة..."
-                           class="w-full h-10 bg-bg-hover/70 border border-border/60 rounded-xl pr-10 pl-3 text-xs font-semibold text-text placeholder:text-text-muted focus:outline-none focus:border-primary transition-all" />
+                           class="input pr-10" />
                 </div>
             </div>
             <div>
                 <label class="text-xs font-semibold text-text-secondary mb-1.5 block">حسب منصة النشر</label>
-                <select name="type" class="w-full h-10 bg-bg-hover/70 border border-border/60 rounded-xl px-3 text-xs font-semibold text-text focus:outline-none focus:border-primary transition-all" onchange="this.form.submit()">
+                <select name="type" class="input" onchange="this.form.submit()">
                     <option value="">كل منصات وأنواع النشر</option>
                     <option value="Execution" selected="@(ViewBag.TypeFilter == "Execution")">سجلات الإنتاج</option>
                     <option value="SocialMedia" selected="@(ViewBag.TypeFilter == "SocialMedia")">سجلات التواصل الاجتماعي</option>
@@ -47,7 +47,7 @@
             </div>
             <div>
                 <label class="text-xs font-semibold text-text-secondary mb-1.5 block">فلترة حسب البرنامج</label>
-                <select name="programId" class="w-full h-10 bg-bg-hover/70 border border-border/60 rounded-xl px-3 text-xs font-semibold text-text focus:outline-none focus:border-primary transition-all" onchange="this.form.submit()">
+                <select name="programId" class="input" onchange="this.form.submit()">
                     <option value="">كل البرامج</option>
                     @foreach (var prog in programs)
                     {
@@ -56,12 +56,12 @@
                 </select>
             </div>
             <div class="flex gap-2 items-end">
-                <button type="submit" class="flex-1 h-10 rounded-xl bg-primary text-primary-foreground font-bold text-xs shadow-md shadow-primary/20 hover:bg-primary-hover transition-all flex items-center justify-center gap-1.5">
-                    <span class="material-symbols-rounded text-base">filter_alt</span>
+                <button type="submit" class="btn btn-primary flex-1 gap-1.5">
+                    <span class="material-symbols-rounded text-base" aria-hidden="true">filter_alt</span>
                     <span>تصفية</span>
                 </button>
-                <a href="/Publishing" class="h-10 px-3 rounded-xl border border-border flex items-center justify-center text-text-secondary hover:bg-surface-hover transition-all" title="إعادة تهيئة">
-                    <span class="material-symbols-rounded text-base">restart_alt</span>
+                <a href="/Publishing" class="btn btn-ghost btn-square" title="إعادة تهيئة" aria-label="إعادة تهيئة التصفية">
+                    <span class="material-symbols-rounded text-base" aria-hidden="true">restart_alt</span>
                 </a>
             </div>
         </form>
@@ -77,93 +77,85 @@
     }
     else
     {
-        <div class="bg-surface rounded-2xl border border-border/80 shadow-sm overflow-hidden">
+        <div class="card overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-xs text-right">
+                <table class="w-full text-xs text-right" aria-label="سجل النشر والتوزيع الموحد">
                     <thead>
-                        <tr class="bg-bg border-b border-border/80 text-text-muted font-bold uppercase tracking-wider">
-                            <th class="px-6 py-4">المنصة</th>
-                            <th class="px-6 py-4">معلومات الحلقة</th>
-                            <th class="px-6 py-4 hidden lg:table-cell">تفاصيل النشر</th>
-                            <th class="px-6 py-4 hidden md:table-cell">المسؤول</th>
-                            <th class="px-6 py-4 hidden md:table-cell">التوقيت</th>
-                            <th class="px-6 py-4 text-center">الخيارات</th>
+                        <tr class="bg-bg border-b border-border text-text-muted font-bold uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-4">المنصة</th>
+                            <th scope="col" class="px-6 py-4">معلومات الحلقة</th>
+                            <th scope="col" class="px-6 py-4 hidden lg:table-cell">تفاصيل النشر</th>
+                            <th scope="col" class="px-6 py-4 hidden md:table-cell">المسؤول</th>
+                            <th scope="col" class="px-6 py-4 hidden md:table-cell">التوقيت</th>
+                            <th scope="col" class="px-6 py-4 text-center">الخيارات</th>
                         </tr>
                     </thead>
                 <tbody>
                     @foreach (var r in Model)
                     {
-                        <tr class="transition-colors duration-200" style="border-bottom: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent)">
+                        <tr class="transition-colors duration-200 border-b border-border-light">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center gap-3">
-                                    <div class="p-1.5 rounded-lg text-white flex items-center justify-center" style="background-color: @r.RecordColor">
-                                        <span class="material-symbols-rounded text-lg">@GetRecordIcon(r.RecordType)</span>
+                                    <div class="p-1.5 rounded-lg flex items-center justify-center" style="background-color: @r.RecordColor; color: white">
+                                        <span class="material-symbols-rounded text-lg" aria-hidden="true">@GetRecordIcon(r.RecordType)</span>
                                     </div>
-                                    <span class="inline-flex items-center px-2.5 py-1 text-xs font-bold rounded-lg"
-                                          style="background: color-mix(in srgb, @r.RecordColor 15%, transparent); color: @r.RecordColor">
+                                    <span class="meta-pill" style="background: color-mix(in srgb, @r.RecordColor 15%, transparent); color: @r.RecordColor">
                                         @GetRecordTypeName(r.RecordType)
                                     </span>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <a href="/Episodes/Details/@r.EpisodeId" class="font-semibold text-sm hover:underline transition-colors"
-                                   style="color: var(--color-primary)" target="_blank">
+                                <a href="/Episodes/Details/@r.EpisodeId" class="font-semibold text-sm text-primary hover:underline transition-colors" target="_blank">
                                     @(r.EpisodeName ?? "حلقة غير معنونة")
                                 </a>
-                                <span class="text-xs mt-0.5 block" style="color: var(--color-text-muted)">@r.ProgramName</span>
+                                <span class="text-xs mt-0.5 block text-text-muted">@r.ProgramName</span>
                             </td>
                             <td class="px-6 py-4 hidden lg:table-cell">
-                                <div class="text-sm max-w-sm line-clamp-2" style="color: var(--color-text-secondary)">@r.Summary</div>
+                                <div class="text-sm max-w-sm line-clamp-2 text-text-secondary">@r.Summary</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 font-bold text-xs"
-                                         style="background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary)">
+                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 font-bold text-xs bg-primary-subtle text-primary">
                                         @(string.IsNullOrEmpty(r.RecordedBy) ? "ت" : r.RecordedBy.Substring(0, 1).ToUpper())
                                     </div>
                                     <div class="text-right">
-                                        <div class="text-sm font-semibold" style="color: var(--color-text)">@(r.RecordedBy ?? "مستخدم تلقائي")</div>
-                                        <div class="text-[10px]" style="color: var(--color-text-muted)">@GetRoleName(r.RecordType)</div>
+                                        <div class="text-sm font-semibold text-text">@(r.RecordedBy ?? "مستخدم تلقائي")</div>
+                                        <div class="text-[10px] text-text-muted">@GetRoleName(r.RecordType)</div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
                                 <div class="flex flex-col text-xs">
-                                    <span class="font-semibold" style="color: var(--color-text)">@r.RecordDate.ToString("yyyy-MM-dd")</span>
-                                    <span style="color: var(--color-text-muted)">@r.RecordDate.ToString("hh:mm tt")</span>
+                                    <span class="font-semibold text-text">@r.RecordDate.ToString("yyyy-MM-dd")</span>
+                                    <span class="text-text-muted">@r.RecordDate.ToString("hh:mm tt")</span>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center justify-center gap-1">
-                                    @if (r.RecordType == "SocialMedia" && User.HasPermission(AppPermissions.EpisodePublish))
+                                    @if (r.RecordType == "SocialMedia" && User.HasPermission(AppPermissions.SocialPublishingPublish))
                                     {
-                                        <a href="/Publishing/Edit/@r.RecordId" class="btn btn-ghost btn-square btn-sm" title="تعديل"
-                                           style="color: var(--color-primary)">
-                                            <span class="material-symbols-rounded text-xl leading-none">edit</span>
+                                        <a href="/Publishing/Edit/@r.RecordId" class="btn btn-ghost btn-square btn-sm text-primary" title="تعديل" aria-label="تعديل سجل النشر الرقمي">
+                                            <span class="material-symbols-rounded text-xl leading-none" aria-hidden="true">edit</span>
                                         </a>
-                                        <button type="button" class="btn btn-ghost btn-square btn-sm" title="حذف"
-                                                style="color: var(--color-danger)"
+                                        <button type="button" class="btn btn-ghost btn-square btn-sm text-danger" title="حذف" aria-label="حذف سجل النشر الرقمي"
                                                 onclick="confirmDelete(@r.RecordId, '@(r.EpisodeName ?? "سجل")')">
-                                            <span class="material-symbols-rounded text-xl leading-none">delete</span>
+                                            <span class="material-symbols-rounded text-xl leading-none" aria-hidden="true">delete</span>
                                         </button>
                                     }
-                                    @if (r.RecordType == "Website" && User.HasPermission(AppPermissions.EpisodeWebPublish))
+                                    @if (r.RecordType == "Website" && User.HasPermission(AppPermissions.WebsitePublishingPublish))
                                     {
-                                        <a href="/WebsitePublishing/Edit/@r.RecordId" class="btn btn-ghost btn-square btn-sm" title="تعديل"
-                                           style="color: var(--color-primary)">
-                                            <span class="material-symbols-rounded text-xl leading-none">edit</span>
+                                        <a href="/WebsitePublishing/Edit/@r.RecordId" class="btn btn-ghost btn-square btn-sm text-primary" title="تعديل" aria-label="تعديل سجل نشر الموقع">
+                                            <span class="material-symbols-rounded text-xl leading-none" aria-hidden="true">edit</span>
                                         </a>
-                                        <button type="button" class="btn btn-ghost btn-square btn-sm" title="حذف"
-                                                style="color: var(--color-danger)"
+                                        <button type="button" class="btn btn-ghost btn-square btn-sm text-danger" title="حذف" aria-label="حذف سجل نشر الموقع"
                                                 onclick="confirmWebsiteDelete(@r.RecordId, '@(r.EpisodeName ?? "سجل")')">
-                                            <span class="material-symbols-rounded text-xl leading-none">delete</span>
+                                            <span class="material-symbols-rounded text-xl leading-none" aria-hidden="true">delete</span>
                                         </button>
                                     }
                                     @if (r.RecordType == "Execution" && (User.HasPermission(AppPermissions.ExecutionExecute) || User.HasPermission(AppPermissions.ExecutionEdit)))
                                     {
-                                        <a href="/ExecutionLogs/Edit/@r.RecordId" class="btn btn-ghost btn-square btn-sm" title="تعديل سجل التنفيذ"
-                                           style="color: var(--color-primary)">
-                                            <span class="material-symbols-rounded text-xl leading-none">edit</span>
+                                        <a href="/ExecutionLogs/Edit/@r.RecordId" class="btn btn-ghost btn-square btn-sm text-primary" title="تعديل سجل التنفيذ" aria-label="تعديل سجل التنفيذ">
+                                            <span class="material-symbols-rounded text-xl leading-none" aria-hidden="true">edit</span>
                                         </a>
                                     }
                                 </div>
@@ -174,83 +166,39 @@
             </table>
         </div>
     </div>
+    }
+</div>
+
+@{
+    ViewBag.DeleteModalId = "deleteModal";
+    ViewBag.DeleteModalTitle = "حذف سجل النشر الرقمي";
+    ViewBag.DeleteModalMessage = "هل أنت متأكد من حذف هذا السجل؟";
 }
+<partial name="_DeleteConfirmModal" />
 
-<!-- Delete Social Modal -->
-<dialog id="deleteModal" class="p-0 bg-transparent border-0" style="max-width: 24rem;">
-    <div class="rounded-2xl border w-full p-6 shadow-xl" style="background: var(--color-surface); border-color: var(--color-border)">
-        <div class="text-center">
-            <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
-                 style="background: color-mix(in srgb, var(--color-error) 10%, transparent); color: var(--color-error)">
-                <span class="material-symbols-rounded text-3xl">delete_forever</span>
-            </div>
-            <h3 class="text-base font-bold mb-2" style="color: var(--color-text)">حذف سجل النشر الرقمي</h3>
-            <p class="text-sm mb-5" id="deleteMessage" style="color: var(--color-text-secondary)">هل أنت متأكد من حذف هذا السجل؟</p>
-            <form id="deleteForm" method="post" action="">
-                @Html.AntiForgeryToken()
-                <div class="flex gap-2 justify-center">
-                    <button type="button" class="btn btn-ghost rounded-xl px-4 py-2 text-sm font-medium"
-                            style="color: var(--color-text-secondary)" onclick="closeDeleteModal()">إلغاء</button>
-                    <button type="submit" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-xl transition-colors"
-                            style="background: var(--color-error); color: #fff">
-                        <span class="material-symbols-rounded text-lg">delete</span>
-                        نعم، احذف
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</dialog>
-
-<!-- Delete Website Modal -->
-<dialog id="deleteWebsiteModal" class="p-0 bg-transparent border-0" style="max-width: 24rem;">
-    <div class="rounded-2xl border w-full p-6 shadow-xl" style="background: var(--color-surface); border-color: var(--color-border)">
-        <div class="text-center">
-            <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
-                 style="background: color-mix(in srgb, var(--color-error) 10%, transparent); color: var(--color-error)">
-                <span class="material-symbols-rounded text-3xl">delete_forever</span>
-            </div>
-            <h3 class="text-base font-bold mb-2" style="color: var(--color-text)">حذف سجل نشر الموقع</h3>
-            <p class="text-sm mb-5" id="deleteWebsiteMessage" style="color: var(--color-text-secondary)">هل أنت متأكد من حذف هذا السجل؟</p>
-            <form id="deleteWebsiteForm" method="post" action="">
-                @Html.AntiForgeryToken()
-                <div class="flex gap-2 justify-center">
-                    <button type="button" class="btn btn-ghost rounded-xl px-4 py-2 text-sm font-medium"
-                            style="color: var(--color-text-secondary)" onclick="closeWebsiteDeleteModal()">إلغاء</button>
-                    <button type="submit" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-xl transition-colors"
-                            style="background: var(--color-error); color: #fff">
-                        <span class="material-symbols-rounded text-lg">delete</span>
-                        نعم، احذف
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</dialog>
+@{
+    ViewBag.DeleteModalId = "deleteWebsiteModal";
+    ViewBag.DeleteModalTitle = "حذف سجل نشر الموقع";
+    ViewBag.DeleteModalMessage = "هل أنت متأكد من حذف هذا السجل؟";
+}
+<partial name="_DeleteConfirmModal" />
 
 @section Scripts {
     <script>
         function confirmDelete(id, name) {
-            document.getElementById('deleteMessage').textContent = 'هل أنت متأكد من حذف سجل النشر الرقمي للحلقة "' + name + '"؟';
-            document.getElementById('deleteForm').action = '/Publishing/Delete/' + id;
+            document.getElementById('deleteModalMessage').textContent = 'هل أنت متأكد من حذف سجل النشر الرقمي للحلقة "' + name + '"؟';
+            document.getElementById('deleteModalForm').action = '/Publishing/Delete/' + id;
             document.getElementById('deleteModal').showModal();
         }
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').close();
-        }
         function confirmWebsiteDelete(id, name) {
-            document.getElementById('deleteWebsiteMessage').textContent = 'هل أنت متأكد من حذف سجل نشر الموقع للحلقة "' + name + '"؟';
-            document.getElementById('deleteWebsiteForm').action = '/WebsitePublishing/Delete/' + id;
+            document.getElementById('deleteWebsiteModalMessage').textContent = 'هل أنت متأكد من حذف سجل نشر الموقع للحلقة "' + name + '"؟';
+            document.getElementById('deleteWebsiteModalForm').action = '/WebsitePublishing/Delete/' + id;
             document.getElementById('deleteWebsiteModal').showModal();
-        }
-        function closeWebsiteDeleteModal() {
-            document.getElementById('deleteWebsiteModal').close();
         }
     </script>
 }
 
-@functions {
-    string GetRecordTypeName(string t) => t switch
+@{ string GetRecordTypeName(string t) => t switch
     {
         "Execution" => "سجل الإنتاج",
         "SocialMedia" => "نشر رقمي",
@@ -272,5 +220,4 @@
         "SocialMedia" => "مسؤول النشر الرقمي",
         "Website" => "مسؤول نشر الموقع",
         _ => "مسؤول النظام"
-    };
-}
+    }; }

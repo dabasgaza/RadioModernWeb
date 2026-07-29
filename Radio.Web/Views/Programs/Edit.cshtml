@@ -24,7 +24,7 @@
         <div asp-validation-summary="All" class="rounded-xl p-4 mb-6 font-semibold text-sm bg-danger-subtle text-danger border border-danger-subtle"></div>
     }
 
-    <div class="bg-surface border border-border rounded-2xl p-6" style="border-color:var(--color-border)">
+    <div class="card p-6">
         @{
             ViewBag.SectionIcon = "radio";
             ViewBag.SectionTitle = "بيانات البرنامج";
@@ -58,10 +58,10 @@
 
     <div class="flex items-center justify-end gap-2 mt-6">
         <a href="/Programs" class="btn btn-ghost rounded-xl gap-2">
-            <span class="material-symbols-rounded">cancel</span>إلغاء
+            <span class="material-symbols-rounded" aria-hidden="true">cancel</span>إلغاء
         </a>
         <button type="submit" class="btn btn-primary rounded-xl gap-2">
-            <span class="material-symbols-rounded">save</span>حفظ البيانات
+            <span class="material-symbols-rounded" aria-hidden="true">save</span>حفظ البيانات
         </button>
     </div>
 </form>

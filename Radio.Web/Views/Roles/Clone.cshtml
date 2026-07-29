@@ -11,7 +11,7 @@
 
 <partial name="_PageHeader" />
 
-<div class="rounded-2xl border max-w-2xl bg-surface" style="border-color: var(--color-border)">
+<div class="card max-w-2xl">
     <form method="post" action="/Roles/Clone/@ViewBag.SourceRoleId">
         @Html.AntiForgeryToken()
 
@@ -23,7 +23,7 @@
             <partial name="_SectionHeader" />
 
             <div class="rounded-2xl p-5 flex items-start gap-4 bg-primary-subtle border border-primary-subtle">
-                <span class="material-symbols-rounded p-1 rounded-lg shrink-0 text-primary" style="background: color-mix(in srgb, var(--color-primary) 15%, transparent)">info</span>
+                <span class="material-symbols-rounded p-1 rounded-lg shrink-0 text-primary">info</span>
                 <div class="text-xs leading-relaxed text-text-secondary">
                     سيتم إنشاء دور وظيفي جديد بنسخة مطابقة تماماً من صلاحيات دور <strong class="text-primary">@ViewBag.SourceRoleName</strong>. بعد إتمام الاستنساخ، يمكنك التعديل والتحكم بالصلاحيات بحرية تامة من مصفوفة الصلاحيات.
                 </div>
@@ -49,7 +49,7 @@
             }
             <partial name="_FormField" />
 
-            <div class="flex items-center justify-between gap-3 pt-4" style="border-top: 1px solid var(--color-border)">
+            <div class="flex items-center justify-between gap-3 pt-4 border-t border-border">
                 <a href="/Roles" class="btn btn-ghost rounded-xl gap-2">
                     <span class="material-symbols-rounded">cancel</span>إلغاء
                 </a>

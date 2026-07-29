@@ -73,13 +73,26 @@ public class EpisodesController : Controller
             if (status.HasValue) filtered = filtered.Where(e => e.StatusId == status.Value);
             if (programId.HasValue) filtered = filtered.Where(e => e.ProgramId == programId.Value);
 
+            var filteredList = filtered.OrderByDescending(e => e.ScheduledExecutionTime ?? DateTime.MinValue).ToList();
+            var totalCount = filteredList.Count;
+            var scheduledCount = filteredList.Count(e => e.StatusId == 0);
+            var executedCount = filteredList.Count(e => e.StatusId == 1);
+            var publishedCount = filteredList.Count(e => e.StatusId == 2 || e.StatusId == 3);
+            var cancelledCount = filteredList.Count(e => e.StatusId == 4);
             var vm = new EpisodeListViewModel
             {
-                Episodes = filtered.OrderByDescending(e => e.ScheduledExecutionTime ?? DateTime.MinValue).ToList(),
+                Episodes = filteredList,
                 Programs = programs,
                 SearchTerm = search ?? string.Empty,
                 StatusFilter = status,
-                ProgramFilter = programId
+                ProgramFilter = programId,
+                KpiItems =
+                [
+                    new() { Label = "إجمالي الحلقات", Value = totalCount.ToString(), Icon = "view_list", Subtitle = "الأرشيف الكامل", Color = "var(--color-primary)" },
+                    new() { Label = "الحلقات المجدولة", Value = scheduledCount.ToString(), Icon = "event_upcoming", Subtitle = "قيد الجدولة للبث", Color = "var(--color-info)" },
+                    new() { Label = "الحلقات المنفذة", Value = executedCount.ToString(), Icon = "task_alt", Subtitle = "تم تنفيذها وتسجيلها", Color = "var(--color-success)" },
+                    new() { Label = "الحلقات المنشورة", Value = publishedCount.ToString(), Icon = "podcasts", Subtitle = "منشورة رقمياً وعلى الموقع", Color = "var(--color-accent)" }
+                ]
             };
             return View(vm);
         }

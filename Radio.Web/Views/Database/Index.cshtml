@@ -12,78 +12,78 @@
 
 <!-- Stats Cards -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
-    <div class="rounded-2xl border p-5" style="background: var(--color-surface); border-color: var(--color-border); color: var(--color-primary)">
+    <div class="rounded-2xl border border-border p-5 bg-surface text-primary">
         <div class="flex items-center justify-between">
             <div>
-                <div class="text-lg font-black" style="color: var(--color-text)">@Model.DatabaseSizeFormatted</div>
-                <div class="text-[10px] font-bold mt-1" style="color: var(--color-text-muted)">حجم قاعدة البيانات</div>
+                <div class="text-lg font-black text-text">@Model.DatabaseSizeFormatted</div>
+                <div class="text-[10px] font-bold mt-1 text-text-muted">حجم قاعدة البيانات</div>
             </div>
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary)">
-                <span class="material-symbols-rounded">database</span>
-            </div>
-        </div>
-    </div>
-    <div class="rounded-2xl border p-5" style="background: var(--color-surface); border-color: var(--color-border); color: var(--color-success)">
-        <div class="p-0">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-lg font-black" style="color: var(--color-text)">@Model.TimeSinceLastBackupFormatted</div>
-                    <div class="text-[10px] font-bold mt-1" style="color: var(--color-text-secondary)">آخر نسخة احتياطية</div>
-                </div>
-                <div class="w-10 h-10 rounded-xl bg-success/10 text-success flex items-center justify-center">
-                    <span class="material-symbols-rounded">backup</span>
-                </div>
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary-subtle text-primary">
+                <span class="material-symbols-rounded" aria-hidden="true">database</span>
             </div>
         </div>
     </div>
-    <div class="rounded-2xl border p-5" style="background: var(--color-surface); border-color: var(--color-border); color: var(--color-accent)">
+    <div class="rounded-2xl border border-border p-5 bg-surface text-success">
         <div class="p-0">
             <div class="flex items-center justify-between">
                 <div>
-                    <div class="text-lg font-black" style="color: var(--color-text)">@Model.SuccessRateFormatted</div>
-                    <div class="text-[10px] font-bold mt-1" style="color: var(--color-text-secondary)">نسبة النجاح</div>
+                    <div class="text-lg font-black text-text">@Model.TimeSinceLastBackupFormatted</div>
+                    <div class="text-[10px] font-bold mt-1 text-text-secondary">آخر نسخة احتياطية</div>
                 </div>
-                <div class="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
-                    <span class="material-symbols-rounded">checklist</span>
+                <div class="w-10 h-10 rounded-xl bg-success-subtle text-success flex items-center justify-center">
+                    <span class="material-symbols-rounded" aria-hidden="true">backup</span>
                 </div>
             </div>
         </div>
     </div>
-    <div class="rounded-2xl border p-5" style="background: var(--color-surface); border-color: var(--color-border); color: var(--color-info)">
+    <div class="rounded-2xl border border-border p-5 bg-surface text-accent">
         <div class="p-0">
             <div class="flex items-center justify-between">
                 <div>
-                    <div class="text-lg font-black" style="color: var(--color-text)">@Model.TotalBackups</div>
-                    <div class="text-[10px] font-bold mt-1" style="color: var(--color-text-secondary)">إجمالي النسخ</div>
+                    <div class="text-lg font-black text-text">@Model.SuccessRateFormatted</div>
+                    <div class="text-[10px] font-bold mt-1 text-text-secondary">نسبة النجاح</div>
                 </div>
-                <div class="w-10 h-10 rounded-xl bg-info/10 text-info flex items-center justify-center">
-                    <span class="material-symbols-rounded">history</span>
+                <div class="w-10 h-10 rounded-xl bg-accent-subtle text-accent flex items-center justify-center">
+                    <span class="material-symbols-rounded" aria-hidden="true">checklist</span>
                 </div>
             </div>
         </div>
     </div>
-    <div class="p-6" style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-warning)">
+    <div class="rounded-2xl border border-border p-5 bg-surface text-info">
         <div class="p-0">
             <div class="flex items-center justify-between">
                 <div>
-                    <div class="text-lg font-black" style="color: var(--color-text)">@Model.BackupsThisMonth</div>
-                    <div class="text-[10px] font-bold mt-1" style="color: var(--color-text-secondary)">نسخ هذا الشهر</div>
+                    <div class="text-lg font-black text-text">@Model.TotalBackups</div>
+                    <div class="text-[10px] font-bold mt-1 text-text-secondary">إجمالي النسخ</div>
                 </div>
-                <div class="w-10 h-10 rounded-xl bg-warning/10 text-warning flex items-center justify-center">
-                    <span class="material-symbols-rounded">calendar_month</span>
+                <div class="w-10 h-10 rounded-xl bg-info-subtle text-info flex items-center justify-center">
+                    <span class="material-symbols-rounded" aria-hidden="true">history</span>
                 </div>
             </div>
         </div>
     </div>
-    <div class="p-6" style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-error)">
+    <div class="rounded-2xl border border-border p-5 bg-surface text-warning">
         <div class="p-0">
             <div class="flex items-center justify-between">
                 <div>
-                    <div class="text-lg font-black" style="color: var(--color-text)">@Model.BackupFolderSizeFormatted</div>
-                    <div class="text-[10px] font-bold mt-1" style="color: var(--color-text-secondary)">حجم مجلد النسخ</div>
+                    <div class="text-lg font-black text-text">@Model.BackupsThisMonth</div>
+                    <div class="text-[10px] font-bold mt-1 text-text-secondary">نسخ هذا الشهر</div>
                 </div>
-                <div class="w-10 h-10 rounded-xl bg-error/10 text-error flex items-center justify-center">
-                    <span class="material-symbols-rounded">folder</span>
+                <div class="w-10 h-10 rounded-xl bg-warning-subtle text-warning flex items-center justify-center">
+                    <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="rounded-2xl border border-border p-5 bg-surface text-danger">
+        <div class="p-0">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-lg font-black text-text">@Model.BackupFolderSizeFormatted</div>
+                    <div class="text-[10px] font-bold mt-1 text-text-secondary">حجم مجلد النسخ</div>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-danger-subtle text-danger flex items-center justify-center">
+                    <span class="material-symbols-rounded" aria-hidden="true">folder</span>
                 </div>
             </div>
         </div>
@@ -96,24 +96,24 @@
         <span class="material-symbols-rounded text-sm">@(Model.IsHealthy ? "check_circle" : "error")</span>
         @(Model.IsHealthy ? "قاعدة البيانات بحالة جيدة" : "قاعدة البيانات تحتاج مراجعة")
     </div>
-    <span class="text-[11px]" style="color: var(--color-text-muted)">|</span>
-    <span class="text-[11px] flex items-center gap-1" style="color: var(--color-text-secondary)">
-        <span class="material-symbols-rounded text-xs">link</span>
+    <span class="text-[11px] text-text-muted" aria-hidden="true">|</span>
+    <span class="text-[11px] flex items-center gap-1 text-text-secondary">
+        <span class="material-symbols-rounded text-xs" aria-hidden="true">link</span>
         @Model.ActiveConnections اتصال نشط
     </span>
-    <span class="text-[11px]" style="color: var(--color-text-muted)">|</span>
-    <span class="text-[11px] flex items-center gap-1" style="color: var(--color-text-secondary)">
-        <span class="material-symbols-rounded text-xs">autorenew</span>
+    <span class="text-[11px] text-text-muted" aria-hidden="true">|</span>
+    <span class="text-[11px] flex items-center gap-1 text-text-secondary">
+        <span class="material-symbols-rounded text-xs" aria-hidden="true">autorenew</span>
         @(Model.IsAutoBackupEnabled ? "النسخ التلقائي: مفعل" : "النسخ التلقائي: معطل")
     </span>
-    <span class="text-[11px]" style="color: var(--color-text-muted)">|</span>
-    <span class="text-[11px] flex items-center gap-1" style="color: var(--color-text-secondary)">
-        <span class="material-symbols-rounded text-xs">cloud</span>
+    <span class="text-[11px] text-text-muted" aria-hidden="true">|</span>
+    <span class="text-[11px] flex items-center gap-1 text-text-secondary">
+        <span class="material-symbols-rounded text-xs" aria-hidden="true">cloud</span>
         @(Model.IsCloudSyncEnabled ? "المزامنة السحابية: مفعلة" : "المزامنة السحابية: معطلة")
     </span>
     @if (Model.FailureCount > 0)
     {
-        <span class="text-[11px]" style="color: var(--color-text-muted)">|</span>
+        <span class="text-[11px] text-text-muted" aria-hidden="true">|</span>
         <span class="text-[11px] text-error font-bold flex items-center gap-1">
             <span class="material-symbols-rounded text-xs">bug_report</span>
             @Model.FailureCount فشل
@@ -123,24 +123,24 @@
 
 <!-- Action Cards -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-6">
-    <div style="background: var(--color-surface); border: 1px solid var(--color-border)">
+    <div class="bg-surface border border-border">
         <div >
             <div class="flex items-center gap-2 mb-4">
                 <span class="material-symbols-rounded text-primary">backup</span>
-                <h3 class="font-bold text-sm" style="color: var(--color-text)">نسخ احتياطي فوري</h3>
+                <h3 class="font-bold text-sm text-text">نسخ احتياطي فوري</h3>
             </div>
-            <p class="text-xs leading-relaxed mb-4" style="color: var(--color-text-secondary)">إنشاء نسخة احتياطية كاملة لقاعدة البيانات مع ضغط تلقائي.</p>
-            @if (User.HasPermission(AppPermissions.DatabaseManage))
+            <p class="text-xs leading-relaxed mb-4 text-text-secondary">إنشاء نسخة احتياطية كاملة لقاعدة البيانات مع ضغط تلقائي.</p>
+            @if (User.HasPermission(AppPermissions.SystemDatabaseManage))
             {
                 <form method="post" action="/Database/Backup" data-confirm="هل أنت متأكد من رغبتك في إنشاء نسخة احتياطية كاملة الآن؟">
                     @Html.AntiForgeryToken()
                     <div class="space-y-3">
                         <div>
-                            <label class="block text-[11px] font-bold mb-1" style="color: var(--color-text-secondary)">مسار الحفظ (اختياري)</label>
+                            <label class="block text-[11px] font-bold mb-1 text-text-secondary">مسار الحفظ (اختياري)</label>
                             <input type="text" name="backupFolder" class="input input-bordered text-xs w-full" placeholder="اترك فارغاً للمسار الافتراضي..." value="" />
                         </div>
-                        <button type="submit" class="flex items-center gap-1.5 w-full" style="background: var(--color-primary); color: white">
-                            <span class="material-symbols-rounded">backup</span>
+                        <button type="submit" class="flex items-center gap-2 w-full bg-primary text-primary-foreground font-bold px-4 py-2.5 rounded-xl transition-colors">
+                            <span class="material-symbols-rounded" aria-hidden="true">backup</span>
                             إنشاء نسخة احتياطية
                         </button>
                     </div>
@@ -149,24 +149,24 @@
         </div>
     </div>
 
-    <div style="background: var(--color-surface); border: 1px solid var(--color-border)">
+    <div class="bg-surface border border-border">
         <div >
             <div class="flex items-center gap-2 mb-4">
                 <span class="material-symbols-rounded text-error">restore_page</span>
-                <h3 class="font-bold text-sm" style="color: var(--color-text)">استعادة نسخة</h3>
+                <h3 class="font-bold text-sm text-text">استعادة نسخة</h3>
             </div>
-            <p class="text-xs leading-relaxed mb-4" style="color: var(--color-text-secondary)">استعادة قاعدة البيانات من ملف .bak مع قطع الاتصالات النشطة تلقائياً.</p>
-            @if (User.HasPermission(AppPermissions.DatabaseManage))
+            <p class="text-xs leading-relaxed mb-4 text-text-secondary">استعادة قاعدة البيانات من ملف .bak مع قطع الاتصالات النشطة تلقائياً.</p>
+            @if (User.HasPermission(AppPermissions.SystemDatabaseManage))
             {
                 <form method="post" action="/Database/Restore" enctype="multipart/form-data" data-confirm="تحذير: استعادة قاعدة البيانات ستؤدي لفقدان أي تغييرات منذ آخر نسخة احتياطية. هل تريد المتابعة؟" id="restoreForm">
                     @Html.AntiForgeryToken()
                     <div class="space-y-3">
                         <div>
-                            <label class="block text-[11px] font-bold mb-1" style="color: var(--color-text-secondary)">اختر ملف .bak</label>
+                            <label class="block text-[11px] font-bold mb-1 text-text-secondary">اختر ملف .bak</label>
                             <input type="file" name="backupFile" accept=".bak" class="input input-bordered text-xs w-full file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-primary/10 file:text-primary file:font-bold file:text-xs hover:file:bg-primary/20" required />
                         </div>
-                        <button type="submit" class="flex items-center gap-1.5 w-full" style="background: var(--color-error); color: white">
-                            <span class="material-symbols-rounded">restore_page</span>
+                        <button type="submit" class="flex items-center gap-1.5 w-full bg-danger text-white font-bold px-4 py-2.5 rounded-xl gap-2 transition-colors">
+                            <span class="material-symbols-rounded" aria-hidden="true">restore_page</span>
                             استعادة من الملف المحدد
                         </button>
                     </div>
@@ -177,19 +177,19 @@
 
     @if (Model.TotalBackups > 0)
     {
-    <div style="background: var(--color-surface); border: 1px solid var(--color-border)">
+    <div class="bg-surface border border-border">
         <div >
             <div class="flex items-center gap-2 mb-4">
                 <span class="material-symbols-rounded text-info">cloud_upload</span>
-                <h3 class="font-bold text-sm" style="color: var(--color-text)">مزامنة أحدث نسخة سحابياً</h3>
+                <h3 class="font-bold text-sm text-text">مزامنة أحدث نسخة سحابياً</h3>
             </div>
-                <p class="text-xs leading-relaxed mb-4" style="color: var(--color-text-secondary)">رفع أحدث نسخة احتياطية إلى التخزين السحابي المحاكي.</p>
-                @if (User.HasPermission(AppPermissions.DatabaseManage))
+                <p class="text-xs leading-relaxed mb-4 text-text-secondary">رفع أحدث نسخة احتياطية إلى التخزين السحابي المحاكي.</p>
+                @if (User.HasPermission(AppPermissions.SystemDatabaseManage))
                 {
                     <form method="post" action="/Database/CloudSync" data-confirm="هل تريد مزامنة أحدث نسخة احتياطية إلى السحابة؟">
                         @Html.AntiForgeryToken()
-                        <button type="submit" class="flex items-center gap-1.5 w-full md:w-auto" style="background: var(--color-info); color: white">
-                            <span class="material-symbols-rounded">cloud_upload</span>
+                        <button type="submit" class="flex items-center gap-2 w-full md:w-auto bg-info text-white font-bold px-4 py-2.5 rounded-xl transition-colors">
+                            <span class="material-symbols-rounded" aria-hidden="true">cloud_upload</span>
                             مزامنة للسحابة
                         </button>
                     </form>
@@ -198,19 +198,19 @@
         </div>
     }
 
-    <div style="background: var(--color-surface); border: 1px solid var(--color-border)">
+    <div class="bg-surface border border-border">
         <div >
             <div class="flex items-center gap-2 mb-4">
                 <span class="material-symbols-rounded text-warning">cleaning_services</span>
-                <h3 class="font-bold text-sm" style="color: var(--color-text)">تهيئة الجداول</h3>
+                <h3 class="font-bold text-sm text-text">تهيئة الجداول</h3>
             </div>
-            <p class="text-xs leading-relaxed mb-4" style="color: var(--color-text-secondary)">إعادة تهيئة الجداول وتطبيق الهجرات بدون فقدان البيانات.</p>
-            @if (User.HasPermission(AppPermissions.DatabaseManage))
+            <p class="text-xs leading-relaxed mb-4 text-text-secondary">إعادة تهيئة الجداول وتطبيق الهجرات بدون فقدان البيانات.</p>
+            @if (User.HasPermission(AppPermissions.SystemDatabaseManage))
             {
                 <form method="post" action="/Database/Initialize" data-confirm="إنتباه: هذه الخطوة قد تقوم بإعادة تهيئة الجداول الحالية، هل تريد المتابعة فعلاً؟">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="flex items-center gap-1.5 w-full md:w-auto" style="color: var(--color-warning); border: 1px solid color-mix(in srgb, var(--color-warning) 30%, transparent)">
-                        <span class="material-symbols-rounded text-warning">build</span>
+                    <button type="submit" class="flex items-center gap-2 w-full md:w-auto text-warning border-2 border-warning/30 font-bold px-4 py-2.5 rounded-xl transition-colors hover:bg-warning-subtle">
+                        <span class="material-symbols-rounded" aria-hidden="true">build</span>
                         تهيئة قاعدة البيانات
                     </button>
                 </form>
@@ -218,19 +218,19 @@
         </div>
     </div>
 
-    <div style="background: var(--color-surface); border: 1px solid var(--color-border)">
+    <div class="bg-surface border border-border">
         <div >
             <div class="flex items-center gap-2 mb-4">
                 <span class="material-symbols-rounded text-error">delete_forever</span>
-                <h3 class="font-bold text-sm" style="color: var(--color-text)">إعادة تعيين قاعدة البيانات</h3>
+                <h3 class="font-bold text-sm text-text">إعادة تعيين قاعدة البيانات</h3>
             </div>
-            <p class="text-xs leading-relaxed mb-4" style="color: var(--color-text-secondary)">إسقاط قاعدة البيانات وإنشائها من الصفر مع البيانات الأولية والصلاحيات.</p>
-            @if (User.HasPermission(AppPermissions.DatabaseManage))
+            <p class="text-xs leading-relaxed mb-4 text-text-secondary">إسقاط قاعدة البيانات وإنشائها من الصفر مع البيانات الأولية والصلاحيات.</p>
+            @if (User.HasPermission(AppPermissions.SystemDatabaseManage))
             {
                 <form method="post" action="/Database/Reset" data-confirm="data-reset" id="resetForm">
                     @Html.AntiForgeryToken()
-                    <button type="button" onclick="confirmReset(event)" class="flex items-center gap-1.5 w-full md:w-auto" style="background: var(--color-error); color: white">
-                        <span class="material-symbols-rounded">delete_forever</span>
+                    <button type="button" onclick="confirmReset(event)" class="flex items-center gap-2 w-full md:w-auto bg-danger text-white font-bold px-4 py-2.5 rounded-xl transition-colors">
+                        <span class="material-symbols-rounded" aria-hidden="true">delete_forever</span>
                         إعادة تعيين كامل
                     </button>
                 </form>
@@ -238,21 +238,21 @@
         </div>
     </div>
 
-    <div style="background: var(--color-surface); border: 1px solid var(--color-border)">
+    <div class="bg-surface border border-border">
         <div >
             <div class="flex items-center gap-2 mb-4">
                 <span class="material-symbols-rounded text-accent">auto_delete</span>
-                <h3 class="font-bold text-sm" style="color: var(--color-text)">سياسة الاحتفاظ</h3>
+                <h3 class="font-bold text-sm text-text">سياسة الاحتفاظ</h3>
             </div>
-            <p class="text-xs leading-relaxed mb-4" style="color: var(--color-text-secondary)">حذف النسخ الاحتياطية الأقدم من عدد الأيام المحدد.</p>
-            @if (User.HasPermission(AppPermissions.DatabaseManage))
+            <p class="text-xs leading-relaxed mb-4 text-text-secondary">حذف النسخ الاحتياطية الأقدم من عدد الأيام المحدد.</p>
+            @if (User.HasPermission(AppPermissions.SystemDatabaseManage))
             {
                 <form method="post" action="/Database/RunRetention" data-confirm="هل تريد تطبيق سياسة الاحتفاظ وحذف النسخ القديمة؟">
                     @Html.AntiForgeryToken()
                     <div class="flex gap-2">
                         <input type="number" name="retentionDays" class="input input-bordered w-24 text-xs" value="@Model.RetentionDays" min="1" max="365" />
-                        <button type="submit" class="flex items-center gap-1.5" style="background: var(--color-accent); color: white">
-                            <span class="material-symbols-rounded">auto_delete</span>
+                        <button type="submit" class="flex items-center gap-2 bg-accent text-white font-bold px-4 py-2.5 rounded-xl transition-colors">
+                            <span class="material-symbols-rounded" aria-hidden="true">auto_delete</span>
                             تنظيف
                         </button>
                     </div>
@@ -263,10 +263,10 @@
 </div>
 
 <!-- Backup Log Table -->
-<div style="background: var(--color-surface); border: 1px solid var(--color-border);" class="mb-6">
+<div class="bg-surface border border-border mb-6">
     <div >
         <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
-            <h3 class="font-bold flex items-center gap-2 text-base" style="color: var(--color-text)">
+            <h3 class="font-bold flex items-center gap-2 text-base text-text">
                 <span class="material-symbols-rounded text-primary">history</span>
                 سجل النسخ الاحتياطي
             </h3>
@@ -274,7 +274,7 @@
 
         <div class="flex gap-3 flex-wrap items-center mb-4">
             <div class="relative flex-1 min-w-[200px]">
-                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-text-muted)">search</span>
+                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-sm text-text-muted">search</span>
                 <input type="text" id="backupSearch" placeholder="بحث في مسار الملف..." class="input input-bordered pr-8 text-xs w-full" />
             </div>
             <select id="filterType" class="select select-bordered w-32 text-xs">
@@ -288,7 +288,7 @@
                 <option value="Success">ناجحة</option>
                 <option value="Failed">فاشلة</option>
             </select>
-            <button type="button" onclick="resetFilters()" class="text-xs px-3 py-2" style="color: var(--color-text-secondary)" title="إعادة ضبط">
+            <button type="button" onclick="resetFilters()" class="text-xs px-3 py-2 text-text-secondary" title="إعادة ضبط">
                 <span class="material-symbols-rounded text-sm">refresh</span>
             </button>
         </div>
@@ -296,10 +296,10 @@
         <div class="overflow-x-auto" id="backupTableContainer">
             @if (!Model.BackupLogs.Any())
             {
-                <div style="background: var(--color-surface); border: 1px solid var(--color-border)"><div class="text-center py-12">
-                    <span class="material-symbols-rounded text-4xl mb-2" style="color: var(--color-text-muted)">history</span>
+                <div class="bg-surface border border-border"><div class="text-center py-12">
+                    <span class="material-symbols-rounded text-4xl mb-2 text-text-muted">history</span>
                     <h3 class="font-bold text-lg mb-2">لا نسخ احتياطية</h3>
-                    <p class="text-sm" style="color: var(--color-text-secondary)">لم يتم تسجيل أي عمليات نسخ احتياطي تاريخية بعد.</p>
+                    <p class="text-sm text-text-secondary">لم يتم تسجيل أي عمليات نسخ احتياطي تاريخية بعد.</p>
                 </div></div>
             }
             else
@@ -320,7 +320,7 @@
                     @foreach (var b in Model.BackupLogs)
                     {
                         <tr class="backup-row" data-type="@b.BackupType" data-status="@b.Status" data-search="@b.BackupPath.ToLower()">
-                            <td class="font-semibold whitespace-nowrap text-xs" style="color: var(--color-text)">@b.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td class="font-semibold whitespace-nowrap text-xs text-text">@b.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
                             <td class="">
 <span class="font-bold text-[10px]" style="background: color-mix(in srgb, @(b.BackupType == "Local" ? "var(--color-info)" : b.BackupType == "Cloud" ? "var(--color-accent)" : "var(--color-success)") 10%, transparent); color: @(b.BackupType == "Local" ? "var(--color-info)" : b.BackupType == "Cloud" ? "var(--color-accent)" : "var(--color-success)")">
     @(b.BackupType == "Local" ? "محلي" : b.BackupType == "Cloud" ? "سحابي" : "كلاهما")
@@ -342,10 +342,10 @@
                                 }
                                 else
                                 {
-                                    <span style="color: var(--color-text-muted)">—</span>
+                                    <span class="text-text-muted">—</span>
                                 }
                             </td>
-                            <td class="text-[10px] max-w-[200px] truncate dir-ltr" style="color: var(--color-text-muted)" title="@b.BackupPath">@System.IO.Path.GetFileName(b.BackupPath)</td>
+                            <td class="text-[10px] max-w-[200px] truncate dir-ltr text-text-muted" title="@b.BackupPath">@System.IO.Path.GetFileName(b.BackupPath)</td>
                             <td class="">
                                 <div class="flex flex-wrap items-center justify-center gap-1.5">
                                     @if (b.Status == "Success" && System.IO.File.Exists(b.BackupPath))
@@ -371,7 +371,7 @@
                                             </button>
                                         </form>
                                     }
-                                    @if (User.HasPermission(AppPermissions.DatabaseManage))
+                                    @if (User.HasPermission(AppPermissions.SystemDatabaseManage))
                                     {
                                         <form method="post" action="/Database/DeleteBackupLog" class="inline" data-confirm="هل تريد حذف هذا السجل؟">
                                             @Html.AntiForgeryToken()
@@ -389,14 +389,14 @@
             </table>
 
             <!-- Pagination -->
-            <div id="paginationControls" class="p-4 border-t flex items-center justify-between gap-3 text-xs" style="border-color: var(--color-border)">
-                <span class="" id="paginationInfo" style="color: var(--color-text-secondary)">عرض 1-@Math.Min(10, Model.BackupLogs.Count) من @Model.BackupLogs.Count</span>
+            <div id="paginationControls" class="p-4 border-t border-border flex items-center justify-between gap-3 text-xs">
+                <span class="text-text-secondary" id="paginationInfo">عرض 1-@Math.Min(10, Model.BackupLogs.Count) من @Model.BackupLogs.Count</span>
                 <div class="flex items-center gap-1">
-                    <button type="button" class="px-2 py-1 text-xs" style="color: var(--color-text-secondary)" onclick="changePage(-1)" id="prevPage" disabled>
+                    <button type="button" class="px-2 py-1 text-xs text-text-secondary" onclick="changePage(-1)" id="prevPage" disabled>
                         <span class="material-symbols-rounded text-sm">chevron_right</span>
                     </button>
-                    <span class="px-2 font-bold" style="color: var(--color-text)" id="currentPageDisplay">1</span>
-                    <button type="button" class="px-2 py-1 text-xs" style="color: var(--color-text-secondary)" onclick="changePage(1)" id="nextPage">
+                    <span class="px-2 font-bold text-text" id="currentPageDisplay">1</span>
+                    <button type="button" class="px-2 py-1 text-xs text-text-secondary" onclick="changePage(1)" id="nextPage">
                         <span class="material-symbols-rounded text-sm">chevron_left</span>
                     </button>
                 </div>
@@ -412,20 +412,20 @@
 </div>
 
 <!-- Timeline Section -->
-<div style="background: var(--color-surface); border: 1px solid var(--color-border)">
+<div class="bg-surface border border-border">
     <div >
         <div class="flex items-center gap-2 mb-4">
             <span class="material-symbols-rounded text-accent">timeline</span>
-            <h3 class="font-bold text-sm" style="color: var(--color-text)">آخر الأنشطة</h3>
+            <h3 class="font-bold text-sm text-text">آخر الأنشطة</h3>
         </div>
         @{
             var timeline = Model.BackupLogs.Take(10).ToList();
         }
         @if (!timeline.Any())
         {
-            <div style="background: var(--color-surface); border: 1px solid var(--color-border)"><div class="text-center py-6">
-                <span class="material-symbols-rounded text-4xl mb-2" style="color: var(--color-text-muted)">timeline</span>
-                <p class="text-sm" style="color: var(--color-text-secondary)">لا توجد أنشطة مسجلة بعد.</p>
+            <div class="bg-surface border border-border"><div class="text-center py-6">
+                <span class="material-symbols-rounded text-4xl mb-2 text-text-muted">timeline</span>
+                <p class="text-sm text-text-secondary">لا توجد أنشطة مسجلة بعد.</p>
             </div></div>
         }
         else
@@ -439,7 +439,7 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2">
-                                <span class="font-bold text-xs" style="color: var(--color-text)">
+                                <span class="font-bold text-xs text-text">
                                     @(t.BackupType switch
                                     {
                                         "Local" => "نسخ احتياطي محلي",
@@ -452,7 +452,7 @@
     @(t.Status == "Success" ? "ناجح" : "فاشل")
                                 </span>
                             </div>
-                            <div class="text-[10px] mt-0.5 flex items-center gap-2" style="color: var(--color-text-secondary)">
+                            <div class="text-[10px] mt-0.5 flex items-center gap-2 text-text-secondary">
                                 <span>@t.CreatedAt.ToString("yyyy-MM-dd HH:mm")</span>
                                 @if (t.FileSize > 0)
                                 {

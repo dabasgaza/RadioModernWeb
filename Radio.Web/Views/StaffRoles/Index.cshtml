@@ -25,34 +25,31 @@
 }
 else
 {
-    <div class="rounded-2xl border overflow-hidden" style="background: var(--color-surface); border-color: var(--color-border)">
+    <div class="card overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+            <table class="w-full text-sm" aria-label="قائمة المسميات الوظيفية">
                 <thead>
-                    <tr class="text-xs font-semibold"
-                        style="color: var(--color-text-muted); background: var(--color-bg-alt); border-bottom: 1px solid var(--color-border)">
-                        <th class="text-right py-3 px-4 font-semibold">الدور</th>
-                        <th class="text-center py-3 px-4 font-semibold">إجراءات</th>
+                    <tr class="text-xs font-semibold text-text-secondary bg-surface-hover border-b border-border">
+                        <th class="px-6 py-4 text-right">الدور</th>
+                        <th class="px-6 py-4 text-center"><span class="sr-only">إجراءات</span></th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-border">
                     @foreach (var r in Model)
                     {
-                        <tr style="border-bottom: 1px solid var(--color-border)">
-                            <td class="py-3 px-4 font-semibold" style="color: var(--color-text)">@r.RoleName</td>
-                            <td class="py-3 px-4">
+                        <tr class="hover:bg-surface-hover/50 transition-colors">
+                            <td class="px-6 py-4 font-semibold text-text">@r.RoleName</td>
+                            <td class="px-6 py-4">
                                 @if (User.HasPermission(AppPermissions.StaffManage))
                                 {
                                     <div class="flex items-center justify-center gap-1 whitespace-nowrap">
-                                        <a href="/StaffRoles/Edit/@r.StaffRoleId" class="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all"
-                                           style="color: var(--color-primary);" title="تعديل" aria-label="تعديل">
-                                            <span class="material-symbols-rounded text-xl leading-none">edit</span>
+                                        <a href="/StaffRoles/Edit/@r.StaffRoleId" class="btn btn-icon btn-sm btn-ghost text-primary" title="تعديل" aria-label="تعديل @r.RoleName">
+                                            <span class="material-symbols-rounded text-lg">edit</span>
                                         </a>
                                         <form method="post" action="/StaffRoles/Delete/@r.StaffRoleId" class="inline" data-confirm="هل أنت متأكد من حذف الدور «@r.RoleName»؟">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all"
-                                                    style="color: var(--color-error);" title="حذف" aria-label="حذف">
-                                                <span class="material-symbols-rounded text-xl leading-none">delete</span>
+                                            <button type="submit" class="btn btn-icon btn-sm btn-ghost text-danger" title="حذف" aria-label="حذف @r.RoleName">
+                                                <span class="material-symbols-rounded text-lg">delete</span>
                                             </button>
                                         </form>
                                     </div>

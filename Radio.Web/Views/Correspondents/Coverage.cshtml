@@ -20,23 +20,23 @@
 }
 else
 {
-    <div class="rounded-2xl border overflow-hidden" style="background: var(--color-surface); border-color: var(--color-border)">
+    <div class="card overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
-                    <tr style="background: var(--color-bg-alt)">
-                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">الموضوع</th>
-                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">الموقع</th>
-                        <th class="text-right font-semibold px-6 py-3.5" style="color: var(--color-text)">الضيف</th>
+                    <tr class="bg-bg-hover">
+                        <th class="text-right font-semibold px-6 py-3.5 text-text">الموضوع</th>
+                        <th class="text-right font-semibold px-6 py-3.5 text-text">الموقع</th>
+                        <th class="text-right font-semibold px-6 py-3.5 text-text">الضيف</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var c in Model)
                     {
-                        <tr class="border-t transition-colors duration-200" style="border-color: var(--color-border)">
-                            <td class="px-6 py-4 font-semibold" style="color: var(--color-text)">@c.Topic</td>
-                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@c.Location</td>
-                            <td class="px-6 py-4" style="color: var(--color-text-secondary)">@c.GuestName</td>
+                        <tr class="border-t border-border transition-colors duration-200">
+                            <td class="px-6 py-4 font-semibold text-text">@c.Topic</td>
+                            <td class="px-6 py-4 text-text-secondary">@c.Location</td>
+                            <td class="px-6 py-4 text-text-secondary">@c.GuestName</td>
                         </tr>
                     }
                 </tbody>

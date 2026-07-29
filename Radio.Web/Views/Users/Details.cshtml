@@ -27,7 +27,7 @@
             <p class="text-caption mt-0.5 text-text-secondary">الهاتف: @(string.IsNullOrWhiteSpace(user.PhoneNumber) ? "غير محدد" : user.PhoneNumber)</p>
         </div>
     </div>
-    
+
     <div class="flex flex-col justify-center items-start md:items-end gap-2 border-t md:border-t-0 md:border-r border-border pt-4 md:pt-0 pr-0 md:pr-6">
         <div>
             <span class="text-xs text-text-secondary">الدور الوظيفي:</span>
@@ -44,34 +44,33 @@
 
 <!-- Effective Permissions Matrix Card -->
 <div class="card overflow-hidden">
-    <div>
-        <div class="p-6 border-b border-border bg-surface flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-                <h3 class="font-bold text-base text-text">الصلاحيات الفعالة (Effective Permissions)</h3>
-                <p class="text-xs mt-1 text-text-secondary">جدول يوضح الصلاحيات الفعلية الممنوحة والمحجوبة بناءً على دمج صلاحيات الدور الافتراضي والاستثناءات الفردية</p>
-            </div>
-            
-            <div class="flex items-center gap-2">
-                @if (User.HasPermission(AppPermissions.UserManage))
-                {
-                    <a href="/Users/Permissions/@user.UserId" class="btn btn-primary btn-sm gap-1.5">
-                        <span class="material-symbols-rounded text-sm">admin_panel_settings</span>
-                        تعديل الاستثناءات الفردية
-                    </a>
-                    <a href="/Users/Edit/@user.UserId" class="btn btn-ghost btn-sm text-text-secondary">
-                        <span class="material-symbols-rounded text-sm">edit</span>
-                        تعديل الحساب
-                    </a>
-                }
-            </div>
+    <div class="p-6 border-b border-border bg-surface flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h3 class="font-bold text-base text-text">الصلاحيات الفعالة (Effective Permissions)</h3>
+            <p class="text-xs mt-1 text-text-secondary">جدول يوضح الصلاحيات الفعلية الممنوحة والمحجوبة بناءً على دمج صلاحيات الدور الافتراضي والاستثناءات الفردية</p>
         </div>
+
+        <div class="flex items-center gap-2">
+            @if (User.HasPermission(AppPermissions.AdminUsersManage))
+            {
+                <a href="/Users/Permissions/@user.UserId" class="btn btn-primary btn-sm gap-1.5">
+                    <span class="material-symbols-rounded text-sm" aria-hidden="true">admin_panel_settings</span>
+                    تعديل الاستثناءات الفردية
+                </a>
+                <a href="/Users/Edit/@user.UserId" class="btn btn-ghost btn-sm gap-1">
+                    <span class="material-symbols-rounded text-sm" aria-hidden="true">edit</span>
+                    تعديل الحساب
+                </a>
+            }
+        </div>
+    </div>
 
     <!-- Quick Search -->
     <div class="p-4 border-b border-border bg-bg">
         <div class="relative w-full">
-            <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm text-text-muted">search</span>
-            <input type="text" id="permSearch" placeholder="بحث سريع في الصلاحيات الفعالة..." 
-                   class="w-full rounded-xl pr-11 pl-4 py-2 text-xs bg-surface border border-border text-text focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
+            <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm text-text-muted" aria-hidden="true">search</span>
+            <input type="text" id="permSearch" placeholder="بحث سريع في الصلاحيات الفعالة..."
+                   class="input pr-11" aria-label="بحث في الصلاحيات" />
         </div>
     </div>
 
@@ -81,7 +80,7 @@
             <div class="module-section space-y-4" data-module="@module.Key.ToLower()">
                 <div class="flex items-center border-b border-border pb-2">
                     <h4 class="font-bold text-sm flex items-center gap-2 text-text">
-                        <span class="w-1.5 h-3.5 bg-primary rounded-full"></span>
+                        <span class="w-1.5 h-3.5 bg-primary rounded-full" aria-hidden="true"></span>
                         @module.Key
                     </h4>
                 </div>
@@ -91,7 +90,7 @@
                     {
                         <div class="perm-item card p-4 hover:border-primary/40 transition-all duration-200"
                              data-text="@p.DisplayName.ToLower() @p.SystemName.ToLower()">
-                            
+
                             <div class="flex flex-col gap-1 pr-2">
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <span class="text-xs font-bold text-text">@p.DisplayName</span>
@@ -99,25 +98,25 @@
                                 </div>
                                 <div class="flex items-center gap-2 mt-1">
                                     <!-- Source Indicator -->
-                                    <span class="text-[9px]" style="color: var(--color-text-secondary);">المصدر:</span>
+                                    <span class="text-[9px] text-text-secondary">المصدر:</span>
                                     @if (p.OverrideType == "Grant")
                                     {
-                                        <span style="display: inline-flex; align-items: center; gap: 0.125rem; background: color-mix(in srgb, var(--color-success) 10%, transparent); color: var(--color-success); padding: 0.125rem 0.5rem; font-size: 0.5rem; font-weight: 700; border-radius: 9999px; border: 1px solid color-mix(in srgb, var(--color-success) 20%, transparent);">
-                                            <span class="material-symbols-rounded text-[9px]">add_circle</span>
+                                        <span class="meta-pill bg-success-subtle text-success border border-success/20 text-[0.5rem]">
+                                            <span class="material-symbols-rounded text-[9px]" aria-hidden="true">add_circle</span>
                                             استثناء (سماح فردي)
                                         </span>
                                     }
                                     else if (p.OverrideType == "Deny")
                                     {
-                                        <span style="display: inline-flex; align-items: center; gap: 0.125rem; background: color-mix(in srgb, var(--color-error) 10%, transparent); color: var(--color-error); padding: 0.125rem 0.5rem; font-size: 0.5rem; font-weight: 700; border-radius: 9999px; border: 1px solid color-mix(in srgb, var(--color-error) 20%, transparent);">
-                                            <span class="material-symbols-rounded text-[9px]">cancel</span>
+                                        <span class="meta-pill bg-danger-subtle text-danger border border-danger/20 text-[0.5rem]">
+                                            <span class="material-symbols-rounded text-[9px]" aria-hidden="true">cancel</span>
                                             استثناء (حظر فردي)
                                         </span>
                                     }
                                     else
                                     {
-                                        <span style="display: inline-flex; align-items: center; gap: 0.125rem; background: var(--color-bg-alt); color: var(--color-text-secondary); padding: 0.125rem 0.5rem; font-size: 0.5rem; font-weight: 700; border-radius: 9999px; border: 1px solid var(--color-border);">
-                                            <span class="material-symbols-rounded text-[9px]">group</span>
+                                        <span class="meta-pill bg-bg-hover text-text-secondary border border-border-light text-[0.5rem]">
+                                            <span class="material-symbols-rounded text-[9px]" aria-hidden="true">group</span>
                                             موروث من الدور الافتراضي
                                         </span>
                                     }
@@ -125,10 +124,19 @@
                             </div>
 
                             <!-- Final Access Status -->
-                            <div class="flex flex-col items-center shrink-0 pr-4 border-r" style="border-color: var(--color-border);">
-                                <span style="@(p.EffectiveAccess ? "display: inline-flex; align-items: center; gap: 0.125rem; background: color-mix(in srgb, var(--color-success) 15%, transparent); color: var(--color-success); padding: 0.25rem 0.875rem; font-size: 0.625rem; font-weight: 900; border-radius: 9999px; border: 1px solid color-mix(in srgb, var(--color-success) 30%, transparent); box-shadow: 0 1px 2px rgba(0,0,0,0.05);" : "display: inline-flex; align-items: center; gap: 0.125rem; background: color-mix(in srgb, var(--color-error) 15%, transparent); color: var(--color-error); padding: 0.25rem 0.875rem; font-size: 0.625rem; font-weight: 900; border-radius: 9999px; border: 1px solid color-mix(in srgb, var(--color-error) 30%, transparent); box-shadow: 0 1px 2px rgba(0,0,0,0.05);")">
-                                    @(p.EffectiveAccess ? "مـصـرّح" : "مـحـظـور")
-                                </span>
+                            <div class="flex flex-col items-center shrink-0 pr-4 border-r border-border">
+                                @if (p.EffectiveAccess)
+                                {
+                                    <span class="meta-pill bg-success-subtle text-success border border-success/30 shadow-sm text-[0.625rem] font-black">
+                                        مـصـرّح
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="meta-pill bg-danger-subtle text-danger border border-danger/30 shadow-sm text-[0.625rem] font-black">
+                                        مـحـظـور
+                                    </span>
+                                }
                             </div>
 
                         </div>
@@ -137,36 +145,36 @@
             </div>
         }
     </div>
-    </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('permSearch');
-        if (searchInput) {
-            searchInput.addEventListener('input', function () {
-                const query = this.value.toLowerCase().trim();
-                const items = document.querySelectorAll('.perm-item');
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('permSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', function () {
+                    const query = this.value.toLowerCase().trim();
+                    const items = document.querySelectorAll('.perm-item');
 
-                items.forEach(item => {
-                    const text = item.getAttribute('data-text');
-                    if (text.includes(query)) {
-                        item.style.display = '';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
+                    items.forEach(item => {
+                        const text = item.getAttribute('data-text');
+                        if (text.includes(query)) {
+                            item.style.display = '';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
 
-                // إخفاء الأقسام الفارغة
-                document.querySelectorAll('.module-section').forEach(section => {
-                    const visibleItems = section.querySelectorAll('.perm-item:not([style*="display: none"])');
-                    if (visibleItems.length === 0) {
-                        section.style.display = 'none';
-                    } else {
-                        section.style.display = '';
-                    }
+                    document.querySelectorAll('.module-section').forEach(section => {
+                        const visibleItems = section.querySelectorAll('.perm-item:not([style*="display: none"])');
+                        if (visibleItems.length === 0) {
+                            section.style.display = 'none';
+                        } else {
+                            section.style.display = '';
+                        }
+                    });
                 });
-            });
-        }
-    });
-</script>
+            }
+        });
+    </script>
+}

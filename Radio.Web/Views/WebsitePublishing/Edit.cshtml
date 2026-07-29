@@ -24,7 +24,7 @@
 }
 else
 {
-    <div class="rounded-2xl border bg-surface mb-4" style="border-color:var(--color-border)">
+    <div class="rounded-2xl border border-border bg-surface mb-4">
         <div class="p-5">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
@@ -46,7 +46,7 @@ else
     <form method="post" action="/WebsitePublishing/Edit/@log.Id">
         @Html.AntiForgeryToken()
 
-        <div class="bg-surface border border-border rounded-2xl p-5" style="border-color:var(--color-border)">
+        <div class="card p-5">
             @{
                 ViewBag.SectionIcon = "article"; ViewBag.SectionTitle = "تفاصيل النشر";
             }
@@ -95,7 +95,7 @@ else
         </div>
     </form>
 
-    <div class="rounded-2xl border bg-surface mt-8" style="border-color:var(--color-border)">
+    <div class="rounded-2xl border border-border bg-surface mt-8">
         <div class="p-5">
             @{
                 ViewBag.SectionIcon = "history"; ViewBag.SectionTitle = $"كافة سجلات النشر والإنتاج الخاصة بهذه الحلقة ({Model.EpisodePublishingRecords?.Count ?? 0})";
@@ -108,11 +108,11 @@ else
             }
             else
             {
-                <div class="rounded-2xl border overflow-hidden" style="border-color:var(--color-border)">
+                <div class="rounded-2xl border border-border overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead>
-                                <tr style="background: var(--color-bg-hover)">
+                                <tr class="bg-bg-hover">
                                     <th class="px-6 py-4 text-right font-bold text-xs uppercase text-text-secondary">النوع</th>
                                     <th class="px-6 py-4 text-right font-bold text-xs uppercase text-text-secondary">التفاصيل / الملخص</th>
                                     <th class="px-6 py-4 text-right font-bold text-xs uppercase text-text-secondary hidden md:table-cell">بواسطة</th>
@@ -123,7 +123,7 @@ else
                             <tbody>
                                 @foreach (var r in Model.EpisodePublishingRecords)
                                 {
-                                    <tr class="transition-colors duration-200" style="border-bottom:1px solid color-mix(in srgb, var(--color-border) 40%, transparent)">
+                                    <tr class="transition-colors duration-200 border-b border-border">
                                         <td class="px-6 py-4">
                                             <span class="inline-flex font-bold text-xs rounded-lg px-3 py-1.5" style="background:color-mix(in srgb, @r.RecordColor 15%, transparent); color:@r.RecordColor">
                                                 @GetRecordTypeName(r.RecordType)
@@ -136,13 +136,13 @@ else
                                             @if (r.RecordType == "SocialMedia")
                                             {
                                                 <a href="/Publishing/Edit/@r.RecordId" class="inline-flex items-center gap-1 font-bold text-primary hover:underline">
-                                                    <span class="material-symbols-rounded" style="font-size:14px">edit</span> تعديل
+                                                    <span class="material-symbols-rounded text-sm">edit</span> تعديل
                                                 </a>
                                             }
                                             else if (r.RecordType == "Website")
                                             {
                                                 <a href="/WebsitePublishing/Edit/@r.RecordId" class="inline-flex items-center gap-1 font-bold text-primary hover:underline">
-                                                    <span class="material-symbols-rounded" style="font-size:14px">edit</span> تعديل
+                                                    <span class="material-symbols-rounded text-sm">edit</span> تعديل
                                                 </a>
                                             }
                                             else

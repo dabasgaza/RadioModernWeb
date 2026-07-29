@@ -9,22 +9,21 @@
     var totalEpisodes = Model.Sum(x => x.EpisodeCount);
     var searchStr = ViewBag.Search as string;
 
+    if (User.HasPermission(AppPermissions.ProgramsManage))
+    {
+        ViewData["HeaderActions"] = "<a href='/Programs/Create' class='btn btn-primary'><span class='material-symbols-rounded text-base'>add</span><span>إضافة برنامج جديد</span></a>";
+    }
+
     var kpiItems = new List<KpiItem>
     {
-        new() { Label = "إجمالي البرامج", Value = totalPrograms.ToString(), Icon = "radio", Color = "var(--color-primary)", IconBg = "color-mix(in srgb, var(--color-primary) 10%, transparent)", IconColor = "var(--color-primary)", Subtitle = "برنامج نشط" },
-        new() { Label = "إجمالي الحلقات المنفذة", Value = totalEpisodes.ToString(), Icon = "podcasts", Color = "var(--color-success)", IconBg = "color-mix(in srgb, var(--color-success) 10%, transparent)", IconColor = "var(--color-success)", Subtitle = "حلقة مسجلة وبث حي" },
-        new() { Label = "متوسط الكثافة", Value = (totalPrograms > 0 ? (totalEpisodes / (double)totalPrograms).ToString("0.0") : "0"), Icon = "analytics", Color = "var(--color-info)", IconBg = "color-mix(in srgb, var(--color-info) 10%, transparent)", IconColor = "var(--color-info)", Subtitle = "حلقة لكل برنامج" }
+        new() { Label = "إجمالي البرامج", Value = totalPrograms.ToString(), Icon = "radio", Subtitle = "برنامج نشط" },
+        new() { Label = "إجمالي الحلقات المنفذة", Value = totalEpisodes.ToString(), Icon = "podcasts", Subtitle = "حلقة مسجلة وبث حي" },
+        new() { Label = "متوسط الكثافة", Value = (totalPrograms > 0 ? (totalEpisodes / (double)totalPrograms).ToString("0.0") : "0"), Icon = "analytics", Subtitle = "حلقة لكل برنامج" }
     };
     ViewBag.KpiItems = kpiItems;
 }
 
 <div class="max-w-7xl mx-auto space-y-6">
-    @{
-        if (User.HasPermission(AppPermissions.ProgramsManage))
-        {
-            ViewData["HeaderActions"] = "<a href='/Programs/Create' class='btn btn-primary'><span class='material-symbols-rounded text-base'>add</span><span>إضافة برنامج جديد</span></a>";
-        }
-    }
     <partial name="_PageHeader" />
     <partial name="_KpiCards" />
 
@@ -53,7 +52,7 @@
                                     @(p.Category ?? "برنامج عام")
                                 </span>
                                 <div class="w-10 h-10 rounded-xl bg-surface-hover text-text-secondary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-normal">
-                                    <span class="material-symbols-rounded text-xl">radio</span>
+                                    <span class="material-symbols-rounded text-xl" aria-hidden="true">radio</span>
                                 </div>
                             </div>
 
@@ -70,7 +69,7 @@
                     <div class="px-6 py-4 border-t border-border-light bg-surface-hover/50">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2 text-caption font-bold text-text-secondary">
-                                <span class="material-symbols-rounded text-base text-primary">podcasts</span>
+                                <span class="material-symbols-rounded text-base text-primary" aria-hidden="true">podcasts</span>
                                 <span>إجمالي الحلقات:</span>
                                 <span class="badge badge-primary">@item.EpisodeCount</span>
                             </div>
@@ -78,8 +77,8 @@
                             @if (User.HasPermission(AppPermissions.ProgramsManage))
                             {
                                 <div class="flex items-center gap-1">
-                                    <a href="/Programs/Edit/@p.ProgramId" class="btn btn-icon btn-sm btn-ghost" title="تعديل">
-                                        <span class="material-symbols-rounded text-base">edit</span>
+                                    <a href="/Programs/Edit/@p.ProgramId" class="btn btn-icon btn-sm btn-ghost" title="تعديل" aria-label="تعديل البرنامج">
+                                        <span class="material-symbols-rounded text-base" aria-hidden="true">edit</span>
                                     </a>
                                 </div>
                             }

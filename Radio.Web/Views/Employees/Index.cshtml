@@ -17,7 +17,6 @@
 @{ ViewBag.SearchValue = ViewBag.Search; ViewBag.SearchPlaceholder = "بحث باسم الموظف..."; ViewBag.SearchAction = "/Employees"; }
 <partial name="_SearchBar" />
 
-<!-- Employees Content -->
 @if (!Model.Any())
 {
     ViewBag.EmptyIcon = "badge";
@@ -34,13 +33,13 @@ else
 {
     <div class="card overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+            <table class="w-full text-sm" aria-label="قائمة الموظفين">
                 <thead>
                     <tr class="text-xs font-semibold text-text-secondary bg-surface-hover border-b border-border">
                         <th class="px-6 py-4 text-right">الاسم</th>
                         <th class="px-6 py-4 text-right">الدور</th>
                         <th class="px-6 py-4 text-right hidden md:table-cell">ملاحظات</th>
-                        <th class="px-6 py-4 text-center">إجراءات</th>
+                        <th class="px-6 py-4 text-center"><span class="sr-only">إجراءات</span></th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-border">
@@ -60,12 +59,12 @@ else
                                 @if (User.HasPermission(AppPermissions.StaffManage))
                                 {
                                     <div class="flex items-center justify-center gap-1">
-                                        <a href="/Employees/Edit/@e.EmployeeId" class="btn btn-icon btn-sm btn-ghost text-primary" title="تعديل" aria-label="تعديل">
+                                        <a href="/Employees/Edit/@e.EmployeeId" class="btn btn-icon btn-sm btn-ghost text-primary" title="تعديل" aria-label="تعديل @e.FullName">
                                             <span class="material-symbols-rounded text-lg">edit</span>
                                         </a>
                                         <form method="post" action="/Employees/Delete/@e.EmployeeId" class="inline" data-confirm="هل أنت متأكد من حذف الموظف «@e.FullName»؟">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn btn-icon btn-sm btn-ghost text-danger" title="حذف" aria-label="حذف">
+                                            <button type="submit" class="btn btn-icon btn-sm btn-ghost text-danger" title="حذف" aria-label="حذف @e.FullName">
                                                 <span class="material-symbols-rounded text-lg">delete</span>
                                             </button>
                                         </form>
