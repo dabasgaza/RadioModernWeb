@@ -22,10 +22,15 @@
     var socialRecords = Model.PublishingRecords.Where(r => r.RecordType == "SocialMedia").ToList();
     var websiteRecords = Model.PublishingRecords.Where(r => r.RecordType == "Website").ToList();
 
-    void CStageIcon(string icon, string color)
+    string StageIconBg(string color) => color switch
     {
-        <span class="material-symbols-rounded p-1 rounded-lg text-lg" style="background:color-mix(in srgb,var(--color-@(color)) 15%,transparent);color:var(--color-@(color))">@icon</span>
-    }
+        "success" => "bg-success-subtle text-success",
+        "warning" => "bg-warning-subtle text-warning",
+        "danger" => "bg-danger-subtle text-danger",
+        "info" => "bg-info-subtle text-info",
+        "accent" => "bg-accent-subtle text-accent",
+        _ => "bg-primary-subtle text-primary"
+    };
 }
 
 <partial name="_PageHeader" />
@@ -290,11 +295,11 @@
         {
             <div class="rounded-xl p-6 bg-surface border border-border @(ep.StatusId == 1 ? "ring-2" : "")" style="@(ep.StatusId == 1 ? "--tw-ring-color:var(--color-success)" : "")">
                 <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
-                    @{ CStageIcon("play_circle", "success"); }
+                    <span class="material-symbols-rounded p-1 rounded-lg text-lg @StageIconBg("success")" aria-hidden="true">play_circle</span>
                     <h3 class="font-bold text-text flex-1">تفاصيل مرحلة التنفيذ (الإنتاج)</h3>
                     @if (ep.StatusId == 1)
                     {
-                        <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full" style="background:color-mix(in srgb,var(--color-success) 15%,transparent);color:var(--color-success);border:1px solid var(--color-border)">المرحلة الحالية</span>
+                        <span class="badge badge-success">المرحلة الحالية</span>
                     }
                 </div>
 
@@ -343,11 +348,11 @@
         {
             <div class="rounded-xl p-6 bg-surface border border-border @(ep.StatusId == 2 ? "ring-2" : "")" style="@(ep.StatusId == 2 ? "--tw-ring-color:var(--color-success)" : "")">
                 <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
-                    @{ CStageIcon("share", "success"); }
+                    <span class="material-symbols-rounded p-1 rounded-lg text-lg @StageIconBg("success")" aria-hidden="true">share</span>
                     <h3 class="font-bold text-text flex-1">تفاصيل النشر الرقمي (سوشال)</h3>
                     @if (ep.StatusId == 2)
                     {
-                        <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full" style="background:color-mix(in srgb,var(--color-success) 15%,transparent);color:var(--color-success);border:1px solid var(--color-border)">المرحلة الحالية</span>
+                        <span class="badge badge-success">المرحلة الحالية</span>
                     }
                 </div>
 
@@ -397,11 +402,11 @@
         {
             <div class="rounded-xl p-6 bg-surface border border-border @(ep.StatusId == 3 ? "ring-2" : "")" style="@(ep.StatusId == 3 ? "--tw-ring-color:var(--color-accent)" : "")">
                 <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
-                    @{ CStageIcon("public", "accent"); }
+                    <span class="material-symbols-rounded p-1 rounded-lg text-lg @StageIconBg("accent")" aria-hidden="true">public</span>
                     <h3 class="font-bold text-text flex-1">تفاصيل النشر على الموقع الرسمي</h3>
                     @if (ep.StatusId == 3)
                     {
-                        <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full" style="background:color-mix(in srgb,var(--color-accent) 15%,transparent);color:var(--color-accent);border:1px solid var(--color-border)">المرحلة الحالية</span>
+                        <span class="badge badge-accent">المرحلة الحالية</span>
                     }
                 </div>
 
@@ -594,45 +599,48 @@
     </div>
 </div>
 
-<!-- Execute modal (inline — unique 3-field form) -->
-<dialog id="executeModal" class="modal backdrop:bg-black/50 p-0 bg-transparent">
-    <div class="rounded-xl p-6 max-w-md w-full mx-auto bg-surface border border-border">
-        <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-2">
-                <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:color-mix(in srgb,var(--color-success) 15%,transparent);color:var(--color-success)">
-                    <span class="material-symbols-rounded">play_circle</span>
-                </div>
-                <h3 class="text-lg font-bold text-text">تسجيل تنفيذ الحلقة</h3>
-            </div>
-            <button type="button" class="btn btn-ghost btn-square btn-sm text-text-muted hover:text-text rounded-xl" onclick="document.getElementById('executeModal').close()">
-                <span class="material-symbols-rounded">close</span>
+<dialog id="executeModal" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box rounded-2xl p-6 border border-border max-w-lg bg-surface shadow-modal">
+        <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute left-4 top-4" aria-label="إغلاق">
+                <span class="material-symbols-rounded text-lg" aria-hidden="true">close</span>
             </button>
+        </form>
+        <div class="flex items-center gap-3 mb-5">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-success-subtle text-success">
+                <span class="material-symbols-rounded text-xl" aria-hidden="true">play_circle</span>
+            </div>
+            <div>
+                <h3 class="font-bold text-text">تسجيل تنفيذ الحلقة</h3>
+                <p class="text-caption text-text-muted">تأكيد تنفيذ البث وإدخال الملاحظات الفنية</p>
+            </div>
         </div>
         <form method="post" action="/Episodes/Execute/@ep.EpisodeId">
             @Html.AntiForgeryToken()
             <div class="space-y-4">
                 <div>
-                    <label class="block mb-1.5 text-label font-semibold text-text-muted flex items-center gap-1"><span class="material-symbols-rounded text-sm text-text-muted">notes</span>ملاحظات التنفيذ</label>
-                    <textarea name="executionNotes" rows="3" class="input" placeholder="سجل ملاحظات حول عملية التنفيذ والمحتوى..."></textarea>
+                    <label class="block mb-1.5 text-label font-semibold text-text-muted flex items-center gap-1" for="execNotes"><span class="material-symbols-rounded text-sm text-text-muted" aria-hidden="true">notes</span>ملاحظات التنفيذ</label>
+                    <textarea id="execNotes" name="executionNotes" rows="3" class="input" placeholder="سجل ملاحظات حول عملية التنفيذ والمحتوى..."></textarea>
                 </div>
                 <div>
-                    <label class="block mb-1.5 text-label font-semibold text-text-muted flex items-center gap-1"><span class="material-symbols-rounded text-sm text-warning">warning</span>مشكلات واجهت التنفيذ</label>
-                    <textarea name="issuesEncountered" rows="2" class="input" placeholder="أي مشكلات فنية أو تشغيلية ظهرت أثناء البث..."></textarea>
+                    <label class="block mb-1.5 text-label font-semibold text-text-muted flex items-center gap-1" for="execIssues"><span class="material-symbols-rounded text-sm text-warning" aria-hidden="true">warning</span>مشكلات واجهت التنفيذ</label>
+                    <textarea id="execIssues" name="issuesEncountered" rows="2" class="input" placeholder="أي مشكلات فنية أو تشغيلية ظهرت أثناء البث..."></textarea>
                 </div>
                 <div>
-                    <label class="block mb-1.5 text-label font-semibold text-text-muted flex items-center gap-1"><span class="material-symbols-rounded text-sm text-text-muted">timer</span>المدة (دقيقة) *</label>
-                    <input type="number" name="durationMinutes" min="1" max="720" value="60" class="input" required />
+                    <label class="block mb-1.5 text-label font-semibold text-text-muted flex items-center gap-1" for="execDuration"><span class="material-symbols-rounded text-sm text-text-muted" aria-hidden="true">timer</span>المدة (دقيقة) *</label>
+                    <input id="execDuration" type="number" name="durationMinutes" min="1" max="720" value="60" class="input" required />
                 </div>
             </div>
             <div class="flex gap-2 justify-end mt-6 pt-4 border-t border-border">
-                <button type="button" class="btn btn-ghost rounded-xl" onclick="document.getElementById('executeModal').close()">إلغاء</button>
-                <button type="submit" class="btn btn-success rounded-xl gap-2">
-                    <span class="material-symbols-rounded text-sm">check</span>
+                <button type="button" class="btn btn-ghost" onclick="document.getElementById('executeModal').close()">إلغاء</button>
+                <button type="submit" class="btn btn-success gap-2">
+                    <span class="material-symbols-rounded text-sm" aria-hidden="true">check</span>
                     تسجيل التنفيذ
                 </button>
             </div>
         </form>
     </div>
+    <form method="dialog" class="modal-backdrop"><button>إلغاء</button></form>
 </dialog>
 
 <!-- Cancel modal -->
