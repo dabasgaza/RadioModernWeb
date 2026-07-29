@@ -1,2 +1,24 @@
-@* _Card — NOT USED: Razor partials don't support @RenderBody() with body content.
-   Use CSS classes directly: class="bg-surface border border-border rounded-2xl p-5" *@
+@* _Card — unified card wrapper using .card component class *@
+@using Microsoft.AspNetCore.Html
+@{
+    var padding = ViewBag.CardPadding as string ?? "p-5";
+    var className = ViewBag.CardClass as string ?? "";
+    var onClick = ViewBag.CardOnClick as string;
+    var href = ViewBag.CardHref as string;
+    var id = ViewBag.CardId as string;
+    var body = ViewBag.CardBody as Func<object, IHtmlContent>;
+    var hover = ViewBag.CardHover as bool? ?? false;
+    var hoverClass = hover ? "card-hover" : "";
+}
+@if (!string.IsNullOrEmpty(href))
+{
+    <a href="@href" class="card @hoverClass @padding @className" @Html.Raw(!string.IsNullOrEmpty(onClick) ? $"onclick=\"{onClick}\"" : "") @Html.Raw(!string.IsNullOrEmpty(id) ? $"id=\"{id}\"" : "")>
+        @body?.Invoke(null)
+    </a>
+}
+else
+{
+    <div class="card @hoverClass @padding @className" @Html.Raw(!string.IsNullOrEmpty(onClick) ? $"onclick=\"{onClick}\"" : "") @Html.Raw(!string.IsNullOrEmpty(id) ? $"id=\"{id}\"" : "")>
+        @body?.Invoke(null)
+    </div>
+}

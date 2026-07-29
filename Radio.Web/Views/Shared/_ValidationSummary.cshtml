@@ -1,0 +1,10 @@
+@* _ValidationSummary — unified model validation summary using .alert component *@
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
+    var onlyModelErrors = (ViewBag.ModelOnlyErrors as bool? ?? false);
+    var summary = onlyModelErrors ? ValidationSummary.ModelOnly : ValidationSummary.All;
+}
+@if (ViewContext.ModelState.ErrorCount > 0)
+{
+    <div asp-validation-summary="@summary" class="alert alert-danger mb-6 font-semibold"></div>
+}

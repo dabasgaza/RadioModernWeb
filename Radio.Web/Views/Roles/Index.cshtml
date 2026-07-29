@@ -13,16 +13,18 @@
 
 <partial name="_PageHeader" />
 
-<div class="wf-card p-4 mb-8">
-    <div class="flex flex-col md:flex-row gap-4 items-center">
-        @{
-            ViewBag.SearchValue = "";
-            ViewBag.SearchPlaceholder = "ابحث عن دور...";
-            ViewBag.SearchHideCard = true;
-        }
-        <partial name="_SearchBar" />
-        <div class="text-xs font-medium whitespace-nowrap shrink-0" style="color: var(--color-text-muted);">
-            إجمالي الأدوار: <span class="font-bold" style="color: var(--color-primary);" id="roleCount">@Model.Count</span>
+<div class="card p-4 mb-8">
+    <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div class="w-full md:w-auto flex-1">
+            @{
+                ViewBag.SearchValue = "";
+                ViewBag.SearchPlaceholder = "ابحث عن دور...";
+                ViewBag.SearchHideCard = true;
+            }
+            <partial name="_SearchBar" />
+        </div>
+        <div class="text-xs font-semibold text-text-secondary whitespace-nowrap shrink-0">
+            إجمالي الأدوار: <span class="font-bold text-primary" id="roleCount">@Model.Count</span>
         </div>
     </div>
 </div>
@@ -39,48 +41,44 @@
 }
 else
 {
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="rolesGrid">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="rolesGrid">
         @foreach (var r in Model)
         {
             var isAdmin = string.Equals(r.RoleName, "Admin", StringComparison.OrdinalIgnoreCase);
-            <div class="wf-card hover:shadow-md transition-all group flex flex-col justify-between"
-                 data-name="@r.RoleName" data-desc="@r.RoleDescription"
-                 style="--hover-border: var(--color-primary);">
+            <div class="card card-interactive flex flex-col justify-between overflow-hidden"
+                 data-name="@r.RoleName" data-desc="@r.RoleDescription">
 
-                <div class="p-5">
+                <div class="p-6">
                     <div class="flex items-start justify-between mb-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-11 h-11 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 transition-all"
-                                 style="background: var(--color-primary-subtle); color: var(--color-primary);">
+                            <div class="w-11 h-11 rounded-xl bg-primary-subtle text-primary flex items-center justify-center font-bold text-sm shrink-0">
                                 @r.RoleName.Substring(0, Math.Min(2, r.RoleName.Length)).ToUpper()
                             </div>
                             <div>
-                                <h3 class="font-bold text-sm transition-colors" style="color: var(--color-text);">@r.RoleName</h3>
-                                <span class="text-[10px] font-medium" style="color: var(--color-text-muted);">معرف الدور: #@r.RoleId</span>
+                                <h3 class="font-bold text-body text-text">@r.RoleName</h3>
+                                <span class="text-caption text-text-muted">معرف الدور: #@r.RoleId</span>
                             </div>
                         </div>
                         @if (isAdmin)
                         {
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full"
-                                  style="background: var(--color-primary-subtle); color: var(--color-primary); border: 1px solid var(--color-primary);">
+                            <span class="badge badge-primary gap-1">
                                 <span class="material-symbols-rounded text-sm">security</span>
                                 مدير النظام
                             </span>
                         }
                     </div>
 
-                    <p class="text-xs leading-relaxed line-clamp-3 mb-5 min-h-[4rem]" style="color: var(--color-text-muted);">
+                    <p class="text-caption text-text-secondary leading-relaxed line-clamp-3 mb-5 min-h-[4rem]">
                         @(r.RoleDescription ?? "لا يوجد وصف مخصص لهذا الدور الوظيفي بعد. يمكنك إضافة وصف لتعريف مهام الدور بشكل أوضح.")
                     </p>
 
-                    <div class="pt-4" style="border-top: 1px solid var(--color-border);">
-                        <div class="flex items-center justify-between text-xs">
-                            <span class="flex items-center gap-1" style="color: var(--color-text-muted);">
+                    <div class="pt-4 border-t border-border-light">
+                        <div class="flex items-center justify-between text-caption">
+                            <span class="flex items-center gap-1 text-text-muted">
                                 <span class="material-symbols-rounded text-sm">key</span>
                                 التحكم:
                             </span>
-                            <a href="/Permissions?roleId=@r.RoleId" class="font-semibold hover:underline flex items-center gap-1 transition-colors"
-                               style="color: var(--color-primary);">
+                            <a href="/Permissions?roleId=@r.RoleId" class="font-semibold text-primary hover:underline flex items-center gap-1">
                                 <span class="material-symbols-rounded text-sm">settings</span>
                                 إدارة الصلاحيات المخصصة
                             </a>
@@ -88,16 +86,16 @@ else
                     </div>
                 </div>
 
-                <div class="px-5 py-3 flex items-center justify-between gap-2" style="border-top: 1px solid var(--color-border); background: var(--color-bg);">
+                <div class="px-6 py-3.5 flex items-center justify-between gap-2 border-t border-border-light bg-surface-hover/50">
                     <div class="flex items-center gap-1">
                         @if (User.HasPermission(AppPermissions.UserManage))
                         {
-                            <a href="/Roles/Clone/@r.RoleId" class="p-2 rounded-lg transition-colors text-text-secondary hover:bg-bg-hover hover:text-text" title="نسخ الدور وصلاحياته" aria-label="نسخ الدور وصلاحياته">
+                            <a href="/Roles/Clone/@r.RoleId" class="btn btn-icon btn-sm btn-ghost text-text-secondary hover:text-text" title="نسخ الدور وصلاحياته" aria-label="نسخ الدور وصلاحياته">
                                 <span class="material-symbols-rounded text-lg">content_copy</span>
                             </a>
                             @if (!isAdmin)
                             {
-                                <a href="/Roles/Edit/@r.RoleId" class="p-2 rounded-lg transition-colors text-text-secondary hover:bg-primary-subtle hover:text-primary" title="تعديل بيانات الدور" aria-label="تعديل بيانات الدور">
+                                <a href="/Roles/Edit/@r.RoleId" class="btn btn-icon btn-sm btn-ghost text-primary" title="تعديل بيانات الدور" aria-label="تعديل بيانات الدور">
                                     <span class="material-symbols-rounded text-lg">edit</span>
                                 </a>
                             }
@@ -107,7 +105,7 @@ else
                     {
                         <form method="post" action="/Roles/Delete/@r.RoleId" class="inline" data-confirm="هل أنت متأكد من حذف هذا الدور «@r.RoleName» نهائياً؟ لا يمكن التراجع عن هذا الإجراء وسيتم سحب صلاحيات جميع الموظفين المرتبطين به.">
                             @Html.AntiForgeryToken()
-                        <button type="submit" class="p-2 rounded-lg transition-colors text-text-secondary hover:bg-danger-subtle hover:text-danger" title="حذف الدور" aria-label="حذف الدور">
+                            <button type="submit" class="btn btn-icon btn-sm btn-ghost text-danger" title="حذف الدور" aria-label="حذف الدور">
                                 <span class="material-symbols-rounded text-lg">delete</span>
                             </button>
                         </form>

@@ -22,7 +22,7 @@
     @{
         if (User.HasPermission(AppPermissions.ProgramsManage))
         {
-            ViewData["HeaderActions"] = "<a href='/Programs/Create' class='inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs shadow-sm transition-all' style='background:var(--color-primary);color:white'><span class='material-symbols-rounded text-base'>add</span><span>إضافة برنامج جديد</span></a>";
+            ViewData["HeaderActions"] = "<a href='/Programs/Create' class='btn btn-primary'><span class='material-symbols-rounded text-base'>add</span><span>إضافة برنامج جديد</span></a>";
         }
     }
     <partial name="_PageHeader" />
@@ -45,40 +45,40 @@
             @foreach (var item in Model)
             {
                 var p = item.Program;
-                <div class="bg-surface rounded-2xl border border-border/80 shadow-sm overflow-hidden group hover:border-primary/40 hover:shadow-xl transition-all duration-300 flex flex-col">
+                <div class="card card-interactive overflow-hidden flex flex-col">
                     <div class="p-6 flex-1 flex flex-col justify-between">
                         <div>
                             <div class="flex items-center justify-between mb-4">
-                                <span class="px-3 py-1 rounded-full text-[11px] font-bold bg-primary-subtle text-primary">
+                                <span class="badge badge-primary">
                                     @(p.Category ?? "برنامج عام")
                                 </span>
-                                <div class="w-10 h-10 rounded-xl bg-surface-hover text-text-secondary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+                                <div class="w-10 h-10 rounded-xl bg-surface-hover text-text-secondary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-normal">
                                     <span class="material-symbols-rounded text-xl">radio</span>
                                 </div>
                             </div>
 
-                            <h3 class="font-black text-base text-text mb-2 leading-snug group-hover:text-primary transition-colors">
+                            <h3 class="font-bold text-body text-text mb-2 leading-snug group-hover:text-primary transition-colors">
                                 @p.ProgramName
                             </h3>
 
-                            <p class="text-xs text-text-secondary leading-relaxed line-clamp-3 p-3 rounded-xl bg-bg border border-border-light">
+                            <p class="text-caption text-text-secondary leading-relaxed line-clamp-3 p-3 rounded-xl bg-bg border border-border-light">
                                 @(p.ProgramDescription ?? "لا يوجد وصف متوفر لهذا البرنامج الإذاعي حالياً.")
                             </p>
                         </div>
                     </div>
 
-                    <div class="px-6 py-4 bg-surface/70 border-t border-border-light">
+                    <div class="px-6 py-4 border-t border-border-light bg-surface-hover/50">
                         <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2 text-xs font-bold text-text-secondary">
+                            <div class="flex items-center gap-2 text-caption font-bold text-text-secondary">
                                 <span class="material-symbols-rounded text-base text-primary">podcasts</span>
                                 <span>إجمالي الحلقات:</span>
-                                <span class="px-2.5 py-0.5 rounded-lg bg-primary-subtle text-primary font-extrabold text-xs">@item.EpisodeCount</span>
+                                <span class="badge badge-primary">@item.EpisodeCount</span>
                             </div>
 
                             @if (User.HasPermission(AppPermissions.ProgramsManage))
                             {
                                 <div class="flex items-center gap-1">
-                                    <a href="/Programs/Edit/@p.ProgramId" class="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-primary-subtle transition-colors" title="تعديل">
+                                    <a href="/Programs/Edit/@p.ProgramId" class="btn btn-icon btn-sm btn-ghost" title="تعديل">
                                         <span class="material-symbols-rounded text-base">edit</span>
                                     </a>
                                 </div>
@@ -90,4 +90,3 @@
         </div>
     }
 </div>
-

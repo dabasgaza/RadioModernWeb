@@ -9,13 +9,12 @@
 
 <partial name="_PageHeader" />
 
-<div class="rounded-xl p-6 mb-6" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
+<div class="card p-6 mb-6">
     <form method="get">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-                <label class="text-xs font-medium mb-1.5 block text-[var(--color-text-secondary)]">الجدول</label>
-                <select name="table" class="w-full rounded-xl py-2.5 px-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all appearance-none"
-                        style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);">
+                <label class="text-xs font-semibold mb-1.5 block text-text-secondary">الجدول</label>
+                <select name="table" class="w-full bg-surface border border-border rounded-xl py-2.5 px-3 text-sm font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none">
                     <option value="">الكل</option>
                     @foreach (var t in tables ?? Array.Empty<string>())
                     {
@@ -24,9 +23,8 @@
                 </select>
             </div>
             <div>
-                <label class="text-xs font-medium mb-1.5 block text-[var(--color-text-secondary)]">العملية</label>
-                <select name="action" class="w-full rounded-xl py-2.5 px-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all appearance-none"
-                        style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);">
+                <label class="text-xs font-semibold mb-1.5 block text-text-secondary">العملية</label>
+                <select name="action" class="w-full bg-surface border border-border rounded-xl py-2.5 px-3 text-sm font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none">
                     <option value="">الكل</option>
                     @foreach (var a in actions ?? Array.Empty<string>())
                     {
@@ -35,20 +33,20 @@
                 </select>
             </div>
             <div>
-                <label class="text-xs font-medium mb-1.5 block text-[var(--color-text-secondary)]">من تاريخ</label>
+                <label class="text-xs font-semibold mb-1.5 block text-text-secondary">من تاريخ</label>
                 <input type="text" name="fromDate" value="@ViewBag.FromDate"
-                       class="w-full rounded-xl py-2.5 px-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all datepicker"
-                       style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);" placeholder="اختر تاريخ البداية" />
+                       class="w-full bg-surface border border-border rounded-xl py-2.5 px-3 text-sm font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all datepicker"
+                       placeholder="اختر تاريخ البداية" />
             </div>
             <div>
-                <label class="text-xs font-medium mb-1.5 block text-[var(--color-text-secondary)]">إلى تاريخ</label>
+                <label class="text-xs font-semibold mb-1.5 block text-text-secondary">إلى تاريخ</label>
                 <input type="text" name="toDate" value="@ViewBag.ToDate"
-                       class="w-full rounded-xl py-2.5 px-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all datepicker"
-                       style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);" placeholder="اختر تاريخ النهاية" />
+                       class="w-full bg-surface border border-border rounded-xl py-2.5 px-3 text-sm font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all datepicker"
+                       placeholder="اختر تاريخ النهاية" />
             </div>
-            <div class="md:col-span-4 flex justify-end gap-2">
-                <button type="submit" class="btn btn-primary rounded-xl gap-2"><span class="material-symbols-rounded">search</span> تطبيق</button>
-                <a href="/AuditLogs" class="btn btn-ghost rounded-xl gap-2"><span class="material-symbols-rounded">refresh</span> إعادة ضبط</a>
+            <div class="md:col-span-4 flex justify-end gap-2 mt-2">
+                <button type="submit" class="btn btn-primary gap-2"><span class="material-symbols-rounded">search</span> تطبيق</button>
+                <a href="/AuditLogs" class="btn btn-ghost gap-2"><span class="material-symbols-rounded">refresh</span> إعادة ضبط</a>
             </div>
         </div>
     </form>
@@ -56,20 +54,18 @@
 
 @if (!Model.Items.Any())
 {
-    <div class="rounded-xl p-12 text-center" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
-        <span class="material-symbols-rounded text-4xl text-[var(--color-text-muted)] mb-2 block">history</span>
-        <h3 class="font-bold text-lg mb-2 text-[var(--color-text)]">لا سجلات</h3>
-        <p class="text-sm text-[var(--color-text-secondary)]">لا توجد عمليات مطابقة للبحث.</p>
-    </div>
+    ViewBag.EmptyIcon = "history";
+    ViewBag.EmptyTitle = "لا توجد سجلات تدقيق";
+    ViewBag.EmptyDesc = "لم يتم العثور على أية سجلات مطابقة لمحددات البحث الحالية.";
+    <partial name="_EmptyState" />
 }
 else
 {
-    <div class="rounded-xl overflow-hidden" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
+    <div class="card overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
-                    <tr class="text-xs font-semibold text-[var(--color-text-muted)]"
-                        style="background: var(--color-bg); border-bottom: 1px solid var(--color-border);">
+                    <tr class="text-xs font-semibold text-text-secondary bg-surface-hover border-b border-border">
                         <th class="text-right py-3 px-4">التاريخ</th>
                         <th class="text-right py-3 px-4">الجدول</th>
                         <th class="text-right py-3 px-4">العملية</th>
@@ -78,20 +74,20 @@ else
                         <th class="text-center py-3 px-4">تفاصيل</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-border">
                     @foreach (var log in Model.Items)
                     {
-                        <tr class="transition-colors hover:bg-[var(--color-bg-hover)]" style="border-bottom: 1px solid var(--color-border);">
-                            <td class="py-3 px-4 whitespace-nowrap text-[var(--color-text-2)]" dir="ltr">@log.ChangedAt.ToString("yyyy-MM-dd HH:mm")</td>
-                            <td class="py-3 px-4"><span class="text-[10px] font-bold px-2 py-0.5 rounded-lg" style="background: var(--color-bg); color: var(--color-text-secondary);">@log.TableName</span></td>
+                        <tr class="hover:bg-surface-hover/50 transition-colors">
+                            <td class="py-3 px-4 whitespace-nowrap text-text-secondary font-mono text-xs" dir="ltr">@log.ChangedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td class="py-3 px-4"><span class="badge badge-primary">@log.TableName</span></td>
                             <td class="py-3 px-4">
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg" style="background: @GetActionBadgeColor(log.Action); color: @GetActionBadgeText(log.Action);">@log.Action</span>
+                                <span class="badge badge-primary">@log.Action</span>
                             </td>
-                            <td class="py-3 px-4 text-[var(--color-text-secondary)]">@log.UserFullName</td>
-                            <td class="py-3 px-4 text-xs text-[var(--color-text-muted)] max-w-xs truncate" title="@log.Reason">@(log.Reason ?? "—")</td>
+                            <td class="py-3 px-4 text-text-secondary">@log.UserFullName</td>
+                            <td class="py-3 px-4 text-xs text-text-muted max-w-xs truncate" title="@log.Reason">@(log.Reason ?? "—")</td>
                             <td class="py-3 px-4 text-center">
-                                <button class="btn btn-ghost btn-xs rounded-lg" onclick="showDiff(@log.AuditLogId, '@log.Action')">
-                                    <span class="material-symbols-rounded text-sm">visibility</span>
+                                <button class="btn btn-icon btn-sm btn-ghost text-primary" onclick="showDiff(@log.AuditLogId, '@log.Action')">
+                                    <span class="material-symbols-rounded text-lg">visibility</span>
                                 </button>
                             </td>
                         </tr>

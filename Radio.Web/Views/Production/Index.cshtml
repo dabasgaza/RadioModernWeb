@@ -15,62 +15,59 @@
 
 <partial name="_PageHeader" />
 
-<div class="rounded-xl p-5 mb-6" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
+<div class="card p-5 mb-6">
     <div class="relative w-full">
-        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none">search</span>
+        <span class="material-symbols-rounded absolute right-3.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none">search</span>
         <input type="text" id="productionSearch" placeholder="بحث في جميع الحلقات..."
-               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium focus:outline-none focus:ring-2 transition-all"
-               style="background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);" />
+               class="w-full bg-surface border border-border rounded-xl py-2.5 pr-10 pl-3 text-sm text-text font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
     </div>
 </div>
 
 <div class="overflow-x-auto pb-2">
-    <div class="grid grid-cols-5 gap-3" style="min-width: 900px;" dir="ltr">
+    <div class="grid grid-cols-5 gap-4" style="min-width: 950px;" dir="ltr">
         @foreach (var col in Model.Columns)
         {
             var statusKey = col.Key;
-            var cssClass = columnStyles.GetValueOrDefault(statusKey, "planned");
             <div dir="rtl">
-                <div class="rounded-xl flex flex-col h-full" style="background: var(--color-bg); border: 1px solid var(--color-border);">
-                    <div class="flex items-center justify-between px-4 py-2.5 rounded-t-xl" style="border-bottom: 1px solid var(--color-border); background: var(--color-bg-elevated); color: var(--color-text);">
+                <div class="card flex flex-col h-full overflow-hidden bg-bg">
+                    <div class="flex items-center justify-between px-4 py-3 border-b border-border bg-surface text-text">
                         <h3 class="font-bold text-sm">@col.Value.Title</h3>
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg" style="background: var(--color-bg); color: var(--color-text-secondary);">
+                        <span class="badge badge-primary">
                             @col.Value.Cards.Count
                         </span>
                     </div>
-                    <div class="p-2 space-y-2 overflow-y-auto production-column" style="max-height: 68vh;">
+                    <div class="p-3 space-y-3 overflow-y-auto production-column" style="max-height: 68vh;">
                         @foreach (var card in col.Value.Cards)
                         {
-                            <div class="rounded-xl p-2.5 transition-all duration-200 cursor-pointer production-card hover:shadow-sm"
-                                 style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);"
+                            <div class="card card-interactive p-3.5 cursor-pointer production-card"
                                  data-search="@card.EpisodeName @card.ProgramName @card.GuestNames"
                                  onclick="window.location='/Episodes/Details/@card.EpisodeId'">
-                                <h4 class="font-bold text-sm text-[var(--color-text)] leading-snug line-clamp-2">@card.EpisodeName</h4>
-                                <p class="text-xs text-[var(--color-text-muted)] truncate flex items-center gap-1 mt-1">
-                                    <span class="material-symbols-rounded text-xs">radio</span>
+                                <h4 class="font-bold text-sm text-text leading-snug line-clamp-2">@card.EpisodeName</h4>
+                                <p class="text-caption text-text-secondary truncate flex items-center gap-1 mt-1.5">
+                                    <span class="material-symbols-rounded text-xs text-primary">radio</span>
                                     @card.ProgramName
                                 </p>
                                 @if (!string.IsNullOrEmpty(card.GuestNames))
                                 {
-                                    <p class="text-xs text-[var(--color-text-muted)] truncate flex items-center gap-1 mt-0.5">
+                                    <p class="text-caption text-text-muted truncate flex items-center gap-1 mt-1">
                                         <span class="material-symbols-rounded text-xs">person</span>
                                         @card.GuestNames
                                     </p>
                                 }
-                                <div class="flex items-center justify-between mt-2 pt-1.5" style="border-top: 1px solid var(--color-border);">
-                                    <span class="text-[11px] text-[var(--color-text-muted)] flex items-center gap-0.5" dir="ltr">
-                                        <span class="material-symbols-rounded text-[14px]">schedule</span>
+                                <div class="flex items-center justify-between mt-3 pt-2 border-t border-border-light">
+                                    <span class="text-caption text-text-muted flex items-center gap-1" dir="ltr">
+                                        <span class="material-symbols-rounded text-xs">schedule</span>
                                         @(card.ScheduledTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")
                                     </span>
-                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg" style="background: var(--color-primary-subtle); color: var(--color-primary);">@card.StatusDisplay</span>
+                                    <span class="badge badge-primary text-[10px]">@card.StatusDisplay</span>
                                 </div>
                             </div>
                         }
                         @if (!col.Value.Cards.Any())
                         {
-                            <div class="text-center py-10 text-[var(--color-text-muted)]">
+                            <div class="text-center py-10 text-text-muted">
                                 <span class="material-symbols-rounded text-3xl">inbox</span>
-                                <p class="text-xs mt-1">لا توجد حلقات</p>
+                                <p class="text-xs mt-1 font-medium">لا توجد حلقات</p>
                             </div>
                         }
                     </div>

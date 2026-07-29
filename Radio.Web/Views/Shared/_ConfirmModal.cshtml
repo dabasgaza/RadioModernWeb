@@ -12,7 +12,7 @@
     var isDestructive = ViewBag.ModalDestructive as bool? ?? false;
     var bodyHtml = ViewBag.ModalBody as Microsoft.AspNetCore.Html.IHtmlContent;
     var showClose = ViewBag.ModalShowClose as bool? ?? true;
-    var btnClass = isDestructive ? "btn btn-error" : "btn btn-primary";
+    var btnClass = isDestructive ? "btn btn-destructive" : "btn btn-primary";
     var titleId = $"{modalId}Title";
     var descId = $"{modalId}Desc";
 }
@@ -31,7 +31,7 @@
             </div>
             <div>
                 <h3 class="font-bold text-text" id="@titleId">@title</h3>
-                <p class="text-xs text-text-muted" id="@descId">@message</p>
+                <p class="text-caption text-text-muted" id="@descId">@message</p>
             </div>
         </div>
 
@@ -44,8 +44,8 @@
                 </div>
             }
             <div class="flex items-center justify-end gap-2">
-                <button type="button" class="btn btn-ghost rounded-xl px-5" onclick="document.getElementById('@modalId').close()">@cancelText</button>
-                <button type="submit" class="@btnClass rounded-xl px-6">@confirmText</button>
+                <button type="button" class="btn btn-ghost" onclick="document.getElementById('@modalId').close()">@cancelText</button>
+                <button type="submit" class="@btnClass">@confirmText</button>
             </div>
         </form>
     </div>

@@ -28,12 +28,11 @@
 }
 else
 {
-    <div class="wf-card overflow-hidden">
+    <div class="card overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
-                    <tr class="text-xs font-semibold"
-                        style="color: var(--color-text-muted); background: var(--color-bg); border-bottom: 1px solid var(--color-border);">
+                    <tr class="text-xs font-semibold text-text-secondary bg-surface-hover border-b border-border">
                         <th class="text-right py-3 px-4">الاسم</th>
                         <th class="text-right py-3 px-4 hidden md:table-cell">اسم الدخول</th>
                         <th class="text-right py-3 px-4 hidden md:table-cell">البريد</th>
@@ -42,27 +41,23 @@ else
                         <th class="text-center py-3 px-4">إجراءات</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-border">
                     @foreach (var u in Model)
                     {
-                        <tr class="transition-colors"
-                            style="border-bottom: 1px solid var(--color-border);">
+                        <tr class="hover:bg-surface-hover/50 transition-colors">
                             <td class="py-3 px-4">
-                                <a href="/Users/Details/@u.UserId" class="font-semibold inline-flex items-center gap-1.5 transition-colors"
-                                   style="color: var(--color-text);">
-                                    <span class="material-symbols-rounded text-base" style="color: var(--color-text-muted);">account_box</span>
-                                    <span class="hover:underline" style="color: var(--color-primary);">@u.FullName</span>
+                                <a href="/Users/Details/@u.UserId" class="font-semibold inline-flex items-center gap-2 text-text hover:text-primary transition-colors">
+                                    <span class="material-symbols-rounded text-lg text-text-muted">account_box</span>
+                                    <span>@u.FullName</span>
                                 </a>
                             </td>
-                            <td class="py-3 px-4 hidden md:table-cell" style="color: var(--color-text-secondary);">@u.Username</td>
-                            <td class="py-3 px-4 hidden md:table-cell" style="color: var(--color-text-secondary);">@u.EmailAddress</td>
+                            <td class="py-3 px-4 hidden md:table-cell text-text-secondary">@u.Username</td>
+                            <td class="py-3 px-4 hidden md:table-cell text-text-secondary">@u.EmailAddress</td>
                             <td class="py-3 px-4">
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg"
-                                      style="background: var(--color-info-container); color: var(--color-info);">@u.RoleName</span>
+                                <span class="badge badge-primary">@u.RoleName</span>
                             </td>
                             <td class="py-3 px-4">
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg"
-                                      style="background: @(u.IsActive ? "var(--color-success-container)" : "var(--color-danger-container)"); color: @(u.IsActive ? "var(--color-success)" : "var(--color-danger)");">
+                                <span class="badge @(u.IsActive ? "badge-success" : "badge-danger")">
                                     @(u.IsActive ? "نشط" : "معطّل")
                                 </span>
                             </td>
@@ -70,25 +65,21 @@ else
                                 @if (User.HasPermission(AppPermissions.UserManage))
                                 {
                                     <div class="flex items-center justify-center gap-1">
-                                        <a href="/Users/Edit/@u.UserId" class="inline-flex items-center justify-center w-9 h-9 rounded-lg transition-colors hover:bg-primary-subtle"
-                                           style="color: var(--color-primary);" title="تعديل الحساب">
+                                        <a href="/Users/Edit/@u.UserId" class="btn btn-icon btn-sm btn-ghost text-primary" title="تعديل الحساب">
                                             <span class="material-symbols-rounded text-lg">edit</span>
                                         </a>
-                                        <a href="/Users/Permissions/@u.UserId" class="hidden md:inline-flex items-center justify-center w-9 h-9 rounded-lg transition-colors hover:bg-success-subtle"
-                                           style="color: var(--color-success);" title="الاستثناءات والصلاحيات الفردية">
+                                        <a href="/Users/Permissions/@u.UserId" class="hidden md:inline-flex btn btn-icon btn-sm btn-ghost text-success" title="الاستثناءات والصلاحيات الفردية">
                                             <span class="material-symbols-rounded text-lg">admin_panel_settings</span>
                                         </a>
                                         <form method="post" action="/Users/ToggleStatus/@u.UserId" class="hidden md:inline">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-lg transition-colors hover:bg-bg-hover"
-                                                    style="color: @(u.IsActive ? "var(--color-text-muted)" : "var(--color-success)");" title="@(u.IsActive ? "تعطيل" : "تفعيل")">
+                                            <button type="submit" class="btn btn-icon btn-sm btn-ghost text-text-secondary hover:text-success" title="@(u.IsActive ? "تعطيل" : "تفعيل")">
                                                 <span class="material-symbols-rounded text-lg">@(u.IsActive ? "block" : "check_circle")</span>
                                             </button>
                                         </form>
                                         <form method="post" action="/Users/Delete/@u.UserId" class="inline" data-confirm="هل أنت متأكد من حذف المستخدم «@u.FullName»؟">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-lg transition-colors hover:bg-danger-subtle"
-                                                    style="color: var(--color-danger);" title="حذف">
+                                            <button type="submit" class="btn btn-icon btn-sm btn-ghost text-danger" title="حذف">
                                                 <span class="material-symbols-rounded text-lg">delete</span>
                                             </button>
                                         </form>

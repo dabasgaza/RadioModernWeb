@@ -11,26 +11,26 @@
 
 <partial name="_PageHeader" />
 
-<div class="rounded-2xl border bg-surface" style="border-color:var(--color-border)">
+<div class="card overflow-hidden">
     <div class="p-4">
-        <div id="calendarGrid" class="grid grid-cols-7 gap-px overflow-hidden rounded-xl" style="background:var(--color-border)" role="grid" aria-label="تقويم شهري"></div>
+        <div id="calendarGrid" class="grid grid-cols-7 gap-px overflow-hidden rounded-xl bg-border" role="grid" aria-label="تقويم شهري"></div>
     </div>
 </div>
 
 <dialog id="episodeModal" class="p-0 bg-transparent border-0" style="max-width:28rem" aria-labelledby="modalDate">
-    <div class="rounded-2xl border w-full p-6 shadow-xl bg-surface" style="border-color:var(--color-border)">
+    <div class="card w-full p-6 shadow-xl overflow-hidden">
         <h3 class="font-bold text-lg mb-4 text-text" id="modalDate"></h3>
         <div id="modalEvents" class="space-y-2" role="list"></div>
-        <div class="mt-4 text-left">
-            <button onclick="closeModal()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-sm transition-all text-text-secondary">إغلاق</button>
+        <div class="mt-5 flex justify-end">
+            <button onclick="closeModal()" class="btn btn-ghost btn-sm font-bold">إغلاق</button>
         </div>
     </div>
 </dialog>
 
 <style>
     .cal-cell { background: var(--color-surface); }
-    .cal-cell:hover { background: var(--color-bg-hover) !important; }
-    .cal-event-link:hover { background: var(--color-bg-hover) !important; }
+    .cal-cell:hover { background: var(--color-surface-hover) !important; }
+    .cal-event-link:hover { background: var(--color-surface-hover) !important; }
 </style>
 
 @section Scripts {

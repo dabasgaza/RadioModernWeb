@@ -7,7 +7,7 @@
 
     if (User.HasPermission(AppPermissions.GuestManage))
     {
-        ViewData["HeaderActions"] = "<a href='/Guests/Create' class='inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs shadow-sm transition-all' style='background:var(--color-primary);color:white'><span class='material-symbols-rounded text-base'>person_add</span><span>إضافة ضيف جديد</span></a>";
+        ViewData["HeaderActions"] = "<a href='/Guests/Create' class='btn btn-primary'><span class='material-symbols-rounded text-base'>person_add</span><span>إضافة ضيف جديد</span></a>";
     }
 }
 
@@ -30,19 +30,19 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach (var g in Model)
             {
-                <div class="bg-surface rounded-2xl border border-border/80 shadow-sm overflow-hidden group hover:border-primary/40 hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+                <div class="card card-interactive overflow-hidden flex flex-col justify-between">
                     <div class="p-6 space-y-4">
                         <div class="flex items-center gap-3.5">
-                            <div class="w-12 h-12 rounded-2xl text-primary-foreground font-bold text-sm flex items-center justify-center shadow-md shadow-primary/20 shrink-0" style="background:var(--color-primary)">
+                            <div class="w-12 h-12 rounded-2xl bg-primary-subtle text-primary font-bold text-sm flex items-center justify-center shrink-0">
                                 @(g.FullName.Length > 0 ? g.FullName[0].ToString() : "G")
                             </div>
                             <div class="min-w-0">
-                                <h3 class="font-bold text-sm text-text truncate group-hover:text-primary transition-colors">@g.FullName</h3>
-                                <p class="text-[11px] text-text-muted truncate mt-0.5">@(g.Organization ?? "ضيف مستقل / غير محدد")</p>
+                                <h3 class="font-bold text-body text-text truncate group-hover:text-primary transition-colors">@g.FullName</h3>
+                                <p class="text-caption text-text-muted truncate mt-0.5">@(g.Organization ?? "ضيف مستقل / غير محدد")</p>
                             </div>
                         </div>
 
-                        <div class="space-y-2 pt-3 border-t border-border-light text-xs">
+                        <div class="space-y-2 pt-3 border-t border-border-light text-caption">
                             <div class="flex items-center gap-2 text-text-secondary">
                                 <span class="material-symbols-rounded text-sm text-text-muted">phone</span>
                                 <span class="font-semibold">@(g.PhoneNumber ?? "—")</span>
@@ -56,8 +56,8 @@
 
                     @if (User.HasPermission(AppPermissions.GuestManage))
                     {
-                        <div class="px-6 py-3 bg-surface/70 border-t border-border-light flex items-center justify-end gap-1.5">
-                            <a href="/Guests/Edit/@g.GuestId" class="p-2 rounded-xl text-primary hover:bg-primary-subtle transition-colors" title="تعديل">
+                        <div class="px-6 py-3 bg-surface-hover/50 border-t border-border-light flex items-center justify-end gap-1.5">
+                            <a href="/Guests/Edit/@g.GuestId" class="btn btn-icon btn-sm btn-ghost text-primary" title="تعديل">
                                 <span class="material-symbols-rounded text-lg">edit</span>
                             </a>
                         </div>

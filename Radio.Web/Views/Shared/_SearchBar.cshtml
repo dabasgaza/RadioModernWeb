@@ -6,25 +6,22 @@
 }
 @if (!hideCard)
 {
-    @:<div class="rounded-xl p-5 mb-8" style="background:var(--color-surface);border:1px solid var(--color-border)">
+    @:<div class="card p-5 mb-6">
 }
 <form method="get" class="flex gap-3">
     <div class="relative flex-1">
-        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style="color:var(--color-text-muted)">search</span>
+        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted">search</span>
         <input type="text" name="search" value="@searchValue" placeholder="@searchPlaceholder"
-               class="w-full rounded-xl py-2.5 pr-10 pl-3 text-sm font-medium transition-all"
-               style="background:var(--color-bg);border:1px solid var(--color-border);color:var(--color-text)"
-               onfocus="this.style.borderColor='var(--color-primary)';this.style.boxShadow='0 0 0 2px color-mix(in srgb, var(--color-primary) 15%, transparent)'"
-               onblur="this.style.borderColor='var(--color-border)';this.style.boxShadow='none'" />
+               class="input pr-10 pl-3 text-body font-medium" />
         @if (!string.IsNullOrWhiteSpace(searchValue))
         {
-            <a href="@searchAction" class="absolute left-3 top-1/2 -translate-y-1/2" style="color:var(--color-text-muted)" title="مسح البحث">
+            <a href="@searchAction" class="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text" title="مسح البحث">
                 <span class="material-symbols-rounded text-lg">close</span>
             </a>
         }
     </div>
     <div class="flex items-center gap-2 shrink-0">
-        <button type="submit" class="btn btn-primary gap-2">
+        <button type="submit" class="btn btn-primary">
             <span class="material-symbols-rounded">search</span>
             بحث
         </button>
@@ -40,4 +37,3 @@
 {
     @:</div>
 }
-

@@ -1,4 +1,4 @@
-@* _FormField — unified labeled form input with icon + error *@
+@* _FormField — unified labeled form input with icon, error, help text, and checkbox/toggle support *@
 @{
     var fieldIcon = ViewBag.FieldIcon as string;
     var label = ViewBag.FieldLabel as string ?? "";
@@ -8,8 +8,11 @@
     var placeholder = ViewBag.FieldPlaceholder as string ?? "";
     var required = ViewBag.FieldRequired as bool? ?? false;
     var error = ViewBag.FieldError as string;
+    var helpText = ViewBag.FieldHelp as string;
     var isTextarea = type == "textarea";
     var isSelect = type == "select";
+    var isCheckbox = type == "checkbox";
+    var isToggle = type == "toggle";
     var selectOptions = ViewBag.FieldOptions as List<SelectListItem>;
     var dir = ViewBag.FieldDir as string;
     var extraAttrs = ViewBag.FieldAttrs as string ?? "";
@@ -17,67 +20,111 @@
     var disabled = ViewBag.FieldDisabled as bool? ?? false;
     var fieldId = $"field_{name}";
     var errorId = $"error_{name}";
-    var errorClass = error != null ? "border-live focus:border-live focus:ring-live-subtle" : "";
+    var errorClass = error != null ? "input-error" : "";
     var ariaAttrs = "";
     if (error != null) { ariaAttrs = $"aria-describedby=\"{errorId}\" aria-invalid=\"true\""; }
     else if (required) { ariaAttrs = "aria-required=\"true\""; }
 }
 
-<div class="@className">
-    @if (!string.IsNullOrEmpty(label))
-    {
-        <label for="@fieldId" class="block mb-1.5 text-xs font-semibold text-text-muted">
-            @label
-            @if (required) { <span class="text-live">*</span> }
-        </label>
-    }
-
-    <div class="relative">
-        @if (!string.IsNullOrEmpty(fieldIcon))
+@if (isCheckbox)
+{
+    <div class="@className flex items-center gap-2">
+        <input id="@fieldId" name="@name" type="checkbox" value="true" @Html.Raw(required ? "required" : "") @Html.Raw(disabled ? "disabled" : "") @Html.Raw(ariaAttrs) @Html.Raw(extraAttrs)
+               class="w-4 h-4 rounded border-border text-primary focus:ring-2 focus:ring-primary-subtle" />
+        @if (!string.IsNullOrEmpty(label))
         {
-            <span class="material-symbols-rounded absolute right-3 @(isTextarea ? "top-4" : "top-1/2 -translate-y-1/2") pointer-events-none text-lg text-text-muted">@fieldIcon</span>
-        }
-
-        @if (isSelect)
-        {
-            <select id="@fieldId" name="@name" @Html.Raw(required ? "required" : "") @Html.Raw(disabled ? "disabled" : "") @Html.Raw(ariaAttrs) @Html.Raw(extraAttrs)
-                    class="w-full bg-surface-hover border border-border rounded-xl py-2.5 @(fieldIcon != null ? "pr-10" : "pr-3") pl-3 text-sm text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-subtle transition-all appearance-none @errorClass">
-                @if (selectOptions != null)
-                {
-                    foreach (var opt in selectOptions)
-                    {
-                        if (opt.Selected)
-                        {
-                            <option value="@opt.Value" selected="selected">@opt.Text</option>
-                        }
-                        else
-                        {
-                            <option value="@opt.Value">@opt.Text</option>
-                        }
-                    }
-                }
-            </select>
-        }
-        else if (isTextarea)
-        {
-            <textarea id="@fieldId" name="@name" @Html.Raw(required ? "required" : "") @Html.Raw(disabled ? "disabled" : "") @Html.Raw(ariaAttrs) @Html.Raw(extraAttrs)
-                      rows="@(ViewBag.FieldRows ?? "4")"
-                      placeholder="@placeholder"
-                      class="w-full bg-surface-hover border border-border rounded-xl py-2.5 @(fieldIcon != null ? "pr-10" : "pr-3") pl-3 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-subtle transition-all @errorClass">@value</textarea>
-        }
-        else
-        {
-            <input id="@fieldId" name="@name" type="@type" value="@value" @Html.Raw(required ? "required" : "") @Html.Raw(disabled ? "disabled" : "") @Html.Raw(ariaAttrs) @Html.Raw(!string.IsNullOrEmpty(dir) ? $"dir=\"{dir}\"" : "") @Html.Raw(extraAttrs)
-                   placeholder="@placeholder"
-                   class="w-full bg-surface-hover border border-border rounded-xl py-2.5 @(fieldIcon != null ? "pr-10" : "pr-3") pl-3 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-subtle transition-all @errorClass" />
+            <label for="@fieldId" class="text-body font-medium text-text">
+                @label
+                @if (required) { <span class="text-danger">*</span> }
+            </label>
         }
     </div>
+}
+else if (isToggle)
+{
+    var toggleChecked = ViewBag.FieldChecked as bool? ?? false;
+    <div class="@className">
+        @if (!string.IsNullOrEmpty(label))
+        {
+            <label for="@fieldId" class="block mb-1.5 text-label font-semibold text-text-muted">
+                @label
+                @if (required) { <span class="text-danger">*</span> }
+            </label>
+        }
+        <label class="relative inline-flex items-center cursor-pointer">
+            <input id="@fieldId" name="@name" type="checkbox" value="true" @Html.Raw(toggleChecked ? "checked" : "") @Html.Raw(disabled ? "disabled" : "") @Html.Raw(extraAttrs)
+                   class="sr-only peer" />
+            <div class="w-11 h-6 bg-border rounded-full peer peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-0.5 after:right-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:-translate-x-5"></div>
+            <span class="mr-3 text-body text-text">@(ViewBag.FieldToggleLabel ?? "مفعّل")</span>
+        </label>
+    </div>
+}
+else
+{
+    <div class="@className">
+        @if (!string.IsNullOrEmpty(label))
+        {
+            <label for="@fieldId" class="block mb-1.5 text-label font-semibold text-text-muted">
+                @label
+                @if (required) { <span class="text-danger">*</span> }
+            </label>
+        }
 
-    @if (!string.IsNullOrEmpty(error))
-    {
-        <p id="@errorId" class="mt-1.5 text-xs text-live flex items-center gap-1" role="alert">
-            <span class="material-symbols-rounded text-sm">error</span>
-            @error
-        </p>
-    }
-</div>
+        <div class="relative">
+            @if (!string.IsNullOrEmpty(fieldIcon))
+            {
+                <span class="material-symbols-rounded absolute right-3 @(isTextarea ? "top-4" : "top-1/2 -translate-y-1/2") pointer-events-none text-lg text-text-muted">@fieldIcon</span>
+            }
+
+            @if (isSelect)
+            {
+                <select id="@fieldId" name="@name" @Html.Raw(required ? "required" : "") @Html.Raw(disabled ? "disabled" : "") @Html.Raw(ariaAttrs) @Html.Raw(extraAttrs)
+                        class="input @errorClass @(fieldIcon != null ? "pr-10" : "")">
+                    @if (selectOptions != null)
+                    {
+                        foreach (var opt in selectOptions)
+                        {
+                            if (opt.Selected)
+                            {
+                                <option value="@opt.Value" selected="selected">@opt.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@opt.Value">@opt.Text</option>
+                            }
+                        }
+                    }
+                </select>
+            }
+            else if (isTextarea)
+            {
+                <textarea id="@fieldId" name="@name" @Html.Raw(required ? "required" : "") @Html.Raw(disabled ? "disabled" : "") @Html.Raw(ariaAttrs) @Html.Raw(extraAttrs)
+                          rows="@(ViewBag.FieldRows ?? "4")"
+                          placeholder="@placeholder"
+                          class="input @errorClass @(fieldIcon != null ? "pr-10" : "")">@value</textarea>
+            }
+            else
+            {
+                <input id="@fieldId" name="@name" type="@type" value="@value" @Html.Raw(required ? "required" : "") @Html.Raw(disabled ? "disabled" : "") @Html.Raw(ariaAttrs) @Html.Raw(!string.IsNullOrEmpty(dir) ? $"dir=\"{dir}\"" : "") @Html.Raw(extraAttrs)
+                       placeholder="@placeholder"
+                       class="input @errorClass @(fieldIcon != null ? "pr-10" : "")" />
+            }
+        </div>
+
+        @if (!string.IsNullOrEmpty(helpText) && string.IsNullOrEmpty(error))
+        {
+            <p class="mt-1.5 text-caption text-text-muted flex items-center gap-1">
+                <span class="material-symbols-rounded text-sm">info</span>
+                @helpText
+            </p>
+        }
+
+        @if (!string.IsNullOrEmpty(error))
+        {
+            <p id="@errorId" class="mt-1.5 text-caption text-danger flex items-center gap-1" role="alert">
+                <span class="material-symbols-rounded text-sm">error</span>
+                @error
+            </p>
+        }
+    </div>
+}

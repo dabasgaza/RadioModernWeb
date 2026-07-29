@@ -9,7 +9,7 @@
 
     if (User.HasPermission(AppPermissions.EpisodesCreate))
     {
-        ViewData["HeaderActions"] = "<a href='/Episodes/Create' class='btn btn-primary rounded-xl gap-2'><span class='material-symbols-rounded'>add</span>حلقة جديدة</a>";
+        ViewData["HeaderActions"] = "<a href='/Episodes/Create' class='btn btn-primary'><span class='material-symbols-rounded'>add</span>حلقة جديدة</a>";
     }
 
     var totalCount = Model.Episodes.Count();
@@ -27,6 +27,17 @@
     };
     ViewBag.KpiItems = kpiItems;
     ViewBag.PaginationLabel = "حلقة";
+
+    // Status → _StatusBadge status string mapping (replaces local GetStatusDetails)
+    string StatusKey(byte statusId) => statusId switch
+    {
+        0 => "planned",
+        1 => "executed",
+        2 => "published",
+        3 => "website-published",
+        4 => "cancelled",
+        _ => "planned"
+    };
 }
 
 <partial name="_PageHeader" />
@@ -35,31 +46,24 @@
 <!-- Episodes Grid -->
 @if (!Model.Episodes.Any())
 {
-    <div class="glass-card rounded-xl p-12">
-        ViewBag.EmptyIcon = "podcasts_off";
-        ViewBag.EmptyTitle = "لا توجد حلقات مطابقة";
-        ViewBag.EmptyDesc = "لم يتم العثور على نتائج تطابق معايير البحث الحالية. يمكنك إعادة ضبط البحث أو إضافة حلقة جديدة.";
-        ViewBag.EmptyActionUrl = "/Episodes/Create";
-        ViewBag.EmptyActionText = "إضافة حلقة";
-        ViewBag.EmptyActionIcon = "add";
-        <partial name="_EmptyState" />
-    </div>
+    ViewBag.EmptyIcon = "podcasts_off";
+    ViewBag.EmptyTitle = "لا توجد حلقات مطابقة";
+    ViewBag.EmptyDesc = "لم يتم العثور على نتائج تطابق معايير البحث الحالية. يمكنك إعادة ضبط البحث أو إضافة حلقة جديدة.";
+    ViewBag.EmptyActionUrl = "/Episodes/Create";
+    ViewBag.EmptyActionText = "إضافة حلقة";
+    ViewBag.EmptyActionIcon = "add";
+    <partial name="_EmptyState" />
 }
 else
 {
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
         @foreach (var ep in Model.Episodes)
         {
-            var statusDetails = GetStatusDetails(ep.StatusId);
-
-            <div class="glass-card rounded-xl overflow-hidden group hover:shadow-lg transition-all duration-200 flex flex-col">
+            <div class="card card-interactive overflow-hidden flex flex-col">
                 <!-- Card Header -->
-                <div class="p-4 flex items-center justify-between gap-3 border-b border-border/60">
-                    <span class="chip gap-1.5" style="background: @statusDetails.BgColor; color: @statusDetails.Color;">
-                        <span class="material-symbols-rounded text-sm">@statusDetails.Icon</span>
-                        @ep.StatusText
-                    </span>
-                    <span class="type-caption-md text-ink-muted inline-flex items-center gap-1 bg-surface-2 px-2 py-1 rounded-lg">
+                <div class="p-4 flex items-center justify-between gap-3 border-b border-border-light">
+                    <partial name="_StatusBadge" model='new StatusBadgeViewModel { Type = "episode", Status = StatusKey(ep.StatusId), Label = ep.StatusText }' />
+                    <span class="meta-pill">
                         <span class="material-symbols-rounded text-sm">radio</span>
                         @ep.ProgramName
                     </span>
@@ -67,80 +71,80 @@ else
 
                 <!-- Card Body -->
                 <div class="p-4 flex-1 flex flex-col gap-3">
-                    <a href="/Episodes/Details/@ep.EpisodeId" class="type-body-md font-semibold text-ink hover:text-primary transition-colors line-clamp-2">
+                    <a href="/Episodes/Details/@ep.EpisodeId" class="text-body font-semibold text-text hover:text-primary transition-colors line-clamp-2">
                         @ep.EpisodeName
                     </a>
 
                     @if (!string.IsNullOrWhiteSpace(ep.SpecialNotes))
                     {
-                        <p class="type-caption-md text-ink-muted line-clamp-2 p-2.5 rounded-lg bg-surface-2 border border-border/60">
+                        <p class="text-caption text-text-muted line-clamp-2 p-2.5 rounded-lg bg-bg-hover border border-border-light">
                             @ep.SpecialNotes
                         </p>
                     }
 
-                    <div class="flex items-center justify-between text-xs p-3 rounded-lg bg-surface-2">
+                    <div class="flex items-center justify-between text-caption p-3 rounded-lg bg-bg-hover">
                         <div class="flex items-center gap-2">
                             <span class="material-symbols-rounded text-base text-primary">calendar_today</span>
                             <div>
-                                <span class="type-body-sm font-semibold text-ink block">
+                                <span class="text-body font-semibold text-text block">
                                     @(ep.ScheduledExecutionTime.HasValue ? ep.ScheduledExecutionTime.Value.ToString("dddd", new System.Globalization.CultureInfo("ar")) : "غير محدد")
                                 </span>
-                                <span class="type-caption-md text-ink-muted">
+                                <span class="text-caption text-text-muted">
                                     @(ep.ScheduledExecutionTime.HasValue ? ep.ScheduledExecutionTime.Value.ToString("yyyy-MM-dd") : "—")
                                 </span>
                             </div>
                         </div>
-                        <div class="flex items-center gap-1.5 type-body-sm font-semibold text-primary">
+                        <div class="flex items-center gap-1.5 text-body font-semibold text-primary">
                             <span class="material-symbols-rounded text-sm">schedule</span>
                             @(ep.ScheduledExecutionTime.HasValue ? ep.ScheduledExecutionTime.Value.ToString("hh:mm tt", new System.Globalization.CultureInfo("ar")) : "—")
                         </div>
                     </div>
 
                     <div class="flex items-center justify-between">
-                        <span class="type-caption-md text-ink-muted">الضيوف:</span>
+                        <span class="text-caption text-text-muted">الضيوف:</span>
                         @if (ep.GuestItems.Any())
                         {
-                            <span class="chip gap-1 bg-primary-soft text-primary">
+                            <span class="chip bg-primary-subtle text-primary">
                                 <span class="material-symbols-rounded text-sm">people</span>
                                 @ep.GuestItems.Count ضيف
                             </span>
                         }
                         else
                         {
-                            <span class="type-caption-md text-ink-soft">لا يوجد</span>
+                            <span class="text-caption text-text-secondary">لا يوجد</span>
                         }
                     </div>
                 </div>
 
                 <!-- Card Footer -->
-                <div class="p-3 flex items-center justify-between gap-2 bg-surface-2 border-t border-border/60">
+                <div class="p-3 flex items-center justify-between gap-2 bg-bg-hover border-t border-border-light">
                     <div class="flex items-center gap-1">
-                        <a href="/Episodes/Details/@ep.EpisodeId" class="btn btn-ghost btn-xs rounded-lg gap-1 text-ink-muted font-semibold" title="التفاصيل">
+                        <a href="/Episodes/Details/@ep.EpisodeId" class="btn btn-ghost btn-xs text-text-muted" title="التفاصيل">
                             <span class="material-symbols-rounded text-sm">visibility</span>
                             التفاصيل
                         </a>
-                        <a href="/Publishing?episodeId=@ep.EpisodeId" class="btn btn-ghost btn-xs rounded-lg text-ink-muted" title="النشر">
+                        <a href="/Publishing?episodeId=@ep.EpisodeId" class="btn btn-ghost btn-xs text-text-muted" title="النشر">
                             <span class="material-symbols-rounded text-sm">share</span>
                         </a>
-                        @if (User.HasPermission(AppPermissions.EpisodeEdit))
+                        @if (User.HasPermission(AppPermissions.EpisodesEdit))
                         {
-                            <a href="/Episodes/Edit/@ep.EpisodeId" class="btn btn-ghost btn-xs rounded-lg text-ink-muted" title="تعديل">
+                            <a href="/Episodes/Edit/@ep.EpisodeId" class="btn btn-ghost btn-xs text-text-muted" title="تعديل">
                                 <span class="material-symbols-rounded text-sm">edit</span>
                             </a>
                         }
                     </div>
                     <div class="flex items-center gap-1">
-                        @if (User.HasPermission(AppPermissions.EpisodeExecute) && ep.StatusId == 0)
+                        @if (User.HasPermission(AppPermissions.ExecutionExecute) && ep.StatusId == 0)
                         {
-                            <button type="button" class="btn btn-success btn-xs rounded-lg gap-1"
+                            <button type="button" class="btn btn-success btn-xs"
                                     onclick="openExecuteModal(@ep.EpisodeId, '@JavaScriptEncoder.Default.Encode(ep.EpisodeName)')">
                                 <span class="material-symbols-rounded text-sm">play_circle</span>
                                 تنفيذ
                             </button>
                         }
-                        @if (User.HasPermission(AppPermissions.EpisodeRevert) && ep.CanCancel)
+                        @if (User.HasPermission(AppPermissions.ExecutionCancel) && ep.CanCancel)
                         {
-                            <button type="button" class="btn btn-error btn-xs btn-outline rounded-lg"
+                            <button type="button" class="btn btn-destructive btn-xs btn-outline"
                                     onclick="openCancelModal(@ep.EpisodeId, '@JavaScriptEncoder.Default.Encode(ep.EpisodeName)')">
                                 <span class="material-symbols-rounded text-sm">cancel</span>
                             </button>
@@ -164,21 +168,20 @@ else
     ViewBag.ModalFormAction = "";
     ViewBag.ModalBody = Html.Raw(@"<div class=""space-y-4"">
         <div>
-            <label class=""text-xs font-semibold text-text-muted block mb-1.5"">ملاحظات التنفيذ</label>
+            <label class=""text-label font-semibold text-text-muted block mb-1.5"">ملاحظات التنفيذ</label>
             <textarea name=""executionNotes"" rows=""3""
-                      class=""w-full bg-surface-hover border border-border rounded-lg px-3 py-2.5 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-subtle transition-all""
+                      class=""input""
                       placeholder=""ملاحظات حول أداء الحلقة أو البث...""></textarea>
         </div>
         <div>
-            <label class=""text-xs font-semibold text-text-muted block mb-1.5"">مشكلات واجهت التنفيذ</label>
+            <label class=""text-label font-semibold text-text-muted block mb-1.5"">مشكلات واجهت التنفيذ</label>
             <textarea name=""issuesEncountered"" rows=""2""
-                      class=""w-full bg-surface-hover border border-border rounded-lg px-3 py-2.5 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-subtle transition-all""
+                      class=""input""
                       placeholder=""المشاكل الفنية أو الصوتية إن وجدت...""></textarea>
         </div>
         <div>
-            <label class=""text-xs font-semibold text-text-muted block mb-1.5"">المدة الفعلية (بالدقائق) *</label>
-            <input type=""number"" name=""durationMinutes"" min=""1"" max=""720"" value=""60"" required
-                   class=""w-full bg-surface-hover border border-border rounded-lg px-3 py-2.5 text-sm text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-subtle transition-all"" />
+            <label class=""text-label font-semibold text-text-muted block mb-1.5"">المدة الفعلية (بالدقائق) *</label>
+            <input type=""number"" name=""durationMinutes"" min=""1"" max=""720"" value=""60"" required class=""input"" />
         </div>
     </div>");
 }
@@ -196,9 +199,9 @@ else
     ViewBag.ModalFormAction = "";
     ViewBag.ModalDestructive = true;
     ViewBag.ModalBody = Html.Raw(@"<div>
-        <label class=""text-xs font-semibold text-text-muted block mb-1.5"">سبب الإلغاء *</label>
+        <label class=""text-label font-semibold text-text-muted block mb-1.5"">سبب الإلغاء *</label>
         <textarea name=""reason"" rows=""3"" required
-                  class=""w-full bg-surface-hover border border-border rounded-lg px-3 py-2.5 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-subtle transition-all""
+                  class=""input""
                   placeholder=""يرجى كتابة سبب الإلغاء بالتفصيل...""></textarea>
     </div>");
 }
@@ -218,16 +221,4 @@ else
             document.getElementById(id).close();
         }
     </script>
-}
-
-@functions {
-    (string BgColor, string Color, string Icon) GetStatusDetails(byte statusId) => statusId switch
-    {
-        0 => ("var(--status-planned-bg)", "var(--status-planned-text)", "event"),
-        1 => ("var(--status-executed-bg)", "var(--status-executed-text)", "task_alt"),
-        2 => ("var(--status-published-bg)", "var(--status-published-text)", "share"),
-        3 => ("var(--status-website-bg)", "var(--status-website-text)", "language"),
-        4 => ("var(--status-cancelled-bg)", "var(--status-cancelled-text)", "cancel"),
-        _ => ("var(--color-bg-hover)", "var(--color-text-secondary)", "help")
-    };
 }

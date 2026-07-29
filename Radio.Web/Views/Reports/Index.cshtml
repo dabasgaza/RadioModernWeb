@@ -11,61 +11,26 @@
 
 <partial name="_PageHeader" />
 
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-    <div class="wf-stat">
-        <div class="flex items-center justify-between">
-            <div>
-                <div class="wf-stat-value">@totalEpisodes</div>
-                <div class="wf-stat-label">إجمالي الحلقات</div>
-            </div>
-            <div class="wf-stat-ico" style="--ico-color: var(--color-primary)">
-                <span class="material-symbols-rounded">podcasts</span>
-            </div>
-        </div>
-    </div>
-    <div class="wf-stat">
-        <div class="flex items-center justify-between">
-            <div>
-                <div class="wf-stat-value">@Model.TopPrograms.Count</div>
-                <div class="wf-stat-label">البرامج النشطة</div>
-            </div>
-            <div class="wf-stat-ico" style="--ico-color: var(--color-success)">
-                <span class="material-symbols-rounded">radio</span>
-            </div>
-        </div>
-    </div>
-    <div class="wf-stat">
-        <div class="flex items-center justify-between">
-            <div>
-                <div class="wf-stat-value">@Model.CancelledEpisodes.Count</div>
-                <div class="wf-stat-label">حلقات ملغاة</div>
-            </div>
-            <div class="wf-stat-ico" style="--ico-color: var(--color-danger)">
-                <span class="material-symbols-rounded">cancel</span>
-            </div>
-        </div>
-    </div>
-    <div class="wf-stat">
-        <div class="flex items-center justify-between">
-            <div>
-                <div class="wf-stat-value">@Model.TopGuests.Count</div>
-                <div class="wf-stat-label">أبرز الضيوف</div>
-            </div>
-            <div class="wf-stat-ico" style="--ico-color: var(--color-accent)">
-                <span class="material-symbols-rounded">people_alt</span>
-            </div>
-        </div>
-    </div>
-</div>
+@{
+    var kpiItems = new List<KpiItem>
+    {
+        new() { Label = "إجمالي الحلقات", Value = totalEpisodes.ToString(), Icon = "podcasts", Color = "var(--color-primary)", IconBg = "color-mix(in srgb, var(--color-primary) 10%, transparent)", IconColor = "var(--color-primary)", Subtitle = "حلقة مسجلة وبث حي" },
+        new() { Label = "البرامج النشطة", Value = Model.TopPrograms.Count.ToString(), Icon = "radio", Color = "var(--color-success)", IconBg = "color-mix(in srgb, var(--color-success) 10%, transparent)", IconColor = "var(--color-success)", Subtitle = "برامج قيد الإنتاج" },
+        new() { Label = "حلقات ملغاة", Value = Model.CancelledEpisodes.Count.ToString(), Icon = "cancel", Color = "var(--color-danger)", IconBg = "color-mix(in srgb, var(--color-danger) 10%, transparent)", IconColor = "var(--color-danger)", Subtitle = "حلقات محذوفة/ملغاة" },
+        new() { Label = "أبرز الضيوف", Value = Model.TopGuests.Count.ToString(), Icon = "people_alt", Color = "var(--color-accent)", IconBg = "color-mix(in srgb, var(--color-accent) 10%, transparent)", IconColor = "var(--color-accent)", Subtitle = "ضيوف الأكثر مشاركة" }
+    };
+    ViewBag.KpiItems = kpiItems;
+}
+<partial name="_KpiCards" />
 
-<div class="rounded-xl overflow-hidden" style="background: var(--color-bg-elevated); border: 1px solid var(--color-border);">
-    <div class="px-6 py-0" style="background: var(--color-bg); border-bottom: 1px solid var(--color-border);">
-        <div class="flex gap-1 overflow-x-auto" role="tablist">
-            <button class="tab-btn active font-bold text-sm" data-tab="overview">نظرة عامة</button>
-            <button class="tab-btn font-bold text-sm" data-tab="today">حلقات اليوم</button>
-            <button class="tab-btn font-bold text-sm" data-tab="programs">نشاط البرامج</button>
-            <button class="tab-btn font-bold text-sm" data-tab="guests">أبرز الضيوف</button>
-            <button class="tab-btn font-bold text-sm" data-tab="cancelled">الحلقات الملغاة</button>
+<div class="card overflow-hidden mt-6">
+    <div class="px-6 py-2 border-b border-border bg-surface">
+        <div class="flex gap-2 overflow-x-auto" role="tablist">
+            <button class="tab-btn active font-bold text-sm text-text" data-tab="overview">نظرة عامة</button>
+            <button class="tab-btn font-bold text-sm text-text-secondary" data-tab="today">حلقات اليوم</button>
+            <button class="tab-btn font-bold text-sm text-text-secondary" data-tab="programs">نشاط البرامج</button>
+            <button class="tab-btn font-bold text-sm text-text-secondary" data-tab="guests">أبرز الضيوف</button>
+            <button class="tab-btn font-bold text-sm text-text-secondary" data-tab="cancelled">الحلقات الملغاة</button>
         </div>
     </div>
 

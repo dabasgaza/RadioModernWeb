@@ -9,47 +9,45 @@
     bool HasAny(params string[] perms) => perms.Any(p => CurrentUser.HasPermission(p));
     Func<string, IHtmlContent> SectionHeader = (label) =>
     {
-        var html = $"<div class=\"pt-5 pb-1 px-3 first:pt-0\"><div class=\"text-[10px] font-bold uppercase tracking-widest text-text-muted\">{label}</div></div>";
+        var html = $"<div class=\"sidebar-section-label\">{label}</div>";
         return new HtmlString(html);
     };
-    Func<bool, string> NavLinkActive = (active) =>
-    {
-        if (active) return "bg-primary text-primary-foreground font-bold";
-        return "text-text-secondary hover:bg-bg-hover hover:text-text";
-    };
+    Func<bool, string> NavLinkClass = (active) => active
+        ? "sidebar-link active"
+        : "sidebar-link";
 }
-<div class="flex flex-col h-full select-none bg-surface" style="border-left:1px solid var(--color-border)">
-    <a href="/" class="flex items-center gap-3 h-16 px-5 shrink-0" style="border-bottom:1px solid var(--color-border);background:var(--color-bg-hover)">
-        <div class="flex items-center justify-center w-10 h-10 rounded-xl" style="background:var(--color-primary);color:var(--color-primary-foreground)">
+<div class="flex flex-col h-full select-none">
+    <a href="/" class="flex items-center gap-3 h-16 px-5 shrink-0 border-b border-border bg-bg-hover">
+        <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary text-primary-foreground">
             <span class="material-symbols-rounded text-xl">live_tv</span>
         </div>
         <div class="flex flex-col">
-            <span class="font-bold text-sm tracking-wide text-text">نظام إدارة البث الإذاعي</span>
-            <span class="text-[11px] font-medium text-accent">برامج — حلقات — بث مباشر</span>
+            <span class="font-bold text-label tracking-wide text-text">نظام إدارة البث الإذاعي</span>
+            <span class="text-micro font-medium text-accent">برامج — حلقات — بث مباشر</span>
         </div>
     </a>
 
     <!-- On Air Now -->
-    <div class="mx-3 mt-3 p-3 rounded-xl bg-live-subtle border border-live-subtle flex items-center gap-3">
+    <div class="mx-3 mt-3 p-3 rounded-xl bg-live-subtle border border-live-border flex items-center gap-3">
         <span class="relative flex h-3 w-3 shrink-0">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-live opacity-75"></span>
             <span class="relative inline-flex rounded-full h-3 w-3 bg-live"></span>
         </span>
         <div class="flex-1 min-w-0">
-            <div class="text-xs font-bold text-live truncate">على الهواء الآن</div>
-            <div class="text-[10px] text-live truncate opacity-80" id="sidebar-onair-name">—</div>
+            <div class="text-caption font-bold text-live truncate">على الهواء الآن</div>
+            <div class="text-micro text-live truncate opacity-80" id="sidebar-onair-name">—</div>
         </div>
     </div>
 
-    <nav class="flex-1 overflow-y-auto p-3 space-y-0.5 custom-scrollbar" aria-label="التنقل الرئيسي">
+    <nav class="flex-1 overflow-y-auto p-3 space-y-0.5" aria-label="التنقل الرئيسي">
         @* ── القائمة الأساسية ── *@
-        <a href="/" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("Home"))">
+        <a href="/" class="@NavLinkClass(IsActive("Home"))">
             <span class="material-symbols-rounded text-lg">dashboard</span>لوحة التحكم الرئيسية
         </a>
-        <a href="/Search" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("Search"))">
+        <a href="/Search" class="@NavLinkClass(IsActive("Search"))">
             <span class="material-symbols-rounded text-lg">search</span>البحث العام
         </a>
-        <a href="/Calendar" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("Calendar"))">
+        <a href="/Calendar" class="@NavLinkClass(IsActive("Calendar"))">
             <span class="material-symbols-rounded text-lg">calendar_month</span>جدول البث والإعادة
         </a>
 
@@ -57,13 +55,13 @@
         @if (HasAny(AppPermissions.EpisodesView, AppPermissions.EpisodesCreate, AppPermissions.EpisodesEdit, AppPermissions.ExecutionExecute))
         {
             @SectionHeader("البث والإنتاج")
-            <a href="/Episodes/LiveBoard" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("Episodes", "LiveBoard"))">
+            <a href="/Episodes/LiveBoard" class="@NavLinkClass(IsActive("Episodes", "LiveBoard"))">
                 <span class="material-symbols-rounded text-lg text-live">live_tv</span>شاشة البث المباشر
             </a>
-            <a href="/Episodes" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("Episodes", "Index"))">
+            <a href="/Episodes" class="@NavLinkClass(IsActive("Episodes", "Index"))">
                 <span class="material-symbols-rounded text-lg">tv</span>سجل الحلقات
             </a>
-            <a href="/Production" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("Production"))">
+            <a href="/Production" class="@NavLinkClass(IsActive("Production"))">
                 <span class="material-symbols-rounded text-lg">view_column</span>لوحة سير الإنتاج
             </a>
         }
@@ -74,22 +72,22 @@
             @SectionHeader("البرامج والمحتوى")
             @if (HasAny(AppPermissions.ProgramsView, AppPermissions.ProgramsManage))
             {
-                <a href="/Programs" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("Programs"))">
+                <a href="/Programs" class="@NavLinkClass(IsActive("Programs"))">
                     <span class="material-symbols-rounded text-lg">radio</span>دليل البرامج
                 </a>
             }
             @if (HasAny(AppPermissions.GuestsView, AppPermissions.GuestsManage))
             {
-                <a href="/Guests" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("Guests"))">
+                <a href="/Guests" class="@NavLinkClass(IsActive("Guests"))">
                     <span class="material-symbols-rounded text-lg">people_alt</span>سجل الضيوف
                 </a>
             }
             @if (HasAny(AppPermissions.CoordinationView, AppPermissions.CoordinationManage))
             {
-                <a href="/Correspondents" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("Correspondents"))">
+                <a href="/Correspondents" class="@NavLinkClass(IsActive("Correspondents"))">
                     <span class="material-symbols-rounded text-lg">map</span>المراسلون الميدانيون
                 </a>
-                <a href="/Coverage" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("Coverage"))">
+                <a href="/Coverage" class="@NavLinkClass(IsActive("Coverage"))">
                     <span class="material-symbols-rounded text-lg">edit_location_alt</span>التغطيات الميدانية
                 </a>
             }
@@ -101,19 +99,19 @@
             @SectionHeader("النشر والتوزيع")
             if (HasAny(AppPermissions.SocialPublishingPublish, AppPermissions.SocialPublishingView))
             {
-                <a href="/Publishing" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("Publishing"))">
+                <a href="/Publishing" class="@NavLinkClass(IsActive("Publishing"))">
                     <span class="material-symbols-rounded text-lg">rss_feed</span>سجل النشر الرقمي
                 </a>
             }
             if (HasAny(AppPermissions.WebsitePublishingPublish, AppPermissions.WebsitePublishingView))
             {
-                <a href="/WebsitePublishing" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("WebsitePublishing"))">
+                <a href="/WebsitePublishing" class="@NavLinkClass(IsActive("WebsitePublishing"))">
                     <span class="material-symbols-rounded text-lg">public</span>نشر البوابة الرقمية
                 </a>
             }
             if (HasAny(AppPermissions.ExecutionExecute, AppPermissions.ExecutionView))
             {
-                <a href="/ExecutionLogs" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("ExecutionLogs"))">
+                <a href="/ExecutionLogs" class="@NavLinkClass(IsActive("ExecutionLogs"))">
                     <span class="material-symbols-rounded text-lg">assignment</span>سجلات التنفيذ والإعادة
                 </a>
             }
@@ -123,7 +121,7 @@
         @if (CurrentUser.HasPermission(AppPermissions.ReportsView))
         {
             @SectionHeader("التقارير")
-            <a href="/Reports" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("Reports"))">
+            <a href="/Reports" class="@NavLinkClass(IsActive("Reports"))">
                 <span class="material-symbols-rounded text-lg">assessment</span>تقارير الإنتاج والأداء
             </a>
         }
@@ -134,44 +132,44 @@
             @SectionHeader("الإدارة")
             @if (HasAny(AppPermissions.StaffView, AppPermissions.StaffManage))
             {
-                <a href="/Employees" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("Employees"))">
+                <a href="/Employees" class="@NavLinkClass(IsActive("Employees"))">
                     <span class="material-symbols-rounded text-lg">badge</span>الموظفون والكادر
                 </a>
-                <a href="/StaffRoles" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("StaffRoles"))">
+                <a href="/StaffRoles" class="@NavLinkClass(IsActive("StaffRoles"))">
                     <span class="material-symbols-rounded text-lg">work_history</span>المسميات الوظيفية
                 </a>
-                <a href="/SocialPlatforms" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("SocialPlatforms"))">
+                <a href="/SocialPlatforms" class="@NavLinkClass(IsActive("SocialPlatforms"))">
                     <span class="material-symbols-rounded text-lg">share</span>منصات النشر الرقمي
                 </a>
             }
             @if (HasAny(AppPermissions.AdminUsersManage, AppPermissions.AdminRolesManage))
             {
-                <a href="/Users" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("Users"))">
+                <a href="/Users" class="@NavLinkClass(IsActive("Users"))">
                     <span class="material-symbols-rounded text-lg">group</span>المستخدمون
                 </a>
-                <a href="/Roles" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("Roles"))">
+                <a href="/Roles" class="@NavLinkClass(IsActive("Roles"))">
                     <span class="material-symbols-rounded text-lg">group_work</span>الأدوار والصلاحيات
                 </a>
-                <a href="/Permissions" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("Permissions"))">
+                <a href="/Permissions" class="@NavLinkClass(IsActive("Permissions"))">
                     <span class="material-symbols-rounded text-lg">admin_panel_settings</span>جدول الصلاحيات
                 </a>
             }
             @if (CurrentUser.HasPermission(AppPermissions.SystemViewAuditLogs))
             {
-                <a href="/AuditLogs" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("AuditLogs"))">
+                <a href="/AuditLogs" class="@NavLinkClass(IsActive("AuditLogs"))">
                     <span class="material-symbols-rounded text-lg">history</span>سجل التدقيق
                 </a>
             }
             @if (CurrentUser.HasPermission(AppPermissions.SystemDatabaseManage))
             {
-                <a href="/Database" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("Database"))">
+                <a href="/Database" class="@NavLinkClass(IsActive("Database"))">
                     <span class="material-symbols-rounded text-lg">storage</span>إدارة قاعدة البيانات
                 </a>
-                <a href="/Diagnostics" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("Diagnostics"))">
+                <a href="/Diagnostics" class="@NavLinkClass(IsActive("Diagnostics"))">
                     <span class="material-symbols-rounded text-lg">monitor_heart</span>تشخيص النظام
                 </a>
             }
-            <a href="/Settings" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 @NavLinkActive(IsActive("Settings"))">
+            <a href="/Settings" class="@NavLinkClass(IsActive("Settings"))">
                 <span class="material-symbols-rounded text-lg">settings</span>إعدادات النظام
             </a>
         }

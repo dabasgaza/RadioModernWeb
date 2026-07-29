@@ -7,24 +7,36 @@
 
 <partial name="_PageHeader" />
 
-<div class="rounded-2xl border" style="background: var(--color-surface); border-color: var(--color-border)">
-    <div class="p-6">
-        <h2 class="font-bold text-lg mb-4 flex items-center gap-2" style="color: var(--color-text)">
-            <span class="material-symbols-rounded" style="color: var(--color-primary)">mail</span>
-            البريد الإلكتروني
-        </h2>
+<div class="card p-6">
+    <h2 class="font-bold text-lg mb-4 flex items-center gap-2 text-text">
+        <span class="material-symbols-rounded text-primary">mail</span>
+        البريد الإلكتروني
+    </h2>
 
-        <table class="w-full text-sm">
-            <tbody>
-                <tr class="border-b" style="border-color: var(--color-border)"><td class="font-semibold py-3 w-40" style="color: var(--color-text)">الحالة</td><td class="py-3"><span class="inline-flex items-center px-2.5 py-0.5 text-xs font-bold rounded-full" style="background: color-mix(in srgb, @(ViewBag.EmailConfigured ? "var(--color-success)" : "var(--color-warning)") 10%, transparent); color: @(ViewBag.EmailConfigured ? "var(--color-success)" : "var(--color-warning)")">@(ViewBag.EmailConfigured ? "مضبوط" : "غير مضبوط")</span></td></tr>
-                <tr class="border-b" style="border-color: var(--color-border)"><td class="font-semibold py-3" style="color: var(--color-text)">خادم SMTP</td><td class="py-3" style="color: var(--color-text-secondary)">@ViewBag.SmtpHost</td></tr>
-                <tr><td class="font-semibold py-3" style="color: var(--color-text)">المنفذ</td><td class="py-3" style="color: var(--color-text-secondary)">@ViewBag.SmtpPort</td></tr>
-            </tbody>
-        </table>
+    <table class="w-full text-sm">
+        <tbody class="divide-y divide-border">
+            <tr>
+                <td class="font-semibold py-3 w-40 text-text">الحالة</td>
+                <td class="py-3">
+                    <span class="badge @(ViewBag.EmailConfigured ? "badge-success" : "badge-warning")">
+                        @(ViewBag.EmailConfigured ? "مضبوط" : "غير مضبوط")
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="font-semibold py-3 text-text">خادم SMTP</td>
+                <td class="py-3 text-text-secondary font-mono text-xs">@ViewBag.SmtpHost</td>
+            </tr>
+            <tr>
+                <td class="font-semibold py-3 text-text">المنفذ</td>
+                <td class="py-3 text-text-secondary font-mono text-xs">@ViewBag.SmtpPort</td>
+            </tr>
+        </tbody>
+    </table>
 
-        <div class="mt-4 p-4 rounded-xl text-sm" style="background: var(--color-bg-alt); color: var(--color-text-secondary)">
-            <p>لتكوين البريد الإلكتروني، أضف الإعدادات التالية في <code style="background: var(--color-surface); padding: 0.1em 0.3em; border-radius: 4px;">appsettings.json</code>:</p>
-            <pre class="text-xs p-3 rounded-xl mt-2" dir="ltr" style="background: var(--color-surface); color: var(--color-text-secondary)">{
+    <div class="mt-6 p-4 rounded-xl text-sm bg-bg text-text-secondary border border-border">
+        <p>لتكوين البريد الإلكتروني، أضف الإعدادات التالية في <code class="bg-surface px-2 py-1 rounded border border-border font-mono text-xs text-primary">appsettings.json</code>:</p>
+        <pre class="text-xs p-4 rounded-xl mt-3 dir-ltr bg-surface border border-border text-text font-mono overflow-x-auto">{
   "Email": {
     "Host": "smtp.example.com",
     "Port": "587",
@@ -32,6 +44,5 @@
     "Password": "your-password"
   }
 }</pre>
-        </div>
     </div>
 </div>

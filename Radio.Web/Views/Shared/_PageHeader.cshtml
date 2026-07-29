@@ -21,15 +21,15 @@
         <div class="flex items-start gap-4">
             @if (!string.IsNullOrEmpty(icon))
             {
-                <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style="background:color-mix(in srgb, var(--color-primary) 10%, transparent);color:var(--color-primary)">
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 bg-primary-subtle text-primary">
                     <span class="material-symbols-rounded text-2xl">@icon</span>
                 </div>
             }
             <div>
-                <nav class="text-xs mb-1.5 text-text-muted" aria-label="Breadcrumb">
+                <nav class="breadcrumb mb-1.5" aria-label="Breadcrumb">
                     <ul class="flex items-center gap-1.5">
                         <li>
-                            <a href="/" class="inline-flex items-center gap-1 transition-opacity hover:opacity-80 text-text-muted">
+                            <a href="/" class="inline-flex items-center gap-1 transition-opacity hover:opacity-80">
                                 <span class="material-symbols-rounded text-sm">home</span>
                                 الرئيسية
                             </a>
@@ -40,11 +40,11 @@
                             <li>
                                 @if (!string.IsNullOrEmpty(entityUrl))
                                 {
-                                    <a href="@entityUrl" class="transition-opacity hover:opacity-80 text-text-muted">@entityName</a>
+                                    <a href="@entityUrl" class="transition-opacity hover:opacity-80">@entityName</a>
                                 }
                                 else
                                 {
-                                    <span class="text-text-muted">@entityName</span>
+                                    <span>@entityName</span>
                                 }
                             </li>
                         }
@@ -55,7 +55,7 @@
                         }
                     </ul>
                 </nav>
-                <h1 class="text-xl font-black flex items-center gap-2 flex-wrap text-text">
+                <h1 class="text-headline font-bold flex items-center gap-2 flex-wrap text-text">
                     @if (!string.IsNullOrEmpty(icon))
                     {
                         <span class="material-symbols-rounded text-2xl text-primary">@icon</span>
@@ -64,7 +64,7 @@
                 </h1>
                 @if (!string.IsNullOrEmpty(description))
                 {
-                    <p class="text-sm mt-1 text-text-secondary">@description</p>
+                    <p class="text-body mt-1 text-text-secondary">@description</p>
                 }
             </div>
         </div>
@@ -77,7 +77,7 @@
         else if (!string.IsNullOrEmpty(backUrl))
         {
             <div class="flex items-center gap-2 shrink-0">
-                <a href="@backUrl" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-all rounded-xl text-text-secondary hover:text-text hover:bg-surface-hover">
+                <a href="@backUrl" class="btn btn-ghost btn-sm">
                     <span class="material-symbols-rounded text-lg">arrow_forward</span>
                     @backText
                 </a>
