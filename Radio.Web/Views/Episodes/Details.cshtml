@@ -3,604 +3,836 @@
     ViewData["Title"] = Model.Episode.EpisodeName;
     var ep = Model.Episode;
 
-    ViewBag.Title = ep.EpisodeName;
-    ViewBag.Icon = "podcasts";
-    ViewBag.Description = $"البرنامج الإذاعي: {ep.ProgramName}";
-    ViewBag.EntityName = "الحلقات";
-    ViewBag.EntityUrl = "/Episodes";
-
     var stages = new[] {
-        new { Id = 0, Name = "مجدولة",       Icon = "calendar_today" },
-        new { Id = 1, Name = "منفّذة",        Icon = "play_circle" },
-        new { Id = 2, Name = "منشورة رقمياً", Icon = "share" },
-        new { Id = 3, Name = "منشورة على الموقع", Icon = "public" }
+        new { Id = 0, Name = "التخطيط",         Icon = "calendar_today" },
+        new { Id = 1, Name = "التنفيذ",          Icon = "play_circle" },
+        new { Id = 2, Name = "النشر الرقمي",     Icon = "share" },
+        new { Id = 3, Name = "النشر على الموقع", Icon = "public" }
     };
     var isCancelled = ep.StatusId == 4;
     bool IsDone(int i) { if (isCancelled) return i == 0; return ep.StatusId > stages[i].Id; }
-    bool IsCurrent(int i) { if (isCancelled) return false; return ep.StatusId == stages[i].Id; }
+    bool IsCurrent(int i) { return !isCancelled && ep.StatusId == stages[i].Id; }
 
     var socialRecords = Model.PublishingRecords.Where(r => r.RecordType == "SocialMedia").ToList();
     var websiteRecords = Model.PublishingRecords.Where(r => r.RecordType == "Website").ToList();
+    var execLog = Model.PublishingRecords.FirstOrDefault(r => r.RecordType == "Execution");
 
-    string StageIconBg(string color) => color switch
+    var progressPct = isCancelled ? 25 : (ep.StatusId + 1) * 25;
+    var progressLabel = isCancelled ? "ملغاة" : progressPct + "%";
+
+    string StageDate(int i)
     {
-        "success" => "bg-success-subtle text-success",
-        "warning" => "bg-warning-subtle text-warning",
-        "danger" => "bg-danger-subtle text-danger",
-        "info" => "bg-info-subtle text-info",
-        "accent" => "bg-accent-subtle text-accent",
-        _ => "bg-primary-subtle text-primary"
+        return i switch
+        {
+            0 => ep.ScheduledExecutionTime?.ToString("yyyy-MM-dd") ?? "",
+            1 => (ep.ActualExecutionTime ?? execLog?.RecordDate)?.ToString("yyyy-MM-dd") ?? "",
+            2 => socialRecords.Count > 0 ? socialRecords.Max(r => r.RecordDate).ToString("yyyy-MM-dd") : "",
+            3 => websiteRecords.Count > 0 ? websiteRecords.Max(r => r.RecordDate).ToString("yyyy-MM-dd") : "",
+            _ => ""
+        };
+    }
+
+    string StageBadge(int i)
+    {
+        if (isCancelled) return i == 0 ? "badge-success" : "badge-secondary";
+        if (IsDone(i)) return "badge-success";
+        if (IsCurrent(i)) return "badge-primary";
+        return "badge-secondary";
+    }
+    string StageBadgeText(int i)
+    {
+        if (isCancelled) return i == 0 ? "مكتملة" : "قادمة";
+        if (IsDone(i)) return "مكتملة";
+        if (IsCurrent(i)) return "المرحلة الحالية";
+        return "قادمة";
+    }
+
+    var sectionSubtitles = new[] {
+        "إعداد الموعد والضيوف والطاقم",
+        "تسجيل وقت البث والملاحظات الفنية",
+        "النشر على منصات التواصل الاجتماعي",
+        "النشر على الموقع الرسمي"
     };
+    var openSection = isCancelled ? -1 : Math.Min((int)ep.StatusId, 3);
+
+    var canEdit = User.HasPermission(AppPermissions.EpisodesEdit) && ep.StatusId != 4;
+    var canExecute = User.HasPermission(AppPermissions.ExecutionExecute) && ep.StatusId == 0;
+    var canSocial = User.HasPermission(AppPermissions.SocialPublishingPublish) && ep.StatusId == 1;
+    var canWebsite = User.HasPermission(AppPermissions.WebsitePublishingPublish) && (ep.StatusId == 1 || ep.StatusId == 2);
+    var canRevert = User.HasPermission(AppPermissions.ExecutionCancel) && ep.StatusId is 1 or 2 or 3;
+    var canCancelEpisode = User.HasPermission(AppPermissions.EpisodesDelete) && ep.StatusId != 4;
+
+    var nextIcon = "flag";
+    var nextLabel = "";
+    var nextDesc = "";
+    var nextHref = (string?)null;
+    var nextModal = (string?)null;
+    var nextDone = false;
+    var nextCancelled = false;
+    var nextWaiting = false;
+
+    if (isCancelled)
+    {
+        nextCancelled = true;
+        nextIcon = "cancel";
+        nextLabel = "تم إلغاء هذه الحلقة";
+        nextDesc = "توقف مسار العمل — " + (string.IsNullOrWhiteSpace(ep.CancellationReason) ? "أُلغيت الحلقة لأسباب إدارية." : "سبب الإلغاء: " + ep.CancellationReason);
+    }
+    else if (ep.StatusId == 0)
+    {
+        if (canExecute) { nextIcon = "play_circle"; nextLabel = "تسجيل وتوثيق التنفيذ"; nextDesc = "ابدأ مرحلة التنفيذ وسجّل وقت البث الفعلي مع الملاحظات الفنية."; nextModal = "executeModal"; }
+        else { nextWaiting = true; nextIcon = "lock"; nextLabel = "بانتظار بدء التنفيذ"; nextDesc = "لا تملك صلاحية تسجيل التنفيذ — تواصل مع المسؤول لتفعيل مرحلة الإنتاج."; }
+    }
+    else if (ep.StatusId == 1)
+    {
+        if (canSocial) { nextIcon = "share"; nextLabel = "البدء بالنشر الرقمي (سوشال)"; nextDesc = "انشر الحلقة على منصات التواصل الاجتماعي."; nextHref = "/Publishing/LogSocial/" + ep.EpisodeId; }
+        else if (canWebsite) { nextIcon = "public"; nextLabel = "النشر على الموقع الرسمي"; nextDesc = "انشر الحلقة على الموقع الرسمي مباشرة."; nextHref = "/WebsitePublishing/Publish/" + ep.EpisodeId; }
+        else { nextWaiting = true; nextIcon = "lock"; nextLabel = "تم التنفيذ — بانتظار النشر"; nextDesc = "لا تملك صلاحية النشر الرقمي أو النشر على الموقع."; }
+    }
+    else if (ep.StatusId == 2)
+    {
+        if (canWebsite) { nextIcon = "public"; nextLabel = "النشر على الموقع الرسمي"; nextDesc = "أكمل الحلقة بنشرها على الموقع الرسمي."; nextHref = "/WebsitePublishing/Publish/" + ep.EpisodeId; }
+        else { nextWaiting = true; nextIcon = "lock"; nextLabel = "تم النشر الرقمي — بانتظار النشر على الموقع"; nextDesc = "لا تملك صلاحية النشر على الموقع الرسمي."; }
+    }
+    else if (ep.StatusId == 3)
+    {
+        nextDone = true;
+        nextIcon = "task_alt";
+        nextLabel = "اكتملت جميع مراحل الحلقة";
+        nextDesc = "تم التنفيذ والنشر الرقمي والنشر على الموقع الرسمي. يمكنك مراجعة السجلات أو تعديلها في أي وقت.";
+    }
+
+    var showOtherActions = canEdit || (ep.StatusId == 1 && canSocial && canWebsite) || canRevert || canCancelEpisode;
 }
 
-<partial name="_PageHeader" />
+<!-- ══════════ 1. HERO SUMMARY ══════════ -->
+<section class="card hero-card mb-6" aria-labelledby="episodeTitle">
+    <div class="hero-glow @(isCancelled ? "is-danger" : "")" aria-hidden="true"></div>
+    <div class="relative z-10 p-6 lg:p-8">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <ul class="flex items-center gap-1.5">
+                    <li>
+                        <a href="/" class="inline-flex items-center gap-1 transition-opacity hover:opacity-80">
+                            <span class="material-symbols-rounded text-sm" aria-hidden="true">home</span>
+                            الرئيسية
+                        </a>
+                    </li>
+                    <li><span class="material-symbols-rounded text-xs text-border" aria-hidden="true">chevron_left</span></li>
+                    <li><a href="/Episodes" class="transition-opacity hover:opacity-80">الحلقات</a></li>
+                    <li><span class="material-symbols-rounded text-xs text-border" aria-hidden="true">chevron_left</span></li>
+                    <li class="font-semibold text-text truncate max-w-[14rem]">@ep.EpisodeName</li>
+                </ul>
+            </nav>
+            <div class="flex items-center gap-2">
+                @if (canEdit)
+                {
+                    <a href="/Episodes/Edit/@ep.EpisodeId" class="btn btn-outline btn-sm gap-1" aria-label="تعديل خصائص الحلقة">
+                        <span class="material-symbols-rounded text-sm" aria-hidden="true">edit</span>
+                        تعديل
+                    </a>
+                }
+                <a href="/Episodes" class="btn btn-ghost btn-sm gap-1" aria-label="العودة إلى قائمة الحلقات">
+                    <span class="material-symbols-rounded text-sm" aria-hidden="true">arrow_forward</span>
+                    الحلقات
+                </a>
+            </div>
+        </div>
 
-<div class="flex items-center gap-3 mb-6">
-    <partial name="_StatusBadge" model='new StatusBadgeViewModel { Type = "episode", Status = ep.StatusText, Label = ep.StatusText }' />
-    @if (!isCancelled)
-    {
-        <span class="text-caption text-text-secondary font-semibold">المرحلة الحالية: @ep.StatusText</span>
-    }
-    else
-    {
-        <span class="text-caption text-danger font-semibold">ملغاة</span>
-    }
-</div>
+        <div class="mt-6 flex flex-col lg:flex-row lg:items-end gap-6">
+            <div class="min-w-0 flex-1">
+                <div class="flex flex-wrap items-center gap-2">
+                    <partial name="_StatusBadge" model='new StatusBadgeViewModel { Type = "episode", Status = ep.StatusText, Label = ep.StatusText }' />
+                    @if (!isCancelled)
+                    {
+                        <span class="badge badge-primary">المرحلة الحالية: @ep.StatusText</span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-danger">
+                            <span class="material-symbols-rounded text-xs" aria-hidden="true">cancel</span>
+                            ملغاة
+                        </span>
+                    }
+                </div>
+                <h1 id="episodeTitle" class="text-headline font-extrabold mt-3 text-text">@ep.EpisodeName</h1>
+                <div class="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-label text-text-secondary">
+                    <span class="inline-flex items-center gap-1.5">
+                        <span class="material-symbols-rounded text-base text-primary" aria-hidden="true">radio</span>
+                        <span class="font-bold">@ep.ProgramName</span>
+                    </span>
+                    <span class="inline-flex items-center gap-1.5">
+                        <span class="material-symbols-rounded text-base text-primary" aria-hidden="true">schedule</span>
+                        <span dir="ltr">@(ep.ScheduledExecutionTime?.ToString("yyyy-MM-dd HH:mm") ?? "غير محدد")</span>
+                    </span>
+                    @if (ep.ActualExecutionTime.HasValue)
+                    {
+                        <span class="inline-flex items-center gap-1.5">
+                            <span class="material-symbols-rounded text-base text-success" aria-hidden="true">event_available</span>
+                            <span dir="ltr">نُفّذت: @ep.ActualExecutionTime.Value.ToString("yyyy-MM-dd HH:mm")</span>
+                        </span>
+                    }
+                </div>
+                @if (!string.IsNullOrWhiteSpace(ep.EpisodeDescription))
+                {
+                    <p class="mt-4 text-body text-text-secondary leading-relaxed line-clamp-2">@ep.EpisodeDescription</p>
+                }
+            </div>
 
-<!-- Timeline -->
-<div class="card p-6 lg:p-8 mb-8 relative overflow-hidden">
-    @{
-        ViewBag.SectionIcon = "timeline";
-        ViewBag.SectionTitle = "مسار ودورة عمل الحلقة";
-        ViewBag.SectionSubtitle = "متابعة مراحل التنفيذ والنشر من الإعداد حتى البث الفعلي";
-        ViewBag.SectionAction = null;
-    }
-    <partial name="_SectionHeader" />
+            <div class="w-full lg:w-[20rem] shrink-0">
+                <div class="flex items-end justify-between gap-4 mb-2">
+                    <span class="text-caption font-bold text-text-muted">التقدم في مسار العمل</span>
+                    <span id="heroProgressText" class="text-headline font-extrabold leading-none @(isCancelled ? "text-danger" : "text-primary")">@progressLabel</span>
+                </div>
+                <div class="progress-track" role="progressbar" aria-label="نسبة تقدم مسار العمل" aria-valuemin="0" aria-valuemax="100" aria-valuenow="@progressPct">
+                    <span id="heroProgressFill" class="progress-fill @(isCancelled ? "is-danger" : "")" data-target="@(progressPct + "%")" aria-hidden="true"></span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 mt-4">
+                    <div class="kpi-tile">
+                        <span class="material-symbols-rounded text-base text-primary" aria-hidden="true">groups</span>
+                        <div class="kpi-value" dir="ltr">@ep.GuestItems.Count</div>
+                        <div class="kpi-label">الضيوف</div>
+                    </div>
+                    <div class="kpi-tile">
+                        <span class="material-symbols-rounded text-base text-primary" aria-hidden="true">attach_file</span>
+                        <div class="kpi-value" dir="ltr" id="heroAttachCount">—</div>
+                        <div class="kpi-label">المرفقات</div>
+                    </div>
+                    <div class="kpi-tile">
+                        <span class="material-symbols-rounded text-base @(ep.StatusId >= 2 ? "text-success" : "text-text-muted")" aria-hidden="true">@(ep.StatusId >= 2 ? "check_circle" : "share")</span>
+                        <div class="kpi-value @(ep.StatusId >= 2 ? "text-success" : "")">@(ep.StatusId >= 2 ? "تم" : "—")</div>
+                        <div class="kpi-label">النشر الرقمي</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════ 2. WORKFLOW TIMELINE ══════════ -->
+<section class="card p-6 lg:p-7 mb-6" aria-labelledby="timelineTitle">
+    <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-xl bg-primary-subtle text-primary flex items-center justify-center shrink-0">
+            <span class="material-symbols-rounded text-xl" aria-hidden="true">timeline</span>
+        </div>
+        <div class="flex-1 min-w-0">
+            <h2 id="timelineTitle" class="text-title font-bold text-text">مسار ودورة عمل الحلقة</h2>
+            <p class="text-caption text-text-muted">متابعة مراحل التنفيذ والنشر من الإعداد حتى البث الفعلي</p>
+        </div>
+    </div>
 
     <!-- Desktop: horizontal stepper -->
-    <div class="hidden lg:flex items-start justify-between relative pt-4 pb-2">
+    <div class="hidden lg:flex items-start pt-2" role="list" aria-label="مراحل سير عمل الحلقة">
         @for (int i = 0; i < stages.Length; i++)
         {
             var s = stages[i];
             var done = IsDone(i);
             var current = IsCurrent(i);
             var isLastStage = i == stages.Length - 1;
-            var lineActive = !isLastStage && (IsDone(i + 1) || IsCurrent(i + 1));
-            <div class="flex flex-col items-center flex-1 relative">
+            var nextStageDone = i < stages.Length - 1 && IsDone(i + 1);
+            var nextStageCurrent = i < stages.Length - 1 && IsCurrent(i + 1);
+            <div class="flex flex-col items-center flex-1 relative" role="listitem">
                 @if (!isLastStage || isCancelled)
                 {
-                    var connectionActive = !isLastStage ? (lineActive && !isCancelled) : isCancelled;
-                    <div class="absolute top-7 left-[-50%] right-[50%] h-1 z-0 rounded-full transition-all duration-500 @(connectionActive ? (isLastStage && isCancelled ? "bg-danger" : "bg-success") : "bg-border")"></div>
+                    var connClass = isCancelled && isLastStage ? "step-connector-danger"
+                        : nextStageCurrent ? "step-connector-current"
+                        : nextStageDone ? "step-connector-done"
+                        : "";
+                    <div class="step-connector @connClass" aria-hidden="true"></div>
                 }
-                <div class="w-14 h-14 rounded-2xl flex items-center justify-center border-2 transition-all duration-300 relative z-10 @(done && !isCancelled ? "bg-success text-white border-success shadow-lg" : current && !isCancelled ? "bg-primary text-white border-primary shadow-xl scale-110" : "bg-bg text-text-muted border-border")" style="@(done && !isCancelled ? "box-shadow:0 0 0 4px color-mix(in srgb,var(--color-success) 25%,transparent)" : current && !isCancelled ? "box-shadow:var(--shadow-float)" : "")">
-                    <span class="material-symbols-rounded text-2xl">@(done && !isCancelled ? "check" : s.Icon)</span>
+                <div class="step-node @(done ? "step-node-done" : current ? "step-node-current" : "")">
+                    <span class="material-symbols-rounded" aria-hidden="true">@(done ? "check" : s.Icon)</span>
                 </div>
-                <div class="mt-3 text-center px-1 relative z-10">
-                    <div class="text-xs font-bold leading-tight @(done && !isCancelled ? "text-success" : current && !isCancelled ? "text-primary" : "text-text-muted")">@s.Name</div>
-                    @if (current && !isCancelled)
+                <div class="mt-3 text-center px-1 min-w-0">
+                    <div class="text-xs font-extrabold leading-tight @(done ? "text-success" : current ? "text-primary" : "text-text-muted")">@s.Name</div>
+                    @if (!string.IsNullOrEmpty(StageDate(i)))
                     {
-                        <span class="text-caption font-bold mt-1.5 inline-block px-2.5 py-0.5 rounded-full animate-pulse bg-primary-subtle text-primary border border-border">المرحلة النشطة</span>
-                    }
-                    @if (done && !isCancelled && !current)
-                    {
-                        <span class="text-caption text-success mt-0.5 block font-medium">✓ تم</span>
+                        <div class="text-caption text-text-muted mt-0.5 font-medium" dir="ltr">@StageDate(i)</div>
                     }
                 </div>
             </div>
         }
         @if (isCancelled)
         {
-            <div class="flex flex-col items-center flex-1 relative">
-                <div class="w-14 h-14 rounded-2xl flex items-center justify-center bg-danger text-white border-2 border-danger shadow-lg relative z-10" style="box-shadow:0 0 0 4px color-mix(in srgb,var(--color-danger) 25%,transparent)">
-                    <span class="material-symbols-rounded text-2xl">cancel</span>
+            <div class="flex flex-col items-center flex-1 relative" role="listitem">
+                <div class="step-node step-node-cancelled">
+                    <span class="material-symbols-rounded" aria-hidden="true">cancel</span>
                 </div>
-                <div class="mt-3 text-center relative z-10">
-                    <div class="text-xs font-bold text-danger">ملغاة</div>
-                    <span class="text-caption font-bold mt-1.5 inline-block px-2.5 py-0.5 rounded-full bg-danger-subtle text-danger border border-border">نهائية</span>
+                <div class="mt-3 text-center">
+                    <div class="text-xs font-extrabold text-danger">ملغاة</div>
+                    <span class="badge badge-danger mt-1">نهائية</span>
                 </div>
             </div>
         }
     </div>
 
     <!-- Mobile/tablet: vertical stepper -->
-    <div class="lg:hidden relative space-y-0 pr-8">
+    <div class="lg:hidden relative pr-8" role="list" aria-label="مراحل سير عمل الحلقة">
         @for (int i = 0; i < stages.Length; i++)
         {
             var s = stages[i];
             var done = IsDone(i);
             var current = IsCurrent(i);
-            var lineActive = i < stages.Length - 1 && (IsDone(i + 1) || IsCurrent(i + 1));
-            <div class="flex items-start gap-4 pb-6 relative">
+            var isLastStage = i == stages.Length - 1;
+            var nextStageDone = i < stages.Length - 1 && IsDone(i + 1);
+            var nextStageCurrent = i < stages.Length - 1 && IsCurrent(i + 1);
+            <div class="flex items-start gap-4 pb-6 relative" role="listitem">
                 @if (i < stages.Length - 1 || isCancelled)
                 {
-                    <div class="absolute right-[23px] top-12 bottom-0 w-0.5 z-0 transition-all duration-500 @(lineActive && !isCancelled ? "bg-success" : "bg-border")"></div>
+                    var connClass = isCancelled && isLastStage ? "step-connector-danger"
+                        : nextStageCurrent ? "step-connector-current"
+                        : nextStageDone ? "step-connector-done"
+                        : "";
+                    <div class="step-connector-v @connClass" aria-hidden="true"></div>
                 }
-                <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border-2 transition-all duration-300 relative z-10 @(done && !isCancelled ? "bg-success text-white border-success shadow-lg" : current && !isCancelled ? "bg-primary text-white border-primary shadow-xl scale-110" : "bg-bg text-text-muted border-border")" style="@(done && !isCancelled ? "box-shadow:0 0 0 4px color-mix(in srgb,var(--color-success) 25%,transparent)" : current && !isCancelled ? "box-shadow:var(--shadow-float)" : "")">
-                    <span class="material-symbols-rounded text-xl">@(done && !isCancelled ? "check" : s.Icon)</span>
+                <div class="step-node step-node-sm @(done ? "step-node-done" : current ? "step-node-current" : "")">
+                    <span class="material-symbols-rounded" aria-hidden="true">@(done ? "check" : s.Icon)</span>
                 </div>
-                <div class="flex-1 py-2 relative z-10">
-                    <div class="text-sm font-bold @(done && !isCancelled ? "text-success" : current && !isCancelled ? "text-primary" : "text-text-muted")">@s.Name</div>
-                    @if (current && !isCancelled)
+                <div class="flex-1 py-2 min-w-0">
+                    <div class="text-sm font-extrabold @(done ? "text-success" : current ? "text-primary" : "text-text-muted")">@s.Name</div>
+                    @if (!string.IsNullOrEmpty(StageDate(i)))
                     {
-                        <span class="text-caption font-bold mt-1 inline-block px-2.5 py-0.5 rounded-full animate-pulse bg-primary-subtle text-primary">المرحلة النشطة</span>
-                    }
-                    @if (done && !isCancelled && !current)
-                    {
-                        <span class="text-caption mt-0.5 block font-medium text-success">✓ تم</span>
+                        <div class="text-caption text-text-muted font-medium mt-0.5" dir="ltr">@StageDate(i)</div>
                     }
                 </div>
             </div>
         }
         @if (isCancelled)
         {
-            <div class="flex items-start gap-4 pb-2 relative">
-                <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border-2 bg-danger text-white border-danger relative z-10" style="box-shadow:0 0 0 4px color-mix(in srgb,var(--color-danger) 25%,transparent)">
-                    <span class="material-symbols-rounded text-xl">cancel</span>
+            <div class="flex items-start gap-4 pb-1 relative" role="listitem">
+                <div class="step-node step-node-sm step-node-cancelled">
+                    <span class="material-symbols-rounded" aria-hidden="true">cancel</span>
                 </div>
-                <div class="flex-1 py-2 relative z-10">
-                    <div class="text-sm font-bold text-danger">ملغاة</div>
-                    <span class="text-caption font-bold mt-1 inline-block px-2.5 py-0.5 rounded-full bg-danger-subtle text-danger">نهائية</span>
+                <div class="flex-1 py-2">
+                    <div class="text-sm font-extrabold text-danger">ملغاة</div>
+                    <span class="badge badge-danger mt-1">نهائية</span>
                 </div>
             </div>
         }
     </div>
-</div>
+</section>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <div class="lg:col-span-2 space-y-6">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+    <div class="lg:col-span-2 space-y-6 min-w-0">
 
-        <!-- Basic info -->
-        <div class="card p-6">
-            @{
-                ViewBag.SectionIcon = "info";
-                ViewBag.SectionTitle = "معلومات الحلقة الأساسية";
-                ViewBag.SectionSubtitle = null;
-                ViewBag.SectionAction = null;
-            }
-            <partial name="_SectionHeader" />
+        <!-- ══════════ 3. NEXT ACTION PANEL ══════════ -->
+        <section class="card p-6 next-action-card @(nextDone ? "next-action-done" : nextCancelled ? "next-action-cancelled" : "")" aria-labelledby="nextActionTitle">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-primary-subtle text-primary flex items-center justify-center shrink-0">
+                    <span class="material-symbols-rounded text-xl" aria-hidden="true">bolt</span>
+                </div>
+                <h2 id="nextActionTitle" class="text-title font-bold text-text">الإجراء التالي</h2>
+                @if (!isCancelled && ep.StatusId <= 2 && (canExecute || canSocial || canWebsite))
+                {
+                    <span class="badge badge-primary ms-auto">خطوة واحدة تالية</span>
+                }
+            </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="p-3 rounded-xl bg-bg border border-border">
-                    <div class="text-caption font-bold text-text-muted mb-1">البرنامج الإذاعي</div>
-                    <div class="font-bold text-text text-sm flex items-center gap-1">
-                        <span class="material-symbols-rounded text-sm text-primary" aria-hidden="true">radio</span>
-                        @ep.ProgramName
+            @if (nextDone)
+            {
+                <div class="rounded-xl border border-success-border bg-success-subtle p-4 flex items-center gap-3">
+                    <span class="material-symbols-rounded text-3xl text-success shrink-0" aria-hidden="true">task_alt</span>
+                    <div>
+                        <div class="font-extrabold text-success">@nextLabel</div>
+                        <div class="text-caption text-text-secondary mt-0.5 leading-relaxed">@nextDesc</div>
                     </div>
                 </div>
-                <div class="p-3 rounded-xl bg-bg border border-border">
-                    <div class="text-caption font-bold text-text-muted mb-1">حالة الحلقة الحالية</div>
-                    <partial name="_StatusBadge" model='new StatusBadgeViewModel { Type = "episode", Status = ep.StatusText, Label = ep.StatusText }' />
+            }
+            else if (nextCancelled)
+            {
+                <div class="rounded-xl border border-danger-border bg-danger-subtle p-4 flex items-center gap-3">
+                    <span class="material-symbols-rounded text-3xl text-danger shrink-0" aria-hidden="true">cancel</span>
+                    <div>
+                        <div class="font-extrabold text-danger">@nextLabel</div>
+                        <div class="text-caption text-text-secondary mt-0.5 leading-relaxed">@nextDesc</div>
+                    </div>
                 </div>
+            }
+            else if (nextModal != null)
+            {
+                <button type="button" class="btn btn-primary btn-lg w-full ripple gap-2" onclick="document.getElementById('@nextModal').showModal()" aria-label="@nextLabel">
+                    <span class="material-symbols-rounded text-xl" aria-hidden="true">@nextIcon</span>
+                    @nextLabel
+                </button>
+                <p class="text-caption text-text-muted mt-3 leading-relaxed">@nextDesc</p>
+            }
+            else if (nextHref != null)
+            {
+                <a href="@nextHref" class="btn btn-primary btn-lg w-full ripple gap-2" aria-label="@nextLabel">
+                    <span class="material-symbols-rounded text-xl" aria-hidden="true">@nextIcon</span>
+                    @nextLabel
+                </a>
+                <p class="text-caption text-text-muted mt-3 leading-relaxed">@nextDesc</p>
+            }
+            else if (nextWaiting)
+            {
+                <div class="rounded-xl border border-border bg-bg p-4 flex items-center gap-3">
+                    <span class="material-symbols-rounded text-3xl text-text-muted shrink-0" aria-hidden="true">lock</span>
+                    <div>
+                        <div class="font-extrabold text-text">@nextLabel</div>
+                        <div class="text-caption text-text-secondary mt-0.5 leading-relaxed">@nextDesc</div>
+                    </div>
+                </div>
+            }
+
+            @if (showOtherActions)
+            {
+                <div class="mt-5 pt-4 border-t border-border">
+                    <div class="text-caption font-bold text-text-muted mb-2.5 flex items-center gap-1">
+                        <span class="material-symbols-rounded text-sm" aria-hidden="true">more_horiz</span>
+                        إجراءات أخرى
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        @if (canEdit)
+                        {
+                            <a href="/Episodes/Edit/@ep.EpisodeId" class="btn btn-outline btn-sm gap-1">
+                                <span class="material-symbols-rounded text-sm" aria-hidden="true">edit</span>
+                                تعديل خصائص الحلقة
+                            </a>
+                        }
+                        @if (ep.StatusId == 1 && canSocial && canWebsite)
+                        {
+                            <a href="/WebsitePublishing/Publish/@ep.EpisodeId" class="btn btn-outline btn-sm gap-1">
+                                <span class="material-symbols-rounded text-sm" aria-hidden="true">public</span>
+                                النشر على الموقع الرسمي
+                            </a>
+                        }
+                        @if (canRevert)
+                        {
+                            <button type="button" class="btn btn-outline btn-sm gap-1" onclick="document.getElementById('revertModal').showModal()" aria-label="التراجع عن الحالة السابقة">
+                                <span class="material-symbols-rounded text-sm" aria-hidden="true">undo</span>
+                                التراجع عن الحالة
+                            </button>
+                        }
+                    </div>
+                    @if (canCancelEpisode)
+                    {
+                        <div class="mt-3 pt-3 border-t border-border-light">
+                            <button type="button" class="btn btn-ghost btn-sm gap-1 text-danger" onclick="document.getElementById('cancelModal').showModal()" aria-label="إلغاء الحلقة">
+                                <span class="material-symbols-rounded text-sm" aria-hidden="true">cancel</span>
+                                إلغاء الحلقة
+                            </button>
+                        </div>
+                    }
+                </div>
+            }
+        </section>
+
+        <!-- ══════════ 4. BASIC INFORMATION ══════════ -->
+        <section class="card p-6" aria-labelledby="basicInfoTitle">
+            <div class="flex items-center gap-3 mb-5">
+                <div class="w-10 h-10 rounded-xl bg-primary-subtle text-primary flex items-center justify-center shrink-0">
+                    <span class="material-symbols-rounded text-xl" aria-hidden="true">info</span>
+                </div>
+                <h2 id="basicInfoTitle" class="text-title font-bold text-text">معلومات الحلقة</h2>
             </div>
+
+            <dl class="def-grid">
+                <div class="def-item">
+                    <dt>البرنامج الإذاعي</dt>
+                    <dd class="flex items-center gap-1.5">
+                        <span class="material-symbols-rounded text-sm text-primary" aria-hidden="true">radio</span>
+                        <span>@ep.ProgramName</span>
+                    </dd>
+                </div>
+                <div class="def-item">
+                    <dt>الموعد المجدول للبث</dt>
+                    <dd class="flex items-center gap-1.5">
+                        <span class="material-symbols-rounded text-sm text-primary" aria-hidden="true">schedule</span>
+                        <span dir="ltr">@(ep.ScheduledExecutionTime?.ToString("yyyy-MM-dd HH:mm") ?? "غير محدد")</span>
+                    </dd>
+                </div>
+
+                @if (ep.GuestItems.Any())
+                {
+                    <div class="def-item def-item-full">
+                        <dt>الضيوف المشاركون (@ep.GuestItems.Count)</dt>
+                        <dd class="flex flex-wrap gap-2 pt-1">
+                            @foreach (var g in ep.GuestItems)
+                            {
+                                ViewBag.ChipName = g.Name;
+                                ViewBag.ChipSubtitle = g.Topic;
+                                ViewBag.ChipSubtitleIcon = "topic";
+                                ViewBag.ChipTime = g.HostingTime?.ToString(@"hh\:mm");
+                                ViewBag.ChipColor = "primary";
+                                <partial name="_PersonChip" />
+                            }
+                        </dd>
+                    </div>
+                }
+
+                @if (ep.CorrespondentItems.Any())
+                {
+                    <div class="def-item def-item-full">
+                        <dt>المراسلون الميدانيون (@ep.CorrespondentItems.Count)</dt>
+                        <dd class="flex flex-wrap gap-2 pt-1">
+                            @foreach (var c in ep.CorrespondentItems)
+                            {
+                                ViewBag.ChipName = c.FullName;
+                                ViewBag.ChipSubtitle = c.Topic;
+                                ViewBag.ChipSubtitleIcon = null;
+                                ViewBag.ChipTime = c.HostingTime?.ToString(@"hh\:mm");
+                                ViewBag.ChipColor = "primary";
+                                <partial name="_PersonChip" />
+                            }
+                        </dd>
+                    </div>
+                }
+
+                @if (ep.EmployeeItems.Any())
+                {
+                    <div class="def-item def-item-full">
+                        <dt>طاقم العمل والإنتاج (@ep.EmployeeItems.Count)</dt>
+                        <dd class="flex flex-wrap gap-2 pt-1">
+                            @foreach (var e in ep.EmployeeItems)
+                            {
+                                ViewBag.ChipName = e.FullName;
+                                ViewBag.ChipSubtitle = e.StaffRoleName;
+                                ViewBag.ChipSubtitleIcon = "badge";
+                                ViewBag.ChipTime = null;
+                                ViewBag.ChipColor = "primary";
+                                <partial name="_PersonChip" />
+                            }
+                        </dd>
+                    </div>
+                }
+            </dl>
 
             @if (!string.IsNullOrWhiteSpace(ep.EpisodeDescription))
             {
-                <div class="mt-4 p-4 rounded-xl border-r-4 border-primary bg-primary-subtle">
-                    <div class="text-caption font-bold text-primary mb-1">وصف ومحتوى الحلقة</div>
-                    <div class="text-text text-sm leading-relaxed whitespace-pre-line font-medium">@ep.EpisodeDescription</div>
+                <div class="mt-5 rounded-xl border-r-4 border-primary bg-primary-subtle p-4">
+                    <div class="text-caption font-bold text-primary mb-1 flex items-center gap-1">
+                        <span class="material-symbols-rounded text-sm" aria-hidden="true">notes</span>
+                        وصف ومحتوى الحلقة
+                    </div>
+                    <div class="text-body text-text leading-relaxed whitespace-pre-line font-medium">@ep.EpisodeDescription</div>
                 </div>
             }
 
             @if (!string.IsNullOrWhiteSpace(ep.SpecialNotes))
             {
-                <div class="mt-4 p-4 rounded-xl border-r-4 border-warning bg-warning-subtle">
-                    <div class="text-caption font-bold text-warning mb-1">ملاحظات وتوجيهات خاصة</div>
-                    <div class="text-text text-sm font-medium">@ep.SpecialNotes</div>
+                <div class="mt-4 rounded-xl border border-border bg-bg p-4">
+                    <div class="text-caption font-bold text-text-secondary mb-1 flex items-center gap-1">
+                        <span class="material-symbols-rounded text-sm text-text-muted" aria-hidden="true">edit_note</span>
+                        ملاحظات وتوجيهات خاصة
+                    </div>
+                    <div class="text-body text-text font-medium">@ep.SpecialNotes</div>
                 </div>
             }
 
             @if (!string.IsNullOrWhiteSpace(ep.CancellationReason))
             {
-                <div class="mt-4 p-4 rounded-xl border-r-4 border-danger bg-danger-subtle">
+                <div class="mt-4 rounded-xl border-r-4 border-danger bg-danger-subtle p-4">
                     <div class="text-caption font-bold text-danger mb-1 flex items-center gap-1">
-                        <span class="material-symbols-rounded text-xs" aria-hidden="true">warning</span>
+                        <span class="material-symbols-rounded text-sm" aria-hidden="true">warning</span>
                         سبب إلغاء وجدولة الحلقة
                     </div>
-                    <div class="text-text text-sm font-medium">@ep.CancellationReason</div>
+                    <div class="text-body text-text font-medium">@ep.CancellationReason</div>
                 </div>
             }
-        </div>
+        </section>
 
-        <!-- Planning -->
-        <div class="card p-6 @(ep.StatusId < 1 ? "ring-2 ring-primary" : "")">
-            @{
-                ViewBag.SectionIcon = "calendar_today";
-                ViewBag.SectionTitle = "تفاصيل مرحلة التخطيط";
-                ViewBag.SectionSubtitle = null;
-                ViewBag.SectionAction = ep.StatusId == 0 ? new Microsoft.AspNetCore.Html.HtmlString("<span class=\"text-caption font-bold px-2.5 py-0.5 rounded-full bg-primary-subtle text-primary border border-border\">المرحلة الحالية</span>") : null;
-            }
-            <partial name="_SectionHeader" />
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="p-3 rounded-xl bg-bg border border-border">
-                    <div class="text-caption font-bold text-text-muted mb-1">الموعد المجدول للبث</div>
-                    <div class="font-bold text-text text-sm flex items-center gap-1.5">
-                        <span class="material-symbols-rounded text-sm text-primary" aria-hidden="true">schedule</span>
-                        @(ep.ScheduledExecutionTime?.ToString("yyyy-MM-dd HH:mm") ?? "—")
-                    </div>
+        <!-- ══════════ 5. WORKFLOW DETAILS (ACCORDION) ══════════ -->
+        <section class="card p-6" aria-labelledby="workflowTitle">
+            <div class="flex items-center gap-3 mb-5">
+                <div class="w-10 h-10 rounded-xl bg-primary-subtle text-primary flex items-center justify-center shrink-0">
+                    <span class="material-symbols-rounded text-xl" aria-hidden="true">account_tree</span>
                 </div>
-                <div class="p-3 rounded-xl bg-bg border border-border">
-                    <div class="text-caption font-bold text-text-muted mb-1">البرنامج</div>
-                    <div class="font-bold text-text text-sm flex items-center gap-1.5">
-                        <span class="material-symbols-rounded text-sm text-primary" aria-hidden="true">radio</span>
-                        @ep.ProgramName
-                    </div>
+                <div class="flex-1 min-w-0">
+                    <h2 id="workflowTitle" class="text-title font-bold text-text">تفاصيل مراحل سير العمل</h2>
+                    <p class="text-caption text-text-muted">سجل إنجاز كل مرحلة ومنفّذها وتفاصيلها</p>
                 </div>
             </div>
 
-            @if (ep.GuestItems.Any())
-            {
-                <div class="mt-6">
-                    <div class="text-xs font-bold text-text mb-3 flex items-center gap-1">
-                        <span class="material-symbols-rounded text-sm text-primary" aria-hidden="true">groups</span>
-                        الضيوف المشاركون (@ep.GuestItems.Count)
-                    </div>
-                    <div class="flex flex-wrap gap-2">
-                        @foreach (var g in ep.GuestItems)
-                        {
-                            ViewBag.ChipName = g.Name;
-                            ViewBag.ChipSubtitle = g.Topic;
-                            ViewBag.ChipSubtitleIcon = "topic";
-                            ViewBag.ChipTime = g.HostingTime?.ToString(@"hh\:mm");
-                            ViewBag.ChipColor = "primary";
-                            <partial name="_PersonChip" />
-                        }
-                    </div>
-                </div>
-            }
-
-            @if (ep.CorrespondentItems.Any())
-            {
-                <div class="mt-6">
-                    <div class="text-xs font-bold text-text mb-3 flex items-center gap-1">
-                        <span class="material-symbols-rounded text-sm text-warning" aria-hidden="true">map</span>
-                        المراسلون الميدانيون (@ep.CorrespondentItems.Count)
-                    </div>
-                    <div class="flex flex-wrap gap-2">
-                        @foreach (var c in ep.CorrespondentItems)
-                        {
-                            ViewBag.ChipName = c.FullName;
-                            ViewBag.ChipSubtitle = c.Topic;
-                            ViewBag.ChipSubtitleIcon = null;
-                            ViewBag.ChipTime = c.HostingTime?.ToString(@"hh\:mm");
-                            ViewBag.ChipColor = "warning";
-                            <partial name="_PersonChip" />
-                        }
-                    </div>
-                </div>
-            }
-
-            @if (ep.EmployeeItems.Any())
-            {
-                <div class="mt-6">
-                    <div class="text-xs font-bold text-text mb-3 flex items-center gap-1">
-                        <span class="material-symbols-rounded text-sm" aria-hidden="true">badge</span>
-                        طاقم العمل والإنتاج (@ep.EmployeeItems.Count)
-                    </div>
-                    <div class="flex flex-wrap gap-2">
-                        @foreach (var e in ep.EmployeeItems)
-                        {
-                            ViewBag.ChipName = e.FullName;
-                            ViewBag.ChipSubtitle = e.StaffRoleName;
-                            ViewBag.ChipSubtitleIcon = "badge";
-                            ViewBag.ChipTime = null;
-                            ViewBag.ChipColor = "primary";
-                            <partial name="_PersonChip" />
-                        }
-                    </div>
-                </div>
-            }
-        </div>
-
-        <!-- Execution stage -->
-        @if (ep.StatusId >= 1)
-        {
-            <div class="card p-6 @(ep.StatusId == 1 ? "ring-2 ring-success" : "")">
-                <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
-                    <span class="material-symbols-rounded p-1 rounded-lg text-lg @StageIconBg("success")" aria-hidden="true">play_circle</span>
-                    <h3 class="font-bold text-text flex-1">تفاصيل مرحلة التنفيذ (الإنتاج)</h3>
-                    @if (ep.StatusId == 1)
-                    {
-                        <span class="badge badge-success">المرحلة الحالية</span>
-                    }
-                </div>
-
-                @if (ep.ActualExecutionTime.HasValue)
+            <div class="wf-acc">
+                @for (int i = 0; i < stages.Length; i++)
                 {
-                    var execLog = Model.PublishingRecords.FirstOrDefault(r => r.RecordType == "Execution");
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="p-3 rounded-xl bg-bg border border-border">
-                            <div class="text-caption font-bold text-text-muted mb-1">وقت التنفيذ الفعلي للبث</div>
-                            <div class="font-bold text-text text-sm flex items-center gap-1.5">
-                                <span class="material-symbols-rounded text-sm text-success" aria-hidden="true">event_available</span>
-                                @ep.ActualExecutionTime.Value.ToString("yyyy-MM-dd HH:mm")
+                    var s = stages[i];
+                    var done = IsDone(i);
+                    var current = IsCurrent(i);
+                    var open = i == openSection;
+                    <details class="wf-acc-item" @(open ? "open" : "")>
+                        <summary class="wf-acc-summary">
+                            <span class="wf-acc-stage @(done ? "bg-success-subtle text-success" : current ? "bg-primary-subtle text-primary" : "bg-bg text-text-muted")">
+                                <span class="material-symbols-rounded text-lg" aria-hidden="true">@(done ? "check" : s.Icon)</span>
+                            </span>
+                            <span class="flex-1 min-w-0">
+                                <span class="block text-label font-extrabold text-text">@s.Name</span>
+                                <span class="block text-caption text-text-muted truncate">@sectionSubtitles[i]</span>
+                            </span>
+                            <span class="badge @StageBadge(i) shrink-0">@StageBadgeText(i)</span>
+                            <span class="material-symbols-rounded wf-acc-chevron" aria-hidden="true">expand_more</span>
+                        </summary>
+                        <div class="wf-acc-body">
+                            <div class="wf-acc-body-inner">
+                                <div class="wf-acc-body-content">
+                                    @if (i == 0)
+                                    {
+                                        <div class="space-y-2">
+                                            <div class="wf-acc-row">
+                                                <span class="material-symbols-rounded text-lg text-primary shrink-0" aria-hidden="true">groups</span>
+                                                <span class="text-caption font-bold text-text-muted w-32 shrink-0">المشاركون</span>
+                                                <span class="text-label font-bold text-text">@ep.GuestItems.Count ضيف · @ep.CorrespondentItems.Count مراسل · @ep.EmployeeItems.Count من الطاقم</span>
+                                            </div>
+                                        </div>
+                                    }
+                                    else if (i == 1)
+                                    {
+                                        if (execLog != null)
+                                        {
+                                            <div class="space-y-2">
+                                                <div class="wf-acc-row">
+                                                    <span class="material-symbols-rounded text-lg text-success shrink-0" aria-hidden="true">person</span>
+                                                    <span class="text-caption font-bold text-text-muted w-32 shrink-0">منفّذ بواسطة</span>
+                                                    <span class="text-label font-bold text-text">@(execLog.RecordedBy ?? "تلقائي")</span>
+                                                </div>
+                                                @if (ep.ActualExecutionTime.HasValue)
+                                                {
+                                                    <div class="wf-acc-row">
+                                                        <span class="material-symbols-rounded text-lg text-success shrink-0" aria-hidden="true">event_available</span>
+                                                        <span class="text-caption font-bold text-text-muted w-32 shrink-0">وقت التنفيذ</span>
+                                                        <span class="text-label font-bold text-text" dir="ltr">@ep.ActualExecutionTime.Value.ToString("yyyy-MM-dd HH:mm")</span>
+                                                    </div>
+                                                }
+                                                @if (!string.IsNullOrWhiteSpace(execLog.Summary))
+                                                {
+                                                    <div class="wf-acc-row items-start">
+                                                        <span class="material-symbols-rounded text-lg text-success shrink-0 mt-0.5" aria-hidden="true">notes</span>
+                                                        <span class="text-caption font-bold text-text-muted w-32 shrink-0">الملخص والمدة</span>
+                                                        <span class="text-label font-semibold text-text">@execLog.Summary</span>
+                                                    </div>
+                                                }
+                                            </div>
+                                            @if (User.HasPermission(AppPermissions.ExecutionExecute))
+                                            {
+                                                <a href="/ExecutionLogs/Edit/@execLog.RecordId" class="btn btn-outline btn-sm gap-1 mt-3">
+                                                    <span class="material-symbols-rounded text-sm" aria-hidden="true">edit</span>
+                                                    تعديل بيانات التنفيذ
+                                                </a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <div class="text-caption text-text-muted flex items-center gap-2 py-2">
+                                                <span class="material-symbols-rounded text-base" aria-hidden="true">help_outline</span>
+                                                @(ep.StatusId >= 1 ? "لا توجد بيانات تنفيذ مسجلة بعد." : "بانتظار تسجيل التنفيذ — ستظهر التفاصيل هنا بعد اكتمال المرحلة.")
+                                            </div>
+                                        }
+                                    }
+                                    else if (i == 2)
+                                    {
+                                        if (socialRecords.Any())
+                                        {
+                                            <div class="space-y-2">
+                                                @foreach (var sr in socialRecords)
+                                                {
+                                                    <div class="wf-acc-row flex-wrap">
+                                                        <span class="material-symbols-rounded text-lg text-primary shrink-0" aria-hidden="true">share</span>
+                                                        <span class="min-w-0 flex-1">
+                                                            <span class="block text-label font-bold text-text">@sr.Summary</span>
+                                                            <span class="block text-caption text-text-muted" dir="ltr">@sr.RecordDate.ToString("yyyy-MM-dd HH:mm")</span>
+                                                        </span>
+                                                        <span class="text-caption font-semibold text-text-secondary">@(sr.RecordedBy ?? "تلقائي")</span>
+                                                        @if (User.HasPermission(AppPermissions.SocialPublishingPublish))
+                                                        {
+                                                            <a href="/Publishing/Edit/@sr.RecordId" class="btn btn-outline btn-xs gap-1" aria-label="تعديل النشر الرقمي">
+                                                                <span class="material-symbols-rounded text-sm" aria-hidden="true">edit</span>
+                                                                تعديل
+                                                            </a>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="text-caption text-text-muted flex items-center gap-2 py-2">
+                                                <span class="material-symbols-rounded text-base" aria-hidden="true">help_outline</span>
+                                                لا توجد سجلات نشر رقمي مسجلة بعد.
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (websiteRecords.Any())
+                                        {
+                                            <div class="space-y-2">
+                                                @foreach (var wr in websiteRecords)
+                                                {
+                                                    <div class="wf-acc-row flex-wrap">
+                                                        <span class="material-symbols-rounded text-lg text-primary shrink-0" aria-hidden="true">public</span>
+                                                        <span class="min-w-0 flex-1">
+                                                            <span class="block text-label font-bold text-text">@wr.Summary</span>
+                                                            <span class="block text-caption text-text-muted" dir="ltr">@wr.RecordDate.ToString("yyyy-MM-dd HH:mm")</span>
+                                                        </span>
+                                                        <span class="text-caption font-semibold text-text-secondary">@(wr.RecordedBy ?? "تلقائي")</span>
+                                                        @if (User.HasPermission(AppPermissions.WebsitePublishingPublish))
+                                                        {
+                                                            <a href="/WebsitePublishing/Edit/@wr.RecordId" class="btn btn-outline btn-xs gap-1" aria-label="تعديل النشر على الموقع">
+                                                                <span class="material-symbols-rounded text-sm" aria-hidden="true">edit</span>
+                                                                تعديل
+                                                            </a>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="text-caption text-text-muted flex items-center gap-2 py-2">
+                                                <span class="material-symbols-rounded text-base" aria-hidden="true">help_outline</span>
+                                                لا توجد سجلات نشر موقع مسجلة بعد.
+                                            </div>
+                                        }
+                                    }
+                                </div>
                             </div>
                         </div>
-                        @if (execLog != null)
-                        {
-                            <div class="p-3 rounded-xl bg-bg border border-border">
-                                <div class="text-caption font-bold text-text-muted mb-1">الملخص والمدة</div>
-                                <div class="font-bold text-text text-sm flex items-center gap-1.5">
-                                    <span class="material-symbols-rounded text-sm text-success" aria-hidden="true">hourglass_empty</span>
-                                    @execLog.Summary
-                                </div>
-                            </div>
-                        }
-                    </div>
-                    if (User.HasPermission(AppPermissions.ExecutionExecute) && execLog != null)
-                    {
-                        <a href="/ExecutionLogs/Edit/@execLog.RecordId" class="mt-4 inline-flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-caption font-semibold transition-all bg-success-subtle text-success border border-border">
-                            <span class="material-symbols-rounded text-sm" aria-hidden="true">edit</span>
-                            تعديل بيانات التنفيذ
-                        </a>
-                    }
-                }
-                else
-                {
-                    <div class="text-text-muted text-sm flex items-center gap-2 py-2">
-                        <span class="material-symbols-rounded text-text-muted" aria-hidden="true">help_outline</span>
-                        لم يتم تسجيل وقت التنفيذ الفعلي بعد.
-                    </div>
+                    </details>
                 }
             </div>
-        }
-
-        <!-- Social stage -->
-        @if (ep.StatusId >= 2)
-        {
-            <div class="card p-6 @(ep.StatusId == 2 ? "ring-2 ring-success" : "")">
-                <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
-                    <span class="material-symbols-rounded p-1 rounded-lg text-lg @StageIconBg("success")" aria-hidden="true">share</span>
-                    <h3 class="font-bold text-text flex-1">تفاصيل النشر الرقمي (سوشال)</h3>
-                    @if (ep.StatusId == 2)
-                    {
-                        <span class="badge badge-success">المرحلة الحالية</span>
-                    }
-                </div>
-
-                @if (socialRecords.Any())
-                {
-                    <div class="space-y-3">
-                        @foreach (var sr in socialRecords)
-                        {
-                            <div class="rounded-xl p-4 bg-bg border border-border">
-                                <div class="flex items-center justify-between mb-2 pb-2 border-b border-border">
-                                    <span class="font-bold text-text text-sm flex items-center gap-1.5">
-                                        <span class="material-symbols-rounded text-sm text-primary" aria-hidden="true">person_pin</span>
-                                        @sr.Summary
-                                    </span>
-                                    <span class="text-caption text-text-muted font-medium flex items-center gap-1">
-                                        <span class="material-symbols-rounded text-xs" aria-hidden="true">schedule</span>
-                                        @sr.RecordDate.ToString("yyyy-MM-dd HH:mm")
-                                    </span>
-                                </div>
-                                <div class="text-caption text-text-muted flex items-center gap-1">
-                                    <span class="material-symbols-rounded text-xs text-text-muted" aria-hidden="true">account_circle</span>
-                                    المسؤول عن النشر: @(sr.RecordedBy ?? "تلقائي")
-                                </div>
-                                @if (User.HasPermission(AppPermissions.SocialPublishingPublish))
-                                {
-                                    <a href="/Publishing/Edit/@sr.RecordId" class="mt-3 inline-flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-caption font-semibold transition-all bg-primary-subtle text-primary border border-border">
-                                        <span class="material-symbols-rounded text-sm" aria-hidden="true">edit</span>
-                                        تعديل النشر الرقمي
-                                    </a>
-                                }
-                            </div>
-                        }
-                    </div>
-                }
-                else
-                {
-                    <div class="text-text-muted text-sm flex items-center gap-2 py-2">
-                        <span class="material-symbols-rounded text-text-muted" aria-hidden="true">help_outline</span>
-                        لا توجد سجلات نشر رقمي مسجلة بعد.
-                    </div>
-                }
-            </div>
-        }
-
-        <!-- Website stage -->
-        @if (ep.StatusId >= 3)
-        {
-            <div class="card p-6 @(ep.StatusId == 3 ? "ring-2 ring-accent" : "")">
-                <div class="flex items-center gap-2 mb-4 pb-3 border-b border-border">
-                    <span class="material-symbols-rounded p-1 rounded-lg text-lg @StageIconBg("accent")" aria-hidden="true">public</span>
-                    <h3 class="font-bold text-text flex-1">تفاصيل النشر على الموقع الرسمي</h3>
-                    @if (ep.StatusId == 3)
-                    {
-                        <span class="badge badge-accent">المرحلة الحالية</span>
-                    }
-                </div>
-
-                @if (websiteRecords.Any())
-                {
-                    <div class="space-y-3">
-                        @foreach (var wr in websiteRecords)
-                        {
-                            <div class="rounded-xl p-4 bg-bg border border-border">
-                                <div class="flex items-center justify-between mb-2 pb-2 border-b border-border">
-                                    <span class="font-bold text-text text-sm flex items-center gap-1.5">
-                                        <span class="material-symbols-rounded text-sm text-accent" aria-hidden="true">language</span>
-                                        @wr.Summary
-                                    </span>
-                                    <span class="text-caption text-text-muted font-medium flex items-center gap-1">
-                                        <span class="material-symbols-rounded text-xs" aria-hidden="true">schedule</span>
-                                        @wr.RecordDate.ToString("yyyy-MM-dd HH:mm")
-                                    </span>
-                                </div>
-                                <div class="text-caption text-text-muted flex items-center gap-1">
-                                    <span class="material-symbols-rounded text-xs text-text-muted" aria-hidden="true">account_circle</span>
-                                    المسؤول عن النشر: @(wr.RecordedBy ?? "تلقائي")
-                                </div>
-                                @if (User.HasPermission(AppPermissions.WebsitePublishingPublish))
-                                {
-                                    <a href="/WebsitePublishing/Edit/@wr.RecordId" class="mt-3 inline-flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-caption font-semibold transition-all bg-accent-subtle text-accent border border-border">
-                                        <span class="material-symbols-rounded text-sm" aria-hidden="true">edit</span>
-                                        تعديل النشر على الموقع
-                                    </a>
-                                }
-                            </div>
-                        }
-                    </div>
-                }
-                else
-                {
-                    <div class="text-text-muted text-sm flex items-center gap-2 py-2">
-                        <span class="material-symbols-rounded text-text-muted" aria-hidden="true">help_outline</span>
-                        لا توجد سجلات نشر موقع مسجلة بعد.
-                    </div>
-                }
-            </div>
-        }
+        </section>
     </div>
 
-    <!-- Right sidebar -->
-    <div class="space-y-6">
+    <!-- ══════════ RAIL ══════════ -->
+    <aside class="space-y-6 min-w-0">
 
-        <!-- Actions -->
-        <div class="card p-6">
-            <div class="flex items-center gap-3 mb-4 pb-3 border-b border-border">
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary-subtle text-primary shrink-0">
-                    <span class="material-symbols-rounded text-lg" aria-hidden="true">bolt</span>
-                </div>
-                <h3 class="font-bold text-text">إجراءات الحلقة</h3>
-            </div>
-            <div class="space-y-3">
-                @if (User.HasPermission(AppPermissions.EpisodesEdit) && ep.StatusId != 4)
-                {
-                    <a href="/Episodes/Edit/@ep.EpisodeId" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all bg-primary-subtle text-primary border border-border">
-                        <span class="material-symbols-rounded text-lg" aria-hidden="true">edit</span>
-                        تعديل خصائص الحلقة
-                    </a>
-                }
-                @if (User.HasPermission(AppPermissions.ExecutionExecute) && ep.StatusId == 0)
-                {
-                    <button type="button" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all bg-success-subtle text-success border border-border text-right" onclick="document.getElementById('executeModal').showModal()">
-                        <span class="material-symbols-rounded text-lg" aria-hidden="true">play_circle</span>
-                        تسجيل وتوثيق التنفيذ
-                    </button>
-                }
-                @if (User.HasPermission(AppPermissions.SocialPublishingPublish) && ep.StatusId == 1)
-                {
-                    <a href="/Publishing/LogSocial/@ep.EpisodeId" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all bg-info-subtle text-info border border-border">
-                        <span class="material-symbols-rounded text-lg" aria-hidden="true">share</span>
-                        البدء بالنشر الرقمي (سوشال)
-                    </a>
-                }
-                @if (User.HasPermission(AppPermissions.WebsitePublishingPublish) && (ep.StatusId == 1 || ep.StatusId == 2))
-                {
-                    <a href="/WebsitePublishing/Publish/@ep.EpisodeId" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all bg-accent-subtle text-accent border border-border">
-                        <span class="material-symbols-rounded text-lg" aria-hidden="true">public</span>
-                        النشر على الموقع الرسمي
-                    </a>
-                }
-                @if (User.HasPermission(AppPermissions.ExecutionCancel) && ep.StatusId is 1 or 2 or 3)
-                {
-                    <button type="button" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all bg-warning-subtle text-warning border border-border text-right" onclick="document.getElementById('revertModal').showModal()">
-                        <span class="material-symbols-rounded text-lg" aria-hidden="true">undo</span>
-                        التراجع عن الحالة السابقة
-                    </button>
-                }
-                @if (User.HasPermission(AppPermissions.EpisodesDelete) && ep.StatusId != 4)
-                {
-                    <button type="button" class="inline-flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all bg-danger-subtle text-danger border border-border text-right" onclick="document.getElementById('cancelModal').showModal()">
-                        <span class="material-symbols-rounded text-lg" aria-hidden="true">cancel</span>
-                        إلغاء الحلقة
-                    </button>
-                }
-            </div>
-        </div>
-
-        <!-- Attachments -->
-        <div class="card p-6">
-            <div class="flex items-center gap-3 mb-4 pb-3 border-b border-border">
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary-subtle text-primary shrink-0">
+        <!-- ══════════ 6. ATTACHMENTS ══════════ -->
+        <section class="card p-5" aria-labelledby="attachmentsTitle">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-primary-subtle text-primary flex items-center justify-center shrink-0">
                     <span class="material-symbols-rounded text-lg" aria-hidden="true">attach_file</span>
                 </div>
-                <h3 class="font-bold text-text">المرفقات</h3>
+                <h2 id="attachmentsTitle" class="text-title font-bold text-text flex-1">المرفقات</h2>
+                <span class="badge badge-secondary" id="attachCountChip" dir="ltr">0</span>
             </div>
-            <form method="post" action="/Upload/Episode/@Model.Episode.EpisodeId" enctype="multipart/form-data" class="mb-3">
-                <div class="flex items-center gap-2">
-                    <input type="file" name="files" multiple class="w-full rounded-xl py-2 px-3 text-sm focus:outline-none focus:ring-2 transition-all flex-1 min-w-0 bg-bg border border-border text-text ring-ring" aria-label="اختيار ملفات للرفع" />
-                    <button type="submit" class="btn btn-primary btn-sm rounded-xl whitespace-nowrap gap-1" aria-label="رفع الملفات">
+
+            <label for="fileInput" class="drop-zone" id="dropZone">
+                <input id="fileInput" type="file" name="files" multiple class="sr-only" aria-label="اختيار ملفات للرفع" />
+                <span class="material-symbols-rounded text-2xl text-primary" aria-hidden="true">cloud_upload</span>
+                <span class="text-label font-bold text-text">اسحب الملفات هنا أو انقر للاختيار</span>
+                <span class="text-caption text-text-muted">جميع أنواع الملفات مدعومة</span>
+            </label>
+
+            <noscript>
+                <form method="post" action="/Upload/Episode/@Model.Episode.EpisodeId" enctype="multipart/form-data" class="mt-3 flex gap-2">
+                    <input type="file" name="files" multiple class="input input-sm flex-1" aria-label="اختيار ملفات للرفع" />
+                    <button type="submit" class="btn btn-primary btn-sm gap-1">
                         <span class="material-symbols-rounded text-sm" aria-hidden="true">upload</span>
                         رفع
                     </button>
+                </form>
+            </noscript>
+
+            <div id="uploadProgress" class="hidden mt-3">
+                <div class="flex items-center justify-between text-caption text-text-muted mb-1.5">
+                    <span id="uploadProgressLabel">جاري الرفع…</span>
+                    <span class="spinner" aria-hidden="true"></span>
                 </div>
-            </form>
-            <div id="attachmentList" class="space-y-1">
-                <div class="text-center py-4 text-text-muted text-xs">
-                    <span class="material-symbols-rounded text-lg block mb-1 text-text-muted" aria-hidden="true">cloud_upload</span>
-                    جاري تحميل المرفقات…
+                <div class="progress-track">
+                    <span class="progress-fill" id="uploadProgressBar" aria-hidden="true"></span>
                 </div>
             </div>
-        </div>
 
-        <!-- Audit log -->
-        <div class="card p-6">
-            <div class="flex items-center gap-3 mb-4 pb-3 border-b border-border">
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-accent-subtle text-accent">
+            <ul id="attachmentList" class="space-y-2 mt-4" aria-live="polite">
+                <li class="text-center py-6 text-caption text-text-muted">
+                    <span class="material-symbols-rounded text-xl block mb-1 text-text-muted" aria-hidden="true">cloud_upload</span>
+                    جاري تحميل المرفقات…
+                </li>
+            </ul>
+        </section>
+
+        <!-- ══════════ 7. ACTIVITY TIMELINE ══════════ -->
+        <section class="card p-5" aria-labelledby="activityTitle">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-bg border border-border text-text-secondary flex items-center justify-center shrink-0">
                     <span class="material-symbols-rounded text-lg" aria-hidden="true">history</span>
                 </div>
-                <h3 class="font-bold text-text flex-1">السجل الزمني للعمليات</h3>
-                @if (Model.PublishingRecords.Any())
-                {
-                    <span class="text-caption font-bold px-2 py-0.5 rounded-lg bg-bg text-text-muted">@Model.PublishingRecords.Count</span>
-                }
+                <h2 id="activityTitle" class="text-title font-bold text-text flex-1">النشاط والسجل الزمني</h2>
+                <span class="badge badge-secondary" dir="ltr">@Model.PublishingRecords.Count</span>
             </div>
-            <div class="space-y-4 relative pr-5 border-r-2 border-border">
+
+            @if (Model.PublishingRecords.Any())
+            {
+                <div class="flex flex-wrap gap-1.5 mb-4" role="group" aria-label="تصفية النشاط">
+                    <button type="button" class="filter-chip active" data-activity-filter="all" aria-pressed="true">الكل</button>
+                    <button type="button" class="filter-chip" data-activity-filter="Execution" aria-pressed="false">التنفيذ</button>
+                    <button type="button" class="filter-chip" data-activity-filter="SocialMedia" aria-pressed="false">النشر الرقمي</button>
+                    <button type="button" class="filter-chip" data-activity-filter="Website" aria-pressed="false">الموقع</button>
+                </div>
+            }
+
+            <div class="space-y-1 max-h-[24rem] overflow-y-auto pl-1">
                 @if (!Model.PublishingRecords.Any())
                 {
-                    <div class="text-center py-6 text-text-muted text-xs">
-                        <span class="material-symbols-rounded text-lg block mb-1 text-text-muted" aria-hidden="true">history_toggle_off</span>
+                    <div class="text-center py-8 text-caption text-text-muted">
+                        <span class="material-symbols-rounded text-xl block mb-1 text-text-muted" aria-hidden="true">history_toggle_off</span>
                         لا توجد عمليات مسجلة بعد.
                     </div>
                 }
-                @foreach (var r in Model.PublishingRecords.OrderByDescending(x => x.RecordDate).Take(5))
+                @foreach (var r in Model.PublishingRecords.OrderByDescending(x => x.RecordDate))
                 {
-                    var typeIcon = r.RecordType switch
+                    var typeMeta = r.RecordType switch
                     {
-                        "Execution" => "play_circle",
-                        "SocialMedia" => "share",
-                        "Website" => "public",
-                        _ => "circle"
+                        "Execution" => new { Label = "تنفيذ", Icon = "play_circle", Marker = "bg-success" },
+                        "SocialMedia" => new { Label = "نشر رقمي", Icon = "share", Marker = "bg-primary" },
+                        "Website" => new { Label = "نشر موقع", Icon = "public", Marker = "bg-primary" },
+                        _ => new { Label = "عملية", Icon = "circle", Marker = "bg-text-muted" }
                     };
-                    <div class="relative flex items-start gap-3 group/timeline-item">
-                        <div class="absolute -right-[17px] top-1.5 w-3 h-3 rounded-full border-2 transition-transform duration-200 group-hover/timeline-item:scale-125" style="background:@r.RecordColor;border-color:var(--color-surface)">
-                        </div>
-                        <div class="flex-1 min-w-0 rounded-xl p-3 bg-bg">
-                            <div class="flex items-center gap-1.5 mb-1">
-                                <span class="material-symbols-rounded text-xs" style="color:@r.RecordColor" aria-hidden="true">@typeIcon</span>
-                                <div class="text-xs font-bold text-text truncate">@r.Summary</div>
+                    var initial = string.IsNullOrWhiteSpace(r.RecordedBy) ? "?" : r.RecordedBy.Substring(0, 1);
+                    <details class="activity-item" data-activity-item data-activity-type="@r.RecordType">
+                        <summary class="flex items-start gap-3">
+                            <span class="activity-avatar" aria-hidden="true">@initial</span>
+                            <span class="min-w-0 flex-1">
+                                <span class="block text-label font-bold text-text leading-snug">@r.Summary</span>
+                                <span class="flex items-center gap-2 mt-0.5">
+                                    <span class="activity-marker @typeMeta.Marker" aria-hidden="true"></span>
+                                    @if (!string.IsNullOrEmpty(r.RecordedBy))
+                                    {
+                                        <span class="text-caption text-text-muted inline-flex items-center gap-0.5">
+                                            <span class="material-symbols-rounded text-xs" aria-hidden="true">person</span>
+                                            @r.RecordedBy
+                                        </span>
+                                    }
+                                </span>
+                            </span>
+                            <span class="text-caption text-text-muted shrink-0 font-semibold" dir="ltr">@r.RecordDate.ToString("MM-dd HH:mm")</span>
+                            <span class="material-symbols-rounded activity-chevron" aria-hidden="true">expand_more</span>
+                        </summary>
+                        <div class="activity-details">
+                            <div class="text-caption text-text-muted flex flex-wrap gap-x-4 gap-y-1">
+                                <span class="inline-flex items-center gap-1">
+                                    <span class="material-symbols-rounded text-xs" aria-hidden="true">label</span>
+                                    @typeMeta.Label
+                                </span>
+                                <span class="inline-flex items-center gap-1" dir="ltr">
+                                    <span class="material-symbols-rounded text-xs" aria-hidden="true">schedule</span>
+                                    @r.RecordDate.ToString("yyyy-MM-dd HH:mm")
+                                </span>
+                                <span class="inline-flex items-center gap-1">
+                                    <span class="material-symbols-rounded text-xs" aria-hidden="true">tag</span>
+                                    السجل #@r.RecordId
+                                </span>
                             </div>
-                            <div class="text-caption text-text-muted flex items-center gap-1">
-                                <span class="material-symbols-rounded text-caption" aria-hidden="true">schedule</span>
-                                @r.RecordDate.ToString("yyyy-MM-dd HH:mm")
-                                @if (!string.IsNullOrEmpty(r.RecordedBy))
-                                {
-                                    <span class="flex items-center gap-0.5 border-r border-border pr-1 mr-1">
-                                        <span class="material-symbols-rounded text-caption" aria-hidden="true">person</span>
-                                        @r.RecordedBy
-                                    </span>
-                                }
-                            </div>
                         </div>
-                    </div>
+                    </details>
                 }
             </div>
+
             @if (Model.PublishingRecords.Any())
             {
                 <div class="mt-4 pt-3 border-t border-border">
-                    <a href="/Publishing?episodeId=@ep.EpisodeId" class="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-caption font-semibold text-center transition-all bg-bg text-text-muted border border-border">
+                    <a href="/Publishing?episodeId=@ep.EpisodeId" class="btn btn-outline btn-sm w-full gap-1">
                         <span class="material-symbols-rounded text-sm" aria-hidden="true">list_alt</span>
                         عرض كافة سجلات النشر والإنتاج
                     </a>
                 </div>
             }
-        </div>
-    </div>
+        </section>
+    </aside>
 </div>
 
+<!-- Execute modal -->
 <dialog id="executeModal" class="modal modal-bottom sm:modal-middle" aria-labelledby="executeModalTitle" aria-describedby="executeModalDesc">
     <div class="modal-box rounded-2xl p-6 border border-border max-w-lg bg-surface shadow-modal">
         <form method="dialog">
@@ -697,32 +929,159 @@
 
 @section Scripts {
     <script>
-        function loadAttachments() {
-            fetch('/Upload/Episode/@Model.Episode.EpisodeId')
-                .then(r => r.json())
-                .then(files => {
-                    var c = document.getElementById('attachmentList');
-                    if (!files || files.length === 0) {
-                        c.innerHTML = '<div class="text-center py-4 text-text-muted text-xs"><span class="material-symbols-rounded text-lg block mb-1 text-text-muted" aria-hidden="true">cloud_off</span>لا توجد مرفقات</div>';
-                        return;
-                    }
-                    c.innerHTML = files.map(function(f) {
-                        return '<div class="flex items-center gap-2 p-2 rounded-lg hover:bg-surface-hover transition-colors">' +
-                            '<span class="material-symbols-rounded text-sm text-primary" aria-hidden="true">description</span>' +
-                            '<a href="/uploads/' + @Model.Episode.EpisodeId + '/' + f.storedName + '" target="_blank" class="flex-1 text-sm text-primary hover:underline truncate">' + f.fileName + '</a>' +
-                            '<span class="text-xs text-text-muted" dir="ltr">' + formatSize(f.sizeBytes) + '</span>' +
-                            '<form method="post" action="/Upload/Delete/' + @Model.Episode.EpisodeId + '/' + f.storedName + '" class="inline" onsubmit="return confirm(\'حذف الملف؟\')">' +
-                                '<button class="btn btn-ghost btn-xs text-danger" aria-label="حذف المرفق"><span class="material-symbols-rounded text-sm" aria-hidden="true">delete</span></button>' +
-                            '</form>' +
-                        '</div>';
-                    }).join('');
+        (function () {
+            'use strict';
+            var episodeId = @Model.Episode.EpisodeId;
+
+            function escapeHtml(s) {
+                return String(s).replace(/[&<>"']/g, function (c) {
+                    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
                 });
-        }
-        function formatSize(b) {
-            if (b < 1024) return b + ' B';
-            if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
-            return (b / 1048576).toFixed(1) + ' MB';
-        }
-        document.addEventListener('DOMContentLoaded', loadAttachments);
+            }
+
+            function formatSize(b) {
+                if (b < 1024) return b + ' B';
+                if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+                return (b / 1048576).toFixed(1) + ' MB';
+            }
+
+            function fileIcon(name) {
+                var ext = (name.split('.').pop() || '').toLowerCase();
+                if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp', 'avif'].indexOf(ext) >= 0) return 'image';
+                if (['mp3', 'wav', 'ogg', 'm4a', 'flac', 'aac'].indexOf(ext) >= 0) return 'music_note';
+                if (['mp4', 'mkv', 'mov', 'avi', 'webm'].indexOf(ext) >= 0) return 'movie';
+                if (ext === 'pdf') return 'picture_as_pdf';
+                if (['doc', 'docx', 'rtf', 'txt', 'md'].indexOf(ext) >= 0) return 'description';
+                if (['xls', 'xlsx', 'csv'].indexOf(ext) >= 0) return 'table_chart';
+                if (['ppt', 'pptx'].indexOf(ext) >= 0) return 'slideshow';
+                if (['zip', 'rar', '7z', 'tar', 'gz'].indexOf(ext) >= 0) return 'folder_zip';
+                return 'insert_drive_file';
+            }
+
+            function setAttachmentCounts(n) {
+                var hero = document.getElementById('heroAttachCount');
+                var chip = document.getElementById('attachCountChip');
+                if (hero) hero.textContent = n;
+                if (chip) chip.textContent = n;
+            }
+
+            function attachmentCard(f) {
+                var url = '/uploads/' + episodeId + '/' + encodeURIComponent(f.storedName);
+                var ext = (f.fileName.split('.').pop() || '').toUpperCase();
+                var date = f.uploadedAt ? new Date(f.uploadedAt).toLocaleDateString('ar-EG') : '';
+                return '<li class="file-card">' +
+                    '<span class="file-icon" aria-hidden="true"><span class="material-symbols-rounded text-xl">' + fileIcon(f.fileName) + '</span></span>' +
+                    '<div class="min-w-0 flex-1">' +
+                        '<a class="file-name" href="' + url + '" target="_blank" rel="noopener" title="' + escapeHtml(f.fileName) + '">' + escapeHtml(f.fileName) + '</a>' +
+                        '<div class="file-meta" dir="ltr">' + ext + ' · ' + formatSize(f.sizeBytes) + ' · ' + date + '</div>' +
+                    '</div>' +
+                    '<div class="flex items-center gap-0.5 shrink-0">' +
+                        '<a class="btn btn-ghost btn-xs btn-icon" href="' + url + '" target="_blank" rel="noopener" aria-label="معاينة المرفق" title="معاينة"><span class="material-symbols-rounded text-base" aria-hidden="true">visibility</span></a>' +
+                        '<a class="btn btn-ghost btn-xs btn-icon" href="' + url + '" download aria-label="تنزيل المرفق" title="تنزيل"><span class="material-symbols-rounded text-base" aria-hidden="true">download</span></a>' +
+                        '<form method="post" action="/Upload/Delete/' + episodeId + '/' + encodeURIComponent(f.storedName) + '" onsubmit="return confirm(\'حذف الملف؟\')">' +
+                            '<button class="btn btn-ghost btn-xs btn-icon text-danger" aria-label="حذف المرفق" title="حذف"><span class="material-symbols-rounded text-base" aria-hidden="true">delete</span></button>' +
+                        '</form>' +
+                    '</div>' +
+                '</li>';
+            }
+
+            function loadAttachments() {
+                fetch('/Upload/Episode/' + episodeId)
+                    .then(function (r) { return r.json(); })
+                    .then(function (files) {
+                        var list = document.getElementById('attachmentList');
+                        if (!list) return;
+                        var count = files && files.length ? files.length : 0;
+                        setAttachmentCounts(count);
+                        if (!count) {
+                            list.innerHTML = '<li class="text-center py-6 text-caption text-text-muted"><span class="material-symbols-rounded text-xl block mb-1 text-text-muted" aria-hidden="true">cloud_off</span>لا توجد مرفقات — أضف الملفات أعلاه</li>';
+                            return;
+                        }
+                        list.innerHTML = files.map(attachmentCard).join('');
+                    });
+            }
+
+            function uploadFiles(files) {
+                if (!files || !files.length) return;
+                var fd = new FormData();
+                for (var i = 0; i < files.length; i++) fd.append('files', files[i]);
+
+                var wrap = document.getElementById('uploadProgress');
+                var bar = document.getElementById('uploadProgressBar');
+                var label = document.getElementById('uploadProgressLabel');
+                if (wrap) wrap.classList.remove('hidden');
+                if (bar) bar.style.width = '0%';
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/Upload/Episode/' + episodeId);
+                xhr.upload.onprogress = function (e) {
+                    if (e.lengthComputable && bar && label) {
+                        var pct = Math.round((e.loaded / e.total) * 100);
+                        bar.style.width = pct + '%';
+                        label.textContent = 'جاري الرفع… ' + pct + '%';
+                    }
+                };
+                xhr.onload = function () {
+                    if (wrap) wrap.classList.add('hidden');
+                    var input = document.getElementById('fileInput');
+                    if (input) input.value = '';
+                    loadAttachments();
+                };
+                xhr.onerror = function () {
+                    if (wrap) wrap.classList.add('hidden');
+                    if (window.toastr) toastr.error('فشل رفع الملفات، حاول مرة أخرى');
+                };
+                xhr.send(fd);
+            }
+
+            function initAttachments() {
+                var zone = document.getElementById('dropZone');
+                var input = document.getElementById('fileInput');
+                if (!zone || !input) return;
+                zone.addEventListener('dragover', function (e) { e.preventDefault(); zone.classList.add('dragging'); });
+                zone.addEventListener('dragleave', function () { zone.classList.remove('dragging'); });
+                zone.addEventListener('drop', function (e) {
+                    e.preventDefault();
+                    zone.classList.remove('dragging');
+                    uploadFiles(e.dataTransfer.files);
+                });
+                input.addEventListener('change', function () { uploadFiles(input.files); });
+            }
+
+            function initActivityFilters() {
+                var buttons = document.querySelectorAll('[data-activity-filter]');
+                if (!buttons.length) return;
+                buttons.forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        var filter = btn.getAttribute('data-activity-filter');
+                        document.querySelectorAll('[data-activity-item]').forEach(function (el) {
+                            var show = filter === 'all' || el.getAttribute('data-activity-type') === filter;
+                            el.classList.toggle('hidden', !show);
+                        });
+                        buttons.forEach(function (b) {
+                            var active = b === btn;
+                            b.classList.toggle('active', active);
+                            b.setAttribute('aria-pressed', active ? 'true' : 'false');
+                        });
+                    });
+                });
+            }
+
+            function initProgress() {
+                var fill = document.getElementById('heroProgressFill');
+                if (!fill) return;
+                var target = fill.getAttribute('data-target') || '0%';
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(function () { fill.style.width = target; });
+                });
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                loadAttachments();
+                initAttachments();
+                initActivityFilters();
+                initProgress();
+            });
+        })();
     </script>
 }
