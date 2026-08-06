@@ -1,242 +1,540 @@
 @model SocialPublishingEditViewModel
+@using DataAccess.Services
 @{
-    ViewData["Title"] = "تعديل سجل النشر الرقمي";
+    ViewData["Title"] = "مساحة النشر الرقمي — تعديل السجل";
     var log = Model.Log;
     var episode = Model.Episode;
     ViewBag.IsEdit = true;
-    ViewBag.Icon = "share";
-    ViewBag.Title = "تعديل سجل النشر الرقمي";
-    ViewBag.Description = "تحديث وتعديل تفاصيل النشر على منصات السوشيال ميديا والروابط المرتبطة";
-    ViewBag.EntityName = "سجل النشر الموحد";
-    ViewBag.EntityUrl = "/Publishing";
-    ViewBag.BackUrl = "/Publishing";
-    ViewBag.BackText = "الرجوع للسجل الموحد";
+
+    // Calculate publishing metrics
+    var totalGuests = Model.GuestLogs.Count;
+    var totalPlatformsCount = Model.GuestLogs.Sum(g => g.Platforms.Count(p => !string.IsNullOrWhiteSpace(p.Url)));
+    var totalExpectedPlatforms = Math.Max(totalGuests * 2, 1);
+    var completionPercentage = Math.Min(100, (int)Math.Round((double)totalPlatformsCount / totalExpectedPlatforms * 100));
+
+    var totalRecordsCount = Model.EpisodePublishingRecords?.Count ?? 0;
 }
 
-<partial name="_PageHeader" />
+<style>
+    .workspace-layout {
+        display: grid;
+        grid-template-columns: 280px 1flex 320px;
+        gap: 1.25rem;
+    }
+    @@media (max-width: 1280px) {
+        .workspace-layout {
+            grid-template-columns: 260px 1fr;
+        }
+        .workspace-right-panel {
+            grid-column: span 2;
+        }
+    }
+    @@media (max-width: 860px) {
+        .workspace-layout {
+            grid-template-columns: 1fr;
+        }
+        .workspace-right-panel {
+            grid-column: span 1;
+        }
+    }
+
+    /* Guest Navigator Items */
+    .guest-nav-item {
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        border: 1px solid var(--color-border);
+        border-radius: 0.875rem;
+        cursor: pointer;
+        background: var(--color-surface);
+    }
+    .guest-nav-item:hover {
+        background: var(--color-surface-hover);
+        border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+        transform: translateX(-3px);
+    }
+    .guest-nav-item.active {
+        background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent);
+    }
+
+    /* Platform Cards Styling */
+    .platform-card {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 0.875rem;
+        padding: 1rem;
+        transition: all 0.2s ease;
+    }
+    .platform-card:hover {
+        border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    /* Timeline Items */
+    .timeline-item-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 9999px;
+        position: absolute;
+        right: -6px;
+        top: 4px;
+        border: 2px solid var(--color-surface);
+    }
+
+    /* Animated Progress */
+    .progress-bar-fill {
+        transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+</style>
 
 @if (log == null)
 {
-    <div class="rounded-xl p-4 font-semibold text-sm bg-danger-subtle text-danger border border-danger/20">
-        سجل النشر غير موجود.
+    <div class="rounded-xl p-5 text-sm font-bold bg-danger-subtle text-danger border border-danger/20 flex items-center gap-3">
+        <span class="material-symbols-rounded text-xl">error</span>
+        سجل النشر المطلوب غير موجود أو تم إزالته.
     </div>
     return;
 }
 
-<!-- Episode Info -->
-<div class="card mb-4">
-    <div class="p-5">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 bg-primary-subtle text-primary">
-                    <span class="material-symbols-rounded" aria-hidden="true">podcasts</span>
+<div class="flex flex-col gap-5 text-text">
+
+    <!-- HERO EPISODE HEADER -->
+    <div class="relative overflow-hidden bg-surface border border-border rounded-2xl p-5 md:p-6 shadow-sm">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative z-10">
+            
+            <div class="flex items-start gap-4">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-primary-foreground shadow-md shrink-0"
+                     style="background: linear-gradient(135deg, var(--color-primary), #7C3AED);">
+                    <span class="material-symbols-rounded text-3xl" aria-hidden="true">cell_tower</span>
                 </div>
+
                 <div>
-                    <h3 class="text-lg font-bold text-text">@(episode?.EpisodeName ?? "—")</h3>
-                    <p class="text-sm text-text-secondary">@(episode?.ProgramName ?? "")</p>
+                    <div class="flex flex-wrap items-center gap-2.5 mb-1">
+                        <span class="chip bg-primary-subtle text-primary border-primary/20 font-bold text-xs">
+                            <span class="material-symbols-rounded text-xs">radio</span>
+                            @(episode?.ProgramName ?? "البرنامج العام")
+                        </span>
+                        <span class="chip bg-surface-hover text-text-secondary font-mono text-xs">
+                            <span class="material-symbols-rounded text-xs">calendar_today</span>
+                            @(episode?.ScheduledExecutionTime?.ToString("yyyy/MM/dd HH:mm") ?? "—")
+                        </span>
+                        <span class="chip bg-success-subtle text-success border-success/20 text-xs font-extrabold">
+                            <span class="w-2 h-2 rounded-full bg-success"></span>
+                            مساحة العمل الرقمية
+                        </span>
+                    </div>
+
+                    <h1 class="text-xl md:text-2xl lg:text-3xl font-black tracking-tight text-text">
+                        @(episode?.EpisodeName ?? "عنوان الحلقة غير محدد")
+                    </h1>
+                    <p class="text-xs md:text-sm text-text-secondary mt-1 max-w-3xl leading-relaxed">
+                        إدارة منصات النشر الرقمي والمقاطعات الصوتية والمرئية لضيوف الحلقة على شبكات التواصل الاجتماعي.
+                    </p>
                 </div>
             </div>
-            <a href="/Episodes/Details/@log.EpisodeId" class="btn btn-ghost rounded-xl text-sm gap-1.5" target="_blank">
-                <span class="material-symbols-rounded" aria-hidden="true">open_in_new</span>
-                عرض الحلقة
-            </a>
+
+            <!-- Quick Header KPI Summary & Action Buttons -->
+            <div class="flex flex-wrap items-center gap-4 justify-between lg:justify-end shrink-0 border-t lg:border-t-0 border-border pt-4 lg:pt-0">
+                <div class="flex items-center gap-3 px-4 py-2 bg-surface-hover rounded-xl border border-border/80">
+                    <div class="text-center">
+                        <div class="text-micro font-bold text-text-muted">الضيوف</div>
+                        <div class="text-lg font-black text-text">@totalGuests</div>
+                    </div>
+                    <div class="h-7 w-px bg-border"></div>
+                    <div class="text-center">
+                        <div class="text-micro font-bold text-text-muted">المنصات المنشورة</div>
+                        <div class="text-lg font-black text-primary" id="header-published-count">@totalPlatformsCount</div>
+                    </div>
+                    <div class="h-7 w-px bg-border"></div>
+                    <div class="text-center">
+                        <div class="text-micro font-bold text-text-muted">معدل الإنجاز</div>
+                        <div class="text-lg font-black text-success" id="header-completion-pct">@completionPercentage%</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <a href="/Episodes/Details/@log.EpisodeId" class="btn btn-sm btn-ghost border border-border" target="_blank">
+                        <span class="material-symbols-rounded text-base">open_in_new</span>
+                        <span>تفاصيل الحلقة</span>
+                    </a>
+                    <a href="/Publishing" class="btn btn-sm btn-ghost border border-border">
+                        <span class="material-symbols-rounded text-base">arrow_forward</span>
+                        <span>رجوع</span>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<form method="post" action="/Publishing/Edit/@log.LogId">
-    @Html.AntiForgeryToken()
+    <!-- MAIN 3-PANEL WORKSPACE FORM -->
+    <form method="post" action="/Publishing/Edit/@log.LogId" id="social-publishing-form">
+        @Html.AntiForgeryToken()
 
-    <div id="guests-container">
-        @if (Model.GuestLogs.Any())
-        {
-            @for (int i = 0; i < Model.GuestLogs.Count; i++)
-            {
-                var item = Model.GuestLogs[i];
-                <div class="card mb-4 guest-card" data-index="@i">
-                    <div class="px-5 py-3 rounded-t-xl flex items-center gap-2 bg-bg-hover border-b border-border">
-                        <span class="material-symbols-rounded text-primary" aria-hidden="true">person</span>
-                        <h3 class="font-bold text-text">@item.GuestName</h3>
-                    </div>
-                    <div class="p-5 space-y-4">
-                        <input type="hidden" name="GuestLogs[@i].LogId" value="@item.LogId" />
-                        <input type="hidden" name="GuestLogs[@i].EpisodeGuestId" value="@item.EpisodeGuestId" />
-                        <input type="hidden" name="GuestLogs[@i].EpisodeId" value="@item.EpisodeId" />
+        <div class="workspace-layout">
 
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label class="text-sm font-medium mb-1.5 block text-text-secondary" for="GuestLogs_@(i)_ClipTitle">عنوان المقطع</label>
-                                <div class="relative">
-                                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg text-text-muted" aria-hidden="true">title</span>
-                                    <input type="text" id="GuestLogs_@(i)_ClipTitle" name="GuestLogs[@i].ClipTitle" value="@item.ClipTitle"
-                                           class="input pr-10" placeholder="عنوان المقطع المنشور" />
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium mb-1.5 block text-text-secondary" for="GuestLogs_@(i)_DurationMinutes">المدة (دقيقة)</label>
-                                <div class="relative">
-                                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg text-text-muted" aria-hidden="true">timer</span>
-                                    <input type="number" id="GuestLogs_@(i)_DurationMinutes" name="GuestLogs[@i].DurationMinutes" value="@item.DurationMinutes"
-                                           class="input pr-10" placeholder="مدة المقطع بالدقائق" min="1" />
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium mb-1.5 block text-text-secondary" for="GuestLogs_@(i)_MediaType">نوع الوسائط</label>
-                                <div class="relative">
-                                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg text-text-muted" aria-hidden="true">category</span>
-                                    <select id="GuestLogs_@(i)_MediaType" name="GuestLogs[@i].MediaType" class="input pr-10">
-                                        <option value="1" selected="@(item.MediaType == MediaType.Audio)">صوت</option>
-                                        <option value="2" selected="@(item.MediaType == MediaType.Video)">فيديو</option>
-                                        <option value="3" selected="@(item.MediaType == MediaType.Both)">صوت وفيديو</option>
-                                    </select>
-                                </div>
-                            </div>
+            <!-- LEFT PANEL: GUEST NAVIGATOR -->
+            <div class="flex flex-col gap-3">
+                <div class="bg-surface border border-border rounded-2xl p-4 shadow-xs">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-rounded text-primary text-lg">groups</span>
+                            <h3 class="text-xs font-black uppercase tracking-wider text-text">قائمة ضيوف الحلقة (@totalGuests)</h3>
                         </div>
+                    </div>
 
-                        <!-- Platforms -->
-                        <div>
-                            <label class="text-sm font-medium mb-1.5 block text-text-secondary">منصات النشر</label>
-                            <div class="platforms-container space-y-2" id="platforms-@i">
-                                @if (item.Platforms.Any())
-                                {
-                                    @for (int j = 0; j < item.Platforms.Count; j++)
-                                    {
-                                        var pf = item.Platforms[j];
-                                        <div class="platform-row flex gap-2 items-start">
-                                            <select name="GuestLogs[@i].Platforms[@j].PlatformId" class="input flex-1" aria-label="منصة النشر">
-                                                <option value="">— اختر المنصة —</option>
-                                                @foreach (var p in Model.Platforms)
-                                                {
-                                                    <option value="@p.SocialMediaPlatformId" selected="@(pf.PlatformId == p.SocialMediaPlatformId)">@p.Name</option>
-                                                }
-                                            </select>
-                                            <input type="url" name="GuestLogs[@i].Platforms[@j].Url" value="@pf.Url"
-                                                   class="input flex-[2]" placeholder="رابط النشر" dir="ltr" aria-label="رابط النشر" />
-                                            <button type="button" class="btn btn-ghost btn-square btn-sm text-danger"
-                                                    onclick="this.closest('.platform-row').remove()" title="حذف المنصة" aria-label="حذف المنصة">
-                                                <span class="material-symbols-rounded" aria-hidden="true">close</span>
-                                            </button>
+                    <!-- Search Filter Input -->
+                    <div class="relative mb-3">
+                        <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-text-muted text-base">search</span>
+                        <input type="text" id="guest-search-input" class="input input-sm pr-9 text-xs w-full rounded-xl" placeholder="بحث باسم الضيف..." />
+                    </div>
+
+                    <!-- Guest Navigator List -->
+                    <div class="flex flex-col gap-2 max-h-[580px] overflow-y-auto pr-0.5" id="guest-nav-list">
+                        @if (Model.GuestLogs.Any())
+                        {
+                            for (int i = 0; i < Model.GuestLogs.Count; i++)
+                            {
+                                var item = Model.GuestLogs[i];
+                                var guestPubCount = item.Platforms.Count(p => !string.IsNullOrWhiteSpace(p.Url));
+
+                                <div class="guest-nav-item p-3 flex items-center justify-between gap-2 @(i == 0 ? "active" : "")"
+                                     data-guest-idx="@i"
+                                     onclick="selectGuestTab(@i)">
+                                    <div class="flex items-center gap-2.5 min-w-0">
+                                        <div class="w-9 h-9 rounded-full bg-primary-subtle text-primary font-black text-xs flex items-center justify-center shrink-0 border border-primary/20">
+                                            @(string.IsNullOrWhiteSpace(item.GuestName) ? "غ" : item.GuestName.Substring(0, 1))
                                         </div>
-                                    }
-                                }
-                                else
-                                {
-                                    <div class="platform-row flex gap-2 items-start">
-                                        <select name="GuestLogs[@i].Platforms[0].PlatformId" class="input flex-1" aria-label="منصة النشر">
-                                            <option value="">— اختر المنصة —</option>
-                                            @foreach (var p in Model.Platforms)
-                                            {
-                                                <option value="@p.SocialMediaPlatformId">@p.Name</option>
-                                            }
-                                        </select>
-                                        <input type="url" name="GuestLogs[@i].Platforms[0].Url"
-                                               class="input flex-[2]" placeholder="رابط النشر" dir="ltr" aria-label="رابط النشر" />
-                                        <button type="button" class="btn btn-ghost btn-square btn-sm text-success add-platform-btn"
-                                                onclick="addPlatform(@i)" title="إضافة منصة" aria-label="إضافة منصة">
-                                            <span class="material-symbols-rounded" aria-hidden="true">add</span>
+                                        <div class="min-w-0">
+                                            <h4 class="text-xs font-black text-text truncate guest-name-label">@(item.GuestName ?? $"ضيف #{i+1}")</h4>
+                                            <div class="flex items-center gap-1.5 text-micro text-text-secondary mt-0.5">
+                                                <span class="material-symbols-rounded text-xs">
+                                                    @(item.MediaType == MediaType.Video ? "videocam" : item.MediaType == MediaType.Audio ? "mic" : "perm_media")
+                                                </span>
+                                                <span>@(item.DurationMinutes.HasValue ? $"{item.DurationMinutes} د" : "غير محدد")</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="shrink-0 text-left">
+                                        <span class="chip text-micro font-bold py-0.5 px-2 rounded-full @(guestPubCount > 0 ? "bg-success-subtle text-success border-success/30" : "bg-surface-hover text-text-muted border-border")"
+                                              id="nav-badge-@i">
+                                            @guestPubCount منصة
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="p-6 text-center text-xs text-text-muted border border-dashed border-border rounded-xl">
+                                لا يوجد ضيوف مضافين لهذه الحلقة.
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- CENTER PANEL: SELECTED GUEST EDITOR WORKSPACE -->
+            <div class="flex flex-col gap-4">
+                <div id="guests-container">
+                    @if (Model.GuestLogs.Any())
+                    {
+                        for (int i = 0; i < Model.GuestLogs.Count; i++)
+                        {
+                            var item = Model.GuestLogs[i];
+
+                            <div class="guest-editor-panel flex flex-col gap-4 @(i != 0 ? "hidden" : "")"
+                                 id="guest-editor-panel-@i"
+                                 data-index="@i">
+
+                                <!-- Hidden Inputs for Backend Binding -->
+                                <input type="hidden" name="GuestLogs[@i].LogId" value="@item.LogId" />
+                                <input type="hidden" name="GuestLogs[@i].EpisodeGuestId" value="@item.EpisodeGuestId" />
+                                <input type="hidden" name="GuestLogs[@i].EpisodeId" value="@item.EpisodeId" />
+
+                                <!-- Guest Header & Clip Info Card -->
+                                <div class="bg-surface border border-border rounded-2xl p-5 shadow-xs flex flex-col gap-4">
+                                    <div class="flex items-center justify-between pb-3 border-b border-border">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-full bg-primary/10 text-primary font-black text-sm flex items-center justify-center border border-primary/20">
+                                                <span class="material-symbols-rounded">person</span>
+                                            </div>
+                                            <div>
+                                                <h3 class="text-base font-black text-text">@item.GuestName</h3>
+                                                <p class="text-xs text-text-secondary">تفاصيل مقطع الضيف والوسائط المنشورة</p>
+                                            </div>
+                                        </div>
+
+                                        <span class="chip bg-primary-subtle text-primary border-primary/20 text-xs font-bold">
+                                            مقطع ضيف #@(i + 1)
+                                        </span>
+                                    </div>
+
+                                    <!-- Clip Metadata Inputs Grid -->
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <!-- Clip Title -->
+                                        <div class="md:col-span-3">
+                                            <label class="text-xs font-extrabold mb-1.5 block text-text" for="GuestLogs_@(i)_ClipTitle">عنوان المقطع أو التصريح الشهير</label>
+                                            <div class="relative">
+                                                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-base text-text-muted" aria-hidden="true">title</span>
+                                                <input type="text" id="GuestLogs_@(i)_ClipTitle" name="GuestLogs[@i].ClipTitle" value="@item.ClipTitle"
+                                                       class="input pr-9 text-xs" placeholder="أدخل عنواناً جذاباً لمقطع الضيف..." />
+                                            </div>
+                                        </div>
+
+                                        <!-- Media Type Selector -->
+                                        <div>
+                                            <label class="text-xs font-extrabold mb-1.5 block text-text" for="GuestLogs_@(i)_MediaType">نوع الوسائط المتاحة</label>
+                                            <div class="relative">
+                                                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-base text-text-muted" aria-hidden="true">category</span>
+                                                <select id="GuestLogs_@(i)_MediaType" name="GuestLogs[@i].MediaType" class="input pr-9 text-xs">
+                                                    <option value="1" selected="@(item.MediaType == MediaType.Audio)">صوت فقط (Audio)</option>
+                                                    <option value="2" selected="@(item.MediaType == MediaType.Video)">فيديو فقط (Video)</option>
+                                                    <option value="3" selected="@(item.MediaType == MediaType.Both)">صوت وفيديو (Both)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- Duration Minutes -->
+                                        <div>
+                                            <label class="text-xs font-extrabold mb-1.5 block text-text" for="GuestLogs_@(i)_DurationMinutes">المدة الزمنية (بالدقائق)</label>
+                                            <div class="relative">
+                                                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-base text-text-muted" aria-hidden="true">timer</span>
+                                                <input type="number" id="GuestLogs_@(i)_DurationMinutes" name="GuestLogs[@i].DurationMinutes" value="@item.DurationMinutes"
+                                                       class="input pr-9 text-xs" placeholder="مثال: 5" min="1" />
+                                            </div>
+                                        </div>
+
+                                        <!-- Media Preview Placeholder Box -->
+                                        <div class="flex items-center gap-3 p-3 bg-surface-hover rounded-xl border border-border text-xs">
+                                            <div class="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center shrink-0 text-primary">
+                                                <span class="material-symbols-rounded">movie</span>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <div class="font-bold text-text truncate">معاينة المقطع</div>
+                                                <div class="text-micro text-text-muted">جاهز للتصدير والتضمين</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Platforms Grid Card -->
+                                <div class="bg-surface border border-border rounded-2xl p-5 shadow-xs">
+                                    <div class="flex items-center justify-between mb-4 pb-2 border-b border-border">
+                                        <div class="flex items-center gap-2">
+                                            <span class="material-symbols-rounded text-primary text-lg">share</span>
+                                            <h3 class="text-xs font-black uppercase tracking-wider text-text">روابط ومنصات النشر الاجتماعي</h3>
+                                        </div>
+                                        <button type="button" class="btn btn-xs btn-outline border-primary/30 text-primary hover:bg-primary hover:text-white rounded-xl gap-1"
+                                                onclick="addPlatform(@i)">
+                                            <span class="material-symbols-rounded text-sm">add</span>
+                                            <span>إضافة منصة جديدة</span>
                                         </button>
                                     </div>
-                                }
-                            </div>
-                            <button type="button" class="btn btn-ghost text-sm mt-2 rounded-xl gap-1"
-                                    onclick="addPlatform(@i)">
-                                <span class="material-symbols-rounded" aria-hidden="true">add</span>
-                                إضافة منصة
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            }
-        }
-        else
-        {
-            <div class="card rounded-3xl p-12 text-center">
-                <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 bg-bg-hover text-text-muted">
-                    <span class="material-symbols-rounded text-5xl" aria-hidden="true">people</span>
-                </div>
-                <p class="text-sm text-text-secondary">لا يوجد سجلات نشر لهذه الحلقة.</p>
-            </div>
-        }
-    </div>
 
-    <div class="flex items-center justify-end gap-2 mt-6">
-        <a href="/Publishing" class="btn btn-ghost rounded-xl px-5 gap-1">
-            <span class="material-symbols-rounded" aria-hidden="true">cancel</span>
-            إلغاء
-        </a>
-        @if (Model.GuestLogs.Any())
-        {
-            <button type="submit" class="btn btn-primary rounded-xl px-6 shadow-sm gap-1.5">
-                <span class="material-symbols-rounded" aria-hidden="true">save</span>
-                حفظ التعديلات
-            </button>
-        }
-    </div>
-</form>
+                                    <div class="platforms-container flex flex-col gap-3" id="platforms-@i">
+                                        @if (item.Platforms.Any())
+                                        {
+                                            for (int j = 0; j < item.Platforms.Count; j++)
+                                            {
+                                                var pf = item.Platforms[j];
+                                                var hasUrl = !string.IsNullOrWhiteSpace(pf.Url);
 
-<!-- All Publishing Records for this Episode -->
-<div class="card mt-8">
-    <div class="p-5">
-        <div class="flex items-center gap-2 mb-4">
-            <span class="material-symbols-rounded text-primary" aria-hidden="true">history</span>
-            <h3 class="font-bold text-base text-text">كافة سجلات النشر والإنتاج الخاصة بهذه الحلقة (@(Model.EpisodePublishingRecords?.Count ?? 0))</h3>
-        </div>
-        @if (Model.EpisodePublishingRecords == null || !Model.EpisodePublishingRecords.Any())
-        {
-            <p class="text-sm text-text-secondary">لا توجد سجلات أخرى لهذه الحلقة.</p>
-        }
-        else
-        {
-            <div class="card overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="table w-full text-sm" aria-label="سجلات النشر والإنتاج للحلقة">
-                        <thead>
-                            <tr class="bg-bg-hover">
-                                <th scope="col" class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider text-text-secondary">النوع</th>
-                                <th scope="col" class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider text-text-secondary">التفاصيل / الملخص</th>
-                                <th scope="col" class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider text-text-secondary">بواسطة</th>
-                                <th scope="col" class="px-6 py-4 text-right font-bold text-xs uppercase tracking-wider text-text-secondary">التاريخ والتوقيت</th>
-                                <th scope="col" class="px-6 py-4 text-center font-bold text-xs uppercase tracking-wider text-text-secondary">الإجراء</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var r in Model.EpisodePublishingRecords)
-                            {
-                                <tr class="transition-colors duration-200 border-b border-border-light">
-                                    <td class="px-6 py-4">
-                                        <span class="meta-pill" style="background: color-mix(in srgb, @r.RecordColor 15%, transparent); color: @r.RecordColor">
-                                            @GetRecordTypeName(r.RecordType)
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-text-secondary">@r.Summary</td>
-                                    <td class="px-6 py-4 font-medium text-text-secondary">@(r.RecordedBy ?? "تلقائي")</td>
-                                    <td class="px-6 py-4 text-xs text-text-muted" dir="ltr">@r.RecordDate.ToString("yyyy-MM-dd HH:mm")</td>
-                                    <td class="px-6 py-4 text-center">
-                                        @if (r.RecordType == "SocialMedia")
-                                        {
-                                            <a href="/Publishing/Edit/@r.RecordId" class="inline-flex items-center gap-1 font-bold hover:underline text-primary">
-                                                <span class="material-symbols-rounded text-sm" aria-hidden="true">edit</span> تعديل
-                                            </a>
-                                        }
-                                        else if (r.RecordType == "Website")
-                                        {
-                                            <a href="/WebsitePublishing/Edit/@r.RecordId" class="inline-flex items-center gap-1 font-bold hover:underline text-primary">
-                                                <span class="material-symbols-rounded text-sm" aria-hidden="true">edit</span> تعديل
-                                            </a>
+                                                <div class="platform-card platform-row flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+                                                    <!-- Platform Dropdown -->
+                                                    <div class="w-full sm:w-48 shrink-0">
+                                                        <select name="GuestLogs[@i].Platforms[@j].PlatformId"
+                                                                class="input input-sm text-xs w-full platform-select"
+                                                                aria-label="منصة النشر">
+                                                            <option value="">— اختر المنصة —</option>
+                                                            @foreach (var p in Model.Platforms)
+                                                            {
+                                                                <option value="@p.SocialMediaPlatformId" selected="@(pf.PlatformId == p.SocialMediaPlatformId)">@p.Name</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+
+                                                    <!-- URL Input with quick icons -->
+                                                    <div class="flex-1 relative">
+                                                        <input type="url" name="GuestLogs[@i].Platforms[@j].Url" value="@pf.Url"
+                                                               class="input input-sm text-xs w-full pl-8 pr-3 platform-url-input"
+                                                               placeholder="https://..." dir="ltr"
+                                                               oninput="onUrlInputChange(this)"
+                                                               aria-label="رابط النشر" />
+                                                    </div>
+
+                                                    <!-- Quick Actions (Copy / Open / Delete) -->
+                                                    <div class="flex items-center gap-1.5 shrink-0 justify-end">
+                                                        <button type="button" class="btn btn-ghost btn-square btn-xs text-text-secondary hover:text-primary"
+                                                                onclick="copyUrlInput(this)" title="نسخ الرابط" aria-label="نسخ الرابط">
+                                                            <span class="material-symbols-rounded text-sm">content_copy</span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-ghost btn-square btn-xs text-text-secondary hover:text-primary"
+                                                                onclick="openUrlInput(this)" title="فتح الرابط في نافذة جديدة" aria-label="فتح الرابط">
+                                                            <span class="material-symbols-rounded text-sm">open_in_new</span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-ghost btn-square btn-xs text-danger"
+                                                                onclick="removePlatformRow(this)" title="حذف المنصة" aria-label="حذف المنصة">
+                                                            <span class="material-symbols-rounded text-sm">close</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            }
                                         }
                                         else
                                         {
-                                            <span class="text-xs text-text-muted">—</span>
+                                            <div class="platform-card platform-row flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+                                                <div class="w-full sm:w-48 shrink-0">
+                                                    <select name="GuestLogs[@i].Platforms[0].PlatformId" class="input input-sm text-xs w-full platform-select" aria-label="منصة النشر">
+                                                        <option value="">— اختر المنصة —</option>
+                                                        @foreach (var p in Model.Platforms)
+                                                        {
+                                                            <option value="@p.SocialMediaPlatformId">@p.Name</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                                <div class="flex-1 relative">
+                                                    <input type="url" name="GuestLogs[@i].Platforms[0].Url"
+                                                           class="input input-sm text-xs w-full pl-8 pr-3 platform-url-input"
+                                                           placeholder="https://..." dir="ltr"
+                                                           oninput="onUrlInputChange(this)"
+                                                           aria-label="رابط النشر" />
+                                                </div>
+                                                <div class="flex items-center gap-1.5 shrink-0 justify-end">
+                                                    <button type="button" class="btn btn-ghost btn-square btn-xs text-text-secondary hover:text-primary" onclick="copyUrlInput(this)" title="نسخ الرابط"><span class="material-symbols-rounded text-sm">content_copy</span></button>
+                                                    <button type="button" class="btn btn-ghost btn-square btn-xs text-text-secondary hover:text-primary" onclick="openUrlInput(this)" title="فتح الرابط"><span class="material-symbols-rounded text-sm">open_in_new</span></button>
+                                                    <button type="button" class="btn btn-ghost btn-square btn-xs text-danger" onclick="removePlatformRow(this)" title="حذف"><span class="material-symbols-rounded text-sm">close</span></button>
+                                                </div>
+                                            </div>
                                         }
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="bg-surface border border-border rounded-2xl p-12 text-center">
+                            <div class="w-16 h-16 rounded-full bg-surface-hover flex items-center justify-center mx-auto mb-3 text-text-muted">
+                                <span class="material-symbols-rounded text-4xl">people</span>
+                            </div>
+                            <h3 class="text-base font-black text-text">لا توجد سجلات ضيوف مضافة</h3>
+                            <p class="text-xs text-text-secondary mt-1">لم يتم إلحاق أي ضيوف بهذه الحلقة حتى الآن.</p>
+                        </div>
+                    }
                 </div>
             </div>
-        }
-    </div>
+
+            <!-- RIGHT PANEL: WORKSPACE INSIGHTS & ACTIVITY TIMELINE -->
+            <div class="workspace-right-panel flex flex-col gap-4">
+
+                <!-- Publishing Progress Card Widget -->
+                <div class="bg-surface border border-border rounded-2xl p-4 shadow-xs flex flex-col gap-3">
+                    <div class="flex items-center justify-between border-b border-border pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-rounded text-primary text-base">donut_large</span>
+                            <h3 class="text-xs font-black uppercase tracking-wider text-text">تقدم النشر الرقمي</h3>
+                        </div>
+                        <span class="text-xs font-black text-primary" id="progress-card-pct">@completionPercentage%</span>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div class="w-full bg-surface-hover h-2.5 rounded-full overflow-hidden border border-border/80">
+                        <div class="bg-primary h-full rounded-full progress-bar-fill" id="progress-card-bar" style="width: @completionPercentage%;"></div>
+                    </div>
+
+                    <!-- Stat List -->
+                    <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+                        <div class="p-2.5 rounded-xl bg-surface-hover border border-border/60">
+                            <div class="text-micro font-bold text-text-muted">المنصات المنشورة</div>
+                            <div class="text-sm font-black text-success mt-0.5" id="stat-published-count">@totalPlatformsCount</div>
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-surface-hover border border-border/60">
+                            <div class="text-micro font-bold text-text-muted">ضيوف مكتملون</div>
+                            <div class="text-sm font-black text-primary mt-0.5" id="stat-completed-guests">
+                                @Model.GuestLogs.Count(g => g.Platforms.Any(p => !string.IsNullOrWhiteSpace(p.Url))) / @totalGuests
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sticky Quick Save Actions -->
+                <div class="bg-surface border border-border rounded-2xl p-4 shadow-xs flex flex-col gap-2.5 sticky top-4">
+                    <h3 class="text-xs font-black uppercase tracking-wider text-text mb-1">الإجراءات والسجلات</h3>
+
+                    @if (Model.GuestLogs.Any())
+                    {
+                        <button type="submit" class="btn btn-primary rounded-xl text-xs w-full shadow-sm gap-2 py-2.5">
+                            <span class="material-symbols-rounded text-base">save</span>
+                            <span>حفظ التعديلات المنشورة</span>
+                        </button>
+                    }
+
+                    <a href="/Publishing" class="btn btn-ghost border border-border rounded-xl text-xs w-full justify-center gap-1.5 py-2">
+                        <span class="material-symbols-rounded text-base">cancel</span>
+                        <span>إلغاء التعديلات</span>
+                    </a>
+                </div>
+
+                <!-- Publishing Activity Timeline Card -->
+                <div class="bg-surface border border-border rounded-2xl p-4 shadow-xs flex flex-col gap-3">
+                    <div class="flex items-center justify-between border-b border-border pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-rounded text-primary text-base">history</span>
+                            <h3 class="text-xs font-black uppercase tracking-wider text-text">جدول النشاط والسجلات (@totalRecordsCount)</h3>
+                        </div>
+                    </div>
+
+                    @if (Model.EpisodePublishingRecords == null || !Model.EpisodePublishingRecords.Any())
+                    {
+                        <p class="text-xs text-text-muted text-center py-4">لا توجد سجلات سابقة لهذه الحلقة.</p>
+                    }
+                    else
+                    {
+                        <div class="relative border-r border-border pr-4 flex flex-col gap-4 max-h-[350px] overflow-y-auto">
+                            @foreach (var r in Model.EpisodePublishingRecords)
+                            {
+                                var dotColor = r.RecordType switch
+                                {
+                                    "SocialMedia" => "var(--color-primary)",
+                                    "Website" => "var(--color-success)",
+                                    "Execution" => "var(--color-accent)",
+                                    _ => "var(--color-border)"
+                                };
+
+                                <div class="relative text-xs flex flex-col gap-1">
+                                    <div class="timeline-item-dot" style="background: @dotColor;"></div>
+
+                                    <div class="flex items-center justify-between gap-2">
+                                        <span class="font-black text-text text-micro">@GetRecordTypeName(r.RecordType)</span>
+                                        <span class="text-micro text-text-muted font-mono" dir="ltr">@r.RecordDate.ToString("MM/dd HH:mm")</span>
+                                    </div>
+
+                                    <p class="text-text-secondary text-micro leading-snug line-clamp-2">
+                                        @r.Summary
+                                    </p>
+
+                                    <div class="flex items-center justify-between text-micro text-text-muted mt-0.5">
+                                        <span>بواسطة: @(r.RecordedBy ?? "النظام")</span>
+                                        @if (r.RecordType == "SocialMedia")
+                                        {
+                                            <a href="/Publishing/Edit/@r.RecordId" class="text-primary font-bold hover:underline">تعديل</a>
+                                        }
+                                        else if (r.RecordType == "Website")
+                                        {
+                                            <a href="/WebsitePublishing/Edit/@r.RecordId" class="text-primary font-bold hover:underline">تعديل</a>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+
+            </div>
+
+        </div>
+    </form>
 </div>
 
 @functions {
@@ -252,13 +550,34 @@
 @section Scripts {
     <script>
         const platformBaseUrls = @Html.Raw(Json.Serialize(Model.Platforms.ToDictionary(p => p.SocialMediaPlatformId.ToString(), p => p.BaseUrl ?? "")));
-
         let platformCounters = {};
-        document.querySelectorAll('.guest-card').forEach(function(card) {
-            const idx = card.dataset.index;
-            platformCounters[idx] = card.querySelectorAll('.platform-row').length;
+
+        document.querySelectorAll('.guest-editor-panel').forEach(function(panel) {
+            const idx = panel.dataset.index;
+            platformCounters[idx] = panel.querySelectorAll('.platform-row').length;
         });
 
+        // Tab Switching for Guests
+        function selectGuestTab(guestIdx) {
+            document.querySelectorAll('.guest-nav-item').forEach(el => el.classList.remove('active'));
+            const activeNav = document.querySelector(`.guest-nav-item[data-guest-idx="${guestIdx}"]`);
+            if (activeNav) activeNav.classList.add('active');
+
+            document.querySelectorAll('.guest-editor-panel').forEach(panel => panel.classList.add('hidden'));
+            const activePanel = document.getElementById(`guest-editor-panel-${guestIdx}`);
+            if (activePanel) activePanel.classList.remove('hidden');
+        }
+
+        // Live Search Filter for Guest Navigator
+        document.getElementById('guest-search-input')?.addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase().trim();
+            document.querySelectorAll('.guest-nav-item').forEach(item => {
+                const name = item.querySelector('.guest-name-label')?.textContent.toLowerCase() || '';
+                item.style.display = name.includes(term) ? 'flex' : 'none';
+            });
+        });
+
+        // Platform base URL auto-fill
         document.getElementById('guests-container').addEventListener('change', function(e) {
             if (e.target.matches('select[name*=".PlatformId"]')) {
                 const row = e.target.closest('.platform-row');
@@ -268,30 +587,120 @@
                 if (baseUrl && !urlInput.value) {
                     urlInput.value = baseUrl;
                 }
+                recalculateMetrics();
             }
         });
+
+        function onUrlInputChange(input) {
+            recalculateMetrics();
+        }
+
+        function removePlatformRow(btn) {
+            const row = btn.closest('.platform-row');
+            if (row) {
+                row.remove();
+                recalculateMetrics();
+            }
+        }
 
         function addPlatform(guestIdx) {
             const container = document.getElementById('platforms-' + guestIdx);
             const count = platformCounters[guestIdx] || container.querySelectorAll('.platform-row').length;
             const html = `
-                <div class="platform-row flex gap-2 items-start">
-                    <select name="GuestLogs[${guestIdx}].Platforms[${count}].PlatformId"
-                            class="input flex-1" aria-label="منصة النشر">
-                        <option value="">— اختر المنصة —</option>
-                        @foreach (var p in Model.Platforms)
-                        {
-                            <option value="@p.SocialMediaPlatformId">@p.Name</option>
-                        }
-                    </select>
-                    <input type="url" name="GuestLogs[${guestIdx}].Platforms[${count}].Url"
-                           class="input flex-[2]" placeholder="رابط النشر" dir="ltr" aria-label="رابط النشر" />
-                    <button type="button" class="btn btn-ghost btn-square btn-sm text-danger" onclick="this.closest('.platform-row').remove()" aria-label="حذف المنصة">
-                        <span class="material-symbols-rounded" aria-hidden="true">close</span>
-                    </button>
+                <div class="platform-card platform-row flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+                    <div class="w-full sm:w-48 shrink-0">
+                        <select name="GuestLogs[${guestIdx}].Platforms[${count}].PlatformId"
+                                class="input input-sm text-xs w-full platform-select" aria-label="منصة النشر">
+                            <option value="">— اختر المنصة —</option>
+                            @foreach (var p in Model.Platforms)
+                            {
+                                <option value="@p.SocialMediaPlatformId">@p.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="flex-1 relative">
+                        <input type="url" name="GuestLogs[${guestIdx}].Platforms[${count}].Url"
+                               class="input input-sm text-xs w-full pl-8 pr-3 platform-url-input"
+                               placeholder="https://..." dir="ltr"
+                               oninput="onUrlInputChange(this)"
+                               aria-label="رابط النشر" />
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0 justify-end">
+                        <button type="button" class="btn btn-ghost btn-square btn-xs text-text-secondary hover:text-primary" onclick="copyUrlInput(this)" title="نسخ الرابط"><span class="material-symbols-rounded text-sm">content_copy</span></button>
+                        <button type="button" class="btn btn-ghost btn-square btn-xs text-text-secondary hover:text-primary" onclick="openUrlInput(this)" title="فتح الرابط"><span class="material-symbols-rounded text-sm">open_in_new</span></button>
+                        <button type="button" class="btn btn-ghost btn-square btn-xs text-danger" onclick="removePlatformRow(this)" title="حذف المنصة"><span class="material-symbols-rounded text-sm">close</span></button>
+                    </div>
                 </div>`;
             container.insertAdjacentHTML('beforeend', html);
             platformCounters[guestIdx] = count + 1;
+            recalculateMetrics();
+        }
+
+        function copyUrlInput(btn) {
+            const row = btn.closest('.platform-row');
+            const urlInput = row?.querySelector('input[type="url"]');
+            if (urlInput && urlInput.value) {
+                navigator.clipboard.writeText(urlInput.value);
+                btn.classList.add('text-success');
+                setTimeout(() => btn.classList.remove('text-success'), 1500);
+            }
+        }
+
+        function openUrlInput(btn) {
+            const row = btn.closest('.platform-row');
+            const urlInput = row?.querySelector('input[type="url"]');
+            if (urlInput && urlInput.value) {
+                window.open(urlInput.value, '_blank');
+            }
+        }
+
+        function recalculateMetrics() {
+            let totalPublished = 0;
+            const totalGuests = document.querySelectorAll('.guest-editor-panel').length;
+            let guestsWithPubs = 0;
+
+            document.querySelectorAll('.guest-editor-panel').forEach((panel, idx) => {
+                let guestPubs = 0;
+                panel.querySelectorAll('.platform-url-input').forEach(input => {
+                    if (input.value.trim().length > 0) {
+                        totalPublished++;
+                        guestPubs++;
+                    }
+                });
+
+                if (guestPubs > 0) guestsWithPubs++;
+
+                const navBadge = document.getElementById(`nav-badge-${idx}`);
+                if (navBadge) {
+                    navBadge.textContent = `${guestPubs} منصة`;
+                    if (guestPubs > 0) {
+                        navBadge.className = 'chip text-micro font-bold py-0.5 px-2 rounded-full bg-success-subtle text-success border-success/30';
+                    } else {
+                        navBadge.className = 'chip text-micro font-bold py-0.5 px-2 rounded-full bg-surface-hover text-text-muted border-border';
+                    }
+                }
+            });
+
+            const expected = Math.max(totalGuests * 2, 1);
+            const pct = Math.min(100, Math.round((totalPublished / expected) * 100));
+
+            const hPub = document.getElementById('header-published-count');
+            if (hPub) hPub.textContent = totalPublished;
+
+            const hPct = document.getElementById('header-completion-pct');
+            if (hPct) hPct.textContent = `${pct}%`;
+
+            const cardPct = document.getElementById('progress-card-pct');
+            if (cardPct) cardPct.textContent = `${pct}%`;
+
+            const cardBar = document.getElementById('progress-card-bar');
+            if (cardBar) cardBar.style.width = `${pct}%`;
+
+            const sPub = document.getElementById('stat-published-count');
+            if (sPub) sPub.textContent = totalPublished;
+
+            const sGuest = document.getElementById('stat-completed-guests');
+            if (sGuest) sGuest.textContent = `${guestsWithPubs} / ${totalGuests}`;
         }
     </script>
 }

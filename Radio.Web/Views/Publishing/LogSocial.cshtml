@@ -1,13 +1,34 @@
 @model SocialPublishingViewModel
 @{
-    ViewData["Title"] = "تسجيل نشر رقمي";
+    ViewData["Title"] = "مساحة النشر الرقمي";
     ViewData["HeaderIcon"] = "share";
-    ViewData["HeaderDescription"] = "تسجيل عملية نشر حلقة على منصات السوشيال ميديا مع إرفاق الروابط والتفاصيل";
+    ViewData["HeaderDescription"] = "مساحة عمل لتسجيل ومتابعة نشر مقاطع ضيوف الحلقة";
     ViewBag.EntityName = "سجل النشر الموحد";
     ViewBag.EntityUrl = "/Publishing";
     ViewBag.BackUrl = "/Publishing";
     ViewBag.BackText = "الرجوع للسجل الموحد";
     var episode = Model.Episode;
+    var guestCount = Model.EpisodeGuests.Count;
+    var expectedPlatforms = Math.Max(guestCount * 2, 1);
+}
+
+@section Styles {
+<style>
+    .publishing-workspace { display:grid; grid-template-columns:17.5rem minmax(0,1fr) 20rem; gap:1rem; align-items:start; }
+    .workspace-panel { background:var(--color-surface); border:1px solid var(--color-border); border-radius:1.25rem; box-shadow:0 1px 2px color-mix(in srgb,var(--color-text) 7%,transparent); }
+    .guest-nav-item { border:1px solid var(--color-border); border-radius:1rem; cursor:pointer; transition:transform .18s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease; }
+    .guest-nav-item:hover { transform:translateX(-2px); background:var(--color-surface-hover); border-color:color-mix(in srgb,var(--color-primary) 40%,var(--color-border)); }
+    .guest-nav-item.active { background:var(--color-primary-subtle); border-color:var(--color-primary); box-shadow:0 0 0 3px color-mix(in srgb,var(--color-primary) 14%,transparent); }
+    .platform-card { border:1px solid var(--color-border); background:var(--color-surface); border-radius:1rem; transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease; }
+    .platform-card:focus-within,.platform-card:hover { border-color:color-mix(in srgb,var(--color-primary) 45%,var(--color-border)); box-shadow:0 5px 16px color-mix(in srgb,var(--color-text) 7%,transparent); }
+    .progress-fill { transition:width .45s cubic-bezier(.16,1,.3,1); }
+    .timeline-dot { position:absolute; right:-.36rem; top:.15rem; width:.7rem; height:.7rem; border-radius:9999px; border:2px solid var(--color-surface); }
+    .sticky-actions { position:sticky; bottom:1rem; z-index:20; box-shadow:0 12px 32px color-mix(in srgb,var(--color-text) 14%,transparent); }
+    @@media (max-width:1280px) { .publishing-workspace { grid-template-columns:16rem minmax(0,1fr); } .workspace-insights { grid-column:1 / -1; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); } .workspace-insights .timeline-card { grid-column:1 / -1; } }
+    @@media (max-width:760px) { .publishing-workspace { grid-template-columns:1fr; } .workspace-insights { grid-column:auto; display:flex; } .guest-navigator { max-height:none; } .guest-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); max-height:none; } .sticky-actions { bottom:.5rem; } }
+    @@media (max-width:480px) { .guest-list { grid-template-columns:1fr; } .workspace-insights { display:flex; } }
+    @@media (prefers-reduced-motion:reduce) { .guest-nav-item,.platform-card,.progress-fill { transition:none; } }
+</style>
 }
 
 <partial name="_PageHeader" />
@@ -18,215 +39,101 @@
     return;
 }
 
-<!-- Episode Info Header -->
-<div class="card p-6 mb-6 relative overflow-hidden" style="background: linear-gradient(135deg, color-mix(in srgb, var(--color-primary) 5%, transparent), color-mix(in srgb, var(--color-accent) 5%, transparent));">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
-        <div class="flex items-start gap-4">
-            <div class="p-3 rounded-2xl flex items-center justify-center bg-primary-subtle text-primary">
-                <span class="material-symbols-rounded text-3xl" aria-hidden="true">radio</span>
+<div class="space-y-4 text-text">
+    <header class="workspace-panel relative overflow-hidden p-5 md:p-6">
+        <div class="absolute inset-y-0 right-0 w-1 bg-primary pointer-events-none"></div>
+        <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-5">
+            <div class="flex gap-4 min-w-0">
+                <div class="w-14 h-14 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-sm"><span class="material-symbols-rounded text-3xl">podcasts</span></div>
+                <div class="min-w-0">
+                    <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                        <span class="chip bg-primary-subtle text-primary border-primary/20 text-xs font-bold">غرفة النشر الرقمي</span>
+                        <span class="text-xs text-text-secondary flex gap-1 items-center"><span class="material-symbols-rounded text-sm">calendar_today</span>@episode.ScheduledExecutionTime?.ToString("yyyy/MM/dd HH:mm")</span>
+                    </div>
+                    <h1 class="text-xl md:text-2xl font-black tracking-tight truncate">@episode.EpisodeName</h1>
+                    <p class="text-sm text-text-secondary mt-1">@episode.ProgramName · تسجيل نشر مقاطع الضيوف على القنوات الرقمية</p>
+                </div>
             </div>
-            <div>
-                <span class="meta-pill bg-primary-subtle text-primary inline-block mb-1.5">الحلقة الحالية</span>
-                <h3 class="text-xl font-black text-text">@episode.EpisodeName</h3>
-                <p class="text-sm flex items-center gap-1.5 mt-0.5 text-text-secondary">
-                    <span class="material-symbols-rounded text-sm text-text-muted" aria-hidden="true">folder</span>
-                    البرنامج: @episode.ProgramName
-                </p>
+            <div class="flex flex-wrap items-center gap-3 shrink-0">
+                <div class="flex divide-x-reverse divide-x divide-border rounded-xl border border-border bg-surface-hover px-1 py-2" aria-label="ملخص الحلقة">
+                    <div class="px-3 text-center"><div class="text-micro text-text-muted">الضيوف</div><strong class="text-lg font-black">@guestCount</strong></div>
+                    <div class="px-3 text-center"><div class="text-micro text-text-muted">المنصات المنشورة</div><strong class="text-lg font-black text-primary" id="header-published">0</strong></div>
+                    <div class="px-3 text-center"><div class="text-micro text-text-muted">اكتمال النشر</div><strong class="text-lg font-black text-success" id="header-progress">0%</strong></div>
+                </div>
+                <a href="/Episodes/Details/@episode.EpisodeId" target="_blank" class="btn btn-ghost border border-border rounded-xl text-xs gap-1"><span class="material-symbols-rounded text-base">open_in_new</span>تفاصيل الحلقة</a>
             </div>
         </div>
-        <a href="/Episodes/Details/@episode.EpisodeId" class="btn btn-ghost rounded-xl font-bold text-sm gap-2 border border-primary text-primary" target="_blank">
-            <span class="material-symbols-rounded" aria-hidden="true">open_in_new</span>
-            تفاصيل الحلقة الكاملة
-        </a>
-    </div>
+        <div class="mt-5 h-1.5 rounded-full overflow-hidden bg-surface-hover" aria-label="نسبة اكتمال النشر"><div class="progress-fill h-full rounded-full bg-primary" id="hero-progress-bar" style="width:0%"></div></div>
+    </header>
+
+    <form method="post" action="/Publishing/LogSocial/@episode.EpisodeId" id="social-publishing-form">
+        @Html.AntiForgeryToken()
+        <div class="publishing-workspace">
+            <aside class="workspace-panel guest-navigator p-3" aria-label="مستعرض الضيوف">
+                <div class="flex items-center justify-between px-1 mb-3"><h2 class="font-black text-sm flex items-center gap-2"><span class="material-symbols-rounded text-primary">groups</span>ضيوف الحلقة</h2><span class="text-xs text-text-muted">@guestCount مقاطع</span></div>
+                <div class="relative mb-3"><span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-text-muted text-base">search</span><input id="guest-search-input" class="input input-sm pr-9 text-xs" placeholder="ابحث عن ضيف..." type="search" /></div>
+                <div class="guest-list space-y-2 max-h-[62vh] overflow-y-auto" id="guest-nav-list">
+                @for (int i = 0; i < guestCount; i++)
+                {
+                    var guest = Model.EpisodeGuests[i];
+                    var initial = string.IsNullOrWhiteSpace(guest.FullName) ? "ض" : guest.FullName.Substring(0, 1);
+                    <button class="guest-nav-item w-full p-3 text-right @(i == 0 ? "active" : "")" type="button" data-guest-idx="@i" onclick="selectGuestTab(@i)">
+                        <div class="flex gap-2.5 items-center"><span class="w-9 h-9 shrink-0 rounded-full bg-primary-subtle text-primary flex items-center justify-center font-black text-sm">@initial</span><span class="min-w-0 flex-1"><span class="guest-name-label block text-sm font-bold truncate">@guest.FullName</span><span class="block text-micro text-text-secondary truncate mt-0.5">@(string.IsNullOrWhiteSpace(guest.Topic) ? "مقطع بانتظار الإعداد" : guest.Topic)</span></span></div>
+                        <div class="flex items-center justify-between mt-3"><span class="text-micro text-text-muted">تقدم النشر</span><span id="nav-badge-@i" class="chip py-0.5 px-2 text-micro bg-surface-hover text-text-muted border-border">0 منصة</span></div>
+                    </button>
+                }
+                </div>
+            </aside>
+
+            <main id="guests-container" class="min-w-0">
+            @if (guestCount > 0) { for (int i = 0; i < guestCount; i++) { var guest = Model.EpisodeGuests[i];
+                <section class="guest-editor-panel space-y-4 @(i == 0 ? "" : "hidden")" id="guest-editor-panel-@i" data-index="@i" aria-label="محرر نشر @guest.FullName">
+                    <input type="hidden" name="GuestLogs[@i].EpisodeGuestId" value="@guest.EpisodeGuestId" />
+                    <div class="workspace-panel p-5">
+                        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-border"><div class="flex items-center gap-3"><span class="w-10 h-10 rounded-xl bg-primary-subtle text-primary grid place-items-center"><span class="material-symbols-rounded">movie</span></span><div><h2 class="font-black">@guest.FullName</h2><p class="text-xs text-text-secondary">معلومات المقطع والتحضير للنشر</p></div></div><span class="chip bg-primary-subtle text-primary text-xs border-primary/20">مقطع ضيف #@(i+1)</span></div>
+                        <div class="grid grid-cols-1 md:grid-cols-6 gap-4 pt-5">
+                            <div class="md:col-span-6"><label class="text-xs font-bold block mb-1.5" for="ClipTitle_@i">عنوان المقطع <span class="text-danger">*</span></label><input id="ClipTitle_@i" name="GuestLogs[@i].ClipTitle" class="input text-sm" placeholder="أدخل عنوانًا واضحًا للمقطع المنشور" /><p class="validation-hint text-micro text-text-muted mt-1">العنوان يساعد فريق التحرير على التحقق من المقطع.</p></div>
+                            <div class="md:col-span-2"><label class="text-xs font-bold block mb-1.5" for="MediaType_@i">نوع الوسائط</label><select id="MediaType_@i" name="GuestLogs[@i].MediaType" class="input"><option value="1">صوت</option><option value="2">فيديو</option><option value="3">صوت وفيديو</option></select></div>
+                            <div class="md:col-span-2"><label class="text-xs font-bold block mb-1.5" for="DurationMinutes_@i">المدة بالدقائق</label><input id="DurationMinutes_@i" name="GuestLogs[@i].DurationMinutes" class="input" type="number" placeholder="مثال: 5" min="1" /></div>
+                            <div class="md:col-span-2 rounded-xl border border-dashed border-border bg-surface-hover flex gap-3 p-3 items-center"><span class="w-10 h-10 rounded-lg bg-surface grid place-items-center text-primary"><span class="material-symbols-rounded">image</span></span><span><b class="text-xs block">معاينة الصورة</b><small class="text-micro text-text-muted">تظهر عند توفرها</small></span></div>
+                        </div>
+                    </div>
+                    <div class="workspace-panel p-5">
+                        <div class="flex flex-wrap items-center justify-between gap-3 mb-4"><div><h2 class="font-black text-sm flex gap-2 items-center"><span class="material-symbols-rounded text-primary">share</span>قنوات النشر</h2><p class="text-xs text-text-secondary mt-1">أضف رابطًا صالحًا لكل منصة تم النشر عليها.</p></div><button type="button" class="btn btn-ghost border border-primary text-primary rounded-xl text-xs gap-1" onclick="addPlatform(@i)"><span class="material-symbols-rounded text-base">add</span>إضافة منصة</button></div>
+                        <div id="platforms-@i" class="grid grid-cols-1 gap-3 platforms-container">
+                            <div class="platform-card platform-row p-4 grid grid-cols-1 lg:grid-cols-[minmax(10rem,.7fr)_minmax(0,1.6fr)_auto] gap-3 items-center">
+                                <div class="flex gap-2 items-center"><span class="w-9 h-9 rounded-lg bg-primary-subtle text-primary grid place-items-center"><span class="material-symbols-rounded">public</span></span><select name="GuestLogs[@i].Platforms[0].PlatformId" class="input input-sm platform-select" aria-label="منصة النشر"><option value="">— اختر المنصة —</option>@foreach (var p in Model.Platforms) { <option value="@p.SocialMediaPlatformId">@p.Name</option> }</select></div>
+                                <div><input type="url" name="GuestLogs[@i].Platforms[0].Url" class="input input-sm platform-url-input" placeholder="https://…" dir="ltr" aria-label="رابط النشر" oninput="recalculateMetrics()" /><p class="url-feedback text-micro text-text-muted mt-1">بانتظار رابط النشر</p></div>
+                                <div class="flex gap-1 justify-end"><button type="button" class="btn btn-ghost btn-square btn-xs text-text-secondary" onclick="copyUrlInput(this)" title="نسخ الرابط"><span class="material-symbols-rounded text-sm">content_copy</span></button><button type="button" class="btn btn-ghost btn-square btn-xs text-text-secondary" onclick="openUrlInput(this)" title="فتح الرابط"><span class="material-symbols-rounded text-sm">open_in_new</span></button><button type="button" class="btn btn-ghost btn-square btn-xs text-danger" onclick="removePlatformRow(this)" title="حذف المنصة"><span class="material-symbols-rounded text-sm">close</span></button></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            }} else { <div class="workspace-panel text-center p-12"><span class="material-symbols-rounded text-5xl text-text-muted">groups</span><p class="font-bold mt-3">لا يوجد ضيوف مسجلون لهذه الحلقة.</p></div> }
+            </main>
+
+            <aside class="workspace-insights flex flex-col gap-4">
+                <section class="workspace-panel p-4"><div class="flex items-center justify-between"><h2 class="font-black text-sm flex items-center gap-2"><span class="material-symbols-rounded text-primary">donut_large</span>اكتمال النشر</h2><strong class="text-primary" id="progress-card-pct">0%</strong></div><div class="mt-4 h-2 rounded-full bg-surface-hover overflow-hidden"><div id="progress-card-bar" class="progress-fill h-full rounded-full bg-primary" style="width:0%"></div></div><div class="grid grid-cols-2 gap-2 mt-4"><div class="p-2.5 rounded-xl bg-surface-hover"><small class="text-micro text-text-muted block">منصات منشورة</small><strong id="stat-published-count" class="text-success">0</strong></div><div class="p-2.5 rounded-xl bg-surface-hover"><small class="text-micro text-text-muted block">مقاطع جاهزة</small><strong id="stat-ready-clips">0 / @guestCount</strong></div><div class="p-2.5 rounded-xl bg-surface-hover"><small class="text-micro text-text-muted block">متبقي</small><strong id="stat-remaining">@expectedPlatforms</strong></div><div class="p-2.5 rounded-xl bg-surface-hover"><small class="text-micro text-text-muted block">اكتمال الضيوف</small><strong id="stat-completed-guests">0 / @guestCount</strong></div></div></section>
+                <section class="workspace-panel timeline-card p-4"><h2 class="font-black text-sm flex gap-2 items-center pb-3 border-b border-border"><span class="material-symbols-rounded text-primary">timeline</span>مسار النشر</h2><ol class="relative mr-2 mt-4 border-r border-border pr-4 space-y-4 text-xs"><li class="relative"><i class="timeline-dot bg-success"></i><b>التنفيذ</b><p class="text-text-secondary mt-0.5">الحلقة جاهزة للمقاطع</p></li><li class="relative"><i class="timeline-dot bg-primary"></i><b>إنشاء المقطع</b><p class="text-text-secondary mt-0.5">أدخل العنوان والمدة</p></li><li class="relative"><i class="timeline-dot bg-surface-hover"></i><b>النشر الاجتماعي</b><p class="text-text-secondary mt-0.5">سجل روابط المنصات</p></li><li class="relative"><i class="timeline-dot bg-surface-hover"></i><b>نشر الموقع</b><p class="text-text-secondary mt-0.5">يُتابع في سجل الموقع</p></li></ol></section>
+            </aside>
+        </div>
+        @if (guestCount > 0) { <div class="sticky-actions workspace-panel mt-4 p-3 flex flex-col sm:flex-row justify-between gap-2"><a href="/Publishing" class="btn btn-ghost rounded-xl order-3 sm:order-1">إلغاء</a><div class="flex flex-col-reverse sm:flex-row gap-2"><button type="button" class="btn btn-ghost border border-border rounded-xl" onclick="document.getElementById('social-publishing-form').requestSubmit()"><span class="material-symbols-rounded">save</span>حفظ مسودة</button><button type="submit" class="btn btn-primary rounded-xl shadow-sm"><span class="material-symbols-rounded">publish</span>تسجيل النشر</button></div></div> }
+    </form>
 </div>
 
-<form method="post" action="/Publishing/LogSocial/@episode.EpisodeId" class="space-y-6">
-    @Html.AntiForgeryToken()
-
-    <div id="guests-container" class="space-y-6">
-        @if (Model.EpisodeGuests.Any())
-        {
-            @for (int i = 0; i < Model.EpisodeGuests.Count; i++)
-            {
-                var guest = Model.EpisodeGuests[i];
-                <div class="card p-6 guest-card relative overflow-hidden transition-all duration-300" data-index="@i">
-                    <!-- Guest Card Header -->
-                    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-border">
-                        <div class="p-2.5 rounded-xl flex items-center justify-center bg-primary-subtle text-primary">
-                            <span class="material-symbols-rounded" aria-hidden="true">person</span>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-lg flex items-center gap-2 text-text">
-                                @guest.FullName
-                            </h3>
-                            @if (!string.IsNullOrWhiteSpace(guest.Topic))
-                            {
-                                <p class="text-xs mt-0.5 text-text-secondary">الموضوع: @guest.Topic</p>
-                            }
-                        </div>
-                    </div>
-
-                    <input type="hidden" name="GuestLogs[@i].EpisodeGuestId" value="@guest.EpisodeGuestId" />
-
-                    <!-- Form Inputs Row -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                        <div>
-                            <label class="text-xs font-bold mb-1.5 block text-text-secondary" for="ClipTitle_@i">عنوان المقطع المنشور</label>
-                            <div class="relative">
-                                <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm text-text-muted" aria-hidden="true">title</span>
-                                <input type="text" id="ClipTitle_@i" name="GuestLogs[@i].ClipTitle"
-                                       class="input pr-12" placeholder="عنوان المقطع المنشور للضيف" />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="text-xs font-bold mb-1.5 block text-text-secondary" for="DurationMinutes_@i">المدة (بالدقائق)</label>
-                            <div class="relative">
-                                <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm text-text-muted" aria-hidden="true">hourglass_empty</span>
-                                <input type="number" id="DurationMinutes_@i" name="GuestLogs[@i].DurationMinutes"
-                                       class="input pr-12" placeholder="مدة المقطع" min="1" />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="text-xs font-bold mb-1.5 block text-text-secondary" for="MediaType_@i">نوع الوسائط</label>
-                            <div class="relative">
-                                <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm text-text-muted" aria-hidden="true">video_library</span>
-                                <select id="MediaType_@i" name="GuestLogs[@i].MediaType" class="input pr-12">
-                                    <option value="1">صوت</option>
-                                    <option value="2">فيديو</option>
-                                    <option value="3">صوت وفيديو</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Platforms Section -->
-                    <div class="mt-6 pt-6 pb-2 border-t border-border">
-                        <div class="flex items-center justify-between mb-4">
-                            <h4 class="font-bold text-sm flex items-center gap-2 text-text">
-                                <span class="material-symbols-rounded text-base text-primary" aria-hidden="true">link</span>
-                                روابط ومنصات النشر للمقطع
-                            </h4>
-                            <button type="button" class="btn btn-ghost rounded-xl text-xs font-bold gap-1.5 border border-primary text-primary" onclick="addPlatform(@i)">
-                                <span class="material-symbols-rounded text-sm" aria-hidden="true">add</span>
-                                إضافة رابط منصة
-                            </button>
-                        </div>
-
-                        <div class="platforms-container space-y-3" id="platforms-@i">
-                            <div class="platform-row grid grid-cols-1 sm:grid-cols-12 gap-3 items-center p-4 rounded-2xl transition-all bg-bg-hover border border-border">
-                                <div class="sm:col-span-4">
-                                    <div class="relative">
-                                        <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm text-text-muted" aria-hidden="true">social_leaderboard</span>
-                                        <select name="GuestLogs[@i].Platforms[0].PlatformId"
-                                                class="input pr-12" aria-label="منصة النشر">
-                                            <option value="">— اختر المنصة —</option>
-                                            @foreach (var p in Model.Platforms)
-                                            {
-                                                <option value="@p.SocialMediaPlatformId">@p.Name</option>
-                                            }
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="sm:col-span-7">
-                                    <div class="relative">
-                                        <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm text-text-muted" aria-hidden="true">link</span>
-                                        <input type="url" name="GuestLogs[@i].Platforms[0].Url"
-                                               class="input pr-12" placeholder="رابط النشر (مثال: https://...)" dir="ltr" aria-label="رابط النشر" />
-                                    </div>
-                                </div>
-                                <div class="sm:col-span-1 flex justify-end">
-                                    <button type="button" class="btn btn-ghost btn-square text-danger" onclick="this.closest('.platform-row').remove()" title="حذف الرابط" aria-label="حذف الرابط">
-                                        <span class="material-symbols-rounded text-lg" aria-hidden="true">delete</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
-        }
-        else
-        {
-            <div class="card border text-center py-12">
-                <span class="material-symbols-rounded text-5xl mb-2 text-text-muted" aria-hidden="true">people</span>
-                <p class="font-semibold text-text-secondary">لا يوجد ضيوف مسجلين في هذه الحلقة.</p>
-            </div>
-        }
-    </div>
-
-    <div class="flex items-center justify-end gap-3 mt-6">
-        <a href="/Publishing" class="btn btn-ghost rounded-xl gap-1.5">
-            <span class="material-symbols-rounded" aria-hidden="true">cancel</span>
-            إلغاء
-        </a>
-        @if (Model.EpisodeGuests.Any())
-        {
-            <button type="submit" class="btn btn-primary rounded-xl gap-2 shadow-sm">
-                <span class="material-symbols-rounded" aria-hidden="true">publish</span>
-                تسجيل النشر
-            </button>
-        }
-    </div>
-</form>
-
 @section Scripts {
-    <script>
-        const platformBaseUrls = @Html.Raw(Json.Serialize(Model.Platforms.ToDictionary(p => p.SocialMediaPlatformId.ToString(), p => p.BaseUrl ?? "")));
-
-        let platformCounters = {};
-        document.querySelectorAll('.guest-card').forEach(function (card) {
-            const idx = card.dataset.index;
-            platformCounters[idx] = 1;
-        });
-
-        document.getElementById('guests-container').addEventListener('change', function(e) {
-            if (e.target.matches('select[name*=".PlatformId"]')) {
-                const row = e.target.closest('.platform-row');
-                if (!row) return;
-                const urlInput = row.querySelector('input[type="url"]');
-                const baseUrl = platformBaseUrls[e.target.value] || '';
-                if (baseUrl && !urlInput.value) {
-                    urlInput.value = baseUrl;
-                }
-            }
-        });
-
-        function addPlatform(guestIdx) {
-            const container = document.getElementById('platforms-' + guestIdx);
-            const count = platformCounters[guestIdx] || container.querySelectorAll('.platform-row').length;
-            const html = `
-                <div class="platform-row grid grid-cols-1 sm:grid-cols-12 gap-3 items-center p-4 rounded-2xl transition-all mt-3 bg-bg-hover border border-border">
-                    <div class="sm:col-span-4">
-                        <div class="relative">
-                            <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm text-text-muted" aria-hidden="true">social_leaderboard</span>
-                            <select name="GuestLogs[${guestIdx}].Platforms[${count}].PlatformId"
-                                    class="input pr-12" aria-label="منصة النشر">
-                                <option value="">— اختر المنصة —</option>
-                                @foreach (var p in Model.Platforms)
-                                {
-                                    <option value="@p.SocialMediaPlatformId">@p.Name</option>
-                                }
-                            </select>
-                        </div>
-                    </div>
-                    <div class="sm:col-span-7">
-                        <div class="relative">
-                            <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-sm text-text-muted" aria-hidden="true">link</span>
-                            <input type="url" name="GuestLogs[${guestIdx}].Platforms[${count}].Url"
-                                   class="input pr-12" placeholder="رابط النشر (مثال: https://...)" dir="ltr" aria-label="رابط النشر" />
-                        </div>
-                    </div>
-                    <div class="sm:col-span-1 flex justify-end">
-                        <button type="button" class="btn btn-ghost btn-square text-danger" onclick="this.closest('.platform-row').remove()" title="حذف الرابط" aria-label="حذف الرابط">
-                            <span class="material-symbols-rounded text-lg" aria-hidden="true">delete</span>
-                        </button>
-                    </div>
-                </div>`;
-            container.insertAdjacentHTML('beforeend', html);
-            platformCounters[guestIdx] = count + 1;
-        }
-    </script>
+<script>
+const platformBaseUrls = @Html.Raw(Json.Serialize(Model.Platforms.ToDictionary(p => p.SocialMediaPlatformId.ToString(), p => p.BaseUrl ?? "")));
+let platformCounters = {};
+document.querySelectorAll('.guest-editor-panel').forEach(p => platformCounters[p.dataset.index] = p.querySelectorAll('.platform-row').length);
+function selectGuestTab(i) { document.querySelectorAll('.guest-nav-item').forEach(x => x.classList.toggle('active', x.dataset.guestIdx == i)); document.querySelectorAll('.guest-editor-panel').forEach(x => x.classList.toggle('hidden', x.dataset.index != i)); }
+document.getElementById('guest-search-input')?.addEventListener('input', function () { const q=this.value.trim().toLowerCase(); document.querySelectorAll('.guest-nav-item').forEach(x => x.style.display=(x.querySelector('.guest-name-label')?.textContent.toLowerCase().includes(q))?'':'none'); });
+document.getElementById('guests-container')?.addEventListener('change', function(e) { if (e.target.matches('select[name*=".PlatformId"]')) { const row=e.target.closest('.platform-row'), input=row?.querySelector('input[type="url"]'), base=platformBaseUrls[e.target.value]||''; if(base&&!input.value) input.value=base; recalculateMetrics(); }});
+function addPlatform(i) { const c=document.getElementById('platforms-'+i), n=platformCounters[i]||c.querySelectorAll('.platform-row').length; c.insertAdjacentHTML('beforeend', `<div class="platform-card platform-row p-4 grid grid-cols-1 lg:grid-cols-[minmax(10rem,.7fr)_minmax(0,1.6fr)_auto] gap-3 items-center"><div class="flex gap-2 items-center"><span class="w-9 h-9 rounded-lg bg-primary-subtle text-primary grid place-items-center"><span class="material-symbols-rounded">public</span></span><select name="GuestLogs[${i}].Platforms[${n}].PlatformId" class="input input-sm platform-select" aria-label="منصة النشر"><option value="">— اختر المنصة —</option>@foreach (var p in Model.Platforms) { <option value="@p.SocialMediaPlatformId">@p.Name</option> }</select></div><div><input type="url" name="GuestLogs[${i}].Platforms[${n}].Url" class="input input-sm platform-url-input" placeholder="https://…" dir="ltr" aria-label="رابط النشر" oninput="recalculateMetrics()" /><p class="url-feedback text-micro text-text-muted mt-1">بانتظار رابط النشر</p></div><div class="flex gap-1 justify-end"><button type="button" class="btn btn-ghost btn-square btn-xs text-text-secondary" onclick="copyUrlInput(this)" title="نسخ الرابط"><span class="material-symbols-rounded text-sm">content_copy</span></button><button type="button" class="btn btn-ghost btn-square btn-xs text-text-secondary" onclick="openUrlInput(this)" title="فتح الرابط"><span class="material-symbols-rounded text-sm">open_in_new</span></button><button type="button" class="btn btn-ghost btn-square btn-xs text-danger" onclick="removePlatformRow(this)" title="حذف المنصة"><span class="material-symbols-rounded text-sm">close</span></button></div></div>`); platformCounters[i]=n+1; recalculateMetrics(); }
+function removePlatformRow(b) { b.closest('.platform-row')?.remove(); recalculateMetrics(); }
+function copyUrlInput(b) { const v=b.closest('.platform-row')?.querySelector('input[type="url"]')?.value; if(v) { navigator.clipboard.writeText(v); b.classList.add('text-success'); setTimeout(()=>b.classList.remove('text-success'),1500); } }
+function openUrlInput(b) { const v=b.closest('.platform-row')?.querySelector('input[type="url"]')?.value; if(v) window.open(v,'_blank'); }
+function recalculateMetrics() { let published=0, complete=0; const panels=document.querySelectorAll('.guest-editor-panel'); panels.forEach((p,i)=>{let n=0;p.querySelectorAll('.platform-url-input').forEach(x=>{const valid=x.value.trim()&&x.checkValidity(); const f=x.parentElement.querySelector('.url-feedback'); if(x.value.trim()){ f.textContent=valid?'رابط صالح وجاهز للتسجيل':'تحقق من صيغة الرابط'; f.className='url-feedback text-micro mt-1 '+(valid?'text-success':'text-danger'); if(valid){n++;published++;} }else {f.textContent='بانتظار رابط النشر';f.className='url-feedback text-micro text-text-muted mt-1';}}); if(n) complete++; const badge=document.getElementById('nav-badge-'+i); if(badge){badge.textContent=n+' منصة';badge.className='chip py-0.5 px-2 text-micro '+(n?'bg-success-subtle text-success border-success/20':'bg-surface-hover text-text-muted border-border');}}); const expected=Math.max(panels.length*2,1),pct=Math.min(100,Math.round(published/expected*100)); ['header-published','stat-published-count'].forEach(id=>{const x=document.getElementById(id);if(x)x.textContent=published;}); ['header-progress','progress-card-pct'].forEach(id=>{const x=document.getElementById(id);if(x)x.textContent=pct+'%';}); ['hero-progress-bar','progress-card-bar'].forEach(id=>{const x=document.getElementById(id);if(x)x.style.width=pct+'%';}); document.getElementById('stat-ready-clips').textContent=complete+' / '+panels.length;document.getElementById('stat-completed-guests').textContent=complete+' / '+panels.length;document.getElementById('stat-remaining').textContent=Math.max(0,expected-published); }
+recalculateMetrics();
+</script>
 }

@@ -3,202 +3,708 @@
 @{
     ViewData["Title"] = "سجل النشر والتوزيع الموحد";
     ViewData["HeaderIcon"] = "hub";
-    ViewData["HeaderDescription"] = "متابعة وإدارة عمليات الإنتاج والنشر الرقمي على وسائل التواصل الاجتماعي والموقع الرسمي";
+    ViewData["HeaderDescription"] = "مركز عمليات النشر — متابعة عمليات الإنتاج والنشر الرقمي على وسائل التواصل الاجتماعي والموقع الرسمي";
     ViewBag.EntityName = "سجل النشر";
+    var programs = ViewBag.Programs as List<ProgramDto> ?? new();
+
+    var now = DateTime.UtcNow;
+    var today = now.Date;
+    var yesterday = today.AddDays(-1);
+
     var socialCount = Model.Count(r => r.RecordType == "SocialMedia");
     var websiteCount = Model.Count(r => r.RecordType == "Website");
     var executionCount = Model.Count(r => r.RecordType == "Execution");
-    var todayCount = Model.Count(r => r.RecordDate.Date == DateTime.UtcNow.Date);
-    var programs = ViewBag.Programs as List<ProgramDto> ?? new();
+    var todayCount = Model.Count(r => r.RecordDate.Date == today);
+    var pendingCount = Model.Count(r => r.RecordDate > now);
 
-    var kpiItems = new List<KpiItem>
-    {
-        new() { Label = "سجلات الإنتاج", Value = executionCount.ToString(), Icon = "check_circle", Subtitle = "منفذة ومسجلة" },
-        new() { Label = "النشر الرقمي", Value = socialCount.ToString(), Icon = "rss_feed", Subtitle = "وسائل التواصل الاجتماعي" },
-        new() { Label = "الموقع الرسمي", Value = websiteCount.ToString(), Icon = "public", Subtitle = "نشر على البوابة" },
-        new() { Label = "نشاط اليوم", Value = todayCount.ToString(), Icon = "today", Subtitle = "سجلات منشورة اليوم" }
-    };
-    ViewBag.KpiItems = kpiItems;
+    var feed = Model.OrderByDescending(r => r.RecordDate).Take(8).ToList();
+    var tlToday = Model.Where(r => r.RecordDate.Date == today).OrderByDescending(r => r.RecordDate).ToList();
+    var tlYesterday = Model.Where(r => r.RecordDate.Date == yesterday).OrderByDescending(r => r.RecordDate).ToList();
+    var tlEarlier = Model.Where(r => r.RecordDate.Date < yesterday).OrderByDescending(r => r.RecordDate).Take(6).ToList();
+    var syncTime = now.ToLocalTime().ToString("HH:mm:ss");
 }
 
 <div class="max-w-7xl mx-auto space-y-6">
     <partial name="_PageHeader" />
-    <partial name="_KpiCards" />
 
-    <!-- Filters Section -->
-    <div class="card p-5">
-        <form method="get" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div>
-                <label class="text-xs font-semibold text-text-secondary mb-1.5 block">البحث باسم الحلقة</label>
-                <div class="relative">
-                    <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none text-base" aria-hidden="true">search</span>
-                    <input type="text" name="search" value="@ViewBag.Search" placeholder="بحث باسم الحلقة..."
-                           class="input pr-10" />
-                </div>
+    <!-- ═══ HERO BAND — عمليات النشر ═══ -->
+    <section class="po-hero" aria-label="ملخص عمليات النشر">
+        <div class="po-hero-inner">
+            <span class="po-live">
+                <span class="po-live-dot" aria-hidden="true"></span>
+                مباشر
+            </span>
+            <span class="po-hero-chip" title="وقت تحميل الصفحة">
+                <span class="material-symbols-rounded" aria-hidden="true">sync</span>
+                آخر مزامنة @syncTime
+            </span>
+            <span class="po-hero-chip">
+                <span class="material-symbols-rounded" aria-hidden="true">inventory_2</span>
+                إجمالي السجلات @Model.Count
+            </span>
+            <span class="po-hero-chip">
+                <span class="material-symbols-rounded" aria-hidden="true">event</span>
+                @today.ToString("yyyy-MM-dd")
+            </span>
+        </div>
+        <div class="po-hero-actions">
+            <a href="/Publishing?type=Execution" class="po-preset" title="تصفية حسب سجلات الإنتاج">
+                <span class="material-symbols-rounded" aria-hidden="true">play_circle</span>
+                سجلات الإنتاج
+            </a>
+            <a href="/Publishing?type=SocialMedia" class="po-preset" title="تصفية حسب النشر الرقمي">
+                <span class="material-symbols-rounded" aria-hidden="true">share</span>
+                النشر الرقمي
+            </a>
+            <a href="/Publishing?type=Website" class="po-preset" title="تصفية حسب نشر الموقع">
+                <span class="material-symbols-rounded" aria-hidden="true">public</span>
+                نشر الموقع
+            </a>
+            <a href="/Publishing" class="btn btn-ghost btn-icon" title="تحديث البيانات" aria-label="تحديث البيانات">
+                <span class="material-symbols-rounded">refresh</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ═══ METRICS — مؤشرات النشر ═══ -->
+    <section class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-4" aria-label="مؤشرات النشر">
+        <div class="po-metric po-metric-exec">
+            <div class="po-metric-top">
+                <div class="po-metric-icon"><span class="material-symbols-rounded" aria-hidden="true">check_circle</span></div>
+                <span class="po-growth @(GrowthToday(r => r.RecordType == "Execution") > 0 ? "is-up" : GrowthToday(r => r.RecordType == "Execution") < 0 ? "is-down" : "is-flat")" title="مقارنة بعدد سجلات الإنتاج أمس">
+                    <span class="material-symbols-rounded" aria-hidden="true">@(GrowthToday(r => r.RecordType == "Execution") >= 0 ? "trending_up" : "trending_down")</span>
+                    @Math.Abs(GrowthToday(r => r.RecordType == "Execution"))%
+                </span>
             </div>
-            <div>
-                <label class="text-xs font-semibold text-text-secondary mb-1.5 block">حسب منصة النشر</label>
-                <select name="type" class="input" onchange="this.form.submit()">
-                    <option value="">كل منصات وأنواع النشر</option>
-                    <option value="Execution" selected="@(ViewBag.TypeFilter == "Execution")">سجلات الإنتاج</option>
-                    <option value="SocialMedia" selected="@(ViewBag.TypeFilter == "SocialMedia")">سجلات التواصل الاجتماعي</option>
-                    <option value="Website" selected="@(ViewBag.TypeFilter == "Website")">سجلات الموقع الرسمي</option>
-                </select>
+            <p class="po-metric-num" data-count="@executionCount">@executionCount</p>
+            <p class="po-metric-label">سجلات الإنتاج</p>
+            <p class="po-metric-sub">منفذة ومسجلة</p>
+        </div>
+
+        <div class="po-metric po-metric-social">
+            <div class="po-metric-top">
+                <div class="po-metric-icon"><span class="material-symbols-rounded" aria-hidden="true">share</span></div>
+                <span class="po-growth @(GrowthToday(r => r.RecordType == "SocialMedia") > 0 ? "is-up" : GrowthToday(r => r.RecordType == "SocialMedia") < 0 ? "is-down" : "is-flat")" title="مقارنة بعدد عمليات النشر الرقمي أمس">
+                    <span class="material-symbols-rounded" aria-hidden="true">@(GrowthToday(r => r.RecordType == "SocialMedia") >= 0 ? "trending_up" : "trending_down")</span>
+                    @Math.Abs(GrowthToday(r => r.RecordType == "SocialMedia"))%
+                </span>
             </div>
-            <div>
-                <label class="text-xs font-semibold text-text-secondary mb-1.5 block">فلترة حسب البرنامج</label>
-                <select name="programId" class="input" onchange="this.form.submit()">
-                    <option value="">كل البرامج</option>
-                    @foreach (var prog in programs)
-                    {
-                        <option value="@prog.ProgramId" selected="@(ViewBag.ProgramFilter == prog.ProgramId)">@prog.ProgramName</option>
-                    }
-                </select>
+            <p class="po-metric-num" data-count="@socialCount">@socialCount</p>
+            <p class="po-metric-label">النشر الرقمي</p>
+            <p class="po-metric-sub">وسائل التواصل الاجتماعي</p>
+        </div>
+
+        <div class="po-metric po-metric-web">
+            <div class="po-metric-top">
+                <div class="po-metric-icon"><span class="material-symbols-rounded" aria-hidden="true">public</span></div>
+                <span class="po-growth @(GrowthToday(r => r.RecordType == "Website") > 0 ? "is-up" : GrowthToday(r => r.RecordType == "Website") < 0 ? "is-down" : "is-flat")" title="مقارنة بعدد عمليات نشر الموقع أمس">
+                    <span class="material-symbols-rounded" aria-hidden="true">@(GrowthToday(r => r.RecordType == "Website") >= 0 ? "trending_up" : "trending_down")</span>
+                    @Math.Abs(GrowthToday(r => r.RecordType == "Website"))%
+                </span>
             </div>
-            <div class="flex gap-2 items-end">
-                <button type="submit" class="btn btn-primary flex-1 gap-1.5">
-                    <span class="material-symbols-rounded text-base" aria-hidden="true">filter_alt</span>
-                    <span>تصفية</span>
-                </button>
-                <a href="/Publishing" class="btn btn-ghost btn-square" title="إعادة تهيئة" aria-label="إعادة تهيئة التصفية">
-                    <span class="material-symbols-rounded text-base" aria-hidden="true">restart_alt</span>
-                </a>
+            <p class="po-metric-num" data-count="@websiteCount">@websiteCount</p>
+            <p class="po-metric-label">نشر الموقع الرسمي</p>
+            <p class="po-metric-sub">نشر على البوابة</p>
+        </div>
+
+        <div class="po-metric po-metric-pending">
+            <div class="po-metric-top">
+                <div class="po-metric-icon"><span class="material-symbols-rounded" aria-hidden="true">schedule</span></div>
+                <span class="po-growth is-flat" title="مواعيد نشر مجدولة في المستقبل">
+                    <span class="material-symbols-rounded" aria-hidden="true">more_time</span>
+                    @pendingCount
+                </span>
             </div>
+            <p class="po-metric-num" data-count="@pendingCount">@pendingCount</p>
+            <p class="po-metric-label">قيد الانتظار</p>
+            <p class="po-metric-sub">مواعيد نشر قادمة</p>
+        </div>
+
+        <div class="po-metric po-metric-today">
+            <div class="po-metric-top">
+                <div class="po-metric-icon"><span class="material-symbols-rounded" aria-hidden="true">today</span></div>
+                <span class="po-growth @(GrowthToday(_ => true) > 0 ? "is-up" : GrowthToday(_ => true) < 0 ? "is-down" : "is-flat")" title="مقارنة بنشاط أمس">
+                    <span class="material-symbols-rounded" aria-hidden="true">@(GrowthToday(_ => true) >= 0 ? "trending_up" : "trending_down")</span>
+                    @Math.Abs(GrowthToday(_ => true))%
+                </span>
+            </div>
+            <p class="po-metric-num" data-count="@todayCount">@todayCount</p>
+            <p class="po-metric-label">نشاط اليوم</p>
+            <p class="po-metric-sub">سجلات منشورة اليوم</p>
+        </div>
+    </section>
+
+    <!-- ═══ STICKY FILTER TOOLBAR ═══ -->
+    <div class="po-toolbar" role="search" aria-label="تصفية السجلات">
+        <form method="get" class="po-toolbar-form" id="poFilterForm">
+            <div class="relative">
+                <input type="text" name="search" id="poSearchInput" value="@ViewBag.Search"
+                       placeholder="بحث فوري: حلقة / برنامج / منصة / مستخدم"
+                       class="input w-full pl-10" aria-label="بحث فوري"
+                       autocomplete="off" />
+                <span class="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" aria-hidden="true">search</span>
+            </div>
+
+            <select name="programId" class="input" onchange="this.form.submit()" aria-label="تصفية حسب البرنامج">
+                <option value="">كل البرامج</option>
+                @foreach (var prog in programs)
+                {
+                    <option value="@prog.ProgramId" selected="@(ViewBag.ProgramFilter == prog.ProgramId)">@prog.ProgramName</option>
+                }
+            </select>
+
+            <select name="type" class="input" onchange="this.form.submit()" aria-label="تصفية حسب نوع السجل">
+                <option value="">كل المنصات</option>
+                <option value="Execution" selected="@(ViewBag.TypeFilter == "Execution")">سجل الإنتاج</option>
+                <option value="SocialMedia" selected="@(ViewBag.TypeFilter == "SocialMedia")">نشر رقمي</option>
+                <option value="Website" selected="@(ViewBag.TypeFilter == "Website")">نشر موقع</option>
+            </select>
+
+            <button type="submit" class="btn btn-primary">
+                <span class="material-symbols-rounded text-lg" aria-hidden="true">filter_alt</span>
+                تطبيق
+            </button>
+            <a href="/Publishing" class="btn btn-ghost" title="إعادة تهيئة جميع الفلاتر">إعادة</a>
         </form>
-    </div>
 
-    <!-- Records Grid Container -->
-    @if (!Model.Any())
-    {
-        ViewBag.EmptyIcon = "folder_off";
-        ViewBag.EmptyTitle = "لا توجد سجلات نشر مطابقة";
-        ViewBag.EmptyDesc = "لم نتمكن من العثور على أية نتائج تطابق محددات البحث الحالية";
-        <partial name="_EmptyState" />
-    }
-    else
-    {
-        <div class="card overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-xs text-right" aria-label="سجل النشر والتوزيع الموحد">
-                    <thead>
-                        <tr class="bg-bg border-b border-border text-text-muted font-bold uppercase tracking-wider">
-                            <th scope="col" class="px-6 py-4">المنصة</th>
-                            <th scope="col" class="px-6 py-4">معلومات الحلقة</th>
-                            <th scope="col" class="px-6 py-4 hidden lg:table-cell">تفاصيل النشر</th>
-                            <th scope="col" class="px-6 py-4 hidden md:table-cell">المسؤول</th>
-                            <th scope="col" class="px-6 py-4 hidden md:table-cell">التوقيت</th>
-                            <th scope="col" class="px-6 py-4 text-center">الخيارات</th>
-                        </tr>
-                    </thead>
-                <tbody>
-                    @foreach (var r in Model)
-                    {
-                        <tr class="transition-colors duration-200 border-b border-border-light">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center gap-3">
-                                    <div class="p-1.5 rounded-lg flex items-center justify-center" style="background-color: @r.RecordColor; color: white">
-                                        <span class="material-symbols-rounded text-lg" aria-hidden="true">@GetRecordIcon(r.RecordType)</span>
-                                    </div>
-                                    <span class="meta-pill" style="background: color-mix(in srgb, @r.RecordColor 15%, transparent); color: @r.RecordColor">
-                                        @GetRecordTypeName(r.RecordType)
-                                    </span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <a href="/Episodes/Details/@r.EpisodeId" class="font-semibold text-sm text-primary hover:underline transition-colors" target="_blank">
-                                    @(r.EpisodeName ?? "حلقة غير معنونة")
-                                </a>
-                                <span class="text-xs mt-0.5 block text-text-muted">@r.ProgramName</span>
-                            </td>
-                            <td class="px-6 py-4 hidden lg:table-cell">
-                                <div class="text-sm max-w-sm line-clamp-2 text-text-secondary">@r.Summary</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 font-bold text-xs bg-primary-subtle text-primary">
-                                        @(string.IsNullOrEmpty(r.RecordedBy) ? "ت" : r.RecordedBy.Substring(0, 1).ToUpper())
-                                    </div>
-                                    <div class="text-right">
-                                        <div class="text-sm font-semibold text-text">@(r.RecordedBy ?? "مستخدم تلقائي")</div>
-                                        <div class="text-[10px] text-text-muted">@GetRoleName(r.RecordType)</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
-                                <div class="flex flex-col text-xs">
-                                    <span class="font-semibold text-text">@r.RecordDate.ToString("yyyy-MM-dd")</span>
-                                    <span class="text-text-muted">@r.RecordDate.ToString("hh:mm tt")</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center justify-center gap-1">
-                                    @if (r.RecordType == "SocialMedia" && User.HasPermission(AppPermissions.SocialPublishingPublish))
-                                    {
-                                        <a href="/Publishing/Edit/@r.RecordId" class="btn btn-ghost btn-square btn-sm text-primary" title="تعديل" aria-label="تعديل سجل النشر الرقمي">
-                                            <span class="material-symbols-rounded text-xl leading-none" aria-hidden="true">edit</span>
-                                        </a>
-                                        <button type="button" class="btn btn-ghost btn-square btn-sm text-danger" title="حذف" aria-label="حذف سجل النشر الرقمي"
-                                                onclick="confirmDelete(@r.RecordId, '@(r.EpisodeName ?? "سجل")')">
-                                            <span class="material-symbols-rounded text-xl leading-none" aria-hidden="true">delete</span>
-                                        </button>
-                                    }
-                                    @if (r.RecordType == "Website" && User.HasPermission(AppPermissions.WebsitePublishingPublish))
-                                    {
-                                        <a href="/WebsitePublishing/Edit/@r.RecordId" class="btn btn-ghost btn-square btn-sm text-primary" title="تعديل" aria-label="تعديل سجل نشر الموقع">
-                                            <span class="material-symbols-rounded text-xl leading-none" aria-hidden="true">edit</span>
-                                        </a>
-                                        <button type="button" class="btn btn-ghost btn-square btn-sm text-danger" title="حذف" aria-label="حذف سجل نشر الموقع"
-                                                onclick="confirmWebsiteDelete(@r.RecordId, '@(r.EpisodeName ?? "سجل")')">
-                                            <span class="material-symbols-rounded text-xl leading-none" aria-hidden="true">delete</span>
-                                        </button>
-                                    }
-                                    @if (r.RecordType == "Execution" && (User.HasPermission(AppPermissions.ExecutionExecute) || User.HasPermission(AppPermissions.ExecutionEdit)))
-                                    {
-                                        <a href="/ExecutionLogs/Edit/@r.RecordId" class="btn btn-ghost btn-square btn-sm text-primary" title="تعديل سجل التنفيذ" aria-label="تعديل سجل التنفيذ">
-                                            <span class="material-symbols-rounded text-xl leading-none" aria-hidden="true">edit</span>
-                                        </a>
-                                    }
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <div class="po-toolbar-row2">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-text-muted" aria-hidden="true">date_range</span>
+                <input type="date" id="poDateFrom" class="input" aria-label="من تاريخ" title="تصفية من تاريخ" />
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-text-muted" aria-hidden="true">event_busy</span>
+                <input type="date" id="poDateTo" class="input" aria-label="إلى تاريخ" title="تصفية إلى تاريخ" />
+            </div>
+            <select id="poStatus" class="input" aria-label="تصفية حسب الحالة">
+                <option value="all">كل الحالات</option>
+                <option value="published">منشور</option>
+                <option value="pending">قيد الانتظار</option>
+            </select>
+            <select id="poSort" class="input" aria-label="ترتيب السجلات">
+                <option value="newest">الأحدث أولاً</option>
+                <option value="oldest">الأقدم أولاً</option>
+            </select>
         </div>
     </div>
+
+    <!-- ═══ MAIN GRID ═══ -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+
+        <!-- ═══ LEFT — PUBLISHING CARDS ═══ -->
+        <div class="lg:col-span-2 space-y-4">
+            <div class="flex items-center justify-between gap-3 flex-wrap">
+                <h2 class="text-title-lg font-bold flex items-center gap-2 text-text">
+                    <span class="material-symbols-rounded text-primary" aria-hidden="true">view_agenda</span>
+                    سجلات النشر
+                    <span class="badge badge-primary" id="poCount" role="status" aria-live="polite">@Model.Count سجل</span>
+                </h2>
+                <p class="text-caption text-text-muted" id="poRange" aria-live="polite"></p>
+            </div>
+
+            <!-- Skeletons (JS-driven intro, no-JS safe) -->
+            <div id="poSkel" class="po-skel-wrap hidden" aria-hidden="true">
+                <div class="po-skel-card">
+                    <div class="flex items-center gap-4">
+                        <div class="po-skel-line" style="width:2.75rem;height:2.75rem;border-radius:1rem"></div>
+                        <div class="flex-1 space-y-2">
+                            <div class="po-skel-line" style="width:45%"></div>
+                            <div class="po-skel-line" style="width:70%"></div>
+                        </div>
+                    </div>
+                    <div class="po-skel-line mt-4" style="width:90%"></div>
+                    <div class="po-skel-line mt-2" style="width:55%"></div>
+                </div>
+                <div class="po-skel-card">
+                    <div class="flex items-center gap-4">
+                        <div class="po-skel-line" style="width:2.75rem;height:2.75rem;border-radius:1rem"></div>
+                        <div class="flex-1 space-y-2">
+                            <div class="po-skel-line" style="width:55%"></div>
+                            <div class="po-skel-line" style="width:80%"></div>
+                        </div>
+                    </div>
+                    <div class="po-skel-line mt-4" style="width:85%"></div>
+                    <div class="po-skel-line mt-2" style="width:45%"></div>
+                </div>
+                <div class="po-skel-card">
+                    <div class="flex items-center gap-4">
+                        <div class="po-skel-line" style="width:2.75rem;height:2.75rem;border-radius:1rem"></div>
+                        <div class="flex-1 space-y-2">
+                            <div class="po-skel-line" style="width:40%"></div>
+                            <div class="po-skel-line" style="width:65%"></div>
+                        </div>
+                    </div>
+                    <div class="po-skel-line mt-4" style="width:75%"></div>
+                    <div class="po-skel-line mt-2" style="width:50%"></div>
+                </div>
+            </div>
+
+            <div id="poCards" class="space-y-4">
+                @foreach (var r in Model)
+                {
+                    var isPending = r.RecordDate > now;
+                    var haystack = $"{r.EpisodeName} {r.ProgramName} {r.Summary} {r.RecordedBy} {GetRecordTypeName(r.RecordType)}".ToLowerInvariant();
+
+                    <article class="po-card card card-hover" data-id="@r.RecordId" data-type="@r.RecordType"
+                             data-date="@r.RecordDate.ToString("o")" data-status="@(isPending ? "pending" : "published")"
+                             data-search="@haystack">
+                        <div class="po-card-head">
+                            <div class="po-card-icon" style="background:@r.RecordColor" aria-hidden="true">
+                                <span class="material-symbols-rounded">@GetRecordIcon(r.RecordType)</span>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="po-type-chip">
+                                        <span class="material-symbols-rounded" aria-hidden="true">@GetRecordIcon(r.RecordType)</span>
+                                        @GetRecordTypeName(r.RecordType)
+                                    </span>
+                                    <span class="po-status @(isPending ? "is-pending" : "is-published")" role="status">
+                                        <span class="material-symbols-rounded" aria-hidden="true">@(isPending ? "schedule" : "task_alt")</span>
+                                        @(isPending ? "قيد الانتظار" : "منشور")
+                                    </span>
+                                </div>
+                                <h3 class="text-title font-bold mt-2 text-text truncate">
+                                    <a href="/Episodes/Details/@r.EpisodeId" class="hover:text-primary transition-colors duration-fast">@(r.EpisodeName ?? "حلقة غير معنونة")</a>
+                                </h3>
+                                <p class="text-caption text-text-muted mt-1 flex items-center gap-1">
+                                    <span class="material-symbols-rounded text-sm" aria-hidden="true">radio</span>
+                                    @(r.ProgramName ?? "بدون برنامج")
+                                </p>
+                            </div>
+                            <div class="po-card-actions">
+                                @if (r.RecordType == "SocialMedia" && User.HasPermission(AppPermissions.SocialPublishingPublish))
+                                {
+                                    <a href="/Publishing/Edit/@r.RecordId" class="btn btn-ghost btn-icon btn-sm" title="تعديل السجل" aria-label="تعديل السجل">
+                                        <span class="material-symbols-rounded">edit</span>
+                                    </a>
+                                }
+                                @if (r.RecordType == "Website" && User.HasPermission(AppPermissions.WebsitePublishingPublish))
+                                {
+                                    <a href="/WebsitePublishing/Edit/@r.RecordId" class="btn btn-ghost btn-icon btn-sm" title="تعديل السجل" aria-label="تعديل السجل">
+                                        <span class="material-symbols-rounded">edit</span>
+                                    </a>
+                                }
+                                @if (r.RecordType == "Execution" && (User.HasPermission(AppPermissions.ExecutionExecute) || User.HasPermission(AppPermissions.ExecutionEdit)))
+                                {
+                                    <a href="/ExecutionLogs/Edit/@r.RecordId" class="btn btn-ghost btn-icon btn-sm" title="تعديل سجل التنفيذ" aria-label="تعديل سجل التنفيذ">
+                                        <span class="material-symbols-rounded">edit</span>
+                                    </a>
+                                }
+                                <button type="button" class="btn btn-ghost btn-icon btn-sm po-copy" data-copy="/Episodes/Details/@r.EpisodeId" title="نسخ رابط الحلقة" aria-label="نسخ رابط الحلقة">
+                                    <span class="material-symbols-rounded">content_copy</span>
+                                </button>
+                                <a href="/Episodes/Details/@r.EpisodeId" class="btn btn-ghost btn-icon btn-sm" title="فتح صفحة الحلقة" aria-label="فتح صفحة الحلقة">
+                                    <span class="material-symbols-rounded">open_in_new</span>
+                                </a>
+                                @if (r.RecordType == "SocialMedia" && User.HasPermission(AppPermissions.SocialPublishingPublish))
+                                {
+                                    <button type="button" class="btn btn-ghost btn-icon btn-sm" title="حذف السجل" aria-label="حذف السجل"
+                                            onclick="confirmDelete(@r.RecordId, '@(r.EpisodeName?.Replace("'", "") ?? "")')">
+                                        <span class="material-symbols-rounded">delete</span>
+                                    </button>
+                                }
+                                @if (r.RecordType == "Website" && User.HasPermission(AppPermissions.WebsitePublishingPublish))
+                                {
+                                    <button type="button" class="btn btn-ghost btn-icon btn-sm" title="حذف السجل" aria-label="حذف السجل"
+                                            onclick="confirmWebsiteDelete(@r.RecordId, '@(r.EpisodeName?.Replace("'", "") ?? "")')">
+                                        <span class="material-symbols-rounded">delete</span>
+                                    </button>
+                                }
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(r.Summary))
+                        {
+                            <p class="po-summary po-clamp-2">@r.Summary</p>
+                        }
+
+                        <div class="po-card-foot">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="po-avatar po-avatar-@(RecordTypeClass(r.RecordType))" aria-hidden="true">@Initials(r.RecordedBy)</span>
+                                <span class="text-caption font-semibold text-text-secondary truncate">@(r.RecordedBy ?? "النظام")</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-caption text-text-muted" dir="auto">
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-rounded text-sm" aria-hidden="true">schedule</span>
+                                    <time datetime="@r.RecordDate.ToString("o")" title="@r.RecordDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm")">@Rel(r.RecordDate)</time>
+                                </span>
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-rounded text-sm" aria-hidden="true">calendar_month</span>
+                                    @r.RecordDate.ToLocalTime().ToString("MM-dd HH:mm")
+                                </span>
+                            </div>
+                        </div>
+                    </article>
+                }
+            </div>
+
+            <!-- Empty state (client-side) -->
+            <div id="poEmpty" class="hidden">
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <span class="material-symbols-rounded">hub</span>
+                    </div>
+                    <h3 class="empty-state-title">لا توجد سجلات مطابقة</h3>
+                    <p class="empty-state-desc">جرّب تعديل نطاق التاريخ أو إعادة تعيين عوامل التصفية للعثور على السجلات.</p>
+                    <div class="empty-state-actions">
+                        <a href="/Publishing" class="btn btn-primary">
+                            <span class="material-symbols-rounded text-lg" aria-hidden="true">refresh</span>
+                            عرض كل السجلات
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination (client-side, animated) -->
+            <div id="poPager" class="pagination-bar" hidden>
+                <div class="pagination-controls" id="poPagerBtns"></div>
+            </div>
+        </div>
+
+        <!-- ═══ RIGHT — ACTIVITY FEED + TIMELINE ═══ -->
+        <aside class="space-y-6 lg:sticky lg:top-24" aria-label="نشاط وجدول النشر">
+            <!-- Activity Feed -->
+            <section class="card p-5">
+                <div class="flex items-center justify-between gap-3 mb-2">
+                    <h2 class="text-title font-bold flex items-center gap-2 text-text">
+                        <span class="material-symbols-rounded text-primary" aria-hidden="true">bolt</span>
+                        آخر الأنشطة
+                    </h2>
+                    <span class="badge badge-info">@feed.Count</span>
+                </div>
+                <p class="text-caption text-text-muted mb-3">نشر، تنفيذ، وتحديثات على مدار السجل الموحد</p>
+                <ol class="po-feed-list">
+                    @foreach (var item in feed)
+                    {
+                        <li class="po-feed-item">
+                            <span class="po-avatar po-avatar-@(RecordTypeClass(item.RecordType))" aria-hidden="true">@Initials(item.RecordedBy)</span>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-body leading-snug text-text truncate">
+                                    <span class="font-bold">@(item.RecordedBy ?? "النظام")</span>
+                                    <span class="text-text-muted">@GetRecordTypeName(item.RecordType) ←</span>
+                                    <a href="/Episodes/Details/@item.EpisodeId" class="text-primary font-semibold hover:underline">@(item.EpisodeName ?? "حلقة")</a>
+                                </p>
+                                <p class="text-caption text-text-muted mt-0.5">
+                                    <time datetime="@item.RecordDate.ToString("o")" title="@item.RecordDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm")">@Rel(item.RecordDate)</time>
+                                </p>
+                            </div>
+                            <span class="po-dot" style="background:@item.RecordColor" aria-hidden="true"></span>
+                        </li>
+                    }
+                </ol>
+            </section>
+
+            <!-- Publishing Timeline -->
+            <section class="card p-5">
+                <h2 class="text-title font-bold flex items-center gap-2 text-text mb-2">
+                    <span class="material-symbols-rounded text-accent" aria-hidden="true">timeline</span>
+                    الجدول الزمني للنشر
+                </h2>
+                <p class="text-caption text-text-muted mb-4">نشاط النشر مجمّعًا حسب اليوم</p>
+
+                @if (!tlToday.Any() && !tlYesterday.Any() && !tlEarlier.Any())
+                {
+                    <p class="text-caption text-text-muted">لا توجد أنشطة مسجلة بعد.</p>
+                }
+                else
+                {
+                    <div class="po-tl">
+                        @if (tlToday.Any())
+                        {
+                            <div class="po-tl-group">
+                                <div class="po-tl-label">
+                                    <span class="material-symbols-rounded" aria-hidden="true">today</span>
+                                    اليوم — @tlToday.Count عملية
+                                </div>
+                                @foreach (var r in tlToday)
+                                {
+                                    <div class="po-tl-item">
+                                        <span class="po-tl-node" style="background:@r.RecordColor" aria-hidden="true"></span>
+                                        <div class="po-tl-body">
+                                            <p class="po-tl-title truncate">
+                                                <a href="/Episodes/Details/@r.EpisodeId" class="hover:text-primary transition-colors duration-fast">@(r.EpisodeName ?? "حلقة غير معنونة")</a>
+                                            </p>
+                                            <p class="po-tl-meta"><span class="font-semibold text-text-secondary">@GetRecordTypeName(r.RecordType)</span> • @Rel(r.RecordDate)</p>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                        @if (tlYesterday.Any())
+                        {
+                            <div class="po-tl-group">
+                                <div class="po-tl-label">
+                                    <span class="material-symbols-rounded" aria-hidden="true">yesterday</span>
+                                    أمس — @tlYesterday.Count عملية
+                                </div>
+                                @foreach (var r in tlYesterday)
+                                {
+                                    <div class="po-tl-item">
+                                        <span class="po-tl-node" style="background:@r.RecordColor" aria-hidden="true"></span>
+                                        <div class="po-tl-body">
+                                            <p class="po-tl-title truncate">
+                                                <a href="/Episodes/Details/@r.EpisodeId" class="hover:text-primary transition-colors duration-fast">@(r.EpisodeName ?? "حلقة غير معنونة")</a>
+                                            </p>
+                                            <p class="po-tl-meta"><span class="font-semibold text-text-secondary">@GetRecordTypeName(r.RecordType)</span> • @Rel(r.RecordDate)</p>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                        @if (tlEarlier.Any())
+                        {
+                            <div class="po-tl-group">
+                                <div class="po-tl-label">
+                                    <span class="material-symbols-rounded" aria-hidden="true">history</span>
+                                    سابقًا — @tlEarlier.Count عملية
+                                </div>
+                                @foreach (var r in tlEarlier)
+                                {
+                                    <div class="po-tl-item">
+                                        <span class="po-tl-node" style="background:@r.RecordColor" aria-hidden="true"></span>
+                                        <div class="po-tl-body">
+                                            <p class="po-tl-title truncate">
+                                                <a href="/Episodes/Details/@r.EpisodeId" class="hover:text-primary transition-colors duration-fast">@(r.EpisodeName ?? "حلقة غير معنونة")</a>
+                                            </p>
+                                            <p class="po-tl-meta"><span class="font-semibold text-text-secondary">@GetRecordTypeName(r.RecordType)</span> • @Rel(r.RecordDate)</p>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </section>
+        </aside>
+    </div>
+
+    <!-- Modals (unchanged) -->
+    @{
+        ViewBag.DeleteModalId = "deleteModal";
+        ViewBag.DeleteModalTitle = "حذف سجل النشر الرقمي";
+        ViewBag.DeleteModalMessage = "هل أنت متأكد من حذف هذا السجل؟";
     }
+    <partial name="_DeleteConfirmModal" />
+
+    @{
+        ViewBag.DeleteModalId = "deleteWebsiteModal";
+        ViewBag.DeleteModalTitle = "حذف سجل نشر الموقع";
+        ViewBag.DeleteModalMessage = "هل أنت متأكد من حذف هذا السجل؟";
+    }
+    <partial name="_DeleteConfirmModal" />
 </div>
-
-@{
-    ViewBag.DeleteModalId = "deleteModal";
-    ViewBag.DeleteModalTitle = "حذف سجل النشر الرقمي";
-    ViewBag.DeleteModalMessage = "هل أنت متأكد من حذف هذا السجل؟";
-}
-<partial name="_DeleteConfirmModal" />
-
-@{
-    ViewBag.DeleteModalId = "deleteWebsiteModal";
-    ViewBag.DeleteModalTitle = "حذف سجل نشر الموقع";
-    ViewBag.DeleteModalMessage = "هل أنت متأكد من حذف هذا السجل؟";
-}
-<partial name="_DeleteConfirmModal" />
 
 @section Scripts {
     <script>
-        function confirmDelete(id, name) {
-            document.getElementById('deleteModalMessage').textContent = 'هل أنت متأكد من حذف سجل النشر الرقمي للحلقة "' + name + '"؟';
-            document.getElementById('deleteModalForm').action = '/Publishing/Delete/' + id;
-            document.getElementById('deleteModal').showModal();
-        }
-        function confirmWebsiteDelete(id, name) {
-            document.getElementById('deleteWebsiteModalMessage').textContent = 'هل أنت متأكد من حذف سجل نشر الموقع للحلقة "' + name + '"؟';
-            document.getElementById('deleteWebsiteModalForm').action = '/WebsitePublishing/Delete/' + id;
-            document.getElementById('deleteWebsiteModal').showModal();
-        }
+        (function () {
+            // ── Existing delete helpers (preserved) ──
+            window.confirmDelete = function (id, name) {
+                document.getElementById('deleteModalMessage').textContent = 'هل أنت متأكد من حذف سجل النشر الرقمي للحلقة "' + name + '"؟';
+                document.getElementById('deleteModalForm').action = '/Publishing/Delete/' + id;
+                document.getElementById('deleteModal').showModal();
+            };
+            window.confirmWebsiteDelete = function (id, name) {
+                document.getElementById('deleteWebsiteModalMessage').textContent = 'هل أنت متأكد من حذف سجل نشر الموقع للحلقة "' + name + '"؟';
+                document.getElementById('deleteWebsiteModalForm').action = '/WebsitePublishing/Delete/' + id;
+                document.getElementById('deleteWebsiteModal').showModal();
+            };
+
+            // ── Publishing Operations Center engine ──
+            var cards = Array.prototype.slice.call(document.querySelectorAll('#poCards .po-card'));
+            if (!cards.length) {
+                document.getElementById('poEmpty') && document.getElementById('poEmpty').classList.remove('hidden');
+                return;
+            }
+
+            var searchInput = document.getElementById('poSearchInput');
+            var fromInput = document.getElementById('poDateFrom');
+            var toInput = document.getElementById('poDateTo');
+            var statusSel = document.getElementById('poStatus');
+            var sortSel = document.getElementById('poSort');
+            var countEl = document.getElementById('poCount');
+            var rangeEl = document.getElementById('poRange');
+            var emptyEl = document.getElementById('poEmpty');
+            var pager = document.getElementById('poPager');
+            var pagerBtns = document.getElementById('poPagerBtns');
+            var skel = document.getElementById('poSkel');
+            var cardsWrap = document.getElementById('poCards');
+            var PAGE_SIZE = 12;
+            var page = 1;
+            var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            function isVisible(card) {
+                var q = searchInput.value.trim().toLowerCase();
+                if (q && card.dataset.search.indexOf(q) === -1) return false;
+                var st = statusSel.value;
+                if (st !== 'all' && card.dataset.status !== st) return false;
+                var d = new Date(card.dataset.date);
+                if (fromInput.value && d < new Date(fromInput.value + 'T00:00:00')) return false;
+                if (toInput.value && d > new Date(toInput.value + 'T23:59:59')) return false;
+                return true;
+            }
+
+            function filtered() {
+                var list = cards.filter(isVisible);
+                var dir = sortSel.value === 'oldest' ? 1 : -1;
+                list.sort(function (a, b) {
+                    return dir * (new Date(a.dataset.date) - new Date(b.dataset.date));
+                });
+                return list;
+            }
+
+            function pageWindow(total) {
+                if (total <= 7) {
+                    var all = [];
+                    for (var i = 1; i <= total; i++) all.push(i);
+                    return all;
+                }
+                var win = [1];
+                if (page > 4) win.push('…');
+                for (var p = Math.max(2, page - 1); p <= Math.min(total - 1, page + 1); p++) win.push(p);
+                if (page < total - 3) win.push('…');
+                win.push(total);
+                return win;
+            }
+
+            function buildPager(totalPages) {
+                pager.hidden = totalPages <= 1;
+                pagerBtns.innerHTML = '';
+                if (totalPages <= 1) return;
+
+                var prev = document.createElement('button');
+                prev.type = 'button';
+                prev.className = 'pagination-nav' + (page <= 1 ? ' disabled' : '');
+                prev.setAttribute('aria-label', 'السابق');
+                prev.innerHTML = '<span class="material-symbols-rounded">chevron_right</span>';
+                prev.disabled = page <= 1;
+                prev.addEventListener('click', function () { if (page > 1) { page--; render(); } });
+                pagerBtns.appendChild(prev);
+
+                pageWindow(totalPages).forEach(function (p) {
+                    if (p === '…') {
+                        var ell = document.createElement('span');
+                        ell.className = 'pagination-ellipsis';
+                        ell.textContent = '…';
+                        pagerBtns.appendChild(ell);
+                        return;
+                    }
+                    var btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'pagination-page' + (p === page ? ' active' : '');
+                    btn.textContent = p;
+                    btn.setAttribute('aria-label', 'صفحة ' + p);
+                    if (p === page) btn.setAttribute('aria-current', 'page');
+                    btn.addEventListener('click', function () { page = p; render(); });
+                    pagerBtns.appendChild(btn);
+                });
+
+                var next = document.createElement('button');
+                next.type = 'button';
+                next.className = 'pagination-nav' + (page >= totalPages ? ' disabled' : '');
+                next.setAttribute('aria-label', 'التالي');
+                next.innerHTML = '<span class="material-symbols-rounded">chevron_left</span>';
+                next.disabled = page >= totalPages;
+                next.addEventListener('click', function () { if (page < totalPages) { page++; render(); } });
+                pagerBtns.appendChild(next);
+            }
+
+            function render() {
+                var list = filtered();
+                var totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+                if (page > totalPages) page = totalPages;
+                var start = (page - 1) * PAGE_SIZE;
+                var slice = list.slice(start, start + PAGE_SIZE);
+                var inSlice = {};
+                slice.forEach(function (c) { inSlice[c.dataset.id] = true; });
+
+                cards.forEach(function (c) {
+                    var show = !!inSlice[c.dataset.id];
+                    c.classList.toggle('hidden', !show);
+                    if (show) {
+                        c.classList.remove('po-card-enter');
+                        if (!reduceMotion) { void c.offsetWidth; c.classList.add('po-card-enter'); }
+                    }
+                });
+
+                countEl.textContent = list.length + (list.length === 1 ? ' سجل' : ' سجل');
+                if (rangeEl) rangeEl.textContent = slice.length ? ('عرض ' + (start + 1) + '–' + (start + slice.length) + ' من ' + list.length) : '';
+                if (emptyEl) emptyEl.classList.toggle('hidden', list.length > 0);
+                buildPager(totalPages);
+            }
+
+            // Events
+            searchInput.addEventListener('input', function () { page = 1; render(); });
+            [fromInput, toInput, statusSel, sortSel].forEach(function (el) {
+                el.addEventListener('change', function () { page = 1; render(); });
+            });
+
+            // Copy link buttons
+            document.querySelectorAll('.po-copy').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var url = window.location.origin + btn.dataset.copy;
+                    function done() {
+                        btn.classList.add('po-copy-done');
+                        var icon = btn.querySelector('.material-symbols-rounded');
+                        var prev = icon.textContent;
+                        icon.textContent = 'check';
+                        btn.setAttribute('title', 'تم نسخ الرابط');
+                        setTimeout(function () {
+                            btn.classList.remove('po-copy-done');
+                            icon.textContent = prev;
+                            btn.setAttribute('title', 'نسخ رابط الحلقة');
+                        }, 1600);
+                    }
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(url).then(done).catch(function () { fallbackCopy(url); done(); });
+                    } else { fallbackCopy(url); done(); }
+                    function fallbackCopy(text) {
+                        var ta = document.createElement('textarea');
+                        ta.value = text;
+                        ta.style.position = 'fixed';
+                        ta.style.opacity = '0';
+                        document.body.appendChild(ta);
+                        ta.select();
+                        try { document.execCommand('copy'); } catch (e) { }
+                        document.body.removeChild(ta);
+                    }
+                });
+            });
+
+            // Animated counters
+            document.querySelectorAll('.po-metric-num[data-count]').forEach(function (el) {
+                var target = parseInt(el.dataset.count, 10) || 0;
+                if (reduceMotion || target === 0) { el.textContent = target; return; }
+                var startTime = null;
+                var duration = 800;
+                function step(ts) {
+                    if (!startTime) startTime = ts;
+                    var p = Math.min(1, (ts - startTime) / duration);
+                    var eased = 1 - Math.pow(1 - p, 3);
+                    el.textContent = Math.round(target * eased);
+                    if (p < 1) requestAnimationFrame(step);
+                }
+                requestAnimationFrame(step);
+            });
+
+            // Skeleton intro
+            if (skel && cardsWrap) {
+                skel.classList.remove('hidden');
+                cardsWrap.classList.add('po-cards-loading');
+                setTimeout(function () {
+                    skel.classList.add('hidden');
+                    cardsWrap.classList.remove('po-cards-loading');
+                }, reduceMotion ? 0 : 420);
+            }
+
+            render();
+        })();
     </script>
 }
 
-@{ string GetRecordTypeName(string t) => t switch
+@{
+    string GetRecordTypeName(string t) => t switch
     {
         "Execution" => "سجل الإنتاج",
         "SocialMedia" => "نشر رقمي",
@@ -220,4 +726,46 @@
         "SocialMedia" => "مسؤول النشر الرقمي",
         "Website" => "مسؤول نشر الموقع",
         _ => "مسؤول النظام"
-    }; }
+    };
+
+    string RecordTypeClass(string t) => t switch
+    {
+        "Execution" => "exec",
+        "SocialMedia" => "social",
+        "Website" => "web",
+        _ => "web"
+    };
+
+    string Initials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "ن";
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length >= 2) return $"{parts[0][0]}{parts[1][0]}";
+        return name.Substring(0, 1);
+    }
+
+    string Rel(DateTime d)
+    {
+        if (d > now)
+        {
+            var f = d - now;
+            if (f < TimeSpan.FromHours(1)) return $"خلال {Math.Max(1, (int)f.TotalMinutes)} دقيقة";
+            if (f < TimeSpan.FromDays(1)) return $"خلال {Math.Max(1, (int)f.TotalHours)} ساعة";
+            return $"خلال {(int)f.TotalDays} يوم";
+        }
+        var diff = now - d;
+        if (diff < TimeSpan.FromMinutes(1)) return "الآن";
+        if (diff < TimeSpan.FromHours(1)) return $"منذ {Math.Max(1, (int)diff.TotalMinutes)} دقيقة";
+        if (diff < TimeSpan.FromHours(24)) return $"منذ {Math.Max(1, (int)diff.TotalHours)} ساعة";
+        if (diff < TimeSpan.FromDays(2)) return "أمس";
+        if (diff < TimeSpan.FromDays(30)) return $"منذ {(int)diff.TotalDays} يوم";
+        return d.ToString("yyyy-MM-dd");
+    }
+
+    int GrowthToday(Func<PublishingRecordDto, bool> pred)
+    {
+        var t = Model.Count(r => pred(r) && r.RecordDate.Date == today);
+        var y = Model.Count(r => pred(r) && r.RecordDate.Date == yesterday);
+        return y == 0 ? (t > 0 ? 100 : 0) : (int)Math.Round((t - y) * 100.0 / y);
+    }
+}

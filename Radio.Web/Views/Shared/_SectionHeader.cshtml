@@ -5,14 +5,16 @@
     var title = ViewBag.SectionTitle as string ?? "";
     var subtitle = ViewBag.SectionSubtitle as string;
     var action = ViewBag.SectionAction as IHtmlContent;
+    var size = ViewBag.SectionSize as string;
+    var isLg = size == "lg";
 }
 
-<div class="flex items-center gap-3 mb-5">
-    <div class="w-10 h-10 rounded-xl bg-primary-subtle text-primary flex items-center justify-center shrink-0">
-        <span class="material-symbols-rounded text-xl" aria-hidden="true">@icon</span>
+<div class="flex items-center gap-3 @(isLg ? "mb-6" : "mb-5")">
+    <div class="@(isLg ? "w-12 h-12 rounded-2xl ws-sec-icon-lg" : "w-10 h-10 rounded-xl bg-primary-subtle") text-primary flex items-center justify-center shrink-0">
+        <span class="material-symbols-rounded @(isLg ? "text-2xl" : "text-xl")" aria-hidden="true">@icon</span>
     </div>
     <div class="flex-1 min-w-0">
-        <h3 class="font-bold text-text truncate">@title</h3>
+        <h3 class="@(isLg ? "text-title-lg" : "") font-bold text-text truncate">@title</h3>
         @if (!string.IsNullOrEmpty(subtitle))
         {
             <p class="text-caption text-text-muted">@subtitle</p>

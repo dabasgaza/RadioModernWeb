@@ -3,13 +3,6 @@
 @{
     ViewData["Title"] = Model.Episode.EpisodeId == 0 ? "حلقة جديدة" : "تعديل حلقة";
     var isEdit = Model.Episode.EpisodeId != 0;
-    ViewData["HeaderIcon"] = isEdit ? "edit" : "add";
-    ViewData["HeaderDescription"] = "إدخال وتعديل البيانات والتفاصيل والضيوف المشاركين في الحلقة";
-    ViewBag.IsEdit = isEdit;
-    ViewBag.EntityName = "الحلقات";
-    ViewBag.EntityUrl = "/Episodes";
-    ViewBag.BackUrl = "/Episodes";
-    ViewBag.BackText = "الرجوع للحلقات";
 
     var arDays = new[] { "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت" };
     var arMonths = new[] { "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر" };
@@ -19,32 +12,131 @@
     if (dt.HasValue) { var d = dt.Value; dayName = arDays[(int)d.DayOfWeek]; dayNum = d.Day.ToString(); monthName = arMonths[d.Month - 1]; yearNum = d.Year.ToString(); }
     else { dayName = "اليوم"; dayNum = "–"; monthName = ""; yearNum = ""; }
     timeStr = tm?.ToString(@"hh\:mm") ?? "";
+
+    var programName = Model.Programs.FirstOrDefault(p => p.ProgramId == Model.Episode.ProgramId)?.ProgramName;
+    var headerTitle = isEdit
+        ? (string.IsNullOrWhiteSpace(Model.Episode.EpisodeName) ? $"حلقة #{Model.Episode.EpisodeId}" : Model.Episode.EpisodeName)
+        : "حلقة جديدة";
+    var statusLabel = Model.StatusText ?? "مجدولة";
+    var statusVm = new StatusBadgeViewModel { Type = "episode", Status = statusLabel, Label = statusLabel };
+    var guestCount = Model.Episode.Guests.Count;
+    var corrCount = Model.Episode.Correspondents.Count;
+    var empCount = Model.Episode.Employees.Count;
+
+    string Initials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "";
+        var clean = name.Split('—')[0].Trim();
+        var parts = clean.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0) return "";
+        var init = parts[0].Substring(0, 1);
+        if (parts.Length > 1) init += parts[1].Substring(0, 1);
+        return init;
+    }
+
+    var stages = new[] {
+        new { Id = 0, Name = "مجدولة",           Icon = "calendar_today" },
+        new { Id = 1, Name = "منفّذة",            Icon = "play_circle" },
+        new { Id = 2, Name = "منشورة رقمياً",     Icon = "share" },
+        new { Id = 3, Name = "منشورة على الموقع", Icon = "public" }
+    };
+    var sid = Model.StatusId;
+    var isCancelled = sid == 4;
 }
 
-<partial name="_PageHeader" />
-
-<form method="post" action="@(isEdit ? $"/Episodes/Edit/{Model.Episode.EpisodeId}" : "/Episodes/Create")" id="episodeForm">
+<form method="post" action="@(isEdit ? $"/Episodes/Edit/{Model.Episode.EpisodeId}" : "/Episodes/Create")" id="episodeForm" class="ws-edit">
     @Html.AntiForgeryToken()
     <input type="hidden" name="EpisodeId" value="@Model.Episode.EpisodeId" />
 
     @if (ViewContext.ModelState.ErrorCount > 0)
     {
-        <div asp-validation-summary="All" class="rounded-lg p-4 mb-6 bg-danger-subtle border border-danger-border text-danger text-sm font-semibold" role="alert"></div>
+        <div asp-validation-summary="All" class="rounded-2xl p-4 mb-6 bg-danger-subtle border border-danger-border text-danger text-sm font-semibold" role="alert"></div>
     }
 
+    <!-- ══════════ HEADER — Episode workspace ══════════ -->
+    <header class="ws-header mb-6">
+        <div class="ws-header-content">
+            <nav class="breadcrumb mb-4" aria-label="Breadcrumb">
+                <ul class="flex items-center gap-1.5">
+                    <li>
+                        <a href="/" class="inline-flex items-center gap-1 transition-opacity hover:opacity-80">
+                            <span class="material-symbols-rounded text-sm" aria-hidden="true">home</span>
+                            الرئيسية
+                        </a>
+                    </li>
+                    <li><span class="material-symbols-rounded text-xs text-border" aria-hidden="true">chevron_left</span></li>
+                    <li><a href="/Episodes" class="transition-opacity hover:opacity-80">الحلقات</a></li>
+                    <li><span class="material-symbols-rounded text-xs text-border" aria-hidden="true">chevron_left</span></li>
+                    <li class="font-semibold text-text">@ViewData["Title"]</li>
+                </ul>
+            </nav>
+
+            <div class="flex flex-wrap items-start justify-between gap-6">
+                <div class="flex items-start gap-4 min-w-0">
+                    <div class="ws-header-icon">
+                        <span class="material-symbols-rounded" aria-hidden="true">@(isEdit ? "edit_note" : "add_circle")</span>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <h1 class="ws-header-title">@headerTitle</h1>
+                            @if (isEdit)
+                            {
+                                <span class="text-caption font-bold text-text-muted" dir="ltr">#@Model.Episode.EpisodeId</span>
+                            }
+                            <partial name="_StatusBadge" model="statusVm" />
+                        </div>
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2.5 text-caption text-text-secondary">
+                            <span class="inline-flex items-center gap-1.5">
+                                <span class="material-symbols-rounded text-sm text-primary" aria-hidden="true">radio</span>
+                                <span id="ws-header-program" class="font-semibold">@(programName ?? "لم يُحدد البرنامج بعد")</span>
+                            </span>
+                            <span class="inline-flex items-center gap-1.5">
+                                <span class="material-symbols-rounded text-sm text-text-muted" aria-hidden="true">update</span>
+                                آخر تحديث: —
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0">
+                    @if (isEdit)
+                    {
+                        <a href="/Episodes/Details/@Model.Episode.EpisodeId" class="btn btn-outline btn-sm gap-1">
+                            <span class="material-symbols-rounded text-base" aria-hidden="true">visibility</span>
+                            معاينة
+                        </a>
+                    }
+                    <a href="/Episodes" class="btn btn-ghost btn-sm gap-1">
+                        <span class="material-symbols-rounded text-base" aria-hidden="true">close</span>
+                        إلغاء
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-sm gap-1">
+                        <span class="material-symbols-rounded text-base" aria-hidden="true">save</span>
+                        حفظ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ══════════ WORKSPACE GRID ══════════ -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
+        <!-- ────────── LEFT — MAIN WORKSPACE ────────── -->
         <div class="lg:col-span-8 space-y-6">
 
-            <div class="card p-6">
+            <!-- Section 1 · Episode Information (Primary Card) -->
+            <section class="card ws-card-primary p-6" aria-labelledby="sec-basic">
                 @{
+                    ViewBag.SectionSize = "lg";
                     ViewBag.SectionIcon = "info";
                     ViewBag.SectionTitle = "المعلومات الأساسية";
-                    ViewBag.SectionSubtitle = null;
+                    ViewBag.SectionSubtitle = "بيانات الحلقة الرئيسية: البرنامج والعنوان والوصف والملاحظات الخاصة";
                     ViewBag.SectionAction = null;
                 }
                 <partial name="_SectionHeader" />
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="ws-section-divider" aria-hidden="true"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                         <label for="ProgramId" class="text-label font-semibold text-text-muted mb-1.5 block">البرنامج *</label>
                         <div class="relative">
@@ -83,16 +175,19 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="card p-6">
+            <!-- Section 2 · Guests (Standard Card) -->
+            <section class="card p-6" aria-labelledby="sec-guests">
                 @{
-                    ViewBag.SectionIcon = "people_alt";
+                    ViewBag.SectionSize = "lg";
+                    ViewBag.SectionIcon = "groups";
                     ViewBag.SectionTitle = "الضيوف";
-                    ViewBag.SectionSubtitle = null;
+                    ViewBag.SectionSubtitle = "سجّل ضيوف الحلقة ومواضيعهم وأوقات الاستضافة — اسحب البطاقات لترتيب الظهور";
                     ViewBag.SectionAction = new HtmlString("<button type=\"button\" class=\"btn btn-success btn-sm gap-1\" onclick=\"EP.addRow('guests-container','guest-row-tpl')\"><span class=\"material-symbols-rounded text-sm\" aria-hidden=\"true\">add</span>إضافة ضيف</button>");
                 }
                 <partial name="_SectionHeader" />
+                <div class="ws-section-divider" aria-hidden="true"></div>
                 <div id="guests-container" data-empty="true" class="space-y-3">
                     @if (Model.Episode.Guests.Any())
                     {
@@ -103,9 +198,12 @@
                                 <input type="hidden" name="Guests[@i].EpisodeGuestId" value="@g.EpisodeGuestId" />
                                 <div class="ep-row-handle" title="سحب لإعادة الترتيب"><span class="material-symbols-rounded" aria-hidden="true">drag_indicator</span></div>
                                 <div class="ep-row-body">
+                                    <div class="ws-avatar" data-avatar>
+                                        @if (!string.IsNullOrEmpty(Initials(g.FullName))) { @Initials(g.FullName) } else { <span class="material-symbols-rounded" aria-hidden="true">person</span> }
+                                    </div>
                                     <div class="ep-row-fields">
-                                        <div class="ep-field flex-1">
-                                            <select name="Guests[@i].GuestId" class="input" aria-label="اختيار ضيف">
+                                        <div class="ep-field flex-[1.6]">
+                                            <select name="Guests[@i].GuestId" class="input ep-guest-select" aria-label="اختيار ضيف">
                                                 <option value="">— اختر الضيف —</option>
                                                 @foreach (var guest in Model.Guests)
                                                 {
@@ -132,22 +230,29 @@
                     }
                     else
                     {
-                        ViewBag.EmptyIcon = "groups";
-                        ViewBag.EmptyTitle = "لم تتم إضافة ضيوف بعد";
-                        ViewBag.EmptyDesc = "انقر على زر الإضافة أعلاه لتسجيل ضيف في الحلقة";
-                        <partial name="_EmptyState" />
+                        <div class="ws-empty ep-empty">
+                            <div class="ws-empty-icon"><span class="material-symbols-rounded" aria-hidden="true">groups</span></div>
+                            <h3 class="ws-empty-title">لم تتم إضافة ضيوف بعد</h3>
+                            <p class="ws-empty-desc">انقر على زر الإضافة أعلاه أو استخدم الزر أدناه لتسجيل أول ضيف في الحلقة</p>
+                            <button type="button" class="btn btn-primary btn-sm gap-1" onclick="EP.addRow('guests-container','guest-row-tpl')">
+                                <span class="material-symbols-rounded text-base" aria-hidden="true">add</span>إضافة ضيف
+                            </button>
+                        </div>
                     }
                 </div>
-            </div>
+            </section>
 
-            <div class="card p-6">
+            <!-- Section 3 · Correspondents (Soft Panel) -->
+            <section class="ws-panel-soft p-6" aria-labelledby="sec-correspondents">
                 @{
+                    ViewBag.SectionSize = "lg";
                     ViewBag.SectionIcon = "map";
                     ViewBag.SectionTitle = "المراسلون";
-                    ViewBag.SectionSubtitle = null;
+                    ViewBag.SectionSubtitle = "تغطية ميدانية: أضف المراسلين ومواضيعهم وأوقات التغطية";
                     ViewBag.SectionAction = new HtmlString("<button type=\"button\" class=\"btn btn-success btn-sm gap-1\" onclick=\"EP.addRow('correspondents-container','corr-row-tpl')\"><span class=\"material-symbols-rounded text-sm\" aria-hidden=\"true\">add</span>إضافة مراسل</button>");
                 }
                 <partial name="_SectionHeader" />
+                <div class="ws-section-divider" aria-hidden="true"></div>
                 <div id="correspondents-container" data-empty="true" class="space-y-3">
                     @if (Model.Episode.Correspondents.Any())
                     {
@@ -158,9 +263,12 @@
                                 <input type="hidden" name="Correspondents[@i].Id" value="@c.Id" />
                                 <div class="ep-row-handle" title="سحب لإعادة الترتيب"><span class="material-symbols-rounded" aria-hidden="true">drag_indicator</span></div>
                                 <div class="ep-row-body">
+                                    <div class="ws-avatar is-corr" data-avatar>
+                                        @if (!string.IsNullOrEmpty(Initials(c.FullName))) { @Initials(c.FullName) } else { <span class="material-symbols-rounded" aria-hidden="true">person</span> }
+                                    </div>
                                     <div class="ep-row-fields">
-                                        <div class="ep-field flex-1">
-                                            <select name="Correspondents[@i].CorrespondentId" class="input" aria-label="اختيار مراسل">
+                                        <div class="ep-field flex-[1.6]">
+                                            <select name="Correspondents[@i].CorrespondentId" class="input ep-corr-select" aria-label="اختيار مراسل">
                                                 <option value="">— اختر —</option>
                                                 @foreach (var cor in Model.Correspondents)
                                                 {
@@ -186,22 +294,29 @@
                     }
                     else
                     {
-                        ViewBag.EmptyIcon = "map";
-                        ViewBag.EmptyTitle = "لم تتم إضافة مراسلين بعد";
-                        ViewBag.EmptyDesc = "انقر على زر الإضافة لتسجيل مراسل ميداني للتغطية";
-                        <partial name="_EmptyState" />
+                        <div class="ws-empty ep-empty">
+                            <div class="ws-empty-icon"><span class="material-symbols-rounded" aria-hidden="true">map</span></div>
+                            <h3 class="ws-empty-title">لم تتم إضافة مراسلين بعد</h3>
+                            <p class="ws-empty-desc">انقر على زر الإضافة لتسجيل مراسل ميداني للتغطية</p>
+                            <button type="button" class="btn btn-primary btn-sm gap-1" onclick="EP.addRow('correspondents-container','corr-row-tpl')">
+                                <span class="material-symbols-rounded text-base" aria-hidden="true">add</span>إضافة مراسل
+                            </button>
+                        </div>
                     }
                 </div>
-            </div>
+            </section>
 
-            <div class="card p-6">
+            <!-- Section 4 · Production Crew (Inset Panel) -->
+            <section class="ws-panel-inset p-6" aria-labelledby="sec-crew">
                 @{
+                    ViewBag.SectionSize = "lg";
                     ViewBag.SectionIcon = "badge";
                     ViewBag.SectionTitle = "طاقم العمل والإنتاج";
-                    ViewBag.SectionSubtitle = null;
+                    ViewBag.SectionSubtitle = "فريق الإنتاج المسؤول عن إعداد وبث الحلقة";
                     ViewBag.SectionAction = new HtmlString("<button type=\"button\" class=\"btn btn-success btn-sm gap-1\" onclick=\"EP.addRow('employees-container','emp-row-tpl')\"><span class=\"material-symbols-rounded text-sm\" aria-hidden=\"true\">add</span>إضافة عضو للطاقم</button>");
                 }
                 <partial name="_SectionHeader" />
+                <div class="ws-section-divider" aria-hidden="true"></div>
                 <div id="employees-container" data-empty="true" class="space-y-3">
                     @if (Model.Episode.Employees.Any())
                     {
@@ -212,9 +327,12 @@
                                 <input type="hidden" name="Employees[@i].Id" value="@e.Id" />
                                 <div class="ep-row-handle" title="سحب لإعادة الترتيب"><span class="material-symbols-rounded" aria-hidden="true">drag_indicator</span></div>
                                 <div class="ep-row-body">
+                                    <div class="ws-avatar is-emp" data-avatar>
+                                        @if (!string.IsNullOrEmpty(Initials(e.FullName))) { @Initials(e.FullName) } else { <span class="material-symbols-rounded" aria-hidden="true">person</span> }
+                                    </div>
                                     <div class="ep-row-fields">
                                         <div class="ep-field flex-1">
-                                            <select name="Employees[@i].EmployeeId" class="input" aria-label="اختيار عضو الطاقم">
+                                            <select name="Employees[@i].EmployeeId" class="input ep-emp-select" aria-label="اختيار عضو الطاقم">
                                                 <option value="">— اختر عضو الطاقم —</option>
                                                 @foreach (var emp in Model.Employees)
                                                 {
@@ -224,6 +342,12 @@
                                                 }
                                             </select>
                                         </div>
+                                        @if (!string.IsNullOrEmpty(e.StaffRoleName))
+                                        {
+                                            <div class="ep-field">
+                                                <span class="ws-role-chip"><span class="material-symbols-rounded" aria-hidden="true">verified</span>@e.StaffRoleName</span>
+                                            </div>
+                                        }
                                     </div>
                                     <div class="ep-row-actions">
                                         <button type="button" class="ep-row-del" title="حذف" aria-label="حذف عضو الطاقم" onclick="EP.removeRow(this)">
@@ -236,159 +360,254 @@
                     }
                     else
                     {
-                        ViewBag.EmptyIcon = "badge";
-                        ViewBag.EmptyTitle = "لم يتم إضافة أي موظف للطاقم بعد";
-                        ViewBag.EmptyDesc = "انقر على زر الإضافة لتسجيل أعضاء فريق الإنتاج";
-                        <partial name="_EmptyState" />
+                        <div class="ws-empty ep-empty">
+                            <div class="ws-empty-icon"><span class="material-symbols-rounded" aria-hidden="true">badge</span></div>
+                            <h3 class="ws-empty-title">لم يتم إضافة أي موظف للطاقم بعد</h3>
+                            <p class="ws-empty-desc">انقر على زر الإضافة لتسجيل أعضاء فريق الإنتاج</p>
+                            <button type="button" class="btn btn-primary btn-sm gap-1" onclick="EP.addRow('employees-container','emp-row-tpl')">
+                                <span class="material-symbols-rounded text-base" aria-hidden="true">add</span>إضافة عضو للطاقم
+                            </button>
+                        </div>
                     }
                 </div>
-            </div>
+            </section>
 
         </div>
 
-        <div class="lg:col-span-4 space-y-6 lg:sticky lg:top-6">
+        <!-- ────────── RIGHT — STICKY DASHBOARD ────────── -->
+        <div class="lg:col-span-4">
+            <div class="ws-dashboard lg:sticky lg:top-6">
 
-            @if (isEdit)
-            {
-                <div class="card p-6">
-                    @{
-                        ViewBag.SectionIcon = "timeline";
-                        ViewBag.SectionTitle = "مسار الحلقة";
-                        ViewBag.SectionSubtitle = null;
-                        ViewBag.SectionAction = null;
-                    }
-                    <partial name="_SectionHeader" />
-                    <div class="status-timeline">
-                        @{
-                            var stages = new[] {
-                                new { Id = 0, Name = "مجدولة",       Icon = "calendar_today" },
-                                new { Id = 1, Name = "منفّذة",        Icon = "play_circle" },
-                                new { Id = 2, Name = "منشورة رقمياً", Icon = "share" },
-                                new { Id = 3, Name = "منشورة على الموقع", Icon = "public" }
-                            };
-                            var sid = Model.StatusId;
-                            var isCancelled = sid == 4;
-                        }
-                        @for (int i = 0; i < stages.Length; i++)
-                        {
-                            var s = stages[i];
-                            var cls = sid > s.Id ? "done" : (sid == s.Id ? "active" : "");
-                            <div class="status-timeline-item @cls">
-                                <div class="status-timeline-dot"></div>
-                                <div class="status-timeline-text">@s.Name</div>
-                                @if (sid == s.Id && !isCancelled)
-                                {
-                                    <div class="status-timeline-date font-bold text-primary">الحالية</div>
-                                }
-                            </div>
-                        }
-                        @if (isCancelled)
-                        {
-                            <div class="status-timeline-item cancelled">
-                                <div class="status-timeline-dot"></div>
-                                <div class="status-timeline-text">ملغاة</div>
-                                <div class="status-timeline-date font-bold text-danger">نهائية</div>
-                            </div>
-                        }
+                <div class="ws-dash-head flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-10 h-10 rounded-xl bg-primary-subtle text-primary flex items-center justify-center shrink-0">
+                            <span class="material-symbols-rounded text-xl" aria-hidden="true">space_dashboard</span>
+                        </div>
+                        <div class="min-w-0">
+                            <h2 class="text-title font-bold text-text leading-tight">لوحة الحلقة</h2>
+                            <p class="text-caption text-text-muted truncate">نظرة سريعة على بيانات الحلقة</p>
+                        </div>
+                    </div>
+                    <div class="shrink-0">
+                        <partial name="_StatusBadge" model="statusVm" />
                     </div>
                 </div>
-            }
 
-            <div class="card p-6">
-                @{
-                    ViewBag.SectionIcon = "schedule";
-                    ViewBag.SectionTitle = "الموعد";
-                    ViewBag.SectionSubtitle = null;
-                    ViewBag.SectionAction = null;
-                }
-                <partial name="_SectionHeader" />
-                <div id="date-preview" class="text-center py-5 px-4 mb-5 rounded-xl bg-bg border border-border transition-all duration-300">
-                    <div class="text-4xl font-bold leading-tight tracking-tight text-primary" id="preview-day">@dayName</div>
-                    <div class="w-10 h-px mx-auto my-3 rounded-full bg-primary opacity-30"></div>
-                    <div class="text-sm font-semibold text-text-secondary" id="preview-date">
-                        @if (dt.HasValue) { <text>@dayNum @monthName @yearNum</text> } else { <text>لم يُحدد</text> }
+                <!-- Episode Summary -->
+                <div class="ws-dash-sec">
+                    <h3 class="ws-dash-sec-title">
+                        <span class="material-symbols-rounded" aria-hidden="true">description</span>ملخص الحلقة
+                    </h3>
+                    <dl class="space-y-3 text-sm">
+                        <div class="flex items-center justify-between gap-3">
+                            <dt class="flex items-center gap-1.5 text-text-secondary shrink-0">
+                                <span class="material-symbols-rounded text-base text-primary" aria-hidden="true">radio</span>البرنامج
+                            </dt>
+                            <dd id="ws-side-program" class="font-bold text-text truncate min-w-0">@(programName ?? "لم يُحدد")</dd>
+                        </div>
+                        <div class="flex items-center justify-between gap-3">
+                            <dt class="flex items-center gap-1.5 text-text-secondary shrink-0">
+                                <span class="material-symbols-rounded text-base text-primary" aria-hidden="true">calendar_month</span>تاريخ البث
+                            </dt>
+                            <dd id="ws-summary-date" class="font-bold text-text truncate min-w-0">@(dt.HasValue ? $"{dayNum} {monthName} {yearNum}" : "لم يُحدد")</dd>
+                        </div>
+                        <div class="flex items-center justify-between gap-3">
+                            <dt class="flex items-center gap-1.5 text-text-secondary shrink-0">
+                                <span class="material-symbols-rounded text-base text-primary" aria-hidden="true">access_time</span>وقت البث
+                            </dt>
+                            <dd id="ws-summary-time" class="font-bold text-text truncate min-w-0">@(tm.HasValue ? timeStr : "لم يُحدد")</dd>
+                        </div>
+                    </dl>
+
+                    <div class="grid grid-cols-3 gap-2.5 mt-5">
+                        <div class="ws-stat-tile">
+                            <span class="material-symbols-rounded text-primary" aria-hidden="true">groups</span>
+                            <span class="ws-stat-num" id="stat-guests" aria-live="polite">@guestCount</span>
+                            <span class="ws-stat-label">ضيوف</span>
+                        </div>
+                        <div class="ws-stat-tile">
+                            <span class="material-symbols-rounded text-accent" aria-hidden="true">map</span>
+                            <span class="ws-stat-num" id="stat-correspondents" aria-live="polite">@corrCount</span>
+                            <span class="ws-stat-label">مراسلون</span>
+                        </div>
+                        <div class="ws-stat-tile">
+                            <span class="material-symbols-rounded text-success" aria-hidden="true">badge</span>
+                            <span class="ws-stat-num" id="stat-employees" aria-live="polite">@empCount</span>
+                            <span class="ws-stat-label">طاقم</span>
+                        </div>
                     </div>
-                    @if (dt.HasValue || tm.HasValue)
+                </div>
+
+                <!-- Timeline -->
+                @if (isEdit)
+                {
+                    <div class="ws-dash-sec">
+                        <h3 class="ws-dash-sec-title">
+                            <span class="material-symbols-rounded" aria-hidden="true">timeline</span>مسار الحلقة
+                        </h3>
+                        <ol class="ws-timeline" aria-label="مسار الحلقة">
+                            @for (int i = 0; i < stages.Length; i++)
+                            {
+                                var s = stages[i];
+                                var state = isCancelled ? (i == 0 ? "done" : "todo") : (sid > s.Id ? "done" : (sid == s.Id ? "active" : "todo"));
+                                var stateText = isCancelled ? (i == 0 ? "مكتملة" : "قادمة") : (sid > s.Id ? "مكتملة" : (sid == s.Id ? "الحالية" : "قادمة"));
+                                var icon = state == "done" ? "check" : s.Icon;
+                                <li class="ws-timeline-item is-@state" aria-current="@(state == "active" ? "step" : null)">
+                                    <div class="ws-timeline-node">
+                                        <span class="material-symbols-rounded" aria-hidden="true">@icon</span>
+                                    </div>
+                                    <div class="ws-timeline-title">@s.Name</div>
+                                    <div class="ws-timeline-sub">
+                                        @stateText
+                                        @if (i == 0 && dt.HasValue) { <text> • @dayNum @monthName @yearNum</text> }
+                                    </div>
+                                </li>
+                            }
+                            @if (isCancelled)
+                            {
+                                <li class="ws-timeline-item is-cancelled">
+                                    <div class="ws-timeline-node">
+                                        <span class="material-symbols-rounded" aria-hidden="true">cancel</span>
+                                    </div>
+                                    <div class="ws-timeline-title">ملغاة</div>
+                                    <div class="ws-timeline-sub">نهائية — أُلغيت الحلقة</div>
+                                </li>
+                            }
+                        </ol>
+                    </div>
+                }
+
+                <!-- Broadcast Schedule -->
+                <div class="ws-dash-sec">
+                    <h3 class="ws-dash-sec-title">
+                        <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>جدول البث
+                    </h3>
+
+                    <div id="date-preview" class="ws-calendar @(dt.HasValue ? "" : "opacity-50")">
+                        <div class="ws-calendar-top">
+                            <span class="material-symbols-rounded" aria-hidden="true">wb_sunny</span>
+                            <span class="ws-calendar-day" id="preview-day">@dayName</span>
+                        </div>
+                        <div class="ws-calendar-body">
+                            <span class="ws-calendar-num" id="preview-daynum">@dayNum</span>
+                            <div class="ws-calendar-meta">
+                                <span class="ws-calendar-month" id="preview-month">@monthName</span>
+                                <span class="ws-calendar-year" id="preview-year">@yearNum</span>
+                            </div>
+                        </div>
+                        <div class="ws-calendar-foot">
+                            <span class="ws-calendar-time">
+                                <span class="material-symbols-rounded" aria-hidden="true">access_time</span>
+                                <span id="preview-time">@(tm.HasValue ? timeStr : "–")</span>
+                            </span>
+                        </div>
+                        <span id="preview-date" class="sr-only">@(dt.HasValue ? $"{dayNum} {monthName} {yearNum}" : "لم يُحدد")</span>
+                    </div>
+
+                    <div class="mt-4 space-y-3">
+                        <div>
+                            <label for="input-date" class="text-label font-semibold text-text-muted mb-1.5 block">التاريخ</label>
+                            <div class="relative">
+                                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg text-text-muted" aria-hidden="true">calendar_month</span>
+                                <input type="text" id="input-date" name="ScheduledDate"
+                                       value="@(dt?.ToString("yyyy-MM-dd"))"
+                                       class="input pr-10 timepicker datepicker" aria-label="تاريخ البث" />
+                            </div>
+                        </div>
+                        <div>
+                            <label for="input-time" class="text-label font-semibold text-text-muted mb-1.5 block">الوقت</label>
+                            <div class="relative">
+                                <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg text-text-muted" aria-hidden="true">access_time</span>
+                                <input type="text" id="input-time" name="BroadcastTime"
+                                       value="@(tm?.ToString(@"hh\:mm"))"
+                                       class="input pr-10 timepicker" aria-label="وقت البث" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="ws-dash-sec">
+                    <h3 class="ws-dash-sec-title">
+                        <span class="material-symbols-rounded" aria-hidden="true">query_stats</span>إحصائيات
+                    </h3>
+                    @if (isEdit)
                     {
-                        <div class="inline-flex items-center gap-1.5 mt-3 text-xs font-bold rounded-full px-3 py-1.5 bg-bg text-text-muted border border-border">
-                            <span class="material-symbols-rounded text-sm text-primary" aria-hidden="true">access_time</span>
-                            <span id="preview-time">@(tm.HasValue ? timeStr : "–")</span>
+                        <div class="space-y-2.5">
+                            <div class="meta-pill w-full">
+                                <span class="material-symbols-rounded" aria-hidden="true">tag</span>
+                                <span class="flex-1">رقم الحلقة</span>
+                                <span class="font-bold text-text" dir="ltr">#@Model.Episode.EpisodeId</span>
+                            </div>
+                            <div class="meta-pill w-full">
+                                <span class="material-symbols-rounded" aria-hidden="true">calendar_today</span>
+                                <span class="flex-1">تاريخ الإنشاء</span>
+                                <span class="font-bold text-text">—</span>
+                            </div>
+                            <div class="meta-pill w-full">
+                                <span class="material-symbols-rounded" aria-hidden="true">update</span>
+                                <span class="flex-1">آخر تعديل</span>
+                                <span class="font-bold text-text">—</span>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="meta-pill w-full">
+                            <span class="material-symbols-rounded" aria-hidden="true">flag</span>
+                            <span class="flex-1">حالة الحفظ</span>
+                            <span class="font-bold text-text">لم تُحفظ بعد</span>
                         </div>
                     }
                 </div>
 
-                <div class="space-y-3">
-                    <div>
-                        <label for="input-date" class="text-label font-semibold text-text-muted mb-1.5 block">التاريخ</label>
-                        <div class="relative">
-                            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg text-text-muted" aria-hidden="true">calendar_month</span>
-                            <input type="text" id="input-date" name="ScheduledDate"
-                                   value="@(dt?.ToString("yyyy-MM-dd"))"
-                                   class="input pr-10 timepicker datepicker" aria-label="تاريخ البث" />
-                        </div>
-                    </div>
-                    <div>
-                        <label for="input-time" class="text-label font-semibold text-text-muted mb-1.5 block">الوقت</label>
-                        <div class="relative">
-                            <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-lg text-text-muted" aria-hidden="true">access_time</span>
-                            <input type="text" id="input-time" name="BroadcastTime"
-                                   value="@(tm?.ToString(@"hh\:mm"))"
-                                   class="input pr-10 timepicker" aria-label="وقت البث" />
-                        </div>
+                <!-- Quick Actions -->
+                <div class="ws-dash-sec">
+                    <h3 class="ws-dash-sec-title">
+                        <span class="material-symbols-rounded" aria-hidden="true">bolt</span>إجراءات سريعة
+                    </h3>
+                    <div class="flex flex-col gap-2.5">
+                        @if (isEdit)
+                        {
+                            <a href="/Episodes/Details/@Model.Episode.EpisodeId" class="btn btn-outline w-full justify-center gap-2">
+                                <span class="material-symbols-rounded" aria-hidden="true">visibility</span>
+                                معاينة الحلقة
+                            </a>
+                        }
+                        <button type="submit" class="btn btn-primary w-full justify-center gap-2">
+                            <span class="material-symbols-rounded" aria-hidden="true">save</span>
+                            @(isEdit ? "حفظ التغييرات" : "إنشاء الحلقة")
+                        </button>
+                        <a href="/Episodes" class="btn btn-ghost w-full justify-center gap-2">
+                            <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
+                            العودة للحلقات
+                        </a>
                     </div>
                 </div>
+
             </div>
+        </div>
 
-            @if (isEdit)
-            {
-                <div class="card p-6">
-                    @{
-                        ViewBag.SectionIcon = "info";
-                        ViewBag.SectionTitle = "معلومات الحلقة";
-                        ViewBag.SectionSubtitle = null;
-                        ViewBag.SectionAction = null;
-                    }
-                    <partial name="_SectionHeader" />
-                    <div class="space-y-3 text-sm">
-                        <div class="meta-pill w-full">
-                            <span class="material-symbols-rounded" aria-hidden="true">tag</span>
-                            <span class="flex-1">رقم الحلقة</span>
-                            <span class="font-bold text-text" dir="ltr">#@Model.Episode.EpisodeId</span>
-                        </div>
-                        <div class="meta-pill w-full">
-                            <span class="material-symbols-rounded" aria-hidden="true">calendar_today</span>
-                            <span class="flex-1">تاريخ الإنشاء</span>
-                            <span class="font-bold text-text">—</span>
-                        </div>
-                        <div class="meta-pill w-full">
-                            <span class="material-symbols-rounded" aria-hidden="true">update</span>
-                            <span class="flex-1">آخر تعديل</span>
-                            <span class="font-bold text-text">—</span>
-                        </div>
-                    </div>
-                </div>
-            }
+    </div>
 
-            <div class="card p-6">
-                @{
-                    ViewBag.SectionIcon = "save";
-                    ViewBag.SectionTitle = "حفظ التغييرات";
-                    ViewBag.SectionSubtitle = null;
-                    ViewBag.SectionAction = null;
-                }
-                <partial name="_SectionHeader" />
-                <div class="flex flex-col gap-3">
-                    <button type="submit" class="btn btn-primary w-full justify-center py-3 gap-2" aria-label="@(isEdit ? "حفظ التغييرات" : "إنشاء الحلقة")">
-                        <span class="material-symbols-rounded" aria-hidden="true">save</span>
-                        @(isEdit ? "حفظ التغييرات" : "إنشاء الحلقة")
-                    </button>
-                    <a href="/Episodes" class="btn btn-ghost w-full justify-center py-3 gap-2">
-                        <span class="material-symbols-rounded" aria-hidden="true">close</span>
-                        إلغاء والعودة
-                    </a>
-                </div>
+    <!-- ══════════ STICKY SAVE BAR ══════════ -->
+    <div class="ws-save-bar">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <a href="/Episodes" class="btn btn-ghost gap-1.5">
+                <span class="material-symbols-rounded text-lg" aria-hidden="true">close</span>
+                إلغاء
+            </a>
+            <div class="flex flex-wrap items-center gap-2.5">
+                <span class="hidden sm:inline text-caption text-text-muted">تُحفظ البيانات على الخادم عند إتمام الحفظ</span>
+                <button type="submit" formnovalidate class="btn btn-secondary gap-1.5" title="يحفظ الحلقة حتى لو كانت بعض الحقول المطلوبة فارغة — يخضع للتحقق من الخادم">
+                    <span class="material-symbols-rounded text-lg" aria-hidden="true">draft</span>
+                    حفظ كمسودة
+                </button>
+                <button type="submit" class="btn btn-primary gap-1.5">
+                    <span class="material-symbols-rounded text-lg" aria-hidden="true">save</span>
+                    @(isEdit ? "حفظ الحلقة" : "إنشاء الحلقة")
+                </button>
             </div>
-
         </div>
     </div>
 </form>
@@ -398,9 +617,10 @@
         <input type="hidden" name="Guests[{i}].EpisodeGuestId" value="0" />
         <div class="ep-row-handle"><span class="material-symbols-rounded" aria-hidden="true">drag_indicator</span></div>
         <div class="ep-row-body">
+            <div class="ws-avatar" data-avatar><span class="material-symbols-rounded" aria-hidden="true">person</span></div>
             <div class="ep-row-fields">
-                <div class="ep-field flex-1">
-                    <select name="Guests[{i}].GuestId" class="input" aria-label="اختيار ضيف">
+                <div class="ep-field flex-[1.6]">
+                    <select name="Guests[{i}].GuestId" class="input ep-guest-select" aria-label="اختيار ضيف">
                         <option value="">— اختر الضيف —</option>
                         @foreach (var g in Model.Guests)
                         {
@@ -430,9 +650,10 @@
         <input type="hidden" name="Correspondents[{i}].Id" value="0" />
         <div class="ep-row-handle"><span class="material-symbols-rounded" aria-hidden="true">drag_indicator</span></div>
         <div class="ep-row-body">
+            <div class="ws-avatar is-corr" data-avatar><span class="material-symbols-rounded" aria-hidden="true">person</span></div>
             <div class="ep-row-fields">
-                <div class="ep-field flex-1">
-                    <select name="Correspondents[{i}].CorrespondentId" class="input" aria-label="اختيار مراسل">
+                <div class="ep-field flex-[1.6]">
+                    <select name="Correspondents[{i}].CorrespondentId" class="input ep-corr-select" aria-label="اختيار مراسل">
                         <option value="">— اختر —</option>
                         @foreach (var c in Model.Correspondents)
                         {
@@ -461,9 +682,10 @@
         <input type="hidden" name="Employees[{i}].Id" value="0" />
         <div class="ep-row-handle"><span class="material-symbols-rounded" aria-hidden="true">drag_indicator</span></div>
         <div class="ep-row-body">
+            <div class="ws-avatar is-emp" data-avatar><span class="material-symbols-rounded" aria-hidden="true">person</span></div>
             <div class="ep-row-fields">
                 <div class="ep-field flex-1">
-                    <select name="Employees[{i}].EmployeeId" class="input" aria-label="اختيار عضو الطاقم">
+                    <select name="Employees[{i}].EmployeeId" class="input ep-emp-select" aria-label="اختيار عضو الطاقم">
                         <option value="">— اختر عضو الطاقم —</option>
                         @foreach (var emp in Model.Employees)
                         {
@@ -515,6 +737,138 @@
                 timeInput._flatpickr.config.onChange.push(updatePreview);
             }
         });
+    </script>
+    <script>
+        (function () {
+            'use strict';
+            var arMonthsW = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+            var arDaysW = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+
+            function initialsOf(name) {
+                if (!name) return '';
+                var clean = String(name).split('—')[0].trim();
+                if (!clean) return '';
+                var parts = clean.split(/\s+/).filter(Boolean);
+                if (!parts.length) return '';
+                var init = parts[0].charAt(0);
+                if (parts.length > 1 && parts[1]) init += parts[1].charAt(0);
+                return init;
+            }
+
+            function updateAvatar(row) {
+                var avatar = row.querySelector('[data-avatar]');
+                var sel = row.querySelector('select');
+                if (!avatar || !sel) return;
+                var text = sel.selectedIndex > 0 ? sel.options[sel.selectedIndex].text : '';
+                var init = initialsOf(text);
+                if (init) {
+                    avatar.textContent = init;
+                } else {
+                    avatar.textContent = '';
+                    avatar.innerHTML = '<span class="material-symbols-rounded" aria-hidden="true">person</span>';
+                }
+            }
+
+            var containers = ['guests-container', 'correspondents-container', 'employees-container'];
+            var statIds = {
+                'guests-container': 'stat-guests',
+                'correspondents-container': 'stat-correspondents',
+                'employees-container': 'stat-employees'
+            };
+
+            function updateStats() {
+                containers.forEach(function (id) {
+                    var c = document.getElementById(id);
+                    var s = document.getElementById(statIds[id]);
+                    if (c && s) s.textContent = c.querySelectorAll('.ep-row').length;
+                });
+            }
+
+            containers.forEach(function (id) {
+                var c = document.getElementById(id);
+                if (!c) return;
+                c.addEventListener('change', function (e) {
+                    var row = e.target.closest('.ep-row');
+                    if (row) updateAvatar(row);
+                });
+                if (window.MutationObserver) {
+                    new MutationObserver(updateStats).observe(c, { childList: true });
+                }
+            });
+
+            function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+            function updateCalendar() {
+                var dateInput = document.getElementById('input-date');
+                var timeInput = document.getElementById('input-time');
+                var fp = dateInput && dateInput._flatpickr ? dateInput._flatpickr : null;
+                var d = fp ? fp.selectedDates[0] : null;
+
+                var dn = document.getElementById('preview-daynum');
+                var mn = document.getElementById('preview-month');
+                var yn = document.getElementById('preview-year');
+                if (dn) dn.textContent = d ? d.getDate() : '–';
+                if (mn) mn.textContent = d ? arMonthsW[d.getMonth()] : '';
+                if (yn) yn.textContent = d ? d.getFullYear() : '';
+
+                var sd = document.getElementById('ws-summary-date');
+                if (sd) {
+                    sd.textContent = d ? (arDaysW[d.getDay()] + ' ' + d.getDate() + ' ' + arMonthsW[d.getMonth()] + ' ' + d.getFullYear()) : 'لم يُحدد';
+                }
+                var st = document.getElementById('ws-summary-time');
+                if (st) {
+                    var tfp = timeInput && timeInput._flatpickr ? timeInput._flatpickr : null;
+                    var td = tfp ? tfp.selectedDates[0] : null;
+                    st.textContent = td ? pad(td.getHours()) + ':' + pad(td.getMinutes()) : 'لم يُحدد';
+                }
+            }
+
+            function updateProgram() {
+                var sel = document.getElementById('ProgramId');
+                if (!sel) return;
+                var text = sel.selectedIndex > 0 ? sel.options[sel.selectedIndex].text : '';
+                var v = text || 'لم يُحدد';
+                var h = document.getElementById('ws-header-program');
+                var s = document.getElementById('ws-side-program');
+                if (h) h.textContent = v;
+                if (s) s.textContent = v;
+            }
+
+            function attachRipple(btn) {
+                btn.addEventListener('click', function (e) {
+                    if (btn.disabled || btn.getAttribute('aria-disabled') === 'true') return;
+                    var rect = btn.getBoundingClientRect();
+                    var size = Math.max(rect.width, rect.height) * 2;
+                    var span = document.createElement('span');
+                    span.className = 'ws-ripple';
+                    span.style.width = span.style.height = size + 'px';
+                    span.style.left = (e.clientX - rect.left - size / 2) + 'px';
+                    span.style.top = (e.clientY - rect.top - size / 2) + 'px';
+                    btn.appendChild(span);
+                    window.setTimeout(function () { span.remove(); }, 700);
+                });
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('.ws-edit .btn').forEach(attachRipple);
+
+                var dateInput = document.getElementById('input-date');
+                var timeInput = document.getElementById('input-time');
+                if (dateInput && dateInput._flatpickr) dateInput._flatpickr.config.onChange.push(updateCalendar);
+                if (timeInput && timeInput._flatpickr) timeInput._flatpickr.config.onChange.push(updateCalendar);
+
+                var prog = document.getElementById('ProgramId');
+                if (prog) prog.addEventListener('change', updateProgram);
+
+                updateCalendar();
+                updateProgram();
+                updateStats();
+                containers.forEach(function (id) {
+                    var c = document.getElementById(id);
+                    if (c) c.querySelectorAll('.ep-row').forEach(updateAvatar);
+                });
+            });
+        })();
     </script>
     <script src="~/js/episode-edit.js" asp-append-version="true"></script>
 }

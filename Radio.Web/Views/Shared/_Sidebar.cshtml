@@ -22,10 +22,10 @@
     </a>
 
     <!-- On Air Now Card -->
-    <div class="mx-3 mt-3 p-3 rounded-xl border transition-all duration-300 shrink-0 bg-live-subtle border-live-border min-w-0" id="sidebar-onair-card">
+    <a href="/Episodes/LiveBoard" class="mx-3 mt-3 p-3 rounded-xl border transition-all duration-300 shrink-0 bg-live-subtle border-live-border min-w-0 block hover:border-live" id="sidebar-onair-card" aria-label="فتح شاشة البث المباشر">
         <div class="flex items-center gap-3 min-w-0">
             <span class="relative flex h-3 w-3 shrink-0" id="sidebar-onair-badge">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-live opacity-75"></span>
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-live opacity-75" id="sidebar-onair-ping"></span>
                 <span class="relative inline-flex rounded-full h-3 w-3 bg-live"></span>
             </span>
             <div class="flex-1 min-w-0">
@@ -33,22 +33,35 @@
                 <div class="text-micro text-live truncate font-medium mt-0.5" id="sidebar-onair-name">—</div>
             </div>
         </div>
+    </a>
+
+    <!-- Recently Opened -->
+    <div id="sidebar-recents" class="hidden mx-3 mt-3 rounded-xl border border-border bg-bg p-2" aria-label="صفحات تم فتحها مؤخراً">
+        <div class="px-2 pb-1 text-micro font-bold text-text-secondary flex items-center gap-1">
+            <span class="material-symbols-rounded text-sm" aria-hidden="true">history</span>
+            تم فتحها مؤخراً
+        </div>
+        <div class="sidebar-recents-list space-y-0.5"></div>
     </div>
 
     <!-- Scrollable Nav List -->
-    <nav class="flex-1 overflow-y-auto p-3 space-y-1 min-w-0" aria-label="التنقل الرئيسي">
+    <nav id="sidebar-navigation" class="flex-1 overflow-y-auto p-3 space-y-1 min-w-0" aria-label="التنقل الرئيسي" tabindex="0">
         @* ── القائمة الأساسية الثابتة ── *@
-        <a href="/" class="@NavLinkClass(IsActive("Home"))">
+        <a href="/" class="@NavLinkClass(IsActive("Home"))" aria-current="@(IsActive("Home") ? "page" : null)">
             <span class="material-symbols-rounded shrink-0">dashboard</span>
             <span class="truncate">لوحة التحكم الرئيسية</span>
         </a>
-        <a href="/Search" class="@NavLinkClass(IsActive("Search"))">
+        <a href="/Search" class="@NavLinkClass(IsActive("Search"))" aria-current="@(IsActive("Search") ? "page" : null)">
             <span class="material-symbols-rounded shrink-0">search</span>
             <span class="truncate">البحث العام</span>
         </a>
-        <a href="/Calendar" class="@NavLinkClass(IsActive("Calendar"))">
+        <a href="/Calendar" class="@NavLinkClass(IsActive("Calendar"))" aria-current="@(IsActive("Calendar") ? "page" : null)">
             <span class="material-symbols-rounded shrink-0">calendar_month</span>
             <span class="truncate">جدول البث والإعادة</span>
+        </a>
+        <a href="/Settings" class="@NavLinkClass(IsActive("Settings"))" aria-current="@(IsActive("Settings") ? "page" : null)">
+            <span class="material-symbols-rounded shrink-0">settings</span>
+            <span class="truncate">إعدادات النظام</span>
         </a>
 
         @* ── المجموعة 1: البث والإنتاج ── *@
@@ -63,15 +76,15 @@
                 <span class="material-symbols-rounded sidebar-group-chevron shrink-0">expand_more</span>
             </button>
             <div id="sidebar-group-broadcast" data-sidebar-content="group-broadcast" class="sidebar-group-content @(isBroadcastActive ? "" : "hidden")">
-                <a href="/Episodes/LiveBoard" class="@NavLinkClass(IsActive("Episodes", "LiveBoard"))">
+                <a href="/Episodes/LiveBoard" class="@NavLinkClass(IsActive("Episodes", "LiveBoard"))" aria-current="@(IsActive("Episodes", "LiveBoard") ? "page" : null)">
                     <span class="material-symbols-rounded text-live shrink-0">live_tv</span>
                     <span class="truncate">شاشة البث المباشر</span>
                 </a>
-                <a href="/Episodes" class="@NavLinkClass(IsActive("Episodes", "Index"))">
+                <a href="/Episodes" class="@NavLinkClass(IsActive("Episodes", "Index"))" aria-current="@(IsActive("Episodes", "Index") ? "page" : null)">
                     <span class="material-symbols-rounded shrink-0">tv</span>
                     <span class="truncate">سجل الحلقات</span>
                 </a>
-                <a href="/Production" class="@NavLinkClass(IsActive("Production"))">
+                <a href="/Production" class="@NavLinkClass(IsActive("Production"))" aria-current="@(IsActive("Production") ? "page" : null)">
                     <span class="material-symbols-rounded shrink-0">view_column</span>
                     <span class="truncate">لوحة سير الإنتاج</span>
                 </a>
@@ -176,7 +189,7 @@
         @* ── المجموعة 5: الإدارة والكوادر ── *@
         @if (HasAny(AppPermissions.StaffView, AppPermissions.StaffManage, AppPermissions.AdminUsersManage, AppPermissions.AdminRolesManage, AppPermissions.SystemViewAuditLogs, AppPermissions.SystemDatabaseManage))
         {
-            var isAdminActive = IsActive("Employees") || IsActive("StaffRoles") || IsActive("SocialPlatforms") || IsActive("Users") || IsActive("Roles") || IsActive("Permissions") || IsActive("AuditLogs") || IsActive("Database") || IsActive("Diagnostics") || IsActive("Settings");
+            var isAdminActive = IsActive("Employees") || IsActive("StaffRoles") || IsActive("SocialPlatforms") || IsActive("Users") || IsActive("Roles") || IsActive("Permissions") || IsActive("AuditLogs") || IsActive("Database") || IsActive("Diagnostics");
             <button type="button" class="sidebar-group-toggle" data-sidebar-toggle="group-admin" aria-expanded="@(isAdminActive ? "true" : "false")" aria-controls="sidebar-group-admin">
                 <span class="flex items-center gap-2 min-w-0 truncate">
                     <span class="material-symbols-rounded text-base text-primary shrink-0">admin_panel_settings</span>
@@ -233,10 +246,6 @@
                         <span class="truncate">تشخيص النظام</span>
                     </a>
                 }
-                <a href="/Settings" class="@NavLinkClass(IsActive("Settings"))">
-                    <span class="material-symbols-rounded shrink-0">settings</span>
-                    <span class="truncate">إعدادات النظام</span>
-                </a>
             </div>
         }
     </nav>
@@ -245,6 +254,7 @@
 <script>
     (function() {
         const STORAGE_KEY = 'radio_sidebar_collapsed_groups';
+        const SCROLL_KEY = 'radio_sidebar_navigation_scroll';
 
         function getSavedState() {
             try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
@@ -258,8 +268,28 @@
 
         function initSidebar() {
             const toggles = document.querySelectorAll('[data-sidebar-toggle]');
-            if (!toggles.length) return;
             const saved = getSavedState();
+            const navigation = document.getElementById('sidebar-navigation');
+
+            // Keep an editor's place in long navigation lists when moving between screens.
+            // sessionStorage intentionally scopes this convenience to the current browser tab.
+            function restoreNavigationScroll() {
+                if (!navigation) return;
+                const savedScroll = sessionStorage.getItem(SCROLL_KEY);
+                if (savedScroll === null) return;
+                navigation.scrollTop = Number(savedScroll) || 0;
+            }
+
+            if (navigation) {
+                navigation.addEventListener('scroll', function() {
+                    sessionStorage.setItem(SCROLL_KEY, String(navigation.scrollTop));
+                }, { passive: true });
+            }
+
+            if (!toggles.length) {
+                requestAnimationFrame(restoreNavigationScroll);
+                return;
+            }
 
             toggles.forEach(function(toggle) {
                 const groupId = toggle.getAttribute('data-sidebar-toggle');
@@ -298,6 +328,11 @@
                     content.classList.add('hidden');
                 }
             }
+
+            // Group visibility affects scroll height, so restore after all groups settle.
+            requestAnimationFrame(function() {
+                requestAnimationFrame(restoreNavigationScroll);
+            });
 
             // Mobile drawer link click handler
             const drawerToggle = document.getElementById('sidebar-drawer');
